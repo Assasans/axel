@@ -1,0 +1,11 @@
+# IDEs
+.idea
+.vscode
+
+# Build artifacts
+target
+
+# Certificates
+*.crt
+*.key
+*.pem

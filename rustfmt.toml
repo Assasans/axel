@@ -1,0 +1,6 @@
+max_width = 120
+tab_spaces = 2
+imports_granularity = "Module"
+group_imports = "StdExternalCrate"
+trailing_comma = "Vertical"
+overflow_delimited_expr = true
