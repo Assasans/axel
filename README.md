@@ -6,15 +6,6 @@
 
 See [DUMPING.md](DUMPING.md) for instructions on how to inspect the game code yourself.
 
-### Work in progress
-
-This server mimics the original server's responses, but it cannot modify their bodies because their hash is signed with JWT RS256 (RSA-1024 key).
-
-We need to either change the public key in `global-metadata.dat` or disable JWT verification in `libil2cpp.so`.
-The problem is that LIAPP will detect the modification and prevent the game from starting.
-
-If you know or have an idea how to bypass the LIAPP anti-tampering system, please comment on [this issue](https://github.com/Assasans/axel/issues/1).
-
 ![](https://files.catbox.moe/cjcxx7.png)
 
 ### Current progress
@@ -34,10 +25,21 @@ The first scene ("And so the Adventure Begins!") loads and goes up to the first 
 
 - Linux machine (preferably [Arch Linux](https://archlinux.org/), `x86_64` or `arm64-v8a`), [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) is not tested
 - [Waydroid](https://waydro.id)
+- [Rust](https://rust-lang.org) — to build the [RSA patcher](rsa-patcher)
 
 ### Building server
 
 `RUST_LOG=info cargo run`
+
+### RSA signing issue
+
+The game signs API responses with JWT RS256 (RSA-1024 key).
+This server uses its own key pair, so the public key must be replaced in the client.
+
+Static key replacement is not possible due to the LIAPP anti-tampering system (please comment on [this issue](https://github.com/Assasans/axel/issues/1) if you know how to work around it).
+The current solution is to dynamically replace the key in the process memory after the game has been started.
+
+If you want to generate a new RSA key pair — run `openssl genpkey -algorithm RSA -out key.pem -pkeyopt rsa_keygen_bits:1024`.
 
 ### Waydroid
 
@@ -169,6 +171,13 @@ server {
   }
 }
 ```
+
+### Starting the game
+
+1. Start `KonoSuba: FD` in Waydroid and wait for the title screen to appear ("Connection Error" alert will appear — ignore it).
+2. Build the [RSA key patcher](rsa-patcher) — `cargo build --release`.
+3. And run it — `sudo RUST_LOG=info ./target/release/axel-rsa-patcher $(pidof com.nexon.konosuba)`.
+4. Press OK on the error alert, the game should now work.
 
 ## License
 

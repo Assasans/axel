@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use std::error::Error;
 use std::str;
 
@@ -14,6 +14,9 @@ use axum::Router;
 use base64::prelude::BASE64_STANDARD_NO_PAD;
 use base64::Engine;
 use const_decoder::Decoder;
+use jwt_simple::algorithms::{RS256KeyPair, RSAKeyPairLike};
+use jwt_simple::claims::JWTClaims;
+use md5::Digest;
 use serde::{Deserialize, Serialize};
 use tracing::{debug, info};
 use tracing_subscriber::layer::SubscriberExt;
@@ -63,13 +66,13 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
   Ok(())
 }
 
-fn encrypt(data: &[u8], user_key: Option<&[u8]>) -> Vec<u8> {
+fn encrypt(data: &[u8], user_key: Option<&[u8]>) -> (Vec<u8>, Digest) {
   let encrypted =
     Aes128CbcEnc::new(AES_KEY.into(), user_key.unwrap_or(AES_IV).into()).encrypt_padded_vec_mut::<Pkcs7>(data);
   let hash = md5::compute(&encrypted);
   debug!("hash: {:?}", hash);
 
-  encrypted
+  (encrypted, hash)
 }
 
 async fn api_call(
@@ -107,31 +110,54 @@ async fn api_call(
 
   info!(?method, ?meta, ?body, "api call");
 
-  let (response, user_key, jwt_blob) = match &*method {
+  let (response, user_key) = match &*method {
     "idlink_confirm_google" => {
       let response = r#"{"islink":0,"status":0,"time":1722619270,"remotedata":[],"notificationdata":[]}"#;
-      (response.as_bytes(), None, "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJjcyI6ImY0OGY1Njc1MGRiZmQ0ZTAxMjg2M2UyMDBiYzJjMjY0In0.sL2BqIiQcvo_mu6JbiLH2t0zVvIpp1Kcx0sSI9T0PP3oQIwpnd0EgplcwgkbgNAYD4yaTpf2CpVDd7v5j6nTxNCKzQCBNbzEepV-kzDzUooyE1bSxDi7eCcSdVQ6YVYxLuGho9KqrW9xUDgr1XT_07Nts78EDNVNz8xONwcy5jc")
+      (response.as_bytes(), None)
     }
     "masterlist" => {
       let response = include_str!("masterlist.json").trim();
-      (response.as_bytes(), None, "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJjcyI6IjZlNzE0ZDk5NzRiMzJiZTRlNjNkZTc3NzA4YTIyOWJiIn0.RRCjZkiF-i46cCVcOxo6o8d3kK74yGL6kOpSiZE23SJTLysvykwUb0u66hrSwO9XPAkUnKLcGUsUSKTASBRcQNhTiHrG9F3U_nWIsyTa5DFKWkK_RMjxraTOWPADLBr7LieL04WVq42n9reTcOAReCW6vw1xLGNcGIWRHiCzWYU")
+      (response.as_bytes(), None)
     }
     "login" => {
       let response = include_str!("login.json").trim();
-      (response.as_bytes(), Some(USER_KEY), "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJjcyI6IjM2ZTNlOTVjMzMyOGRmZDkxNDNkM2ExZGQyZmMwYTAxIiwidWsiOiI1YTRkYTQ3ZGViYjI0YWU5ZTY4OTU1NzVkZmRmOTI5MSJ9.F3sL1szo8mHoU_Tcuw403PeWdopBLsIQ7-6zm0bdq69phJwkhqCZE3EdToPxy581Ja24OP5aNjej1JtO1aI-_fy2dSiiRMuctc4xnUCdZzwsA1oR5l-xKPaLcl8HzZYSkcKo4B_TxVV6KW7-X7Dl05nIO_6s6unkuen921lxM1s")
+      (response.as_bytes(), Some(USER_KEY))
     }
     "capturesend" => {
       let response = r#"{"status":0,"time":1722620389,"remotedata":[],"notificationdata":[]}"#;
-      (response.as_bytes(), Some(USER_KEY), "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJjcyI6IjlhY2VhYWQxMDAwMjg4ZjYxYTg1MGU5ZWFlYWY4ZDQ2IiwidWsiOiI1YTRkYTQ3ZGViYjI0YWU5ZTY4OTU1NzVkZmRmOTI5MSJ9.Jw-qyWq3uXWpG3LSh5q1gJZVo3q8QPlRSmjBBgY7Cqb_Q3YU-XcrHkO1kVUsrXxXqPTpe_Nydzm3wVyRbRn-3bFdGcwtkmjlt9d6ebhjFuS9aeQhk1mZmV9qqeXDjXI0kJ3kGwQunqjY8pDvQxpeRdyOeYlFA1nzDLgL0pCMRYg")
+      (response.as_bytes(), Some(USER_KEY))
     }
     "masterall" => {
       let response = include_str!("masterall.json").trim();
-      (response.as_bytes(), None, "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJjcyI6IjFiZTA5YmJiOWZhMTJkMDBhMzMyOWQxM2ZiMGMzNTk1In0.LVfRdKefX_XesFUq_b7QbhkCFXlXB8mtksW6STYK-rX0N4BmZe1lLhIE_dsmYeoKBmKV5Z32tcqr1uxgX8LpD-KSICBuOSnNOwms-NfoC9mwPXnKqunMGYGb9Y72E7hT8s__cxsRYz7uK8ft2zK8aef9dPbCbpkEDInLxjt2uXU")
+      (response.as_bytes(), None)
     }
     _ => todo!(),
   };
 
-  Ok(([(JWT_HEADER, jwt_blob)], encrypt(response, user_key)))
+  let (encrypted, hash) = encrypt(response, user_key);
+
+  let key_pair = RS256KeyPair::from_pem(include_str!("../key.pem")).unwrap();
+  let mut custom = BTreeMap::new();
+  custom.insert("cs".to_owned(), hex::encode(&*hash));
+  if let Some(user_key) = user_key {
+    custom.insert("uk".to_owned(), hex::encode(&*user_key));
+  }
+
+  let claims = JWTClaims {
+    issued_at: None,
+    expires_at: None,
+    invalid_before: None,
+    issuer: None,
+    subject: None,
+    audiences: None,
+    jwt_id: None,
+    nonce: None,
+    custom,
+  };
+  let token = key_pair.sign(claims)?;
+  debug!("response jwt: {}", token);
+
+  Ok(([(JWT_HEADER, token)], encrypted))
 }
 
 // Make our own error that wraps `anyhow::Error`.
