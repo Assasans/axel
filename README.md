@@ -135,6 +135,7 @@ Axel itself does not handle HTTPS, you need to use a proxy server like nginx.
 openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 \
   -nodes -keyout sesisoft.com.key -out sesisoft.com.crt -subj "/CN=sesisoft.com" \
   -addext "subjectAltName=DNS:sesisoft.com,DNS:web-prd-wonder.sesisoft.com,DNS:static-prd-wonder.sesisoft.com"
+openssl x509 -in sesisoft.com.crt -out sesisoft.com.pem -outform PEM
 
 # Install certificate on Waydroid
 hash=$(openssl x509 -subject_hash_old -in sesisoft.com.pem | head -1)
