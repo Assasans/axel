@@ -6,8 +6,6 @@
 
 See [DUMPING.md](DUMPING.md) for instructions on how to inspect the game code yourself.
 
-![](https://files.catbox.moe/cjcxx7.png)
-
 ### Current progress
 
 The first scene ("And so the Adventure Begins!") loads and goes up to the first battle tutorial.
