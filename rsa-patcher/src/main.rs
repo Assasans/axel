@@ -1,11 +1,11 @@
-use std::env;
 use std::error::Error;
 use std::fs::{File, OpenOptions};
 use std::io::{self, BufRead, Read, Seek, SeekFrom, Write};
 
 use bytesize::ByteSize;
+use clap::Parser;
 use memmem::{Searcher, TwoWaySearcher};
-use tracing::{debug, error, info};
+use tracing::{debug, error, info, warn};
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{fmt, EnvFilter};
@@ -38,6 +38,18 @@ pub static NEW_KEY: &[u8] = &[
   0x34, 0x28, 0xcb, 0xd8, 0x4e, 0x00, 0x97, 0x6f, 0x06, 0x09, 0x2a, 0x3a, 0x97, 0xc8, 0xcf, 0x4a, 0x3a, 0x05, 0xe7,
   0xa3, 0xc3, 0xba, 0x83, 0x73, 0x84, 0xb0, 0xb5, 0xc8, 0xc0, 0x63, 0x1e, 0xbe, 0x0d,
 ];
+
+pub static ORIGINAL_STATIC_URL: &str = "https://static-prd-wonder.sesisoft.com/";
+
+#[derive(Parser, Debug)]
+struct Args {
+  /// Publicly accessible URL of the static server. (e.g. "https://static.yourdomain.dev/")
+  #[arg(long)]
+  url: Option<String>,
+
+  /// PID of the `com.nexon.konosuba` process.
+  pid: u32,
+}
 
 #[derive(Debug)]
 pub struct MemoryRegion {
@@ -100,27 +112,47 @@ fn read_memory_regions(pid: u32) -> io::Result<Vec<MemoryRegion>> {
   Ok(regions)
 }
 
+fn str_to_utf16_bytes(input: &str) -> Vec<u8> {
+  let utf16: Vec<u16> = input.encode_utf16().collect();
+  let mut utf16_bytes = Vec::with_capacity(utf16.len() * 2);
+
+  for word in utf16 {
+    utf16_bytes.push((word >> 8) as u8);
+    utf16_bytes.push((word & 0xFF) as u8);
+  }
+
+  utf16_bytes
+}
+
 fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
   tracing_subscriber::registry()
     .with(fmt::layer())
     .with(EnvFilter::from_default_env())
     .init();
 
-  let args: Vec<String> = env::args().collect();
-  if args.len() < 2 {
-    error!("Usage: {} <PID>", args[0]);
-    std::process::exit(1);
-  }
+  let args = Args::parse();
 
-  let pid: u32 = match args[1].parse() {
-    Ok(pid) => pid,
-    Err(_) => {
-      error!("Invalid PID: {}", args[1]);
+  assert_eq!(ORIGINAL_KEY.len(), NEW_KEY.len());
+
+  let new_static_url = if let Some(new_static_url) = &args.url {
+    if new_static_url.len() > ORIGINAL_STATIC_URL.len() {
+      error!(
+        "Static URL ({:?}) - {} characters is longer than original: {} characters",
+        new_static_url,
+        new_static_url.len(),
+        ORIGINAL_STATIC_URL.len()
+      );
       std::process::exit(1);
     }
+    let new_static_url = format!("{:/<width$}", new_static_url, width = ORIGINAL_STATIC_URL.len());
+    info!("padded static url: {}", new_static_url);
+
+    Some(new_static_url)
+  } else {
+    None
   };
 
-  let regions = match read_memory_regions(pid) {
+  let regions = match read_memory_regions(args.pid) {
     Ok(regions) => regions,
     Err(error) => {
       error!("Error reading memory regions: {}", error);
@@ -141,37 +173,90 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
   let total_size = ByteSize::b(suitable_regions.iter().map(|region| region.size() as u64).sum());
   info!("{} to scan", total_size);
 
-  let mut found = 0;
+  let mut found_url = 0;
+  let mut found_rsa = 0;
+
   for region in &suitable_regions {
     let size = ByteSize::b(region.size() as u64);
     debug!("searching {:?}: {}", region, size);
 
-    let addresses = match search_byte_sequence(pid, &region, &ORIGINAL_KEY.iter().cloned().rev().collect::<Vec<_>>()) {
-      Ok(addresses) => addresses,
-      Err(error) => {
-        error!("Error searching memory region {:?}: {}", region, error);
-        continue;
-      }
-    };
-
-    for address in &addresses {
-      info!("Found sequence at address: 0x{:x} in region {:?}", address, region);
-
-      let virtual_address = region.start + address;
-      match write_to_memory(pid, virtual_address, &NEW_KEY.iter().cloned().rev().collect::<Vec<_>>()) {
-        Ok(_) => {
-          info!("Successfully wrote to memory at address 0x{:x}", virtual_address);
-          found += 1;
+    if let Some(new_static_url) = &new_static_url {
+      let addresses = match search_byte_sequence(args.pid, &region, &str_to_utf16_bytes(ORIGINAL_STATIC_URL)) {
+        Ok(addresses) => addresses,
+        Err(error) => {
+          warn!("Error searching memory region {:?}: {}", region, error);
+          continue;
         }
-        Err(error) => error!("Error writing to memory: {}", error),
+      };
+
+      for address in &addresses {
+        info!(
+          "Found domain sequence at address: 0x{:x} in region {:?}",
+          address, region
+        );
+
+        let virtual_address = region.start + address;
+        match write_to_memory(args.pid, virtual_address, &str_to_utf16_bytes(new_static_url)) {
+          Ok(_) => {
+            info!("Successfully wrote to memory at address 0x{:x}", virtual_address);
+            found_url += 1;
+          }
+          Err(error) => error!("Error writing to memory: {}", error),
+        }
+      }
+    }
+
+    {
+      let addresses = match search_byte_sequence(
+        args.pid,
+        &region,
+        &ORIGINAL_KEY.iter().cloned().rev().collect::<Vec<_>>(),
+      ) {
+        Ok(addresses) => addresses,
+        Err(error) => {
+          warn!("Error searching memory region {:?}: {}", region, error);
+          continue;
+        }
+      };
+
+      for address in &addresses {
+        info!(
+          "Found RSA key sequence at address: 0x{:x} in region {:?}",
+          address, region
+        );
+
+        let virtual_address = region.start + address;
+        match write_to_memory(
+          args.pid,
+          virtual_address,
+          &NEW_KEY.iter().cloned().rev().collect::<Vec<_>>(),
+        ) {
+          Ok(_) => {
+            info!("Successfully wrote to memory at address 0x{:x}", virtual_address);
+            found_rsa += 1;
+          }
+          Err(error) => error!("Error writing to memory: {}", error),
+        }
       }
     }
   }
 
-  if found > 0 {
-    info!(?pid, "Replaced RSA key {} times", found);
+  if found_url > 0 {
+    info!(pid = ?args.pid, "Replaced static URL {} times", found_url);
   } else {
-    error!(?pid, "No RSA key found in memory");
+    error!(pid = ?args.pid, "No static URL key found in memory");
+  }
+
+  if found_rsa > 0 {
+    info!(pid = ?args.pid, "Replaced RSA key {} times", found_rsa);
+  } else {
+    error!(pid = ?args.pid, "No RSA key found in memory");
+    error!("Possible causes:");
+    error!("- You have already replaced the key in this process");
+    error!("- The client has failed to connect to the API server (RSA is created lazily on first response)");
+  }
+
+  if found_url < 1 || found_rsa < 1 {
     std::process::exit(1);
   }
 

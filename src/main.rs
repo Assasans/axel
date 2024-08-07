@@ -1,7 +1,9 @@
 pub mod api;
 pub mod bool_as_int;
 pub mod call;
+mod normalize_path;
 pub mod session;
+pub mod static_server;
 pub mod string_as_base64;
 
 use std::collections::{BTreeMap, HashMap};
@@ -18,7 +20,7 @@ use axum::extract::{MatchedPath, Path, Query, Request, State};
 use axum::http::{HeaderMap, StatusCode};
 use axum::response::{IntoResponse, Response};
 use axum::routing::post;
-use axum::Router;
+use axum::{Router, ServiceExt};
 use base64::prelude::BASE64_STANDARD_NO_PAD;
 use base64::Engine;
 use clap::Parser;
@@ -28,6 +30,8 @@ use jwt_simple::claims::JWTClaims;
 use md5::Digest;
 use reqwest::header::CONTENT_TYPE;
 use serde_json::Value;
+use tokio::join;
+use tower::Layer;
 use tower_http::trace::TraceLayer;
 use tracing::{debug, info};
 use tracing_subscriber::layer::SubscriberExt;
@@ -47,6 +51,7 @@ use crate::api::notice::Notice;
 use crate::api::profile::{DisplayPlayData, Profile};
 use crate::api::RemoteData;
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
+use crate::normalize_path::normalize_path;
 use crate::session::{Session, UserId};
 
 pub static AES_KEY: &[u8] = &Decoder::Base64.decode::<16>(b"0x9AHqGo1sHGl/nIvD+MhA==");
@@ -59,6 +64,12 @@ type Aes128CbcDec = cbc::Decryptor<aes::Aes128>;
 
 #[derive(Parser, Debug)]
 struct Args {
+  /// Publicly accessible URL of the API server, must support HTTPS. (e.g. "api.yourdomain.dev/")
+  #[arg(long)]
+  api: String,
+
+  /// Enable proxy mode - save all requests and responses to `proxied/` directory.
+  /// Disables API endpoints.
   #[arg(long, default_value_t = false)]
   proxy: bool,
 }
@@ -78,6 +89,8 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
   info!("May There Be a Blessing on This Wonderful Server");
 
   let args = Args::parse();
+
+  info!("api server public url: {}", args.api);
   if args.proxy {
     info!("proxy mode is enabled");
   }
@@ -118,10 +131,14 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         .on_failure(()),
     )
     .with_state(Arc::new(state));
+  let middleware = tower::util::MapRequestLayer::new(normalize_path);
+  let app = middleware.layer(app);
 
   let listener = tokio::net::TcpListener::bind("0.0.0.0:2020").await.unwrap();
   info!("api server started at {:?}", listener.local_addr().unwrap());
-  axum::serve(listener, app).await.unwrap();
+
+  let (static_result, _) = join!(static_server::start(), axum::serve(listener, app.into_make_service()));
+  static_result.unwrap();
 
   Ok(())
 }
