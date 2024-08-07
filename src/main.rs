@@ -2,6 +2,7 @@ pub mod api;
 pub mod bool_as_int;
 pub mod call;
 pub mod session;
+pub mod string_as_base64;
 
 use std::collections::{BTreeMap, HashMap};
 use std::error::Error;
@@ -34,12 +35,16 @@ use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{fmt, EnvFilter};
 
 use crate::api::gacha::{GachaGoodItem, GachaInfo, GachaItem, GachaTutorial};
+use crate::api::home::{AdvertisementData, Home, MemberInfo};
+use crate::api::honor_list::{HonorItem, HonorList};
 use crate::api::idlink_confirm_google::IdLinkConfirmGoogle;
 use crate::api::login::Login;
+use crate::api::login_bonus::{LoginBonus, LoginBonusGood, Omikuji, RandomLoginBonus, RouletteLoginBonus};
 use crate::api::maintenance_check::MaintenanceCheck;
 use crate::api::master_all::{MasterAll, MASTERS};
 use crate::api::master_list::{MasterList, MASTER_LIST};
 use crate::api::notice::Notice;
+use crate::api::profile::{DisplayPlayData, Profile};
 use crate::api::RemoteData;
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::session::{Session, UserId};
@@ -269,7 +274,7 @@ async fn api_call(
           user_no: session.user_id.to_string(),
           user_key: hex::encode(session.user_key.lock().unwrap().expect("no user key")),
           user_name: "".to_string(),
-          tutorial: 2,
+          tutorial: 0,
           created_at: "".to_string(),
         }));
         response.add_remote_data(vec![
@@ -409,6 +414,80 @@ async fn api_call(
         CallResponse::new_success(Box::new(MaintenanceCheck {
           typestatus: 0,
           system_id: None,
+        })),
+        true,
+      ),
+      "setname" => (CallResponse::new_success(Box::new(())), true),
+      "loginbonus" => (
+        CallResponse::new_success(Box::new(LoginBonus {
+          goods: vec![
+            LoginBonusGood::new(20001, 1, 3, 1, 1000),
+            LoginBonusGood::new(40266, 1, 21, 17, 1),
+            LoginBonusGood::new(40293, 1, 21, 17, 1),
+            LoginBonusGood::new(40294, 1, 21, 17, 1),
+            LoginBonusGood::new(80029, 1, 8, 1, 800),
+          ],
+          omikuji: Omikuji {
+            omikuji_id: 0,
+            fortune_id: 0,
+          },
+          random_login_bonus: RandomLoginBonus {
+            random_loginbonus_id: 0,
+            lot_id: 0,
+            story_id: 0,
+            user_story_id: 0,
+            days: vec![],
+          },
+          roulette_login_bonus: RouletteLoginBonus {
+            roulette_loginbonus_id: 0,
+            result_pattern_id: 0,
+            roulette_view_id: 0,
+            days: vec![],
+            sns_share_results: vec![],
+          },
+        })),
+        true,
+      ),
+      "home" => (
+        CallResponse::new_success(Box::new(Home {
+          multi_battle_invitation: None,
+          member_info: MemberInfo {
+            current_member_id: 1011100,
+            member_ids: vec![1011100, 0, 0, 0, 0],
+          },
+          advertisement_data: AdvertisementData {
+            id: 10006,
+            reward_type: 1,
+            status: 0,
+          },
+          display_plan_map: false,
+        })),
+        true,
+      ),
+      "profile" => (
+        CallResponse::new_success(Box::new(Profile {
+          name: "Aqua".to_string(),
+          profile: "Wahhh! Kazuma, he! Kazuma, he wahhh!".to_string(),
+          icon: 0,
+          honor_id: 62010250,
+          display_play_data: vec![
+            DisplayPlayData::new(1, 2, 1),
+            DisplayPlayData::new(4, 14, 1),
+            DisplayPlayData::new(2, -1, 1),
+            DisplayPlayData::new(3, 3, 1),
+            DisplayPlayData::new(5, 1722883930, 1),
+            DisplayPlayData::new(6, -2, 1),
+            DisplayPlayData::new(7, 1, 1),
+          ],
+        })),
+        true,
+      ),
+      "honor_list" => (
+        CallResponse::new_success(Box::new(HonorList {
+          honor_list: vec![
+            HonorItem::new(60000000, false, false),
+            HonorItem::new(62010250, true, false),
+          ],
         })),
         true,
       ),

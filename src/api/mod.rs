@@ -1,12 +1,16 @@
 use jwt_simple::prelude::Serialize;
 
 pub mod gacha;
+pub mod home;
+pub mod honor_list;
 pub mod idlink_confirm_google;
 pub mod login;
+pub mod login_bonus;
 pub mod maintenance_check;
 pub mod master_all;
 pub mod master_list;
 pub mod notice;
+pub mod profile;
 
 #[derive(Debug, Serialize)]
 pub struct RemoteData {
