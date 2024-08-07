@@ -15,6 +15,12 @@ use crate::{Aes128CbcEnc, AES_IV, AES_KEY};
 #[derive(Copy, Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub struct UserId(u64);
 
+impl UserId {
+  pub fn new(id: u64) -> Self {
+    Self(id)
+  }
+}
+
 impl Deref for UserId {
   type Target = u64;
 

@@ -28,6 +28,7 @@ use const_decoder::Decoder;
 use jwt_simple::algorithms::{RS256KeyPair, RSAKeyPairLike};
 use jwt_simple::claims::JWTClaims;
 use md5::Digest;
+use rand::random;
 use reqwest::header::CONTENT_TYPE;
 use serde_json::Value;
 use tokio::join;
@@ -45,7 +46,7 @@ use crate::api::idlink_confirm_google::IdLinkConfirmGoogle;
 use crate::api::login::Login;
 use crate::api::login_bonus::{LoginBonus, LoginBonusGood, Omikuji, RandomLoginBonus, RouletteLoginBonus};
 use crate::api::maintenance_check::MaintenanceCheck;
-use crate::api::master_all::{MasterAll, MASTERS};
+use crate::api::master_all::{get_masters, MasterAll};
 use crate::api::master_list::{MasterList, MASTER_LIST};
 use crate::api::notice::Notice;
 use crate::api::profile::{DisplayPlayData, Profile};
@@ -94,6 +95,9 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
   if args.proxy {
     info!("proxy mode is enabled");
   }
+
+  // initialize lazies
+  get_masters().await;
 
   // let result = Aes128CbcDec::new(AES_KEY.into(), AES_IV.into())
   //   .decrypt_padded_vec_mut::<Pkcs7>(include_bytes!(
@@ -187,16 +191,10 @@ async fn api_call(
   let meta: CallMeta = serde_json::from_slice(&data).unwrap();
   debug!("api call meta: {:?}", meta);
 
-  let session = state
-    .sessions
-    .lock()
-    .unwrap()
-    .entry(params.user_id)
-    .or_insert_with(|| {
-      info!(user_id = ?params.user_id, "create session");
-      Arc::new(Session::new(params.user_id))
-    })
-    .clone();
+  let mut session = params
+    .user_id
+    .map(|user_id| state.sessions.lock().unwrap().get(&user_id).cloned())
+    .flatten();
 
   let iv = meta
     .uk
@@ -285,7 +283,20 @@ async fn api_call(
         false,
       ),
       "login" => {
+        info!(user_id = ?params.user_id, "create session");
+        session = Some(if let Some(user_id) = params.user_id {
+          // Existing user
+          // TODO: Load from database...
+          Arc::new(Session::new(user_id))
+        } else {
+          // New user
+          let user_id = UserId::new(random::<u32>() as u64);
+          Arc::new(Session::new(user_id))
+        });
+        let session = session.as_ref().unwrap();
+
         session.rotate_user_key();
+        state.sessions.lock().unwrap().insert(session.user_id, session.clone());
 
         let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(Login {
           user_no: session.user_id.to_string(),
@@ -314,9 +325,10 @@ async fn api_call(
       "masterall" => {
         let keys = body["master_keys"].split(",").collect::<Vec<_>>();
         info!("loading masters: {:?}", keys);
-        let masters = MASTERS
+        let masters = get_masters().await;
+        let masters = keys
           .iter()
-          .filter(|master| keys.contains(&master.master_key.as_str()))
+          .map(|key| masters.get(*key).expect(&format!("master {:?} not found", key)))
           .cloned()
           .collect::<Vec<_>>();
         (
@@ -434,6 +446,7 @@ async fn api_call(
         })),
         true,
       ),
+      "firebasetoken" => (CallResponse::new_success(Box::new(())), true),
       "setname" => (CallResponse::new_success(Box::new(())), true),
       "loginbonus" => (
         CallResponse::new_success(Box::new(LoginBonus {
@@ -517,7 +530,15 @@ async fn api_call(
     (
       response,
       if use_user_key {
-        Some(session.user_key.lock().unwrap().expect("no user key").to_vec())
+        Some(
+          session
+            .expect("no session for user endpoint")
+            .user_key
+            .lock()
+            .unwrap()
+            .expect("no user key")
+            .to_vec(),
+        )
       } else {
         None
       },

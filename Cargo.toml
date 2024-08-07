@@ -25,3 +25,4 @@ tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 rand = "0.8.5"
 erased-serde = "0.4.5"
+flate2 = "1.0.31"

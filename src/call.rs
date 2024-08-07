@@ -18,7 +18,7 @@ pub struct CallMeta {
 #[derive(Debug, Deserialize)]
 pub struct ApiCallParams {
   #[serde(rename = "u")]
-  pub user_id: UserId,
+  pub user_id: Option<UserId>,
 }
 
 pub trait CallCustom: erased_serde::Serialize {}
