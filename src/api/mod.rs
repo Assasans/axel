@@ -1,4 +1,10 @@
+use std::collections::HashMap;
+use std::sync::Arc;
+
 use jwt_simple::prelude::Serialize;
+
+use crate::call::ApiCallParams;
+use crate::AppState;
 
 pub mod gacha;
 pub mod home;
@@ -62,4 +68,11 @@ impl NotificationData {
       tag,
     }
   }
+}
+
+pub struct ApiRequest {
+  pub params: ApiCallParams,
+  pub body: HashMap<String, String>,
+
+  pub state: Arc<AppState>,
 }

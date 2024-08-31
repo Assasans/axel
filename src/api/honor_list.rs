@@ -1,6 +1,7 @@
 use jwt_simple::prelude::Serialize;
 
-use crate::call::CallCustom;
+use crate::api::ApiRequest;
+use crate::call::{CallCustom, CallResponse};
 
 #[derive(Debug, Serialize)]
 pub struct HonorList {
@@ -24,4 +25,16 @@ impl HonorItem {
       is_new,
     }
   }
+}
+
+pub async fn route(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+  Ok((
+    CallResponse::new_success(Box::new(HonorList {
+      honor_list: vec![
+        HonorItem::new(60000000, false, false),
+        HonorItem::new(62010250, true, false),
+      ],
+    })),
+    true,
+  ))
 }

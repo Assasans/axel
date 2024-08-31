@@ -1,6 +1,7 @@
 use jwt_simple::prelude::Serialize;
 
-use crate::call::CallCustom;
+use crate::api::ApiRequest;
+use crate::call::{CallCustom, CallResponse};
 
 #[derive(Debug, Serialize)]
 pub struct Profile {
@@ -31,4 +32,25 @@ impl DisplayPlayData {
       display_status,
     }
   }
+}
+
+pub async fn route(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+  Ok((
+    CallResponse::new_success(Box::new(Profile {
+      name: "Aqua".to_string(),
+      profile: "Wahhh! Kazuma, he! Kazuma, he wahhh!".to_string(),
+      icon: 0,
+      honor_id: 62010250,
+      display_play_data: vec![
+        DisplayPlayData::new(1, 2, 1),
+        DisplayPlayData::new(4, 14, 1),
+        DisplayPlayData::new(2, -1, 1),
+        DisplayPlayData::new(3, 3, 1),
+        DisplayPlayData::new(5, 1722883930, 1),
+        DisplayPlayData::new(6, -2, 1),
+        DisplayPlayData::new(7, 1, 1),
+      ],
+    })),
+    true,
+  ))
 }

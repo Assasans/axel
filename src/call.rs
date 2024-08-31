@@ -15,7 +15,7 @@ pub struct CallMeta {
   pub uk: Option<String>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct ApiCallParams {
   #[serde(rename = "u")]
   pub user_id: Option<UserId>,

@@ -29,9 +29,7 @@ use const_decoder::Decoder;
 use jwt_simple::algorithms::{RS256KeyPair, RSAKeyPairLike};
 use jwt_simple::claims::JWTClaims;
 use md5::Digest;
-use rand::random;
 use reqwest::header::CONTENT_TYPE;
-use serde_json::{json, Value};
 use tokio::join;
 use tower::Layer;
 use tower_http::trace::TraceLayer;
@@ -40,22 +38,12 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{fmt, EnvFilter};
 
-use crate::api::gacha::{
-  BonusInfo, BonusItem, GachaChain, GachaChainGood, GachaGoodItem, GachaInfo, GachaItem, GachaTutorial,
+use crate::api::gacha::GachaItem;
+use crate::api::master_all::get_masters;
+use crate::api::{
+  gacha, home, honor_list, idlink_confirm_google, interaction, login, login_bonus, maintenance_check, master_all,
+  master_list, notice, party_info, profile, story_reward, ApiRequest,
 };
-use crate::api::home::{AdvertisementData, Home, MemberInfo};
-use crate::api::honor_list::{HonorItem, HonorList};
-use crate::api::idlink_confirm_google::IdLinkConfirmGoogle;
-use crate::api::interaction::{Character, Interaction};
-use crate::api::login::Login;
-use crate::api::login_bonus::{LoginBonus, Omikuji, RandomLoginBonus, RouletteLoginBonus};
-use crate::api::maintenance_check::MaintenanceCheck;
-use crate::api::master_all::{get_masters, MasterAll};
-use crate::api::master_list::{MasterList, MasterListItem};
-use crate::api::notice::Notice;
-use crate::api::profile::{DisplayPlayData, Profile};
-use crate::api::story_reward::StoryReward;
-use crate::api::RemoteData;
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::normalize_path::normalize_path;
 use crate::session::{Session, UserId};
@@ -356,331 +344,36 @@ async fn api_call(
     (response.to_owned(), None)
   } else*/
   {
+    let request = ApiRequest {
+      params: params.clone(),
+      body: body.clone(),
+
+      state: state.clone(),
+    };
+
     let (response, use_user_key): (CallResponse<dyn CallCustom>, _) = match &*method {
-      "idlink_confirm_google" => (
-        CallResponse::new_success(Box::new(IdLinkConfirmGoogle { islink: false })),
-        false,
-      ),
-      "masterlist" => (
-        CallResponse::new_success(Box::new(MasterList {
-          masterversion: "202408050001".to_owned(),
-          masterarray: get_masters()
-            .await
-            .iter()
-            .map(|(_, master)| {
-              MasterListItem::new(
-                master.master_key.clone(),
-                master.master.len() as u32,
-                master.checkkey.clone(),
-              )
-            })
-            .collect(),
-        })),
-        false,
-      ),
-      "login" => {
-        info!(user_id = ?params.user_id, "create session");
-        session = Some(if let Some(user_id) = params.user_id {
-          // Existing user
-          // TODO: Load from database...
-          Arc::new(Session::new(user_id))
-        } else {
-          // New user
-          let user_id = UserId::new(random::<u32>() as u64);
-          Arc::new(Session::new(user_id))
-        });
-        let session = session.as_ref().unwrap();
-
-        session.rotate_user_key();
-        state.sessions.lock().unwrap().insert(session.user_id, session.clone());
-
-        let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(Login {
-          user_no: session.user_id.to_string(),
-          user_key: hex::encode(session.user_key.lock().unwrap().expect("no user key")),
-          user_name: "".to_string(),
-          tutorial: 99,
-          created_at: "".to_string(),
-        }));
-        response.add_remote_data(vec![
-          RemoteData::new(3, 0, 0, 0, 0, 0, "-".to_owned()),
-          RemoteData::new(4, 1, 0, 80000, 0, 0, "-".to_owned()),
-          RemoteData::new(4, 2, 0, 6000, 0, 0, "-".to_owned()),
-          RemoteData::new(4, 3, 0, 3000, 0, 0, "-".to_owned()),
-          RemoteData::new(4, 9, 0, 10, 0, 0, "-".to_owned()),
-          RemoteData::new(4, 10, 0, 0, 0, 0, "-".to_owned()),
-          RemoteData::new(4, 23, 0, 1, 0, 0, "-".to_owned()),
-          RemoteData::new(4, 28, 230731, 0, 0, 0, "-".to_owned()),
-          RemoteData::new(4, 34, 2, 3, 0, 0, "-".to_owned()),
-          RemoteData::new(4, 34, 1, 0, 0, 0, "-".to_owned()),
-          RemoteData::new(4, 40, 0, 1, 0, 0, "-".to_owned()),
-        ]);
-
-        (response, true)
-      }
+      "idlink_confirm_google" => idlink_confirm_google::route(request).await?,
+      "masterlist" => master_list::route(request).await?,
+      "login" => login::route(request, &mut session).await?,
       "capturesend" => (CallResponse::new_success(Box::new(())), true),
-      "masterall" => {
-        let keys = body["master_keys"].split(",").collect::<Vec<_>>();
-        info!("loading masters: {:?}", keys);
-        let masters = get_masters().await;
-        let masters = keys
-          .iter()
-          .map(|key| masters.get(*key).expect(&format!("master {:?} not found", key)))
-          .cloned()
-          .collect::<Vec<_>>();
-        (
-          CallResponse::new_success(Box::new(MasterAll {
-            masterversion: "202408050001".to_owned(),
-            masterarray: masters,
-            compressed: true,
-          })),
-          false,
-        )
-      }
+      "masterall" => master_all::route(request).await?,
       "tutorial" => (CallResponse::new_success(Box::new(())), false),
-      "notice" => (
-        CallResponse::new_custom(
-          1,
-          Box::new(Notice {
-            answer_alarm: "fail".to_owned(),
-          }),
-        ),
-        false,
-      ),
-      "gachainfo" => {
-        let master = &get_masters().await["gacha"].master_decompressed;
-        let master: Vec<master::gacha::Gacha> = serde_json::from_str(master).unwrap();
-        let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(GachaInfo {
-          gacha: master
-            .iter()
-            .map(|gacha| GachaItem::new_simple(gacha.gacha_id.parse().unwrap()))
-            .collect(), // gacha: vec![
-                        //   GachaItem::new_simple(323083, 0),
-                        // ]
-        }));
-        response.add_notifications(vec![
-          // NotificationData::new(1, 12, 19, 200012, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 12, 19, 410535, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 12, 19, 410536, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 12, 19, 410553, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 12, 19, 410123, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 12, 19, 410436, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 12, 19, 410565, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 12, 19, 410433, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 12, 19, 410564, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 12, 19, 410554, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 12, 19, 410554, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 12, 19, 410554, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 12, 19, 410554, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 12, 19, 410554, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 26, 200012, 1, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 26, 323083, 1, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 26, 410436, 1, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 26, 410536, 1, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 26, 410554, 1, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 27, 410535, 1, "".to_owned(), "".to_owned()),
-          // NotificationData::new(1, 27, 410554, 0, "".to_owned(), "".to_owned()),
-        ]);
-        (response, false)
-      }
-      "gacha_tutorial" => {
-        if body["type"] == "1" {
-          (
-            CallResponse::new_success(Box::new(GachaTutorial {
-              gacha_id: 100002,
-              goods: vec![
-                GachaGoodItem::new(4, 1032102, 1, true),
-                GachaGoodItem::new(4, 1692100, 1, true),
-                GachaGoodItem::new(4, 1182100, 1, true),
-                GachaGoodItem::new(4, 1092100, 1, true),
-                GachaGoodItem::new(4, 1024126, 1, true),
-                GachaGoodItem::new(4, 1092100, 1, true),
-                GachaGoodItem::new(4, 1002100, 1, true),
-                GachaGoodItem::new(4, 1052102, 1, true),
-                GachaGoodItem::new(4, 1083100, 1, true),
-                GachaGoodItem::new(4, 1174130, 1, true),
-              ],
-            })),
-            false,
-          )
-        } else {
-          (
-            CallResponse::new_success(Box::new(GachaTutorial {
-              gacha_id: 100002,
-              goods: vec![],
-            })),
-            false,
-          )
-        }
-      }
-      "gacha_tutorial_reward" => {
-        let response = include_str!("gacha-tutorial-reward.json");
-        let response: Value = serde_json::from_str(response).unwrap();
-        (CallResponse::new_success(Box::new(response)), false)
-      }
-      "gachachain" => {
-        let gacha_id: u32 = body["gacha_id"].parse().unwrap();
-        let money_type: u8 = body["money_type"].parse().unwrap();
-
-        let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(GachaChain {
-          gacha_id,
-          goods: vec![
-            GachaChainGood::new(4, 1032102, 1, true),
-            GachaChainGood::new(4, 1012100, 1, true),
-            GachaChainGood::new(4, 1013100, 1, true),
-            GachaChainGood::new(4, 1012100, 1, true),
-            GachaChainGood::new(4, 1013116, 1, true),
-            GachaChainGood::new(4, 1012102, 1, true),
-            GachaChainGood::new(4, 1012102, 1, true),
-            GachaChainGood::new(4, 1012102, 1, true),
-            GachaChainGood::new(4, 1012100, 1, true),
-            GachaChainGood::new(4, 1012102, 1, true),
-            GachaChainGood::new(4, 1013116, 1, true),
-          ],
-          bonus_info: BonusInfo {
-            items: vec![BonusItem {
-              item_type: 49,
-              item_id: 4,
-              item_num: 1,
-            }],
-            rare: 0,
-            bonus_type: 1,
-            bonus_animation: "".to_owned(),
-          },
-          bonus_step: None,
-        }));
-        response.add_remote_data(vec![
-          RemoteData::new(1, 7, 2, 11, 0, 0, "".to_string()),
-          RemoteData::new(1, 7, 14, 1, 0, 0, "".to_string()),
-          RemoteData::new(1, 7, 14, 1, 0, 0, "".to_string()),
-          RemoteData::new(1, 7, 14, 1, 0, 0, "".to_string()),
-          RemoteData::new(1, 7, 3, 3, 0, 0, "".to_string()),
-          RemoteData::new(1, 7, 13, 7, 0, 0, "".to_string()),
-          RemoteData::new(1, 7, 34, 2, 0, 0, "show_button".to_string()),
-          RemoteData::new(1, 6, 1, 30030001, 0, 0, "".to_string()),
-          RemoteData::new(1, 10, 230731, 52307325, 0, 0, "".to_string()),
-          RemoteData::new(1, 10, 230831, 52308305, 0, 0, "".to_string()),
-        ]);
-
-        (response, false)
-      }
+      "notice" => notice::route(request).await?,
+      "gachainfo" => gacha::gacha_info(request).await?,
+      "gacha_tutorial" => gacha::gacha_tutorial(request).await?,
+      "gacha_tutorial_reward" => gacha::gacha_tutorial_reward(request).await?,
+      "gachachain" => gacha::gacha_chain(request).await?,
       "root_box_check" => (CallResponse::new_success(Box::new(())), false),
-      "maintenancecheck" => (
-        CallResponse::new_success(Box::new(MaintenanceCheck {
-          typestatus: 0,
-          system_id: None,
-        })),
-        false,
-      ),
+      "maintenancecheck" => maintenance_check::route(request).await?,
       "firebasetoken" => (CallResponse::new_success(Box::new(())), true),
       "setname" => (CallResponse::new_success(Box::new(())), true),
-      "storyreward" => (
-        CallResponse::new_success(Box::new(StoryReward { reward: vec![] })),
-        true,
-      ),
-      "loginbonus" => (
-        CallResponse::new_success(Box::new(LoginBonus {
-          goods: vec![
-            // LoginBonusGood::new(20001, 1, 3, 1, 1000),
-            // LoginBonusGood::new(40266, 1, 21, 17, 1),
-            // LoginBonusGood::new(40293, 1, 21, 17, 1),
-            // LoginBonusGood::new(40294, 1, 21, 17, 1),
-            // LoginBonusGood::new(80029, 1, 8, 1, 800),
-          ],
-          omikuji: Omikuji {
-            omikuji_id: 0,
-            fortune_id: 0,
-          },
-          random_login_bonus: RandomLoginBonus {
-            random_loginbonus_id: 0,
-            lot_id: 0,
-            story_id: 0,
-            user_story_id: 0,
-            days: vec![],
-          },
-          roulette_login_bonus: RouletteLoginBonus {
-            roulette_loginbonus_id: 0,
-            result_pattern_id: 0,
-            roulette_view_id: 0,
-            days: vec![],
-            sns_share_results: vec![],
-          },
-        })),
-        true,
-      ),
-      "home" => (
-        CallResponse::new_success(Box::new(Home {
-          multi_battle_invitation: None,
-          member_info: MemberInfo {
-            current_member_id: 1011100,
-            member_ids: vec![1011100, 0, 0, 0, 0],
-          },
-          advertisement_data: AdvertisementData {
-            id: 10006,
-            reward_type: 1,
-            status: 0,
-          },
-          display_plan_map: false,
-        })),
-        true,
-      ),
-      "profile" => (
-        CallResponse::new_success(Box::new(Profile {
-          name: "Aqua".to_string(),
-          profile: "Wahhh! Kazuma, he! Kazuma, he wahhh!".to_string(),
-          icon: 0,
-          honor_id: 62010250,
-          display_play_data: vec![
-            DisplayPlayData::new(1, 2, 1),
-            DisplayPlayData::new(4, 14, 1),
-            DisplayPlayData::new(2, -1, 1),
-            DisplayPlayData::new(3, 3, 1),
-            DisplayPlayData::new(5, 1722883930, 1),
-            DisplayPlayData::new(6, -2, 1),
-            DisplayPlayData::new(7, 1, 1),
-          ],
-        })),
-        true,
-      ),
-      "honor_list" => (
-        CallResponse::new_success(Box::new(HonorList {
-          honor_list: vec![
-            HonorItem::new(60000000, false, false),
-            HonorItem::new(62010250, true, false),
-          ],
-        })),
-        true,
-      ),
-      "interaction" => (
-        CallResponse::new_success(Box::new(Interaction {
-          characters: vec![
-            Character::new(100, 1, 4, "".to_owned(), 1000101, 0, [0, 0, 0, 0], "".to_owned()),
-            Character::new(101, 1, 4, "".to_owned(), 1010101, 0, [0, 0, 0, 0], "".to_owned()),
-            Character::new(102, 1, 0, "".to_owned(), 1020101, 0, [0, 0, 0, 0], "".to_owned()),
-            Character::new(103, 1, 0, "".to_owned(), 1030101, 0, [0, 0, 0, 0], "".to_owned()),
-            Character::new(106, 1, 4, "".to_owned(), 1060101, 0, [0, 0, 0, 0], "".to_owned()),
-            Character::new(108, 1, 0, "".to_owned(), 1080101, 0, [0, 0, 0, 0], "".to_owned()),
-            Character::new(109, 1, 0, "".to_owned(), 1090101, 0, [0, 0, 0, 0], "".to_owned()),
-            Character::new(112, 1, 0, "".to_owned(), 1120101, 0, [0, 0, 0, 0], "".to_owned()),
-            Character::new(113, 1, 0, "".to_owned(), 1130101, 0, [0, 0, 0, 0], "".to_owned()),
-            Character::new(115, 1, 0, "".to_owned(), 1150101, 0, [0, 0, 0, 0], "".to_owned()),
-            Character::new(128, 1, 0, "".to_owned(), 1280101, 0, [0, 0, 0, 0], "".to_owned()),
-          ],
-        })),
-        true,
-      ),
-      "partyinfo" => (
-        // CallResponse::new_success(Box::new(PartyInfo {
-        //   party: vec![
-        //   ],
-        //   members: vec![],
-        //   weapons: vec![],
-        //   accessories: vec![],
-        // })),
-        CallResponse::new_success(Box::new(
-          json!({"party":[{"party_forms":[{"id":666431194,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":1,"name":"Party1"},{"id":666431194,"form_no":2,"main":12,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":477,"specialskill":{"special_skill_id":101001,"trial":false},"skill_pa_fame":0,"party_no":1,"name":"Party1"},{"id":666431194,"form_no":3,"main":10,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":487,"specialskill":{"special_skill_id":106001,"trial":false},"skill_pa_fame":0,"party_no":1,"name":"Party1"},{"id":666431194,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":1,"name":"Party1"},{"id":666431194,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":1,"name":"Party1"}],"party_no":1,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":2,"name":"Party2"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":2,"name":"Party2"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":2,"name":"Party2"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":2,"name":"Party2"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":2,"name":"Party2"}],"party_no":2,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":3,"name":"Party3"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":3,"name":"Party3"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":3,"name":"Party3"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":3,"name":"Party3"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":3,"name":"Party3"}],"party_no":3,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":4,"name":"Party4"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":4,"name":"Party4"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":4,"name":"Party4"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":4,"name":"Party4"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":4,"name":"Party4"}],"party_no":4,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":5,"name":"Party5"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":5,"name":"Party5"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":5,"name":"Party5"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":5,"name":"Party5"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":5,"name":"Party5"}],"party_no":5,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":6,"name":"Party6"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":6,"name":"Party6"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":6,"name":"Party6"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":6,"name":"Party6"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":6,"name":"Party6"}],"party_no":6,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":7,"name":"Party7"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":7,"name":"Party7"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":7,"name":"Party7"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":7,"name":"Party7"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":7,"name":"Party7"}],"party_no":7,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":8,"name":"Party8"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":8,"name":"Party8"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":8,"name":"Party8"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":8,"name":"Party8"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":8,"name":"Party8"}],"party_no":8,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":9,"name":"Party9"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":9,"name":"Party9"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":9,"name":"Party9"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":9,"name":"Party9"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":9,"name":"Party9"}],"party_no":9,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":10,"name":"Party10"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":10,"name":"Party10"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":10,"name":"Party10"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":10,"name":"Party10"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":10,"name":"Party10"}],"party_no":10,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":11,"name":"Party11"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":11,"name":"Party11"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":11,"name":"Party11"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":11,"name":"Party11"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":11,"name":"Party11"}],"party_no":11,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":12,"name":"Party12"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":12,"name":"Party12"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":12,"name":"Party12"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":12,"name":"Party12"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":12,"name":"Party12"}],"party_no":12,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":13,"name":"Party13"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":13,"name":"Party13"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":13,"name":"Party13"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":13,"name":"Party13"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":13,"name":"Party13"}],"party_no":13,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":14,"name":"Party14"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":14,"name":"Party14"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":14,"name":"Party14"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":14,"name":"Party14"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":14,"name":"Party14"}],"party_no":14,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":15,"name":"Party15"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":15,"name":"Party15"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":15,"name":"Party15"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":15,"name":"Party15"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":15,"name":"Party15"}],"party_no":15,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":16,"name":"Party16"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":16,"name":"Party16"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":16,"name":"Party16"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":16,"name":"Party16"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":16,"name":"Party16"}],"party_no":16,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":17,"name":"Party17"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":17,"name":"Party17"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":17,"name":"Party17"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":17,"name":"Party17"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":17,"name":"Party17"}],"party_no":17,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":18,"name":"Party18"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":18,"name":"Party18"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":18,"name":"Party18"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":18,"name":"Party18"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":18,"name":"Party18"}],"party_no":18,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":19,"name":"Party19"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":19,"name":"Party19"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":19,"name":"Party19"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":19,"name":"Party19"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":19,"name":"Party19"}],"party_no":19,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}},{"party_forms":[{"id":0,"form_no":1,"main":11,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":444,"specialskill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0,"party_no":20,"name":"Party20"},{"id":0,"form_no":2,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":20,"name":"Party20"},{"id":0,"form_no":3,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":20,"name":"Party20"},{"id":0,"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":20,"name":"Party20"},{"id":0,"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"strength":0,"specialskill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0,"party_no":20,"name":"Party20"}],"party_no":20,"assist":0,"sub_assists":[],"party_passive_skill":{"skill_id":0,"user_member_id":0}}],"members":[{"id":11,"lv":4,"exp":150,"member_id":1001100,"ac_skill_lv_a":1,"ac_skill_val_a":110,"ac_skill_lv_b":1,"ac_skill_val_b":0,"ac_skill_lv_c":1,"ac_skill_val_c":130,"hp":277,"attack":32,"magicattack":31,"defense":24,"magicdefence":22,"agility":72,"dexterity":78,"luck":88,"limit_break":0,"character_id":100,"waiting_room":0,"ex_flg":0,"is_undead":0},{"id":8,"lv":1,"exp":0,"member_id":1002102,"ac_skill_lv_a":1,"ac_skill_val_a":110,"ac_skill_lv_b":1,"ac_skill_val_b":20,"ac_skill_lv_c":1,"ac_skill_val_c":130,"hp":257,"attack":28,"magicattack":28,"defense":21,"magicdefence":20,"agility":73,"dexterity":79,"luck":87,"limit_break":0,"character_id":100,"waiting_room":0,"ex_flg":0,"is_undead":0},{"id":12,"lv":4,"exp":150,"member_id":1011100,"ac_skill_lv_a":1,"ac_skill_val_a":110,"ac_skill_lv_b":1,"ac_skill_val_b":170,"ac_skill_lv_c":1,"ac_skill_val_c":152,"hp":285,"attack":33,"magicattack":37,"defense":25,"magicdefence":27,"agility":66,"dexterity":76,"luck":10,"limit_break":0,"character_id":101,"waiting_room":0,"ex_flg":0,"is_undead":0},{"id":13,"lv":1,"exp":0,"member_id":1021100,"ac_skill_lv_a":1,"ac_skill_val_a":110,"ac_skill_lv_b":1,"ac_skill_val_b":20,"ac_skill_lv_c":1,"ac_skill_val_c":152,"hp":202,"attack":26,"magicattack":30,"defense":18,"magicdefence":21,"agility":68,"dexterity":71,"luck":72,"limit_break":0,"character_id":102,"waiting_room":0,"ex_flg":0,"is_undead":0},{"id":14,"lv":1,"exp":0,"member_id":1031100,"ac_skill_lv_a":1,"ac_skill_val_a":110,"ac_skill_lv_b":1,"ac_skill_val_b":127,"ac_skill_lv_c":1,"ac_skill_val_c":150,"hp":281,"attack":29,"magicattack":24,"defense":24,"magicdefence":24,"agility":68,"dexterity":10,"luck":64,"limit_break":0,"character_id":103,"waiting_room":0,"ex_flg":0,"is_undead":0},{"id":2,"lv":1,"exp":0,"member_id":1034100,"ac_skill_lv_a":1,"ac_skill_val_a":102,"ac_skill_lv_b":1,"ac_skill_val_b":130,"ac_skill_lv_c":1,"ac_skill_val_c":150,"hp":330,"attack":35,"magicattack":29,"defense":28,"magicdefence":28,"agility":68,"dexterity":10,"luck":64,"limit_break":0,"character_id":103,"waiting_room":0,"ex_flg":0,"is_undead":0},{"id":15,"lv":1,"exp":0,"member_id":1061100,"ac_skill_lv_a":1,"ac_skill_val_a":100,"ac_skill_lv_b":1,"ac_skill_val_b":154,"ac_skill_lv_c":1,"ac_skill_val_c":122,"hp":214,"attack":25,"magicattack":30,"defense":19,"magicdefence":22,"agility":69,"dexterity":68,"luck":67,"limit_break":0,"character_id":106,"waiting_room":0,"ex_flg":0,"is_undead":0},{"id":1,"lv":1,"exp":0,"member_id":1063113,"ac_skill_lv_a":1,"ac_skill_val_a":100,"ac_skill_lv_b":1,"ac_skill_val_b":122,"ac_skill_lv_c":1,"ac_skill_val_c":138,"hp":237,"attack":28,"magicattack":34,"defense":21,"magicdefence":25,"agility":70,"dexterity":69,"luck":66,"limit_break":0,"character_id":106,"waiting_room":0,"ex_flg":0,"is_undead":0},{"id":10,"lv":3,"exp":150,"member_id":1064217,"ac_skill_lv_a":1,"ac_skill_val_a":100,"ac_skill_lv_b":1,"ac_skill_val_b":128,"ac_skill_lv_c":1,"ac_skill_val_c":173,"hp":270,"attack":33,"magicattack":41,"defense":25,"magicdefence":29,"agility":69,"dexterity":67,"luck":68,"limit_break":0,"character_id":106,"waiting_room":0,"ex_flg":0,"is_undead":0},{"id":4,"lv":1,"exp":0,"member_id":1083110,"ac_skill_lv_a":1,"ac_skill_val_a":100,"ac_skill_lv_b":1,"ac_skill_val_b":165,"ac_skill_lv_c":1,"ac_skill_val_c":165,"hp":292,"attack":29,"magicattack":34,"defense":25,"magicdefence":25,"agility":61,"dexterity":66,"luck":63,"limit_break":0,"character_id":108,"waiting_room":0,"ex_flg":0,"is_undead":0},{"id":6,"lv":1,"exp":0,"member_id":1093100,"ac_skill_lv_a":1,"ac_skill_val_a":100,"ac_skill_lv_b":1,"ac_skill_val_b":170,"ac_skill_lv_c":1,"ac_skill_val_c":105,"hp":266,"attack":30,"magicattack":32,"defense":22,"magicdefence":24,"agility":68,"dexterity":67,"luck":65,"limit_break":0,"character_id":109,"waiting_room":0,"ex_flg":0,"is_undead":0},{"id":5,"lv":1,"exp":0,"member_id":1122100,"ac_skill_lv_a":1,"ac_skill_val_a":110,"ac_skill_lv_b":1,"ac_skill_val_b":139,"ac_skill_lv_c":1,"ac_skill_val_c":128,"hp":282,"attack":32,"magicattack":24,"defense":23,"magicdefence":19,"agility":71,"dexterity":70,"luck":62,"limit_break":0,"character_id":112,"waiting_room":0,"ex_flg":0,"is_undead":0},{"id":7,"lv":1,"exp":0,"member_id":1132100,"ac_skill_lv_a":1,"ac_skill_val_a":100,"ac_skill_lv_b":1,"ac_skill_val_b":154,"ac_skill_lv_c":1,"ac_skill_val_c":122,"hp":247,"attack":25,"magicattack":31,"defense":19,"magicdefence":22,"agility":69,"dexterity":73,"luck":73,"limit_break":0,"character_id":113,"waiting_room":0,"ex_flg":0,"is_undead":0},{"id":3,"lv":1,"exp":0,"member_id":1152102,"ac_skill_lv_a":1,"ac_skill_val_a":100,"ac_skill_lv_b":1,"ac_skill_val_b":170,"ac_skill_lv_c":1,"ac_skill_val_c":152,"hp":247,"attack":27,"magicattack":31,"defense":21,"magicdefence":23,"agility":71,"dexterity":74,"luck":70,"limit_break":0,"character_id":115,"waiting_room":0,"ex_flg":0,"is_undead":0},{"id":9,"lv":1,"exp":0,"member_id":1282100,"ac_skill_lv_a":1,"ac_skill_val_a":93,"ac_skill_lv_b":1,"ac_skill_val_b":128,"ac_skill_lv_c":1,"ac_skill_val_c":122,"hp":239,"attack":25,"magicattack":32,"defense":24,"magicdefence":24,"agility":71,"dexterity":74,"luck":72,"limit_break":0,"character_id":128,"waiting_room":0,"ex_flg":0,"is_undead":0}],"weapons":[],"accessories":[]}),
-        )),
-        true,
-      ),
+      "storyreward" => story_reward::route(request).await?,
+      "loginbonus" => login_bonus::route(request).await?,
+      "home" => home::route(request).await?,
+      "profile" => profile::route(request).await?,
+      "honor_list" => honor_list::route(request).await?,
+      "interaction" => interaction::route(request).await?,
+      "partyinfo" => party_info::route(request).await?,
       _ => todo!(),
     };
 

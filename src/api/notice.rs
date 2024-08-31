@@ -1,6 +1,7 @@
 use jwt_simple::prelude::Serialize;
 
-use crate::call::CallCustom;
+use crate::api::ApiRequest;
+use crate::call::{CallCustom, CallResponse};
 
 #[derive(Debug, Serialize)]
 pub struct Notice {
@@ -9,3 +10,15 @@ pub struct Notice {
 }
 
 impl CallCustom for Notice {}
+
+pub async fn route(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+  Ok((
+    CallResponse::new_custom(
+      1,
+      Box::new(Notice {
+        answer_alarm: "fail".to_owned(),
+      }),
+    ),
+    false,
+  ))
+}

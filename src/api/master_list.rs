@@ -2,7 +2,9 @@ use std::sync::LazyLock;
 
 use jwt_simple::prelude::Serialize;
 
-use crate::call::CallCustom;
+use crate::api::master_all::get_masters;
+use crate::api::ApiRequest;
+use crate::call::{CallCustom, CallResponse};
 
 #[derive(Debug, Serialize)]
 pub struct MasterList {
@@ -27,6 +29,26 @@ impl MasterListItem {
       checkkey,
     }
   }
+}
+
+pub async fn route(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+  Ok((
+    CallResponse::new_success(Box::new(MasterList {
+      masterversion: "202408050001".to_owned(),
+      masterarray: get_masters()
+        .await
+        .iter()
+        .map(|(_, master)| {
+          MasterListItem::new(
+            master.master_key.clone(),
+            master.master.len() as u32,
+            master.checkkey.clone(),
+          )
+        })
+        .collect(),
+    })),
+    false,
+  ))
 }
 
 #[rustfmt::skip]

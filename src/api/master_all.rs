@@ -12,7 +12,8 @@ use tokio::io::AsyncReadExt;
 use tokio::sync::OnceCell;
 use tracing::{debug, info};
 
-use crate::call::CallCustom;
+use crate::api::ApiRequest;
+use crate::call::{CallCustom, CallResponse};
 
 #[derive(Debug, Serialize)]
 pub struct MasterAll {
@@ -95,4 +96,23 @@ async fn load_masters() -> HashMap<String, MasterAllItem> {
 
 pub async fn get_masters() -> &'static HashMap<String, MasterAllItem> {
   MASTERS.get_or_init(load_masters).await
+}
+
+pub async fn route(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+  let keys = request.body["master_keys"].split(",").collect::<Vec<_>>();
+  info!("loading masters: {:?}", keys);
+  let masters = get_masters().await;
+  let masters = keys
+    .iter()
+    .map(|key| masters.get(*key).expect(&format!("master {:?} not found", key)))
+    .cloned()
+    .collect::<Vec<_>>();
+  Ok((
+    CallResponse::new_success(Box::new(MasterAll {
+      masterversion: "202408050001".to_owned(),
+      masterarray: masters,
+      compressed: true,
+    })),
+    false,
+  ))
 }
