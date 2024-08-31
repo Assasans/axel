@@ -15,15 +15,15 @@ pub struct GachaItem {
   #[serde(with = "crate::bool_as_int")]
   pub daily: bool,
   pub type1: String,
-  pub val1: i64,
+  pub val1: u32,
   pub type10: String,
-  pub val10: i64,
-  pub ticket: i64,
-  pub ticket_num: i64,
-  pub draw_count: i64,
-  pub remain_draw_count: i64,
-  pub upperlimitcount: i64,
-  pub user_story_id: i64,
+  pub val10: u32,
+  pub ticket: u32,
+  pub ticket_num: u32,
+  pub draw_count: u32,
+  pub remain_draw_count: u32,
+  pub upperlimitcount: u32,
+  pub user_story_id: u32,
   pub stepup_bonus: Option<()>,
   pub random_bonus: Option<()>,
   pub stepup_info: Option<()>,
@@ -37,7 +37,7 @@ impl GachaItem {
   pub fn new_simple(id: u32) -> Self {
     Self {
       gachaid: id,
-      ticket: 2020,
+      ticket: 20,
       ..Default::default()
     }
   }
@@ -69,4 +69,49 @@ impl GachaGoodItem {
       is_new,
     }
   }
+}
+
+#[derive(Default, Debug, Serialize)]
+pub struct GachaChain {
+  pub gacha_id: u32,
+  pub goods: Vec<GachaChainGood>,
+  pub bonus_info: BonusInfo,
+  pub bonus_step: Option<()>,
+}
+
+impl CallCustom for GachaChain {}
+
+#[derive(Default, Debug, Serialize)]
+pub struct GachaChainGood {
+  pub itemtype: u8,
+  pub itemid: u32,
+  pub itemnum: u32,
+  #[serde(with = "crate::bool_as_int")]
+  pub isnew: bool,
+}
+
+impl GachaChainGood {
+  pub fn new(itemtype: u8, itemid: u32, itemnum: u32, isnew: bool) -> Self {
+    Self {
+      itemtype,
+      itemid,
+      itemnum,
+      isnew,
+    }
+  }
+}
+
+#[derive(Default, Debug, Serialize)]
+pub struct BonusInfo {
+  pub items: Vec<BonusItem>,
+  pub rare: u32,
+  pub bonus_type: u32,
+  pub bonus_animation: String,
+}
+
+#[derive(Default, Debug, Serialize)]
+pub struct BonusItem {
+  pub item_type: u32,
+  pub item_id: u32,
+  pub item_num: u32,
 }

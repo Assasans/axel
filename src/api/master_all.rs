@@ -29,13 +29,15 @@ pub struct MasterAllItem {
   pub master_key: String,
   pub master: String,
   pub checkkey: String,
+  #[serde(skip)]
+  pub master_decompressed: String,
 }
 
 impl MasterAllItem {
   pub fn new(master_key: String, master: String) -> Self {
     let digest = md5::compute(&master);
     let reader = BufReader::new(master.as_bytes());
-    let mut encoder = GzEncoder::new(reader, Compression::default());
+    let mut encoder = GzEncoder::new(reader, Compression::fast());
 
     let mut compressed = Vec::new();
     encoder.read_to_end(&mut compressed).unwrap();
@@ -44,6 +46,7 @@ impl MasterAllItem {
       master_key,
       master: BASE64_STANDARD.encode(compressed),
       checkkey: hex::encode(&*digest),
+      master_decompressed: master,
     }
   }
 }

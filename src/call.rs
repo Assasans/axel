@@ -65,6 +65,10 @@ impl<T: CallCustom + ?Sized> CallResponse<T> {
   pub fn add_remote_data(&mut self, mut remote_data: Vec<RemoteData>) {
     self.remote.append(&mut remote_data);
   }
+
+  pub fn add_notifications(&mut self, mut notifications: Vec<NotificationData>) {
+    self.notifications.append(&mut notifications);
+  }
 }
 
 impl CallResponse<()> {
