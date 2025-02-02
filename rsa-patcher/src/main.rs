@@ -1,13 +1,13 @@
 use std::error::Error;
 use std::fs::{File, OpenOptions};
-use std::io::{self, BufRead, Read, Seek, SeekFrom, Write};
+use std::io::{self, stdin, stdout, BufRead, Read, Seek, SeekFrom, Write};
 use std::path::{Path, PathBuf};
 
 use bytesize::ByteSize;
 use clap::Parser;
 use memmem::{Searcher, TwoWaySearcher};
 use openssl::rsa::Rsa;
-use tracing::{debug, error, info, warn};
+use tracing::{debug, enabled, error, info, trace, warn, Level};
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{fmt, EnvFilter};
@@ -74,7 +74,7 @@ fn read_memory_regions(pid: u32) -> io::Result<Vec<MemoryRegion>> {
       continue;
     }
 
-    debug!("{:?}", parts);
+    trace!("{:?}", parts);
     let (start, end) = parts[0].split_once('-').unwrap();
     let (start, end) = (
       usize::from_str_radix(start, 16).unwrap(),
@@ -125,14 +125,14 @@ fn read_public_key(key_file: &Path) -> Vec<u8> {
     Ok(rsa) => {
       info!("read public key from {:?}", key_file);
       rsa.n().to_vec()
-    },
+    }
     Err(error) => {
       warn!("Rsa::public_key_from_pem error: {}, treating as private key", error);
       match Rsa::private_key_from_pem(pem_contents.as_bytes()) {
         Ok(rsa) => {
           info!("read private key from {:?}", key_file);
           rsa.n().to_vec()
-        },
+        }
         Err(error) => {
           error!("Rsa::private_key_from_pem error: {}", error);
           std::process::exit(1);
@@ -140,6 +140,31 @@ fn read_public_key(key_file: &Path) -> Vec<u8> {
       }
     }
   }
+}
+
+fn get_suitable_regions(pid: u32) -> Vec<MemoryRegion> {
+  let regions = match read_memory_regions(pid) {
+    Ok(regions) => regions,
+    Err(error) => {
+      error!("Error reading memory regions: {}", error);
+      std::process::exit(1);
+    }
+  };
+
+  let mut suitable_regions = Vec::new();
+  for region in regions {
+    if !region.perms.contains("w") {
+      trace!(?region, "region is not writable");
+      continue;
+    }
+
+    suitable_regions.push(region);
+  }
+
+  let total_size = ByteSize::b(suitable_regions.iter().map(|region| region.size() as u64).sum());
+  info!("{} to scan", total_size);
+
+  suitable_regions
 }
 
 fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
@@ -173,61 +198,117 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     None
   };
 
-  let regions = match read_memory_regions(args.pid) {
-    Ok(regions) => regions,
-    Err(error) => {
-      error!("Error reading memory regions: {}", error);
-      std::process::exit(1);
-    }
-  };
+  loop {
+    let mut found_original = 0;
+    let mut found_patched = 0;
+    for region in get_suitable_regions(args.pid) {
+      let size = ByteSize::b(region.size() as u64);
+      trace!("searching {:?} for static URL: {}", region, size);
 
-  let mut suitable_regions = Vec::new();
-  for region in &regions {
-    if !region.perms.contains("w") {
-      debug!(?region, "region is not writable");
-      continue;
-    }
+      if let Some(new_static_url) = &new_static_url {
+        {
+          let addresses = match search_byte_sequence(args.pid, &region, &str_to_utf16_bytes(new_static_url)) {
+            Ok(addresses) => addresses,
+            Err(error) => {
+              warn!("Error searching memory region {:?}: {}", region, error);
+              continue;
+            }
+          };
 
-    suitable_regions.push(region);
-  }
-
-  let total_size = ByteSize::b(suitable_regions.iter().map(|region| region.size() as u64).sum());
-  info!("{} to scan", total_size);
-
-  let mut found_url = 0;
-  let mut found_rsa = 0;
-
-  for region in &suitable_regions {
-    let size = ByteSize::b(region.size() as u64);
-    debug!("searching {:?}: {}", region, size);
-
-    if let Some(new_static_url) = &new_static_url {
-      let addresses = match search_byte_sequence(args.pid, &region, &str_to_utf16_bytes(ORIGINAL_STATIC_URL)) {
-        Ok(addresses) => addresses,
-        Err(error) => {
-          warn!("Error searching memory region {:?}: {}", region, error);
-          continue;
-        }
-      };
-
-      for address in &addresses {
-        info!(
-          "Found domain sequence at address: 0x{:x} in region {:?}",
-          address, region
-        );
-
-        let virtual_address = region.start + address;
-        match write_to_memory(args.pid, virtual_address, &str_to_utf16_bytes(new_static_url)) {
-          Ok(_) => {
-            info!("Successfully wrote to memory at address 0x{:x}", virtual_address);
-            found_url += 1;
+          for address in &addresses {
+            debug!(
+              "Found patched domain sequence at address: 0x{:x} in region {:?}",
+              address, region
+            );
+            found_patched += 1;
           }
-          Err(error) => error!("Error writing to memory: {}", error),
+        }
+
+        let addresses = match search_byte_sequence(args.pid, &region, &str_to_utf16_bytes(ORIGINAL_STATIC_URL)) {
+          Ok(addresses) => addresses,
+          Err(error) => {
+            warn!("Error searching memory region {:?}: {}", region, error);
+            continue;
+          }
+        };
+
+        for address in &addresses {
+          debug!(
+            "Found domain sequence at address: 0x{:x} in region {:?}",
+            address, region
+          );
+
+          let virtual_address = region.start + address;
+          match write_to_memory(args.pid, virtual_address, &str_to_utf16_bytes(new_static_url)) {
+            Ok(_) => {
+              debug!("Successfully wrote to memory at address 0x{:x}", virtual_address);
+              found_original += 1;
+            }
+            Err(error) => error!("Error writing to memory: {}", error),
+          }
         }
       }
     }
 
-    {
+    if found_original > 0 {
+      info!("Replaced static URL {} times", found_original);
+      break;
+    }
+
+    if found_patched > 0 {
+      info!(
+        "Found patched static URL {} times, assuming as already patched",
+        found_patched
+      );
+      break;
+    }
+
+    warn!("No static URL key found in memory");
+    info!("Press play button and wait for an error message saying \"The game is experiencing reduced performance. Please try again later.\"");
+    // if !enabled!(Level::DEBUG) {
+    //   info!("Hint: Set RUST_LOG=debug if you believe that you are doing everything correctly");
+    // }
+
+    write!(stdout(), "Press Enter to continue...").unwrap();
+    stdout().flush().unwrap();
+    stdin().read_line(&mut String::new()).unwrap();
+  }
+
+  info!(
+    "Now we need to replace RSA public key in the process memory, it is loaded after first successful server response"
+  );
+  loop {
+    info!("Press play button and wait for an almost instantaneous error message saying \"An error has occurred. Returning to the Title screen...\"");
+
+    write!(stdout(), "Press Enter to continue...").unwrap();
+    stdout().flush().unwrap();
+    stdin().read_line(&mut String::new()).unwrap();
+
+    let mut found_original = 0;
+    let mut found_patched = 0;
+    for region in get_suitable_regions(args.pid) {
+      let size = ByteSize::b(region.size() as u64);
+      trace!("searching {:?} for RSA key: {}", region, size);
+
+      {
+        let addresses =
+          match search_byte_sequence(args.pid, &region, &new_key.iter().cloned().rev().collect::<Vec<_>>()) {
+            Ok(addresses) => addresses,
+            Err(error) => {
+              warn!("Error searching memory region {:?}: {}", region, error);
+              continue;
+            }
+          };
+
+        for address in &addresses {
+          debug!(
+            "Found patched RSA key sequence at address: 0x{:x} in region {:?}",
+            address, region
+          );
+          found_patched += 1;
+        }
+      }
+
       let addresses = match search_byte_sequence(
         args.pid,
         &region,
@@ -241,7 +322,7 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
       };
 
       for address in &addresses {
-        info!(
+        debug!(
           "Found RSA key sequence at address: 0x{:x} in region {:?}",
           address, region
         );
@@ -253,32 +334,32 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
           &new_key.iter().cloned().rev().collect::<Vec<_>>(),
         ) {
           Ok(_) => {
-            info!("Successfully wrote to memory at address 0x{:x}", virtual_address);
-            found_rsa += 1;
+            debug!("Successfully wrote to memory at address 0x{:x}", virtual_address);
+            found_original += 1;
           }
           Err(error) => error!("Error writing to memory: {}", error),
         }
       }
     }
-  }
 
-  if found_url > 0 {
-    info!(pid = ?args.pid, "Replaced static URL {} times", found_url);
-  } else {
-    error!(pid = ?args.pid, "No static URL key found in memory");
-  }
+    if found_original > 0 {
+      info!("Replaced RSA key {} times", found_original);
+      break;
+    }
 
-  if found_rsa > 0 {
-    info!(pid = ?args.pid, "Replaced RSA key {} times", found_rsa);
-  } else {
-    error!(pid = ?args.pid, "No RSA key found in memory");
-    error!("Possible causes:");
-    error!("- You have already replaced the key in this process");
-    error!("- The client has failed to connect to the API server (RSA is created lazily on first response)");
-  }
+    if found_patched > 0 {
+      info!(
+        "Found patched RSA key {} times, assuming as already patched",
+        found_patched
+      );
+      break;
+    }
 
-  if found_url < 1 || found_rsa < 1 {
-    std::process::exit(1);
+    warn!("No RSA key found in memory");
+    info!("Make sure the client has successfully connected to the API server, RSA key is loaded after first successful server response");
+    // if !enabled!(Level::DEBUG) {
+    //   info!("Hint: Set RUST_LOG=debug if you believe that you are doing everything correctly");
+    // }
   }
 
   Ok(())
@@ -291,13 +372,13 @@ fn search_byte_sequence(pid: u32, region: &MemoryRegion, sequence: &[u8]) -> io:
   let mut buffer = vec![0; region.size()];
   mem_file.seek(SeekFrom::Start(region.start as u64))?;
   let read = mem_file.read(&mut buffer)?;
-  debug!("read {} / {} bytes", read, buffer.len());
+  trace!("read {} / {} bytes", read, buffer.len());
 
   let mut start = 0;
   let mut addresses = Vec::new();
   let searcher = TwoWaySearcher::new(sequence);
   loop {
-    debug!("searching from {}", start);
+    trace!("searching from {}", start);
     let position = searcher.search_in(&buffer[start..]);
     if let Some(position) = position {
       addresses.push(start + position);
