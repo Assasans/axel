@@ -237,33 +237,63 @@ async fn api_call(
     let response_data = response.bytes().await.unwrap();
     debug!("upstream response: {:?}", response_data);
 
-    let upstream_jwt = upstream_jwt.ok_or_else(|| anyhow!("no upstream jwt header"))?;
-    debug!("jwt header: {:?}", upstream_jwt);
-    let upstream_jwt = upstream_jwt.to_str().unwrap().to_owned();
-    let [_header, data, _signature] = &upstream_jwt.splitn(3, '.').collect::<Vec<_>>()[..] else {
-      todo!()
-    };
-    let data = BASE64_STANDARD_NO_PAD.decode(data).unwrap();
-    let upstream_meta: CallMeta = serde_json::from_slice(&data).unwrap();
-    debug!("api call upstream meta: {:?}", meta);
+    if upstream_jwt.is_some() {
+      let upstream_jwt = upstream_jwt.ok_or_else(|| anyhow!("no upstream jwt header"))?;
+      debug!("jwt header: {:?}", upstream_jwt);
+      let upstream_jwt = upstream_jwt.to_str().unwrap().to_owned();
+      let [_header, data, _signature] = &upstream_jwt.splitn(3, '.').collect::<Vec<_>>()[..] else {
+        todo!()
+      };
+      let data = BASE64_STANDARD_NO_PAD.decode(data).unwrap();
+      let upstream_meta: CallMeta = serde_json::from_slice(&data).unwrap();
+      debug!("api call upstream meta: {:?}", meta);
 
-    let upstream_uk = upstream_meta
-      .uk
-      .as_ref()
-      .map(|uk| hex::decode(uk).expect(&format!("failed to parse user key: {:?}", uk)));
-    let upstream_iv = upstream_uk.as_deref().unwrap_or(&AES_IV).to_owned();
+      let upstream_uk = upstream_meta
+        .uk
+        .as_ref()
+        .map(|uk| hex::decode(uk).expect(&format!("failed to parse user key: {:?}", uk)));
+      let upstream_iv = upstream_uk.as_deref().unwrap_or(&AES_IV).to_owned();
 
-    let response = Aes128CbcDec::new(AES_KEY.into(), upstream_iv.as_slice().into())
-      .decrypt_padded_vec_mut::<Pkcs7>(&response_data)
-      .expect("failed to decrypt body");
-    info!("upstream decrypted response: {}", String::from_utf8_lossy(&response));
-    let response =
-      str::from_utf8(&response).expect(&format!("failed to convert upstream body to string: {:?}", response));
+      let response = Aes128CbcDec::new(AES_KEY.into(), upstream_iv.as_slice().into())
+        .decrypt_padded_vec_mut::<Pkcs7>(&response_data)
+        .expect("failed to decrypt body");
+      info!("upstream decrypted response: {}", String::from_utf8_lossy(&response));
+      let response =
+        str::from_utf8(&response).expect(&format!("failed to convert upstream body to string: {:?}", response));
 
-    fs::write(format!("proxied/{}-{method}.http", SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis()), format!("method: {method}\nrequest jwt: {jwt}\nresponse jwt: {upstream_jwt}\n\n---REQUEST---\n{body_raw}\n\n---RESPONSE---\n{response}")).unwrap();
+      let response = if method == "login" {
+        r#"{"user_no":"359537457194","user_key":"34ce6215e064469a89b9b76dc27af0d6","user_name":"LS0t","tutorial":1,"status":0,"created_at":"2024-08-02 14:39:30","time":1722864558,"remotedata":[{"cmd":3,"item_type":0,"item_id":0,"item_num":0,"uniqid":0,"lv":0,"tag":"-"},{"cmd":4,"item_type":1,"item_id":0,"item_num":80000,"uniqid":0,"lv":0,"tag":"-"},{"cmd":4,"item_type":2,"item_id":0,"item_num":0,"uniqid":0,"lv":0,"tag":"-"},{"cmd":4,"item_type":3,"item_id":0,"item_num":3000,"uniqid":0,"lv":0,"tag":"-"},{"cmd":4,"item_type":9,"item_id":0,"item_num":10,"uniqid":0,"lv":0,"tag":"-"},{"cmd":4,"item_type":10,"item_id":0,"item_num":0,"uniqid":0,"lv":0,"tag":"-"},{"cmd":4,"item_type":23,"item_id":0,"item_num":1,"uniqid":0,"lv":0,"tag":"-"},{"cmd":4,"item_type":28,"item_id":230731,"item_num":0,"uniqid":0,"lv":0,"tag":"-"},{"cmd":4,"item_type":34,"item_id":2,"item_num":3,"uniqid":0,"lv":0,"tag":"-"},{"cmd":4,"item_type":34,"item_id":1,"item_num":0,"uniqid":0,"lv":0,"tag":"-"},{"cmd":4,"item_type":40,"item_id":0,"item_num":1,"uniqid":0,"lv":0,"tag":"-"}],"notificationdata":[{"cmd":1,"type":7,"key":6,"value":0,"msgkey":"","tag":""},{"cmd":1,"type":8,"key":0,"value":0,"msgkey":"","tag":""},{"cmd":1,"type":7,"key":14,"value":1,"msgkey":"","tag":""},{"cmd":1,"type":7,"key":14,"value":1,"msgkey":"","tag":""},{"cmd":1,"type":7,"key":14,"value":1,"msgkey":"","tag":""},{"cmd":1,"type":7,"key":14,"value":1,"msgkey":"","tag":""},{"cmd":1,"type":6,"key":1,"value":30030001,"msgkey":"","tag":""},{"cmd":1,"type":10,"key":230731,"value":52307325,"msgkey":"","tag":""},{"cmd":1,"type":10,"key":230831,"value":52308305,"msgkey":"","tag":""},{"cmd":1,"type":12,"key":19,"value":200012,"msgkey":"","tag":""},{"cmd":1,"type":12,"key":19,"value":410535,"msgkey":"","tag":""},{"cmd":1,"type":12,"key":19,"value":410536,"msgkey":"","tag":""},{"cmd":1,"type":12,"key":19,"value":410553,"msgkey":"","tag":""},{"cmd":1,"type":12,"key":19,"value":410123,"msgkey":"","tag":""},{"cmd":1,"type":12,"key":19,"value":410436,"msgkey":"","tag":""},{"cmd":1,"type":12,"key":19,"value":410565,"msgkey":"","tag":""},{"cmd":1,"type":12,"key":19,"value":410433,"msgkey":"","tag":""},{"cmd":1,"type":12,"key":19,"value":410564,"msgkey":"","tag":""},{"cmd":1,"type":12,"key":19,"value":410554,"msgkey":"","tag":""},{"cmd":1,"type":12,"key":19,"value":410554,"msgkey":"","tag":""},{"cmd":1,"type":12,"key":19,"value":410554,"msgkey":"","tag":""},{"cmd":1,"type":12,"key":19,"value":410554,"msgkey":"","tag":""},{"cmd":1,"type":12,"key":19,"value":410554,"msgkey":"","tag":""},{"cmd":1,"type":14,"key":21,"value":11003,"msgkey":"","tag":""},{"cmd":1,"type":14,"key":21,"value":31015,"msgkey":"","tag":""},{"cmd":1,"type":14,"key":21,"value":31016,"msgkey":"","tag":""},{"cmd":1,"type":14,"key":21,"value":31017,"msgkey":"","tag":""},{"cmd":1,"type":16,"key":1,"value":0,"msgkey":"","tag":""},{"cmd":1,"type":15,"key":1,"value":0,"msgkey":"","tag":""},{"cmd":1,"type":23,"key":3,"value":1,"msgkey":"","tag":""},{"cmd":1,"type":25,"key":3,"value":0,"msgkey":"0","tag":""},{"cmd":1,"type":14,"key":4,"value":1722609570,"msgkey":"","tag":""},{"cmd":1,"type":19,"key":5,"value":1722620388,"msgkey":"","tag":"100"},{"cmd":1,"type":19,"key":5,"value":1722620388,"msgkey":"","tag":"101"},{"cmd":1,"type":19,"key":5,"value":1722620388,"msgkey":"","tag":"102"},{"cmd":1,"type":19,"key":5,"value":1722620388,"msgkey":"","tag":"103"},{"cmd":1,"type":19,"key":5,"value":1722620388,"msgkey":"","tag":"104"},{"cmd":1,"type":19,"key":5,"value":1722620388,"msgkey":"","tag":"105"},{"cmd":1,"type":19,"key":5,"value":1722620388,"msgkey":"","tag":"106"},{"cmd":1,"type":19,"key":5,"value":1722620388,"msgkey":"","tag":"107"},{"cmd":1,"type":19,"key":5,"value":0,"msgkey":"","tag":"23083"},{"cmd":1,"type":19,"key":5,"value":1722620388,"msgkey":"","tag":"50081"},{"cmd":1,"type":7,"key":23,"value":1,"msgkey":"[\"12209\",\"12206\",\"12204\",\"12203\",\"12205\",\"12207\",\"12208\",\"12210\",\"12211\",\"12212\",\"12320\",\"12900\",\"12100\",\"12200\",\"12300\",\"12310\"]","tag":""},{"cmd":1,"type":7,"key":401,"value":0,"msgkey":"","tag":""},{"cmd":1,"type":7,"key":4011,"value":0,"msgkey":"","tag":""},{"cmd":1,"type":7,"key":4012,"value":0,"msgkey":"","tag":""},{"cmd":1,"type":7,"key":15,"value":0,"msgkey":"","tag":""},{"cmd":1,"type":7,"key":16,"value":0,"msgkey":"","tag":""},{"cmd":1,"type":7,"key":18,"value":1722864558,"msgkey":"","tag":""},{"cmd":1,"type":7,"key":3,"value":2,"msgkey":"","tag":""},{"cmd":1,"type":7,"key":13,"value":7,"msgkey":"","tag":""},{"cmd":1,"type":7,"key":11,"value":0,"msgkey":"","tag":""},{"cmd":1,"type":7,"key":12,"value":0,"msgkey":"","tag":""},{"cmd":1,"type":7,"key":24,"value":0,"msgkey":"","tag":""},{"cmd":1,"type":7,"key":14,"value":1,"msgkey":"","tag":""}]}"#.to_owned()
+      } else {
+        response.to_owned()
+      };
 
-    // info!("upstream response: {}", response);
-    (response.to_owned(), upstream_uk)
+      fs::write(format!("proxied/{}-{method}.http", SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis()), format!("method: {method}\nrequest jwt: {jwt}\nresponse jwt: {upstream_jwt}\n\n---REQUEST---\n{body_raw}\n\n---RESPONSE---\n{response}")).unwrap();
+
+      // info!("upstream response: {}", response);
+      (response.to_owned(), upstream_uk)
+    } else {
+      let response = str::from_utf8(&response_data).expect(&format!(
+        "failed to convert upstream body to string: {:?}",
+        response_data
+      ));
+
+      let response = if method == "capturesend" {
+        r#"{"status":0,"time":1722865498,"remotedata":[],"notificationdata":[]}"#.to_owned()
+      } else {
+        response.to_owned()
+      };
+
+      let response = if method == "idlink_confirm_google" {
+        r#"{"islink":0,"status":0,"time":1722865489,"remotedata":[],"notificationdata":[]}"#.to_owned()
+      } else {
+        response.to_owned()
+      };
+
+      fs::write(format!("proxied/{}-{method}.http", SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis()), format!("method: {method}\nrequest jwt: {jwt}\nresponse jwt: NONE\n\n---REQUEST---\n{body_raw}\n\n---RESPONSE---\n{response}")).unwrap();
+
+      // info!("upstream response: {}", response);
+      (response.to_owned(), None)
+    }
   } else
   /*if method == "gachainfo" {
     let response = json!({
