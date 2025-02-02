@@ -1,10 +1,12 @@
 use std::error::Error;
 use std::fs::{File, OpenOptions};
 use std::io::{self, BufRead, Read, Seek, SeekFrom, Write};
+use std::path::{Path, PathBuf};
 
 use bytesize::ByteSize;
 use clap::Parser;
 use memmem::{Searcher, TwoWaySearcher};
+use openssl::rsa::Rsa;
 use tracing::{debug, error, info, warn};
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
@@ -26,19 +28,6 @@ pub static ORIGINAL_KEY: &[u8] = &[
   0xbc, 0x81, 0x28, 0xbc, 0xae, 0x1e, 0x0c, 0x97, 0x45, 0x24, 0xed, 0xad, 0xcd, 0x9f,
 ];
 
-/// Run `openssl genpkey -algorithm RSA -out key.pem -pkeyopt rsa_keygen_bits:1024` to generate key.
-///
-/// Run `openssl rsa -in private_key.pem -pubout -text -noout` and copy modulus.
-pub static NEW_KEY: &[u8] = &[
-  0xcf, 0xb5, 0x5e, 0x36, 0xcb, 0x98, 0x2d, 0x7f, 0xff, 0x73, 0x1f, 0xe8, 0x33, 0x11, 0x0c, 0xc4, 0xa8, 0x2f, 0xa3,
-  0x8f, 0xf8, 0xc2, 0xeb, 0x01, 0xdd, 0x06, 0xd5, 0xdd, 0x92, 0xf0, 0xeb, 0x50, 0x08, 0x0a, 0x53, 0x52, 0x8e, 0xf3,
-  0x0d, 0x6c, 0x81, 0x41, 0xa5, 0x9c, 0x49, 0x27, 0xd0, 0x22, 0x9f, 0x21, 0x97, 0x7b, 0xa0, 0xb5, 0x96, 0x6a, 0x82,
-  0x85, 0xfa, 0xe5, 0x84, 0x1b, 0x4e, 0x0f, 0x06, 0x6e, 0x82, 0xa2, 0x9e, 0x15, 0xa0, 0x0c, 0x44, 0xdf, 0x54, 0x1a,
-  0x50, 0xd1, 0xc9, 0x29, 0x21, 0x25, 0x99, 0x0c, 0xc9, 0xeb, 0x9f, 0x53, 0xc9, 0x01, 0x04, 0x4b, 0xc7, 0x93, 0x8e,
-  0x34, 0x28, 0xcb, 0xd8, 0x4e, 0x00, 0x97, 0x6f, 0x06, 0x09, 0x2a, 0x3a, 0x97, 0xc8, 0xcf, 0x4a, 0x3a, 0x05, 0xe7,
-  0xa3, 0xc3, 0xba, 0x83, 0x73, 0x84, 0xb0, 0xb5, 0xc8, 0xc0, 0x63, 0x1e, 0xbe, 0x0d,
-];
-
 pub static ORIGINAL_STATIC_URL: &str = "https://static-prd-wonder.sesisoft.com/";
 
 #[derive(Parser, Debug)]
@@ -49,6 +38,9 @@ struct Args {
 
   /// PID of the `com.nexon.konosuba` process.
   pid: u32,
+
+  /// PEM-formatted RSA-1024 key for JWT
+  key_file: PathBuf,
 }
 
 #[derive(Debug)]
@@ -124,6 +116,32 @@ fn str_to_utf16_bytes(input: &str) -> Vec<u8> {
   utf16_bytes
 }
 
+fn read_public_key(key_file: &Path) -> Vec<u8> {
+  let mut pem_file = File::open(key_file).unwrap();
+  let mut pem_contents = String::new();
+  pem_file.read_to_string(&mut pem_contents).unwrap();
+
+  match Rsa::public_key_from_pem(pem_contents.as_bytes()) {
+    Ok(rsa) => {
+      info!("read public key from {:?}", key_file);
+      rsa.n().to_vec()
+    },
+    Err(error) => {
+      warn!("Rsa::public_key_from_pem error: {}, treating as private key", error);
+      match Rsa::private_key_from_pem(pem_contents.as_bytes()) {
+        Ok(rsa) => {
+          info!("read private key from {:?}", key_file);
+          rsa.n().to_vec()
+        },
+        Err(error) => {
+          error!("Rsa::private_key_from_pem error: {}", error);
+          std::process::exit(1);
+        }
+      }
+    }
+  }
+}
+
 fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
   tracing_subscriber::registry()
     .with(fmt::layer())
@@ -132,7 +150,10 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 
   let args = Args::parse();
 
-  assert_eq!(ORIGINAL_KEY.len(), NEW_KEY.len());
+  let new_key = read_public_key(&args.key_file);
+  info!("new key: {:?}", new_key);
+
+  assert_eq!(ORIGINAL_KEY.len(), new_key.len());
 
   let new_static_url = if let Some(new_static_url) = &args.url {
     if new_static_url.len() > ORIGINAL_STATIC_URL.len() {
@@ -229,7 +250,7 @@ fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
         match write_to_memory(
           args.pid,
           virtual_address,
-          &NEW_KEY.iter().cloned().rev().collect::<Vec<_>>(),
+          &new_key.iter().cloned().rev().collect::<Vec<_>>(),
         ) {
           Ok(_) => {
             info!("Successfully wrote to memory at address 0x{:x}", virtual_address);
