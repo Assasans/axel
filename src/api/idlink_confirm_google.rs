@@ -11,7 +11,7 @@ pub struct IdLinkConfirmGoogle {
 
 impl CallCustom for IdLinkConfirmGoogle {}
 
-pub async fn route(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
   Ok((
     CallResponse::new_success(Box::new(IdLinkConfirmGoogle { islink: false })),
     false,

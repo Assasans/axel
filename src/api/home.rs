@@ -26,7 +26,7 @@ pub struct AdvertisementData {
   pub status: u32,
 }
 
-pub async fn route(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
   Ok((
     CallResponse::new_success(Box::new(Home {
       multi_battle_invitation: None,

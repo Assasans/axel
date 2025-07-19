@@ -9,9 +9,10 @@ pub mod string_as_base64;
 
 use std::collections::{BTreeMap, HashMap};
 use std::error::Error;
+use std::io::stdout;
 use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
-use std::{fs, str};
+use std::{env, fs, str};
 
 use aes::cipher::block_padding::Pkcs7;
 use aes::cipher::{BlockDecryptMut, BlockEncryptMut, KeyIvInit};
@@ -36,9 +37,8 @@ use tower_http::trace::TraceLayer;
 use tracing::{debug, info};
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
-use tracing_subscriber::{fmt, EnvFilter};
+use tracing_subscriber::EnvFilter;
 
-use crate::api::gacha::GachaItem;
 use crate::api::master_all::get_masters;
 use crate::api::{
   gacha, home, honor_list, idlink_confirm_google, interaction, login, login_bonus, maintenance_check, master_all,
@@ -68,7 +68,7 @@ struct Args {
   proxy: bool,
 }
 
-struct AppState {
+pub struct AppState {
   proxy: bool,
   sessions: Mutex<HashMap<UserId, Arc<Session>>>,
 }
@@ -299,86 +299,7 @@ async fn api_call(
       // info!("upstream response: {}", response);
       (response.to_owned(), None)
     }
-  } else
-  /*if method == "gachainfo" {
-    let response = json!({
-      "gacha":[
-        {"gachaid":100001,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":6,"ticket_num":10,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        {"gachaid":410321,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":24,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        {"gachaid":323083,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":8,"ticket_num":30,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":200021,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":17,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":323083,"daily":1,"type1":"","val1":0,"type10":"","val10":0,"ticket":0,"ticket_num":0,"draw_count":0,"remain_draw_count":1,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410211,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":19,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":500007,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":1,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410248,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":20,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410305,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":21,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410317,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":23,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410321,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":24,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410326,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":25,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410353,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":26,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410364,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":27,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410393,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":28,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410395,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":29,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":{"gacha_item_id":41039501,"items":[{"pack_id":241039501,"rate":100},{"pack_id":241039502,"rate":1000},{"pack_id":241039503,"rate":5000},{"pack_id":241039504,"rate":7900},{"pack_id":241039505,"rate":8000},{"pack_id":241039506,"rate":10000},{"pack_id":241039507,"rate":10000},{"pack_id":241039508,"rate":10000},{"pack_id":241039509,"rate":16000},{"pack_id":241039510,"rate":16000},{"pack_id":241039511,"rate":16000}]},"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410402,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":30,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410403,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":31,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410410,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":32,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410430,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":33,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410433,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":0,"ticket_num":0,"draw_count":0,"remain_draw_count":1,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":{"select_member_id_list":[]},"first_free_ids":[]},
-        // {"gachaid":410436,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":0,"ticket_num":0,"draw_count":0,"remain_draw_count":1,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":{"select_character_id":0,"select_character_id_list":[100,101,102,103,104,105,106,107,109,110,111,112,113,114,115,116,117,118,119,108,151,128,169]},"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410437,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":34,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410441,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":35,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410458,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":36,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410486,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":37,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410490,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":38,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410509,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":39,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410522,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":40,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410531,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":41,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410535,"daily":0,"type1":"","val1":0,"type10":"limit","val10":0,"ticket":0,"ticket_num":0,"draw_count":0,"remain_draw_count":5,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410536,"daily":0,"type1":"","val1":0,"type10":"limit","val10":0,"ticket":0,"ticket_num":0,"draw_count":0,"remain_draw_count":1,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410544,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":42,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410546,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":43,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410548,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":44,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410550,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":45,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410552,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":46,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410553,"daily":0,"type1":"","val1":0,"type10":"limit","val10":0,"ticket":0,"ticket_num":0,"draw_count":0,"remain_draw_count":3,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410554,"daily":0,"type1":"step","val1":0,"type10":"","val10":0,"ticket":0,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":{"step":0,"loop":0,"is_drawable":true},"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410627,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":53,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410639,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":54,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410653,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":56,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410661,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":57,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]},
-        // {"gachaid":410670,"daily":0,"type1":"","val1":0,"type10":"","val10":0,"ticket":58,"ticket_num":0,"draw_count":0,"remain_draw_count":0,"upperlimitcount":0,"user_story_id":0,"stepup_bonus":null,"random_bonus":null,"stepup_info":null,"select_info":null,"continuation_info":null,"member_select_info":null,"first_free_ids":[]}
-      ],
-      "status":0,
-      "time":1723059410,
-      "remotedata":[],
-      "notificationdata":[
-        // {"cmd":1,"type":12,"key":19,"value":200012,"msgkey":"","tag":""},
-        // {"cmd":1,"type":12,"key":19,"value":410535,"msgkey":"","tag":""},
-        // {"cmd":1,"type":12,"key":19,"value":410536,"msgkey":"","tag":""},
-        // {"cmd":1,"type":12,"key":19,"value":410553,"msgkey":"","tag":""},
-        // {"cmd":1,"type":12,"key":19,"value":410123,"msgkey":"","tag":""},
-        // {"cmd":1,"type":12,"key":19,"value":410436,"msgkey":"","tag":""},
-        // {"cmd":1,"type":12,"key":19,"value":410565,"msgkey":"","tag":""},
-        // {"cmd":1,"type":12,"key":19,"value":410433,"msgkey":"","tag":""},
-        // {"cmd":1,"type":12,"key":19,"value":410564,"msgkey":"","tag":""},
-        // {"cmd":1,"type":12,"key":19,"value":410554,"msgkey":"","tag":""},
-        // {"cmd":1,"type":12,"key":19,"value":410554,"msgkey":"","tag":""},
-        // {"cmd":1,"type":12,"key":19,"value":410554,"msgkey":"","tag":""},
-        // {"cmd":1,"type":12,"key":19,"value":410554,"msgkey":"","tag":""},
-        // {"cmd":1,"type":12,"key":19,"value":410554,"msgkey":"","tag":""},
-        // {"cmd":1,"type":26,"key":200012,"value":1,"msgkey":"","tag":""},
-        // {"cmd":1,"type":26,"key":323083,"value":1,"msgkey":"","tag":""},
-        // {"cmd":1,"type":26,"key":410436,"value":1,"msgkey":"","tag":""},
-        // {"cmd":1,"type":26,"key":410536,"value":1,"msgkey":"","tag":""},
-        // {"cmd":1,"type":26,"key":410554,"value":1,"msgkey":"","tag":""},
-        // {"cmd":1,"type":27,"key":410535,"value":0,"msgkey":"","tag":""},
-        // {"cmd":1,"type":27,"key":410554,"value":0,"msgkey":"","tag":""}
-      ]
-    });
-    let response = serde_json::to_string(&response).unwrap();
-    (response.to_owned(), None)
-  } else*/
-  {
+  } else {
     let request = ApiRequest {
       params: params.clone(),
       body: body.clone(),
@@ -398,6 +319,7 @@ async fn api_call(
       "gacha_tutorial" => gacha::gacha_tutorial(request).await?,
       "gacha_tutorial_reward" => gacha::gacha_tutorial_reward(request).await?,
       "gachachain" => gacha::gacha_chain(request).await?,
+      "gachanormal" => gacha::gacha_normal(request).await?,
       "root_box_check" => (CallResponse::new_success(Box::new(())), false),
       "maintenancecheck" => maintenance_check::route(request).await?,
       "firebasetoken" => (CallResponse::new_success(Box::new(())), true),
@@ -409,11 +331,15 @@ async fn api_call(
       "honor_list" => honor_list::route(request).await?,
       "interaction" => interaction::route(request).await?,
       "partyinfo" => party_info::route(request).await?,
-      _ => todo!(),
+      _ => todo!("api call '{}'", method),
     };
 
     let response = serde_json::to_string(&response).unwrap();
-    info!("response: {}", response);
+    if matches!(&*method, "masterlist" | "masterall") {
+      info!("response: (...)");
+    } else {
+      info!("response: {}", response);
+    }
 
     (
       response,

@@ -104,7 +104,7 @@ pub struct Member {
   pub is_undead: u32,
 }
 
-pub async fn route(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
   let response = include_str!("../party-info.json");
   let response: PartyInfo = serde_json::from_str(response).unwrap();
   Ok((CallResponse::new_success(Box::new(response)), true))

@@ -6,7 +6,6 @@ use std::task::{Context, Poll};
 
 use axum::body::Body;
 use axum::extract::{MatchedPath, Path, Request};
-use axum::handler::HandlerWithoutStateExt;
 use axum::http::response::Builder;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
@@ -17,7 +16,7 @@ use serde::Serialize;
 use tower::{Layer, Service};
 use tower_http::services::ServeDir;
 use tower_http::trace::TraceLayer;
-use tracing::info;
+use tracing::{debug, info, warn};
 use url::Url;
 
 use crate::normalize_path::normalize_path;
@@ -88,20 +87,23 @@ impl Service<Request> for ServeRemoteResource {
   type Error = Infallible;
   type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>> + Send + Sync + 'static>>;
 
-  fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
+  fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
     Poll::Ready(Ok(()))
   }
 
   fn call(&mut self, request: Request) -> Self::Future {
-    let path = &request.uri().path()[1..];
-    let remote_url = self.remote_url.join(path).unwrap();
-    info!("get bundle remote: {} -> {}", path, remote_url);
+    let path = request.uri().path()[1..].to_owned();
+    let remote_url = self.remote_url.join(&path).unwrap();
+    debug!("get bundle remote: {} -> {}", path, remote_url);
 
-    Box::pin(async {
+    Box::pin(async move {
       let client = Client::new();
       let response = client.get(remote_url).send().await.unwrap();
 
       let status = StatusCode::from_u16(response.status().as_u16()).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR);
+      if !status.is_success() {
+        warn!("failed to fetch remote resource: {}, status: {}", path, status);
+      }
 
       let headers = response.headers().clone();
       let stream = response.bytes_stream();

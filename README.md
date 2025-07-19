@@ -5,6 +5,7 @@
 </div>
 
 <!-- TOC -->
+
 - [Server setup](#server-setup)
   - [Building server](#building-server)
   - [RSA signing issue](#rsa-signing-issue)
@@ -18,6 +19,7 @@
   - [B. With your own domain and TLS certificate](#b-with-your-own-domain-and-tls-certificate)
 - [Starting the game](#starting-the-game)
 - [License](#license)
+
 <!-- /TOC -->
 
 See [DUMPING.md](DUMPING.md) for instructions on how to inspect the game code yourself.
@@ -25,9 +27,15 @@ See [DUMPING.md](DUMPING.md) for instructions on how to inspect the game code yo
 **Current progress**
 
 The first scene ("And so the Adventure Begins!") works.
-The home and profile menus work.
+The home and profile menus barely work.
 
-![](https://files.catbox.moe/xvvt4z.png)
+A lot of gacha banners (including collaborations) is visible, but still not all 947 of them.
+Loot pool is hardcoded. **Gacha stories work**, they don't need to interact with the server.
+
+<p>
+  <img src="https://files.catbox.moe/xvvt4z.png" width="300px">
+  <img src="https://files.catbox.moe/x6a55m.png" width="300px">
+</p>
 
 ## Server setup
 
@@ -88,16 +96,19 @@ server {
 The game signs API responses with JWT RS256 (RSA-1024 key).
 This server uses its own key pair, so the public key must be replaced in the client.
 
-Static key replacement is not possible due to the LIAPP anti-tampering system (please comment on [this issue](https://github.com/Assasans/axel/issues/1) if you know how to work around it).
+Static key replacement is not possible due to the LIAPP anti-tampering system (please comment
+on [this issue](https://github.com/Assasans/axel/issues/1) if you know how to work around it).
 The current solution is to dynamically replace the key in the process memory after the game has been started.
 
-If you want to generate a new RSA key pair — run `openssl genpkey -algorithm RSA -out key.pem -pkeyopt rsa_keygen_bits:1024`.
+If you want to generate a new RSA key pair — run
+`openssl genpkey -algorithm RSA -out key.pem -pkeyopt rsa_keygen_bits:1024`.
 
 ## Client setup (Waydroid)
 
 Requirements:
 
-- Linux machine (preferably [Arch Linux](https://archlinux.org/), `x86_64` or `arm64-v8a`), [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) is not tested
+- Linux machine (preferably [Arch Linux](https://archlinux.org/), `x86_64` or
+  `arm64-v8a`), [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) is not tested
 - [Waydroid](https://waydro.id)
 - [Rust](https://rust-lang.org) — to build the [RSA patcher](rsa-patcher)
 
@@ -108,7 +119,9 @@ Contributions with tutorials for real devices are welcome.
 2. Initialize the Waydroid image — `sudo waydroid init -s GAPPS`
 3. Start Waydroid service — `sudo systemctl start waydroid-container`
 4. Install `libhoudini` if you are not on an ARM host: https://github.com/casualsnek/waydroid_script
-5. Add the following properties to `/var/lib/waydroid/waydroid.cfg` ([source](https://github.com/waydroid/waydroid/issues/1060)):
+5. Add the following properties to
+   `/var/lib/waydroid/waydroid.cfg` ([source](https://github.com/waydroid/waydroid/issues/1060)):
+
 ```
 [properties]
 ro.product.brand=google
@@ -137,8 +150,9 @@ ro.debuggable = 0
 7. Start Waydroid session — `waydroid session start` for Wayland users, `cage waydroid session start` for X11 users
 8. Launch a GUI — `waydroid show-full-ui`
 9. Install the game from Google Play or APK:
-   1. Download and extract latest XAPK from [APKPure](https://apkpure.com/konosuba-fantastic-days/com.nexon.konosuba/download)
-   2. Install APKs — `adb install-multiple com.nexon.konosuba.apk config.arm64_v8a.apk`
+1. Download and extract latest XAPK
+   from [APKPure](https://apkpure.com/konosuba-fantastic-days/com.nexon.konosuba/download)
+2. Install APKs — `adb install-multiple com.nexon.konosuba.apk config.arm64_v8a.apk`
 
 ### A. Without your own domain or completely offline
 
@@ -150,6 +164,7 @@ You will have to specify `--url https://static.konosuba.local/` when patching th
 
 ```shell
 # Use custom dnsmasq config
+# This has to be done every time after updating Waydroid, as it overwrites the file.
 sudo sed -i 's|LXC_DHCP_CONFILE=""|LXC_DHCP_CONFILE="/var/lib/waydroid/lxc/waydroid/dnsmasq.conf"|' /usr/lib/waydroid/data/scripts/waydroid-net.sh
 
 # Enter the server's IP here, it must be accessible from Waydroid.
@@ -175,6 +190,7 @@ Waydroid uses `dnsmasq`, so we use it to redirect `web-prd-wonder.sesisoft.com` 
 
 ```shell
 # Use custom dnsmasq config
+# This has to be done every time after updating Waydroid, as it overwrites the file.
 sudo sed -i 's|LXC_DHCP_CONFILE=""|LXC_DHCP_CONFILE="/var/lib/waydroid/lxc/waydroid/dnsmasq.conf"|' /usr/lib/waydroid/data/scripts/waydroid-net.sh
 
 # Enter the server's IP here, it must be accessible from Waydroid.
@@ -235,16 +251,21 @@ sudo chmod 644 /var/lib/waydroid/overlay/system/etc/security/cacerts/$hash.0
 
 ### B. With your own domain and TLS certificate
 
-There are no steps clients have to do, assuming you have already configured a reverse proxy server with your  TLS certificate
-that clients **trust** (e.g. from Let's Encrypt or Cloudflare) and have a domain resolvable by authoritative DNS servers.
+There are no steps clients have to do, assuming you have already configured a reverse proxy server with your TLS
+certificate
+that clients **trust** (e.g. from Let's Encrypt or Cloudflare) and have a domain resolvable by authoritative DNS
+servers.
 
-Clients just have to specify your domain while patching the game (e.g. `axel-rsa-patcher $(pidof com.nexon.konosuba) --url https://axel.assasans.dev/`)
+Clients just have to specify your domain while patching the game (e.g.
+`axel-rsa-patcher $(pidof com.nexon.konosuba) --url https://axel.assasans.dev/`)
 
 ## Starting the game
 
-1. Start `KonoSuba: FD` in Waydroid and wait for the title screen to appear ("Connection Error" alert will appear — ignore it).
+1. Start `KonoSuba: FD` in Waydroid and wait for the title screen to appear ("Connection Error" alert will appear —
+   ignore it).
 2. Build the [RSA key patcher](rsa-patcher) — `cargo build --release`.
-3. And run it — `sudo RUST_LOG=debug ./target/release/axel-rsa-patcher --pid $(pidof com.nexon.konosuba) --url https://static.konosuba.local/ --key ../pubkey.pem`.
+3. And run it —
+   `sudo RUST_LOG=debug ./target/release/axel-rsa-patcher --pid $(pidof com.nexon.konosuba) --url https://static.konosuba.local/ --key ../pubkey.pem`.
 4. Press OK on the error alert, the game should now work.
 
 ## License

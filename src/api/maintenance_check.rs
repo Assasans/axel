@@ -12,7 +12,7 @@ pub struct MaintenanceCheck {
 
 impl CallCustom for MaintenanceCheck {}
 
-pub async fn route(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
   Ok((
     CallResponse::new_success(Box::new(MaintenanceCheck {
       typestatus: 0,
