@@ -1,1 +1,416 @@
-[{"type":"11101","type_category":"HP_RECOVERY","sustain_type":"0","name":"DUNGEON_BENEFIT_NAME_11101","icon_type":"0","effect":"ef_heal_01","effect_position":"0"},{"type":"11102","type_category":"SP_RECOVERY","sustain_type":"0","name":"DUNGEON_BENEFIT_NAME_11102","icon_type":"0","effect":"ef_chant_buff_02","effect_position":"0"},{"type":"11103","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_11103","icon_type":"0","effect":"ef_chant_buff_02","effect_position":"0"},{"type":"11104","type_category":"PA_SKILL","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_11104","icon_type":"0","effect":"ef_chant_buff_02","effect_position":"0"},{"type":"11201","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_11201","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"11202","type_category":"PA_SKILL","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_11202","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"11301","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_11301","icon_type":"2","effect":"ef_damagecut_1","effect_position":"3"},{"type":"11302","type_category":"PA_SKILL","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_11302","icon_type":"2","effect":"ef_damagecut_1","effect_position":"3"},{"type":"12101","type_category":"HP_RECOVERY","sustain_type":"0","name":"DUNGEON_BENEFIT_NAME_12101","icon_type":"0","effect":"ef_heal_01","effect_position":"0"},{"type":"12102","type_category":"SP_RECOVERY","sustain_type":"0","name":"DUNGEON_BENEFIT_NAME_12102","icon_type":"0","effect":"ef_chant_buff_02","effect_position":"0"},{"type":"12103","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_12103","icon_type":"0","effect":"ef_chant_buff_02","effect_position":"0"},{"type":"12104","type_category":"PA_SKILL","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_12104","icon_type":"0","effect":"ef_chant_buff_02","effect_position":"0"},{"type":"12105","type_category":"HP_UP","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_12105","icon_type":"0","effect":"ef_regeneration_3","effect_position":"0"},{"type":"12201","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_12201","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"12202","type_category":"PA_SKILL","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_12202","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"12203","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_12203","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"12204","type_category":"PA_SKILL","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_12204","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"12205","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_12205","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"12206","type_category":"PA_SKILL","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_12206","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"12207","type_category":"ENEMY_HP_DOWN","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_12207","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"12301","type_category":"AGILITY_UP","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_12301","icon_type":"2","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"12302","type_category":"AGILITY_UP","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_12302","icon_type":"2","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"12303","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_12303","icon_type":"2","effect":"ef_damagecut_1","effect_position":"3"},{"type":"12304","type_category":"PA_SKILL","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_12304","icon_type":"2","effect":"ef_damagecut_1","effect_position":"3"},{"type":"13101","type_category":"HP_RECOVERY","sustain_type":"0","name":"DUNGEON_BENEFIT_NAME_13101","icon_type":"0","effect":"ef_heal_01","effect_position":"0"},{"type":"13102","type_category":"REVIVAL","sustain_type":"0","name":"DUNGEON_BENEFIT_NAME_13102","icon_type":"0","effect":"ef_heal_03","effect_position":"3"},{"type":"13103","type_category":"SP_RECOVERY","sustain_type":"0","name":"DUNGEON_BENEFIT_NAME_13103","icon_type":"0","effect":"ef_chant_buff_02","effect_position":"0"},{"type":"13104","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_13104","icon_type":"0","effect":"ef_chant_buff_02","effect_position":"0"},{"type":"13105","type_category":"PA_SKILL","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_13105","icon_type":"0","effect":"ef_chant_buff_02","effect_position":"0"},{"type":"13106","type_category":"HP_UP","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_13106","icon_type":"0","effect":"ef_regeneration_3","effect_position":"0"},{"type":"13201","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_13201","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"13202","type_category":"PA_SKILL","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_13202","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"13203","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_13203","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"13204","type_category":"PA_SKILL","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_13204","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"13205","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_13205","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"13206","type_category":"PA_SKILL","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_13206","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"13207","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_13207","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"13208","type_category":"PA_SKILL","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_13208","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"13209","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_13209","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"13210","type_category":"PA_SKILL","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_13210","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"13211","type_category":"ENEMY_HP_DOWN","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_13211","icon_type":"1","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"13301","type_category":"AGILITY_UP","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_13301","icon_type":"2","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"13302","type_category":"AGILITY_UP","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_13302","icon_type":"2","effect":"ef_chant_buff_01","effect_position":"3"},{"type":"13303","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_13303","icon_type":"2","effect":"ef_damagecut_1","effect_position":"3"},{"type":"13304","type_category":"PA_SKILL","sustain_type":"1","name":"DUNGEON_BENEFIT_NAME_13304","icon_type":"2","effect":"ef_damagecut_1","effect_position":"3"},{"type":"13305","type_category":"PA_SKILL","sustain_type":"2","name":"DUNGEON_BENEFIT_NAME_13305","icon_type":"2","effect":"ef_damagecut_3","effect_position":"0"}]
+[
+  {
+    "type": "11101",
+    "type_category": "HP_RECOVERY",
+    "sustain_type": "0",
+    "name": "DUNGEON_BENEFIT_NAME_11101",
+    "icon_type": "0",
+    "effect": "ef_heal_01",
+    "effect_position": "0"
+  },
+  {
+    "type": "11102",
+    "type_category": "SP_RECOVERY",
+    "sustain_type": "0",
+    "name": "DUNGEON_BENEFIT_NAME_11102",
+    "icon_type": "0",
+    "effect": "ef_chant_buff_02",
+    "effect_position": "0"
+  },
+  {
+    "type": "11103",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_11103",
+    "icon_type": "0",
+    "effect": "ef_chant_buff_02",
+    "effect_position": "0"
+  },
+  {
+    "type": "11104",
+    "type_category": "PA_SKILL",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_11104",
+    "icon_type": "0",
+    "effect": "ef_chant_buff_02",
+    "effect_position": "0"
+  },
+  {
+    "type": "11201",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_11201",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "11202",
+    "type_category": "PA_SKILL",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_11202",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "11301",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_11301",
+    "icon_type": "2",
+    "effect": "ef_damagecut_1",
+    "effect_position": "3"
+  },
+  {
+    "type": "11302",
+    "type_category": "PA_SKILL",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_11302",
+    "icon_type": "2",
+    "effect": "ef_damagecut_1",
+    "effect_position": "3"
+  },
+  {
+    "type": "12101",
+    "type_category": "HP_RECOVERY",
+    "sustain_type": "0",
+    "name": "DUNGEON_BENEFIT_NAME_12101",
+    "icon_type": "0",
+    "effect": "ef_heal_01",
+    "effect_position": "0"
+  },
+  {
+    "type": "12102",
+    "type_category": "SP_RECOVERY",
+    "sustain_type": "0",
+    "name": "DUNGEON_BENEFIT_NAME_12102",
+    "icon_type": "0",
+    "effect": "ef_chant_buff_02",
+    "effect_position": "0"
+  },
+  {
+    "type": "12103",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_12103",
+    "icon_type": "0",
+    "effect": "ef_chant_buff_02",
+    "effect_position": "0"
+  },
+  {
+    "type": "12104",
+    "type_category": "PA_SKILL",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_12104",
+    "icon_type": "0",
+    "effect": "ef_chant_buff_02",
+    "effect_position": "0"
+  },
+  {
+    "type": "12105",
+    "type_category": "HP_UP",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_12105",
+    "icon_type": "0",
+    "effect": "ef_regeneration_3",
+    "effect_position": "0"
+  },
+  {
+    "type": "12201",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_12201",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "12202",
+    "type_category": "PA_SKILL",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_12202",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "12203",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_12203",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "12204",
+    "type_category": "PA_SKILL",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_12204",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "12205",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_12205",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "12206",
+    "type_category": "PA_SKILL",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_12206",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "12207",
+    "type_category": "ENEMY_HP_DOWN",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_12207",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "12301",
+    "type_category": "AGILITY_UP",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_12301",
+    "icon_type": "2",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "12302",
+    "type_category": "AGILITY_UP",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_12302",
+    "icon_type": "2",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "12303",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_12303",
+    "icon_type": "2",
+    "effect": "ef_damagecut_1",
+    "effect_position": "3"
+  },
+  {
+    "type": "12304",
+    "type_category": "PA_SKILL",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_12304",
+    "icon_type": "2",
+    "effect": "ef_damagecut_1",
+    "effect_position": "3"
+  },
+  {
+    "type": "13101",
+    "type_category": "HP_RECOVERY",
+    "sustain_type": "0",
+    "name": "DUNGEON_BENEFIT_NAME_13101",
+    "icon_type": "0",
+    "effect": "ef_heal_01",
+    "effect_position": "0"
+  },
+  {
+    "type": "13102",
+    "type_category": "REVIVAL",
+    "sustain_type": "0",
+    "name": "DUNGEON_BENEFIT_NAME_13102",
+    "icon_type": "0",
+    "effect": "ef_heal_03",
+    "effect_position": "3"
+  },
+  {
+    "type": "13103",
+    "type_category": "SP_RECOVERY",
+    "sustain_type": "0",
+    "name": "DUNGEON_BENEFIT_NAME_13103",
+    "icon_type": "0",
+    "effect": "ef_chant_buff_02",
+    "effect_position": "0"
+  },
+  {
+    "type": "13104",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_13104",
+    "icon_type": "0",
+    "effect": "ef_chant_buff_02",
+    "effect_position": "0"
+  },
+  {
+    "type": "13105",
+    "type_category": "PA_SKILL",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_13105",
+    "icon_type": "0",
+    "effect": "ef_chant_buff_02",
+    "effect_position": "0"
+  },
+  {
+    "type": "13106",
+    "type_category": "HP_UP",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_13106",
+    "icon_type": "0",
+    "effect": "ef_regeneration_3",
+    "effect_position": "0"
+  },
+  {
+    "type": "13201",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_13201",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "13202",
+    "type_category": "PA_SKILL",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_13202",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "13203",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_13203",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "13204",
+    "type_category": "PA_SKILL",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_13204",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "13205",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_13205",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "13206",
+    "type_category": "PA_SKILL",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_13206",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "13207",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_13207",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "13208",
+    "type_category": "PA_SKILL",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_13208",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "13209",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_13209",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "13210",
+    "type_category": "PA_SKILL",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_13210",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "13211",
+    "type_category": "ENEMY_HP_DOWN",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_13211",
+    "icon_type": "1",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "13301",
+    "type_category": "AGILITY_UP",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_13301",
+    "icon_type": "2",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "13302",
+    "type_category": "AGILITY_UP",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_13302",
+    "icon_type": "2",
+    "effect": "ef_chant_buff_01",
+    "effect_position": "3"
+  },
+  {
+    "type": "13303",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_13303",
+    "icon_type": "2",
+    "effect": "ef_damagecut_1",
+    "effect_position": "3"
+  },
+  {
+    "type": "13304",
+    "type_category": "PA_SKILL",
+    "sustain_type": "1",
+    "name": "DUNGEON_BENEFIT_NAME_13304",
+    "icon_type": "2",
+    "effect": "ef_damagecut_1",
+    "effect_position": "3"
+  },
+  {
+    "type": "13305",
+    "type_category": "PA_SKILL",
+    "sustain_type": "2",
+    "name": "DUNGEON_BENEFIT_NAME_13305",
+    "icon_type": "2",
+    "effect": "ef_damagecut_3",
+    "effect_position": "0"
+  }
+]

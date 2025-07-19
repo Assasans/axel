@@ -1,1 +1,13 @@
-[{"item_gacha_id":"1","navi_id":"CAMPAIGN_ITEMGACHA_SCENE_1","name":"CAMPAIGN_ITEMGACHA_NAME_1","banner":"gacha_title_100001.png","appeal_image":"event_quest_gacha_20123.png","open_at":"2020\/2\/26 15:00","start_at":"2020\/2\/27 15:00","end_at":"2020\/3\/1 15:00","ticket_id":"1"}]
+[
+  {
+    "item_gacha_id": "1",
+    "navi_id": "CAMPAIGN_ITEMGACHA_SCENE_1",
+    "name": "CAMPAIGN_ITEMGACHA_NAME_1",
+    "banner": "gacha_title_100001.png",
+    "appeal_image": "event_quest_gacha_20123.png",
+    "open_at": "2020/2/26 15:00",
+    "start_at": "2020/2/27 15:00",
+    "end_at": "2020/3/1 15:00",
+    "ticket_id": "1"
+  }
+]

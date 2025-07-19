@@ -1,1 +1,110 @@
-[{"navi_set_id":"501","navi_set_pattern_id":"50101","start_wait_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_501001_1","start_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_501001_2","result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_501001_3","win_result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_501001_4","lively_voice_id":"314101001_314102001_314103001"},{"navi_set_id":"501","navi_set_pattern_id":"50102","start_wait_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_501001_1","start_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_501002_2","result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_501001_3","win_result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_501001_4","lively_voice_id":"314105001_314106001"},{"navi_set_id":"502","navi_set_pattern_id":"50201","start_wait_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_502001_1","start_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_502001_2","result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_502001_3","win_result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_502001_4","lively_voice_id":"314102001_314103001"},{"navi_set_id":"502","navi_set_pattern_id":"50202","start_wait_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_502001_1","start_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_502002_2","result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_502001_3","win_result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_502001_4","lively_voice_id":"314100001_314105001_314106001"},{"navi_set_id":"503","navi_set_pattern_id":"50301","start_wait_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_503001_1","start_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_503001_2","result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_503001_3","win_result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_503001_4","lively_voice_id":"314101001_314103001"},{"navi_set_id":"503","navi_set_pattern_id":"50302","start_wait_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_503001_1","start_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_503002_2","result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_503001_3","win_result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_503001_4","lively_voice_id":"314100001_314105001_314106001"},{"navi_set_id":"504","navi_set_pattern_id":"50401","start_wait_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_504001_1","start_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_504001_2","result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_504001_3","win_result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_504001_4","lively_voice_id":"314101001_314102001"},{"navi_set_id":"504","navi_set_pattern_id":"50402","start_wait_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_504001_1","start_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_504002_2","result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_504001_3","win_result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_504001_4","lively_voice_id":"314100001_314105001_314106001"},{"navi_set_id":"505","navi_set_pattern_id":"50501","start_wait_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_505001_1","start_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_505001_2","result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_505001_3","win_result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_505001_4","lively_voice_id":"314101001_314102001_314103001"},{"navi_set_id":"505","navi_set_pattern_id":"50502","start_wait_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_505001_1","start_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_505002_2","result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_505001_3","win_result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_505001_4","lively_voice_id":"314100001_314106001"},{"navi_set_id":"506","navi_set_pattern_id":"50601","start_wait_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_506001_1","start_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_506001_2","result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_506001_3","win_result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_506001_4","lively_voice_id":"314101001_314102001_314103001"},{"navi_set_id":"506","navi_set_pattern_id":"50602","start_wait_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_506001_1","start_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_506002_2","result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_506001_3","win_result_navi_id":"NAVI_ROULETTE_ROGIN_BONUS_506001_4","lively_voice_id":"314100001_314105001"}]
+[
+  {
+    "navi_set_id": "501",
+    "navi_set_pattern_id": "50101",
+    "start_wait_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_501001_1",
+    "start_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_501001_2",
+    "result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_501001_3",
+    "win_result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_501001_4",
+    "lively_voice_id": "314101001_314102001_314103001"
+  },
+  {
+    "navi_set_id": "501",
+    "navi_set_pattern_id": "50102",
+    "start_wait_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_501001_1",
+    "start_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_501002_2",
+    "result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_501001_3",
+    "win_result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_501001_4",
+    "lively_voice_id": "314105001_314106001"
+  },
+  {
+    "navi_set_id": "502",
+    "navi_set_pattern_id": "50201",
+    "start_wait_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_502001_1",
+    "start_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_502001_2",
+    "result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_502001_3",
+    "win_result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_502001_4",
+    "lively_voice_id": "314102001_314103001"
+  },
+  {
+    "navi_set_id": "502",
+    "navi_set_pattern_id": "50202",
+    "start_wait_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_502001_1",
+    "start_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_502002_2",
+    "result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_502001_3",
+    "win_result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_502001_4",
+    "lively_voice_id": "314100001_314105001_314106001"
+  },
+  {
+    "navi_set_id": "503",
+    "navi_set_pattern_id": "50301",
+    "start_wait_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_503001_1",
+    "start_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_503001_2",
+    "result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_503001_3",
+    "win_result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_503001_4",
+    "lively_voice_id": "314101001_314103001"
+  },
+  {
+    "navi_set_id": "503",
+    "navi_set_pattern_id": "50302",
+    "start_wait_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_503001_1",
+    "start_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_503002_2",
+    "result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_503001_3",
+    "win_result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_503001_4",
+    "lively_voice_id": "314100001_314105001_314106001"
+  },
+  {
+    "navi_set_id": "504",
+    "navi_set_pattern_id": "50401",
+    "start_wait_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_504001_1",
+    "start_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_504001_2",
+    "result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_504001_3",
+    "win_result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_504001_4",
+    "lively_voice_id": "314101001_314102001"
+  },
+  {
+    "navi_set_id": "504",
+    "navi_set_pattern_id": "50402",
+    "start_wait_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_504001_1",
+    "start_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_504002_2",
+    "result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_504001_3",
+    "win_result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_504001_4",
+    "lively_voice_id": "314100001_314105001_314106001"
+  },
+  {
+    "navi_set_id": "505",
+    "navi_set_pattern_id": "50501",
+    "start_wait_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_505001_1",
+    "start_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_505001_2",
+    "result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_505001_3",
+    "win_result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_505001_4",
+    "lively_voice_id": "314101001_314102001_314103001"
+  },
+  {
+    "navi_set_id": "505",
+    "navi_set_pattern_id": "50502",
+    "start_wait_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_505001_1",
+    "start_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_505002_2",
+    "result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_505001_3",
+    "win_result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_505001_4",
+    "lively_voice_id": "314100001_314106001"
+  },
+  {
+    "navi_set_id": "506",
+    "navi_set_pattern_id": "50601",
+    "start_wait_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_506001_1",
+    "start_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_506001_2",
+    "result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_506001_3",
+    "win_result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_506001_4",
+    "lively_voice_id": "314101001_314102001_314103001"
+  },
+  {
+    "navi_set_id": "506",
+    "navi_set_pattern_id": "50602",
+    "start_wait_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_506001_1",
+    "start_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_506002_2",
+    "result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_506001_3",
+    "win_result_navi_id": "NAVI_ROULETTE_ROGIN_BONUS_506001_4",
+    "lively_voice_id": "314100001_314105001"
+  }
+]

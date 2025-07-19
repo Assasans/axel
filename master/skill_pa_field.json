@@ -1,1 +1,128 @@
-[{"skill_id":"10000","skill_icon":"1000","skill_type":"damage_physics_up","skill_attribute":"0","trigger":"0","trigger_value1":"0","trigger_value2":"0"},{"skill_id":"10010","skill_icon":"1001","skill_type":"damage_magic_up","skill_attribute":"0","trigger":"0","trigger_value1":"0","trigger_value2":"0"},{"skill_id":"10020","skill_icon":"1002","skill_type":"defense_physics_up_passive","skill_attribute":"0","trigger":"0","trigger_value1":"0","trigger_value2":"0"},{"skill_id":"10030","skill_icon":"1003","skill_type":"defense_magic_up_passive","skill_attribute":"0","trigger":"0","trigger_value1":"0","trigger_value2":"0"},{"skill_id":"10040","skill_icon":"1004","skill_type":"speed_up_passive","skill_attribute":"0","trigger":"0","trigger_value1":"0","trigger_value2":"0"},{"skill_id":"20000","skill_icon":"2000","skill_type":"damage_relative","skill_attribute":"0","trigger":"2","trigger_value1":"2","trigger_value2":"0"},{"skill_id":"20010","skill_icon":"2001","skill_type":"damage_relative","skill_attribute":"0","trigger":"2","trigger_value1":"1","trigger_value2":"0"},{"skill_id":"20020","skill_icon":"2002","skill_type":"damage_relative","skill_attribute":"0","trigger":"7","trigger_value1":"8","trigger_value2":"0"},{"skill_id":"20030","skill_icon":"2003","skill_type":"damage_relative","skill_attribute":"0","trigger":"7","trigger_value1":"4","trigger_value2":"0"},{"skill_id":"20040","skill_icon":"2004","skill_type":"damage_physics_down","skill_attribute":"0","trigger":"0","trigger_value1":"0","trigger_value2":"0"},{"skill_id":"20050","skill_icon":"2005","skill_type":"damage_magic_down","skill_attribute":"0","trigger":"0","trigger_value1":"0","trigger_value2":"0"},{"skill_id":"20060","skill_icon":"2006","skill_type":"defense_physics_down_passive","skill_attribute":"0","trigger":"0","trigger_value1":"0","trigger_value2":"0"},{"skill_id":"20070","skill_icon":"2007","skill_type":"defense_magic_down_passive","skill_attribute":"0","trigger":"0","trigger_value1":"0","trigger_value2":"0"},{"skill_id":"20080","skill_icon":"2008","skill_type":"speed_down_passive","skill_attribute":"0","trigger":"0","trigger_value1":"0","trigger_value2":"0"}]
+[
+  {
+    "skill_id": "10000",
+    "skill_icon": "1000",
+    "skill_type": "damage_physics_up",
+    "skill_attribute": "0",
+    "trigger": "0",
+    "trigger_value1": "0",
+    "trigger_value2": "0"
+  },
+  {
+    "skill_id": "10010",
+    "skill_icon": "1001",
+    "skill_type": "damage_magic_up",
+    "skill_attribute": "0",
+    "trigger": "0",
+    "trigger_value1": "0",
+    "trigger_value2": "0"
+  },
+  {
+    "skill_id": "10020",
+    "skill_icon": "1002",
+    "skill_type": "defense_physics_up_passive",
+    "skill_attribute": "0",
+    "trigger": "0",
+    "trigger_value1": "0",
+    "trigger_value2": "0"
+  },
+  {
+    "skill_id": "10030",
+    "skill_icon": "1003",
+    "skill_type": "defense_magic_up_passive",
+    "skill_attribute": "0",
+    "trigger": "0",
+    "trigger_value1": "0",
+    "trigger_value2": "0"
+  },
+  {
+    "skill_id": "10040",
+    "skill_icon": "1004",
+    "skill_type": "speed_up_passive",
+    "skill_attribute": "0",
+    "trigger": "0",
+    "trigger_value1": "0",
+    "trigger_value2": "0"
+  },
+  {
+    "skill_id": "20000",
+    "skill_icon": "2000",
+    "skill_type": "damage_relative",
+    "skill_attribute": "0",
+    "trigger": "2",
+    "trigger_value1": "2",
+    "trigger_value2": "0"
+  },
+  {
+    "skill_id": "20010",
+    "skill_icon": "2001",
+    "skill_type": "damage_relative",
+    "skill_attribute": "0",
+    "trigger": "2",
+    "trigger_value1": "1",
+    "trigger_value2": "0"
+  },
+  {
+    "skill_id": "20020",
+    "skill_icon": "2002",
+    "skill_type": "damage_relative",
+    "skill_attribute": "0",
+    "trigger": "7",
+    "trigger_value1": "8",
+    "trigger_value2": "0"
+  },
+  {
+    "skill_id": "20030",
+    "skill_icon": "2003",
+    "skill_type": "damage_relative",
+    "skill_attribute": "0",
+    "trigger": "7",
+    "trigger_value1": "4",
+    "trigger_value2": "0"
+  },
+  {
+    "skill_id": "20040",
+    "skill_icon": "2004",
+    "skill_type": "damage_physics_down",
+    "skill_attribute": "0",
+    "trigger": "0",
+    "trigger_value1": "0",
+    "trigger_value2": "0"
+  },
+  {
+    "skill_id": "20050",
+    "skill_icon": "2005",
+    "skill_type": "damage_magic_down",
+    "skill_attribute": "0",
+    "trigger": "0",
+    "trigger_value1": "0",
+    "trigger_value2": "0"
+  },
+  {
+    "skill_id": "20060",
+    "skill_icon": "2006",
+    "skill_type": "defense_physics_down_passive",
+    "skill_attribute": "0",
+    "trigger": "0",
+    "trigger_value1": "0",
+    "trigger_value2": "0"
+  },
+  {
+    "skill_id": "20070",
+    "skill_icon": "2007",
+    "skill_type": "defense_magic_down_passive",
+    "skill_attribute": "0",
+    "trigger": "0",
+    "trigger_value1": "0",
+    "trigger_value2": "0"
+  },
+  {
+    "skill_id": "20080",
+    "skill_icon": "2008",
+    "skill_type": "speed_down_passive",
+    "skill_attribute": "0",
+    "trigger": "0",
+    "trigger_value1": "0",
+    "trigger_value2": "0"
+  }
+]

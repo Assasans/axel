@@ -1,1 +1,122 @@
-[{"score_id":"1","score_type_id":"101","score":"4000000","img_type":"10"},{"score_id":"2","score_type_id":"101","score":"3500000","img_type":"9"},{"score_id":"3","score_type_id":"101","score":"3000000","img_type":"8"},{"score_id":"4","score_type_id":"101","score":"2500000","img_type":"7"},{"score_id":"5","score_type_id":"101","score":"2000000","img_type":"6"},{"score_id":"6","score_type_id":"101","score":"1500000","img_type":"5"},{"score_id":"7","score_type_id":"101","score":"1000000","img_type":"4"},{"score_id":"8","score_type_id":"101","score":"750000","img_type":"3"},{"score_id":"9","score_type_id":"101","score":"500000","img_type":"2"},{"score_id":"10","score_type_id":"101","score":"1","img_type":"1"},{"score_id":"10201","score_type_id":"102","score":"4000000","img_type":"10"},{"score_id":"10202","score_type_id":"102","score":"3500000","img_type":"9"},{"score_id":"10203","score_type_id":"102","score":"3000000","img_type":"8"},{"score_id":"10204","score_type_id":"102","score":"2500000","img_type":"7"},{"score_id":"10205","score_type_id":"102","score":"2000000","img_type":"6"},{"score_id":"10206","score_type_id":"102","score":"1500000","img_type":"5"},{"score_id":"10207","score_type_id":"102","score":"1000000","img_type":"4"},{"score_id":"10208","score_type_id":"102","score":"750000","img_type":"3"},{"score_id":"10209","score_type_id":"102","score":"500000","img_type":"2"},{"score_id":"10210","score_type_id":"102","score":"1","img_type":"1"}]
+[
+  {
+    "score_id": "1",
+    "score_type_id": "101",
+    "score": "4000000",
+    "img_type": "10"
+  },
+  {
+    "score_id": "2",
+    "score_type_id": "101",
+    "score": "3500000",
+    "img_type": "9"
+  },
+  {
+    "score_id": "3",
+    "score_type_id": "101",
+    "score": "3000000",
+    "img_type": "8"
+  },
+  {
+    "score_id": "4",
+    "score_type_id": "101",
+    "score": "2500000",
+    "img_type": "7"
+  },
+  {
+    "score_id": "5",
+    "score_type_id": "101",
+    "score": "2000000",
+    "img_type": "6"
+  },
+  {
+    "score_id": "6",
+    "score_type_id": "101",
+    "score": "1500000",
+    "img_type": "5"
+  },
+  {
+    "score_id": "7",
+    "score_type_id": "101",
+    "score": "1000000",
+    "img_type": "4"
+  },
+  {
+    "score_id": "8",
+    "score_type_id": "101",
+    "score": "750000",
+    "img_type": "3"
+  },
+  {
+    "score_id": "9",
+    "score_type_id": "101",
+    "score": "500000",
+    "img_type": "2"
+  },
+  {
+    "score_id": "10",
+    "score_type_id": "101",
+    "score": "1",
+    "img_type": "1"
+  },
+  {
+    "score_id": "10201",
+    "score_type_id": "102",
+    "score": "4000000",
+    "img_type": "10"
+  },
+  {
+    "score_id": "10202",
+    "score_type_id": "102",
+    "score": "3500000",
+    "img_type": "9"
+  },
+  {
+    "score_id": "10203",
+    "score_type_id": "102",
+    "score": "3000000",
+    "img_type": "8"
+  },
+  {
+    "score_id": "10204",
+    "score_type_id": "102",
+    "score": "2500000",
+    "img_type": "7"
+  },
+  {
+    "score_id": "10205",
+    "score_type_id": "102",
+    "score": "2000000",
+    "img_type": "6"
+  },
+  {
+    "score_id": "10206",
+    "score_type_id": "102",
+    "score": "1500000",
+    "img_type": "5"
+  },
+  {
+    "score_id": "10207",
+    "score_type_id": "102",
+    "score": "1000000",
+    "img_type": "4"
+  },
+  {
+    "score_id": "10208",
+    "score_type_id": "102",
+    "score": "750000",
+    "img_type": "3"
+  },
+  {
+    "score_id": "10209",
+    "score_type_id": "102",
+    "score": "500000",
+    "img_type": "2"
+  },
+  {
+    "score_id": "10210",
+    "score_type_id": "102",
+    "score": "1",
+    "img_type": "1"
+  }
+]

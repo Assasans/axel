@@ -1,1 +1,32 @@
-[{"id":"1","name":"TEXT_SHOP_1","description":"0"},{"id":"4","name":"TEXT_SHOP_4","description":"0"},{"id":"6","name":"TEXT_SHOP_6","description":"0"},{"id":"7","name":"TEXT_SHOP_7","description":"0"},{"id":"8","name":"TEXT_SHOP_8","description":"0"},{"id":"9","name":"TEXT_SHOP_9","description":"0"}]
+[
+  {
+    "id": "1",
+    "name": "TEXT_SHOP_1",
+    "description": "0"
+  },
+  {
+    "id": "4",
+    "name": "TEXT_SHOP_4",
+    "description": "0"
+  },
+  {
+    "id": "6",
+    "name": "TEXT_SHOP_6",
+    "description": "0"
+  },
+  {
+    "id": "7",
+    "name": "TEXT_SHOP_7",
+    "description": "0"
+  },
+  {
+    "id": "8",
+    "name": "TEXT_SHOP_8",
+    "description": "0"
+  },
+  {
+    "id": "9",
+    "name": "TEXT_SHOP_9",
+    "description": "0"
+  }
+]

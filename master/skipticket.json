@@ -1,1 +1,200 @@
-[{"animation_name":"BoufuriSkip_1","is_default":"0","display_start_at":"2122\/10\/31 15:00","display_end_at":"2122\/11\/21 22:00"},{"animation_name":"BoufuriSkip_2","is_default":"0","display_start_at":"2122\/10\/31 15:00","display_end_at":"2122\/11\/21 22:00"},{"animation_name":"BoufuriSkip_3","is_default":"0","display_start_at":"2122\/10\/31 15:00","display_end_at":"2122\/11\/21 22:00"},{"animation_name":"QuestSkip_1","is_default":"1","display_start_at":"0","display_end_at":"0"},{"animation_name":"QuestSkip_2","is_default":"1","display_start_at":"0","display_end_at":"0"},{"animation_name":"QuestSkip_3","is_default":"1","display_start_at":"0","display_end_at":"0"},{"animation_name":"RailgunSkip_1","is_default":"0","display_start_at":"2122\/5\/11 15:00","display_end_at":"2122\/5\/30 22:00"},{"animation_name":"RailgunSkip_2","is_default":"0","display_start_at":"2122\/5\/11 15:00","display_end_at":"2122\/5\/30 22:00"},{"animation_name":"RailgunSkip_3","is_default":"0","display_start_at":"2122\/5\/11 15:00","display_end_at":"2122\/5\/30 22:00"},{"animation_name":"RezeroSkip_1","is_default":"0","display_start_at":"2021\/11\/9 0:00","display_end_at":"2021\/11\/23 0:00"},{"animation_name":"RezeroSkip_2","is_default":"0","display_start_at":"2021\/11\/9 0:00","display_end_at":"2021\/11\/23 0:00"},{"animation_name":"RezeroSkip_3","is_default":"0","display_start_at":"2021\/11\/9 0:00","display_end_at":"2021\/11\/23 0:00"},{"animation_name":"ShieldSkip_1","is_default":"0","display_start_at":"2024\/5\/23 0:00","display_end_at":"2024\/6\/7 0:00"},{"animation_name":"ShieldSkip_2","is_default":"0","display_start_at":"2024\/5\/23 0:00","display_end_at":"2024\/6\/7 0:00"},{"animation_name":"ShieldSkip_3","is_default":"0","display_start_at":"2024\/5\/23 0:00","display_end_at":"2024\/6\/7 0:00"},{"animation_name":"TensuraSkip_1","is_default":"0","display_start_at":"2123\/12\/15 15:00","display_end_at":"2123\/12\/30 22:00"},{"animation_name":"TensuraSkip_2","is_default":"0","display_start_at":"2123\/12\/15 15:00","display_end_at":"2123\/12\/30 22:00"},{"animation_name":"NewYearSkip_1","is_default":"0","display_start_at":"2124\/12\/23 0:00","display_end_at":"2125\/1\/3 0:00"},{"animation_name":"NewYearSkip_2","is_default":"0","display_start_at":"2124\/12\/23 0:00","display_end_at":"2125\/1\/3 0:00"},{"animation_name":"NewYearSkip_3","is_default":"0","display_start_at":"2124\/12\/23 0:00","display_end_at":"2125\/1\/3 0:00"},{"animation_name":"OverLoadSkip_1","is_default":"0","display_start_at":"2023\/2\/21 0:00","display_end_at":"2023\/3\/15 0:00"},{"animation_name":"OverLoadSkip_2","is_default":"0","display_start_at":"2023\/2\/21 0:00","display_end_at":"2023\/3\/15 0:00"},{"animation_name":"OverLoadSkip_3","is_default":"0","display_start_at":"2023\/2\/21 0:00","display_end_at":"2023\/3\/15 0:00"},{"animation_name":"DanmachiSkip_1","is_default":"0","display_start_at":"2022\/5\/26 0:00","display_end_at":"2022\/6\/10 0:00"},{"animation_name":"DanmachiSkip_2","is_default":"0","display_start_at":"2022\/5\/26 0:00","display_end_at":"2022\/6\/10 0:00"},{"animation_name":"DanmachiSkip_3","is_default":"0","display_start_at":"2022\/5\/26 0:00","display_end_at":"2022\/6\/10 0:00"},{"animation_name":"HaruhiSkip_1","is_default":"0","display_start_at":"2123\/7\/31 15:00","display_end_at":"2123\/8\/20 22:00"},{"animation_name":"HaruhiSkip_2","is_default":"0","display_start_at":"2123\/7\/31 15:00","display_end_at":"2123\/8\/20 22:00"},{"animation_name":"KagejitsuSkip_1","is_default":"0","display_start_at":"2124\/1\/31 15:00","display_end_at":"2124\/2\/26 22:00"},{"animation_name":"KagejitsuSkip_2","is_default":"0","display_start_at":"2124\/1\/31 15:00","display_end_at":"2124\/2\/26 22:00"},{"animation_name":"MushokuSkip_1","is_default":"0","display_start_at":"2123\/1\/20 15:00","display_end_at":"2123\/2\/9 22:00"},{"animation_name":"MushokuSkip_2","is_default":"0","display_start_at":"2123\/1\/20 15:00","display_end_at":"2123\/2\/9 22:00"},{"animation_name":"MushokuSkip_3","is_default":"0","display_start_at":"2123\/1\/20 15:00","display_end_at":"2123\/2\/9 22:00"}]
+[
+  {
+    "animation_name": "BoufuriSkip_1",
+    "is_default": "0",
+    "display_start_at": "2122/10/31 15:00",
+    "display_end_at": "2122/11/21 22:00"
+  },
+  {
+    "animation_name": "BoufuriSkip_2",
+    "is_default": "0",
+    "display_start_at": "2122/10/31 15:00",
+    "display_end_at": "2122/11/21 22:00"
+  },
+  {
+    "animation_name": "BoufuriSkip_3",
+    "is_default": "0",
+    "display_start_at": "2122/10/31 15:00",
+    "display_end_at": "2122/11/21 22:00"
+  },
+  {
+    "animation_name": "QuestSkip_1",
+    "is_default": "1",
+    "display_start_at": "0",
+    "display_end_at": "0"
+  },
+  {
+    "animation_name": "QuestSkip_2",
+    "is_default": "1",
+    "display_start_at": "0",
+    "display_end_at": "0"
+  },
+  {
+    "animation_name": "QuestSkip_3",
+    "is_default": "1",
+    "display_start_at": "0",
+    "display_end_at": "0"
+  },
+  {
+    "animation_name": "RailgunSkip_1",
+    "is_default": "0",
+    "display_start_at": "2122/5/11 15:00",
+    "display_end_at": "2122/5/30 22:00"
+  },
+  {
+    "animation_name": "RailgunSkip_2",
+    "is_default": "0",
+    "display_start_at": "2122/5/11 15:00",
+    "display_end_at": "2122/5/30 22:00"
+  },
+  {
+    "animation_name": "RailgunSkip_3",
+    "is_default": "0",
+    "display_start_at": "2122/5/11 15:00",
+    "display_end_at": "2122/5/30 22:00"
+  },
+  {
+    "animation_name": "RezeroSkip_1",
+    "is_default": "0",
+    "display_start_at": "2021/11/9 0:00",
+    "display_end_at": "2021/11/23 0:00"
+  },
+  {
+    "animation_name": "RezeroSkip_2",
+    "is_default": "0",
+    "display_start_at": "2021/11/9 0:00",
+    "display_end_at": "2021/11/23 0:00"
+  },
+  {
+    "animation_name": "RezeroSkip_3",
+    "is_default": "0",
+    "display_start_at": "2021/11/9 0:00",
+    "display_end_at": "2021/11/23 0:00"
+  },
+  {
+    "animation_name": "ShieldSkip_1",
+    "is_default": "0",
+    "display_start_at": "2024/5/23 0:00",
+    "display_end_at": "2024/6/7 0:00"
+  },
+  {
+    "animation_name": "ShieldSkip_2",
+    "is_default": "0",
+    "display_start_at": "2024/5/23 0:00",
+    "display_end_at": "2024/6/7 0:00"
+  },
+  {
+    "animation_name": "ShieldSkip_3",
+    "is_default": "0",
+    "display_start_at": "2024/5/23 0:00",
+    "display_end_at": "2024/6/7 0:00"
+  },
+  {
+    "animation_name": "TensuraSkip_1",
+    "is_default": "0",
+    "display_start_at": "2123/12/15 15:00",
+    "display_end_at": "2123/12/30 22:00"
+  },
+  {
+    "animation_name": "TensuraSkip_2",
+    "is_default": "0",
+    "display_start_at": "2123/12/15 15:00",
+    "display_end_at": "2123/12/30 22:00"
+  },
+  {
+    "animation_name": "NewYearSkip_1",
+    "is_default": "0",
+    "display_start_at": "2124/12/23 0:00",
+    "display_end_at": "2125/1/3 0:00"
+  },
+  {
+    "animation_name": "NewYearSkip_2",
+    "is_default": "0",
+    "display_start_at": "2124/12/23 0:00",
+    "display_end_at": "2125/1/3 0:00"
+  },
+  {
+    "animation_name": "NewYearSkip_3",
+    "is_default": "0",
+    "display_start_at": "2124/12/23 0:00",
+    "display_end_at": "2125/1/3 0:00"
+  },
+  {
+    "animation_name": "OverLoadSkip_1",
+    "is_default": "0",
+    "display_start_at": "2023/2/21 0:00",
+    "display_end_at": "2023/3/15 0:00"
+  },
+  {
+    "animation_name": "OverLoadSkip_2",
+    "is_default": "0",
+    "display_start_at": "2023/2/21 0:00",
+    "display_end_at": "2023/3/15 0:00"
+  },
+  {
+    "animation_name": "OverLoadSkip_3",
+    "is_default": "0",
+    "display_start_at": "2023/2/21 0:00",
+    "display_end_at": "2023/3/15 0:00"
+  },
+  {
+    "animation_name": "DanmachiSkip_1",
+    "is_default": "0",
+    "display_start_at": "2022/5/26 0:00",
+    "display_end_at": "2022/6/10 0:00"
+  },
+  {
+    "animation_name": "DanmachiSkip_2",
+    "is_default": "0",
+    "display_start_at": "2022/5/26 0:00",
+    "display_end_at": "2022/6/10 0:00"
+  },
+  {
+    "animation_name": "DanmachiSkip_3",
+    "is_default": "0",
+    "display_start_at": "2022/5/26 0:00",
+    "display_end_at": "2022/6/10 0:00"
+  },
+  {
+    "animation_name": "HaruhiSkip_1",
+    "is_default": "0",
+    "display_start_at": "2123/7/31 15:00",
+    "display_end_at": "2123/8/20 22:00"
+  },
+  {
+    "animation_name": "HaruhiSkip_2",
+    "is_default": "0",
+    "display_start_at": "2123/7/31 15:00",
+    "display_end_at": "2123/8/20 22:00"
+  },
+  {
+    "animation_name": "KagejitsuSkip_1",
+    "is_default": "0",
+    "display_start_at": "2124/1/31 15:00",
+    "display_end_at": "2124/2/26 22:00"
+  },
+  {
+    "animation_name": "KagejitsuSkip_2",
+    "is_default": "0",
+    "display_start_at": "2124/1/31 15:00",
+    "display_end_at": "2124/2/26 22:00"
+  },
+  {
+    "animation_name": "MushokuSkip_1",
+    "is_default": "0",
+    "display_start_at": "2123/1/20 15:00",
+    "display_end_at": "2123/2/9 22:00"
+  },
+  {
+    "animation_name": "MushokuSkip_2",
+    "is_default": "0",
+    "display_start_at": "2123/1/20 15:00",
+    "display_end_at": "2123/2/9 22:00"
+  },
+  {
+    "animation_name": "MushokuSkip_3",
+    "is_default": "0",
+    "display_start_at": "2123/1/20 15:00",
+    "display_end_at": "2123/2/9 22:00"
+  }
+]

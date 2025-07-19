@@ -1,1 +1,296 @@
-[{"id":"1","intimacy_lv":"2","exp":"20","start_at":"0"},{"id":"2","intimacy_lv":"3","exp":"60","start_at":"0"},{"id":"3","intimacy_lv":"4","exp":"150","start_at":"0"},{"id":"4","intimacy_lv":"5","exp":"250","start_at":"0"},{"id":"5","intimacy_lv":"6","exp":"400","start_at":"0"},{"id":"6","intimacy_lv":"7","exp":"600","start_at":"0"},{"id":"7","intimacy_lv":"8","exp":"900","start_at":"0"},{"id":"8","intimacy_lv":"9","exp":"1200","start_at":"0"},{"id":"9","intimacy_lv":"10","exp":"1500","start_at":"0"},{"id":"10","intimacy_lv":"11","exp":"1800","start_at":"0"},{"id":"11","intimacy_lv":"12","exp":"2200","start_at":"0"},{"id":"12","intimacy_lv":"13","exp":"2700","start_at":"0"},{"id":"13","intimacy_lv":"14","exp":"3200","start_at":"0"},{"id":"14","intimacy_lv":"15","exp":"3700","start_at":"0"},{"id":"15","intimacy_lv":"16","exp":"4200","start_at":"0"},{"id":"16","intimacy_lv":"17","exp":"4800","start_at":"0"},{"id":"17","intimacy_lv":"18","exp":"5400","start_at":"0"},{"id":"18","intimacy_lv":"19","exp":"6000","start_at":"0"},{"id":"19","intimacy_lv":"20","exp":"7000","start_at":"0"},{"id":"20","intimacy_lv":"21","exp":"7500","start_at":"2020\/7\/14 6:00"},{"id":"21","intimacy_lv":"22","exp":"8000","start_at":"2020\/7\/14 6:00"},{"id":"22","intimacy_lv":"23","exp":"8500","start_at":"2020\/7\/14 6:00"},{"id":"23","intimacy_lv":"24","exp":"9000","start_at":"2020\/7\/14 6:00"},{"id":"24","intimacy_lv":"25","exp":"9500","start_at":"2020\/7\/14 6:00"},{"id":"25","intimacy_lv":"26","exp":"10000","start_at":"2020\/7\/14 6:00"},{"id":"26","intimacy_lv":"27","exp":"10500","start_at":"2020\/7\/14 6:00"},{"id":"27","intimacy_lv":"28","exp":"11000","start_at":"2020\/7\/14 6:00"},{"id":"28","intimacy_lv":"29","exp":"11500","start_at":"2020\/7\/14 6:00"},{"id":"29","intimacy_lv":"30","exp":"12000","start_at":"2020\/7\/14 6:00"},{"id":"30","intimacy_lv":"31","exp":"12500","start_at":"2022\/6\/30 0:00"},{"id":"31","intimacy_lv":"32","exp":"13000","start_at":"2022\/6\/30 0:00"},{"id":"32","intimacy_lv":"33","exp":"13500","start_at":"2022\/6\/30 0:00"},{"id":"33","intimacy_lv":"34","exp":"14000","start_at":"2022\/6\/30 0:00"},{"id":"34","intimacy_lv":"35","exp":"14500","start_at":"2022\/6\/30 0:00"},{"id":"35","intimacy_lv":"36","exp":"15000","start_at":"2022\/6\/30 0:00"},{"id":"36","intimacy_lv":"37","exp":"15500","start_at":"2022\/6\/30 0:00"},{"id":"37","intimacy_lv":"38","exp":"16000","start_at":"2022\/6\/30 0:00"},{"id":"38","intimacy_lv":"39","exp":"16500","start_at":"2022\/6\/30 0:00"},{"id":"39","intimacy_lv":"40","exp":"17000","start_at":"2022\/6\/30 0:00"},{"id":"40","intimacy_lv":"41","exp":"17500","start_at":"2023\/10\/27 0:00"},{"id":"41","intimacy_lv":"42","exp":"18000","start_at":"2023\/10\/27 0:00"},{"id":"42","intimacy_lv":"43","exp":"18500","start_at":"2023\/10\/27 0:00"},{"id":"43","intimacy_lv":"44","exp":"19000","start_at":"2023\/10\/27 0:00"},{"id":"44","intimacy_lv":"45","exp":"19500","start_at":"2023\/10\/27 0:00"},{"id":"45","intimacy_lv":"46","exp":"20000","start_at":"2023\/10\/27 0:00"},{"id":"46","intimacy_lv":"47","exp":"20000","start_at":"2023\/10\/27 0:00"},{"id":"47","intimacy_lv":"48","exp":"20000","start_at":"2023\/10\/27 0:00"},{"id":"48","intimacy_lv":"49","exp":"20000","start_at":"2023\/10\/27 0:00"},{"id":"49","intimacy_lv":"50","exp":"20000","start_at":"2023\/10\/27 0:00"}]
+[
+  {
+    "id": "1",
+    "intimacy_lv": "2",
+    "exp": "20",
+    "start_at": "0"
+  },
+  {
+    "id": "2",
+    "intimacy_lv": "3",
+    "exp": "60",
+    "start_at": "0"
+  },
+  {
+    "id": "3",
+    "intimacy_lv": "4",
+    "exp": "150",
+    "start_at": "0"
+  },
+  {
+    "id": "4",
+    "intimacy_lv": "5",
+    "exp": "250",
+    "start_at": "0"
+  },
+  {
+    "id": "5",
+    "intimacy_lv": "6",
+    "exp": "400",
+    "start_at": "0"
+  },
+  {
+    "id": "6",
+    "intimacy_lv": "7",
+    "exp": "600",
+    "start_at": "0"
+  },
+  {
+    "id": "7",
+    "intimacy_lv": "8",
+    "exp": "900",
+    "start_at": "0"
+  },
+  {
+    "id": "8",
+    "intimacy_lv": "9",
+    "exp": "1200",
+    "start_at": "0"
+  },
+  {
+    "id": "9",
+    "intimacy_lv": "10",
+    "exp": "1500",
+    "start_at": "0"
+  },
+  {
+    "id": "10",
+    "intimacy_lv": "11",
+    "exp": "1800",
+    "start_at": "0"
+  },
+  {
+    "id": "11",
+    "intimacy_lv": "12",
+    "exp": "2200",
+    "start_at": "0"
+  },
+  {
+    "id": "12",
+    "intimacy_lv": "13",
+    "exp": "2700",
+    "start_at": "0"
+  },
+  {
+    "id": "13",
+    "intimacy_lv": "14",
+    "exp": "3200",
+    "start_at": "0"
+  },
+  {
+    "id": "14",
+    "intimacy_lv": "15",
+    "exp": "3700",
+    "start_at": "0"
+  },
+  {
+    "id": "15",
+    "intimacy_lv": "16",
+    "exp": "4200",
+    "start_at": "0"
+  },
+  {
+    "id": "16",
+    "intimacy_lv": "17",
+    "exp": "4800",
+    "start_at": "0"
+  },
+  {
+    "id": "17",
+    "intimacy_lv": "18",
+    "exp": "5400",
+    "start_at": "0"
+  },
+  {
+    "id": "18",
+    "intimacy_lv": "19",
+    "exp": "6000",
+    "start_at": "0"
+  },
+  {
+    "id": "19",
+    "intimacy_lv": "20",
+    "exp": "7000",
+    "start_at": "0"
+  },
+  {
+    "id": "20",
+    "intimacy_lv": "21",
+    "exp": "7500",
+    "start_at": "2020/7/14 6:00"
+  },
+  {
+    "id": "21",
+    "intimacy_lv": "22",
+    "exp": "8000",
+    "start_at": "2020/7/14 6:00"
+  },
+  {
+    "id": "22",
+    "intimacy_lv": "23",
+    "exp": "8500",
+    "start_at": "2020/7/14 6:00"
+  },
+  {
+    "id": "23",
+    "intimacy_lv": "24",
+    "exp": "9000",
+    "start_at": "2020/7/14 6:00"
+  },
+  {
+    "id": "24",
+    "intimacy_lv": "25",
+    "exp": "9500",
+    "start_at": "2020/7/14 6:00"
+  },
+  {
+    "id": "25",
+    "intimacy_lv": "26",
+    "exp": "10000",
+    "start_at": "2020/7/14 6:00"
+  },
+  {
+    "id": "26",
+    "intimacy_lv": "27",
+    "exp": "10500",
+    "start_at": "2020/7/14 6:00"
+  },
+  {
+    "id": "27",
+    "intimacy_lv": "28",
+    "exp": "11000",
+    "start_at": "2020/7/14 6:00"
+  },
+  {
+    "id": "28",
+    "intimacy_lv": "29",
+    "exp": "11500",
+    "start_at": "2020/7/14 6:00"
+  },
+  {
+    "id": "29",
+    "intimacy_lv": "30",
+    "exp": "12000",
+    "start_at": "2020/7/14 6:00"
+  },
+  {
+    "id": "30",
+    "intimacy_lv": "31",
+    "exp": "12500",
+    "start_at": "2022/6/30 0:00"
+  },
+  {
+    "id": "31",
+    "intimacy_lv": "32",
+    "exp": "13000",
+    "start_at": "2022/6/30 0:00"
+  },
+  {
+    "id": "32",
+    "intimacy_lv": "33",
+    "exp": "13500",
+    "start_at": "2022/6/30 0:00"
+  },
+  {
+    "id": "33",
+    "intimacy_lv": "34",
+    "exp": "14000",
+    "start_at": "2022/6/30 0:00"
+  },
+  {
+    "id": "34",
+    "intimacy_lv": "35",
+    "exp": "14500",
+    "start_at": "2022/6/30 0:00"
+  },
+  {
+    "id": "35",
+    "intimacy_lv": "36",
+    "exp": "15000",
+    "start_at": "2022/6/30 0:00"
+  },
+  {
+    "id": "36",
+    "intimacy_lv": "37",
+    "exp": "15500",
+    "start_at": "2022/6/30 0:00"
+  },
+  {
+    "id": "37",
+    "intimacy_lv": "38",
+    "exp": "16000",
+    "start_at": "2022/6/30 0:00"
+  },
+  {
+    "id": "38",
+    "intimacy_lv": "39",
+    "exp": "16500",
+    "start_at": "2022/6/30 0:00"
+  },
+  {
+    "id": "39",
+    "intimacy_lv": "40",
+    "exp": "17000",
+    "start_at": "2022/6/30 0:00"
+  },
+  {
+    "id": "40",
+    "intimacy_lv": "41",
+    "exp": "17500",
+    "start_at": "2023/10/27 0:00"
+  },
+  {
+    "id": "41",
+    "intimacy_lv": "42",
+    "exp": "18000",
+    "start_at": "2023/10/27 0:00"
+  },
+  {
+    "id": "42",
+    "intimacy_lv": "43",
+    "exp": "18500",
+    "start_at": "2023/10/27 0:00"
+  },
+  {
+    "id": "43",
+    "intimacy_lv": "44",
+    "exp": "19000",
+    "start_at": "2023/10/27 0:00"
+  },
+  {
+    "id": "44",
+    "intimacy_lv": "45",
+    "exp": "19500",
+    "start_at": "2023/10/27 0:00"
+  },
+  {
+    "id": "45",
+    "intimacy_lv": "46",
+    "exp": "20000",
+    "start_at": "2023/10/27 0:00"
+  },
+  {
+    "id": "46",
+    "intimacy_lv": "47",
+    "exp": "20000",
+    "start_at": "2023/10/27 0:00"
+  },
+  {
+    "id": "47",
+    "intimacy_lv": "48",
+    "exp": "20000",
+    "start_at": "2023/10/27 0:00"
+  },
+  {
+    "id": "48",
+    "intimacy_lv": "49",
+    "exp": "20000",
+    "start_at": "2023/10/27 0:00"
+  },
+  {
+    "id": "49",
+    "intimacy_lv": "50",
+    "exp": "20000",
+    "start_at": "2023/10/27 0:00"
+  }
+]

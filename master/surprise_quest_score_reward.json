@@ -1,1 +1,242 @@
-[{"id":"1","score_id":"1","pack_id":"30101","weight":"200"},{"id":"2","score_id":"1","pack_id":"30102","weight":"225"},{"id":"3","score_id":"1","pack_id":"30103","weight":"225"},{"id":"4","score_id":"1","pack_id":"30104","weight":"225"},{"id":"5","score_id":"1","pack_id":"30105","weight":"125"},{"id":"6","score_id":"2","pack_id":"30201","weight":"175"},{"id":"7","score_id":"2","pack_id":"30202","weight":"275"},{"id":"8","score_id":"2","pack_id":"30203","weight":"275"},{"id":"9","score_id":"2","pack_id":"30204","weight":"275"},{"id":"10","score_id":"3","pack_id":"30301","weight":"13"},{"id":"11","score_id":"3","pack_id":"30302","weight":"29"},{"id":"12","score_id":"3","pack_id":"30303","weight":"29"},{"id":"13","score_id":"3","pack_id":"30304","weight":"29"},{"id":"14","score_id":"4","pack_id":"30401","weight":"100"},{"id":"15","score_id":"5","pack_id":"30501","weight":"100"},{"id":"16","score_id":"6","pack_id":"30601","weight":"100"},{"id":"17","score_id":"7","pack_id":"30701","weight":"100"},{"id":"18","score_id":"8","pack_id":"30801","weight":"100"},{"id":"19","score_id":"9","pack_id":"30901","weight":"100"},{"id":"20","score_id":"10","pack_id":"31001","weight":"100"},{"id":"100021","score_id":"10201","pack_id":"31101","weight":"200"},{"id":"100022","score_id":"10201","pack_id":"31102","weight":"225"},{"id":"100023","score_id":"10201","pack_id":"31103","weight":"225"},{"id":"100024","score_id":"10201","pack_id":"31104","weight":"225"},{"id":"100025","score_id":"10201","pack_id":"31105","weight":"125"},{"id":"100026","score_id":"10202","pack_id":"31201","weight":"175"},{"id":"100027","score_id":"10202","pack_id":"31202","weight":"275"},{"id":"100028","score_id":"10202","pack_id":"31203","weight":"275"},{"id":"100029","score_id":"10202","pack_id":"31204","weight":"275"},{"id":"100030","score_id":"10203","pack_id":"31301","weight":"130"},{"id":"100031","score_id":"10203","pack_id":"31302","weight":"290"},{"id":"100032","score_id":"10203","pack_id":"31303","weight":"290"},{"id":"100033","score_id":"10203","pack_id":"31304","weight":"290"},{"id":"100034","score_id":"10204","pack_id":"31401","weight":"1000"},{"id":"100035","score_id":"10205","pack_id":"31501","weight":"1000"},{"id":"100036","score_id":"10206","pack_id":"31601","weight":"1000"},{"id":"100037","score_id":"10207","pack_id":"31701","weight":"1000"},{"id":"100038","score_id":"10208","pack_id":"31801","weight":"1000"},{"id":"100039","score_id":"10209","pack_id":"31901","weight":"1000"},{"id":"100040","score_id":"10210","pack_id":"32001","weight":"1000"}]
+[
+  {
+    "id": "1",
+    "score_id": "1",
+    "pack_id": "30101",
+    "weight": "200"
+  },
+  {
+    "id": "2",
+    "score_id": "1",
+    "pack_id": "30102",
+    "weight": "225"
+  },
+  {
+    "id": "3",
+    "score_id": "1",
+    "pack_id": "30103",
+    "weight": "225"
+  },
+  {
+    "id": "4",
+    "score_id": "1",
+    "pack_id": "30104",
+    "weight": "225"
+  },
+  {
+    "id": "5",
+    "score_id": "1",
+    "pack_id": "30105",
+    "weight": "125"
+  },
+  {
+    "id": "6",
+    "score_id": "2",
+    "pack_id": "30201",
+    "weight": "175"
+  },
+  {
+    "id": "7",
+    "score_id": "2",
+    "pack_id": "30202",
+    "weight": "275"
+  },
+  {
+    "id": "8",
+    "score_id": "2",
+    "pack_id": "30203",
+    "weight": "275"
+  },
+  {
+    "id": "9",
+    "score_id": "2",
+    "pack_id": "30204",
+    "weight": "275"
+  },
+  {
+    "id": "10",
+    "score_id": "3",
+    "pack_id": "30301",
+    "weight": "13"
+  },
+  {
+    "id": "11",
+    "score_id": "3",
+    "pack_id": "30302",
+    "weight": "29"
+  },
+  {
+    "id": "12",
+    "score_id": "3",
+    "pack_id": "30303",
+    "weight": "29"
+  },
+  {
+    "id": "13",
+    "score_id": "3",
+    "pack_id": "30304",
+    "weight": "29"
+  },
+  {
+    "id": "14",
+    "score_id": "4",
+    "pack_id": "30401",
+    "weight": "100"
+  },
+  {
+    "id": "15",
+    "score_id": "5",
+    "pack_id": "30501",
+    "weight": "100"
+  },
+  {
+    "id": "16",
+    "score_id": "6",
+    "pack_id": "30601",
+    "weight": "100"
+  },
+  {
+    "id": "17",
+    "score_id": "7",
+    "pack_id": "30701",
+    "weight": "100"
+  },
+  {
+    "id": "18",
+    "score_id": "8",
+    "pack_id": "30801",
+    "weight": "100"
+  },
+  {
+    "id": "19",
+    "score_id": "9",
+    "pack_id": "30901",
+    "weight": "100"
+  },
+  {
+    "id": "20",
+    "score_id": "10",
+    "pack_id": "31001",
+    "weight": "100"
+  },
+  {
+    "id": "100021",
+    "score_id": "10201",
+    "pack_id": "31101",
+    "weight": "200"
+  },
+  {
+    "id": "100022",
+    "score_id": "10201",
+    "pack_id": "31102",
+    "weight": "225"
+  },
+  {
+    "id": "100023",
+    "score_id": "10201",
+    "pack_id": "31103",
+    "weight": "225"
+  },
+  {
+    "id": "100024",
+    "score_id": "10201",
+    "pack_id": "31104",
+    "weight": "225"
+  },
+  {
+    "id": "100025",
+    "score_id": "10201",
+    "pack_id": "31105",
+    "weight": "125"
+  },
+  {
+    "id": "100026",
+    "score_id": "10202",
+    "pack_id": "31201",
+    "weight": "175"
+  },
+  {
+    "id": "100027",
+    "score_id": "10202",
+    "pack_id": "31202",
+    "weight": "275"
+  },
+  {
+    "id": "100028",
+    "score_id": "10202",
+    "pack_id": "31203",
+    "weight": "275"
+  },
+  {
+    "id": "100029",
+    "score_id": "10202",
+    "pack_id": "31204",
+    "weight": "275"
+  },
+  {
+    "id": "100030",
+    "score_id": "10203",
+    "pack_id": "31301",
+    "weight": "130"
+  },
+  {
+    "id": "100031",
+    "score_id": "10203",
+    "pack_id": "31302",
+    "weight": "290"
+  },
+  {
+    "id": "100032",
+    "score_id": "10203",
+    "pack_id": "31303",
+    "weight": "290"
+  },
+  {
+    "id": "100033",
+    "score_id": "10203",
+    "pack_id": "31304",
+    "weight": "290"
+  },
+  {
+    "id": "100034",
+    "score_id": "10204",
+    "pack_id": "31401",
+    "weight": "1000"
+  },
+  {
+    "id": "100035",
+    "score_id": "10205",
+    "pack_id": "31501",
+    "weight": "1000"
+  },
+  {
+    "id": "100036",
+    "score_id": "10206",
+    "pack_id": "31601",
+    "weight": "1000"
+  },
+  {
+    "id": "100037",
+    "score_id": "10207",
+    "pack_id": "31701",
+    "weight": "1000"
+  },
+  {
+    "id": "100038",
+    "score_id": "10208",
+    "pack_id": "31801",
+    "weight": "1000"
+  },
+  {
+    "id": "100039",
+    "score_id": "10209",
+    "pack_id": "31901",
+    "weight": "1000"
+  },
+  {
+    "id": "100040",
+    "score_id": "10210",
+    "pack_id": "32001",
+    "weight": "1000"
+  }
+]

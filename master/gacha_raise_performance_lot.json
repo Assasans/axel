@@ -1,1 +1,137 @@
-[{"performance_effect_id":"1","before_rare":"2","after_rare":"4","weight":"25","effect_id":"1","navi_id":"NAVI_GACHA_RAISE_1","raise_movie_id":"0"},{"performance_effect_id":"1","before_rare":"2","after_rare":"4","weight":"25","effect_id":"1","navi_id":"NAVI_GACHA_RAISE_2","raise_movie_id":"0"},{"performance_effect_id":"1","before_rare":"3","after_rare":"4","weight":"25","effect_id":"1","navi_id":"NAVI_GACHA_RAISE_1","raise_movie_id":"0"},{"performance_effect_id":"1","before_rare":"3","after_rare":"4","weight":"25","effect_id":"1","navi_id":"NAVI_GACHA_RAISE_2","raise_movie_id":"0"},{"performance_effect_id":"2","before_rare":"2","after_rare":"4","weight":"50","effect_id":"2","navi_id":"NAVI_GACHA_RAISE_3","raise_movie_id":"0"},{"performance_effect_id":"2","before_rare":"3","after_rare":"4","weight":"50","effect_id":"2","navi_id":"NAVI_GACHA_RAISE_3","raise_movie_id":"0"},{"performance_effect_id":"3","before_rare":"3","after_rare":"4","weight":"100","effect_id":"1","navi_id":"NAVI_GACHA_RAISE_4","raise_movie_id":"0"},{"performance_effect_id":"3","before_rare":"2","after_rare":"4","weight":"50","effect_id":"1","navi_id":"NAVI_GACHA_RAISE_5","raise_movie_id":"0"},{"performance_effect_id":"3","before_rare":"2","after_rare":"4","weight":"50","effect_id":"1","navi_id":"NAVI_GACHA_RAISE_6","raise_movie_id":"0"},{"performance_effect_id":"4","before_rare":"3","after_rare":"4","weight":"100","effect_id":"3","navi_id":"NAVI_GACHA_RAISE_7","raise_movie_id":"gacha_performance_TS_raise"},{"performance_effect_id":"4","before_rare":"2","after_rare":"4","weight":"100","effect_id":"3","navi_id":"NAVI_GACHA_RAISE_8","raise_movie_id":"gacha_performance_TS_raise"},{"performance_effect_id":"5","before_rare":"3","after_rare":"4","weight":"100","effect_id":"1","navi_id":"NAVI_GACHA_RAISE_9","raise_movie_id":"0"},{"performance_effect_id":"5","before_rare":"2","after_rare":"4","weight":"100","effect_id":"1","navi_id":"NAVI_GACHA_RAISE_10","raise_movie_id":"0"},{"performance_effect_id":"6","before_rare":"3","after_rare":"4","weight":"100","effect_id":"1","navi_id":"NAVI_GACHA_RAISE_9","raise_movie_id":"0"},{"performance_effect_id":"6","before_rare":"2","after_rare":"4","weight":"100","effect_id":"1","navi_id":"NAVI_GACHA_RAISE_10","raise_movie_id":"0"}]
+[
+  {
+    "performance_effect_id": "1",
+    "before_rare": "2",
+    "after_rare": "4",
+    "weight": "25",
+    "effect_id": "1",
+    "navi_id": "NAVI_GACHA_RAISE_1",
+    "raise_movie_id": "0"
+  },
+  {
+    "performance_effect_id": "1",
+    "before_rare": "2",
+    "after_rare": "4",
+    "weight": "25",
+    "effect_id": "1",
+    "navi_id": "NAVI_GACHA_RAISE_2",
+    "raise_movie_id": "0"
+  },
+  {
+    "performance_effect_id": "1",
+    "before_rare": "3",
+    "after_rare": "4",
+    "weight": "25",
+    "effect_id": "1",
+    "navi_id": "NAVI_GACHA_RAISE_1",
+    "raise_movie_id": "0"
+  },
+  {
+    "performance_effect_id": "1",
+    "before_rare": "3",
+    "after_rare": "4",
+    "weight": "25",
+    "effect_id": "1",
+    "navi_id": "NAVI_GACHA_RAISE_2",
+    "raise_movie_id": "0"
+  },
+  {
+    "performance_effect_id": "2",
+    "before_rare": "2",
+    "after_rare": "4",
+    "weight": "50",
+    "effect_id": "2",
+    "navi_id": "NAVI_GACHA_RAISE_3",
+    "raise_movie_id": "0"
+  },
+  {
+    "performance_effect_id": "2",
+    "before_rare": "3",
+    "after_rare": "4",
+    "weight": "50",
+    "effect_id": "2",
+    "navi_id": "NAVI_GACHA_RAISE_3",
+    "raise_movie_id": "0"
+  },
+  {
+    "performance_effect_id": "3",
+    "before_rare": "3",
+    "after_rare": "4",
+    "weight": "100",
+    "effect_id": "1",
+    "navi_id": "NAVI_GACHA_RAISE_4",
+    "raise_movie_id": "0"
+  },
+  {
+    "performance_effect_id": "3",
+    "before_rare": "2",
+    "after_rare": "4",
+    "weight": "50",
+    "effect_id": "1",
+    "navi_id": "NAVI_GACHA_RAISE_5",
+    "raise_movie_id": "0"
+  },
+  {
+    "performance_effect_id": "3",
+    "before_rare": "2",
+    "after_rare": "4",
+    "weight": "50",
+    "effect_id": "1",
+    "navi_id": "NAVI_GACHA_RAISE_6",
+    "raise_movie_id": "0"
+  },
+  {
+    "performance_effect_id": "4",
+    "before_rare": "3",
+    "after_rare": "4",
+    "weight": "100",
+    "effect_id": "3",
+    "navi_id": "NAVI_GACHA_RAISE_7",
+    "raise_movie_id": "gacha_performance_TS_raise"
+  },
+  {
+    "performance_effect_id": "4",
+    "before_rare": "2",
+    "after_rare": "4",
+    "weight": "100",
+    "effect_id": "3",
+    "navi_id": "NAVI_GACHA_RAISE_8",
+    "raise_movie_id": "gacha_performance_TS_raise"
+  },
+  {
+    "performance_effect_id": "5",
+    "before_rare": "3",
+    "after_rare": "4",
+    "weight": "100",
+    "effect_id": "1",
+    "navi_id": "NAVI_GACHA_RAISE_9",
+    "raise_movie_id": "0"
+  },
+  {
+    "performance_effect_id": "5",
+    "before_rare": "2",
+    "after_rare": "4",
+    "weight": "100",
+    "effect_id": "1",
+    "navi_id": "NAVI_GACHA_RAISE_10",
+    "raise_movie_id": "0"
+  },
+  {
+    "performance_effect_id": "6",
+    "before_rare": "3",
+    "after_rare": "4",
+    "weight": "100",
+    "effect_id": "1",
+    "navi_id": "NAVI_GACHA_RAISE_9",
+    "raise_movie_id": "0"
+  },
+  {
+    "performance_effect_id": "6",
+    "before_rare": "2",
+    "after_rare": "4",
+    "weight": "100",
+    "effect_id": "1",
+    "navi_id": "NAVI_GACHA_RAISE_10",
+    "raise_movie_id": "0"
+  }
+]

@@ -1,1 +1,1502 @@
-[{"rank":"1","allexp":"0","exp":"0","stamina":"10"},{"rank":"2","allexp":"5","exp":"5","stamina":"15"},{"rank":"3","allexp":"13","exp":"8","stamina":"20"},{"rank":"4","allexp":"33","exp":"20","stamina":"25"},{"rank":"5","allexp":"58","exp":"25","stamina":"30"},{"rank":"6","allexp":"96","exp":"38","stamina":"35"},{"rank":"7","allexp":"144","exp":"48","stamina":"40"},{"rank":"8","allexp":"192","exp":"48","stamina":"45"},{"rank":"9","allexp":"240","exp":"48","stamina":"50"},{"rank":"10","allexp":"288","exp":"48","stamina":"55"},{"rank":"11","allexp":"336","exp":"48","stamina":"60"},{"rank":"12","allexp":"399","exp":"63","stamina":"65"},{"rank":"13","allexp":"502","exp":"103","stamina":"70"},{"rank":"14","allexp":"606","exp":"104","stamina":"75"},{"rank":"15","allexp":"757","exp":"151","stamina":"80"},{"rank":"16","allexp":"931","exp":"174","stamina":"85"},{"rank":"17","allexp":"1130","exp":"199","stamina":"90"},{"rank":"18","allexp":"1355","exp":"225","stamina":"95"},{"rank":"19","allexp":"1608","exp":"253","stamina":"100"},{"rank":"20","allexp":"1892","exp":"284","stamina":"105"},{"rank":"21","allexp":"2206","exp":"314","stamina":"110"},{"rank":"22","allexp":"2554","exp":"348","stamina":"115"},{"rank":"23","allexp":"2937","exp":"383","stamina":"120"},{"rank":"24","allexp":"3356","exp":"419","stamina":"125"},{"rank":"25","allexp":"3813","exp":"457","stamina":"130"},{"rank":"26","allexp":"4309","exp":"496","stamina":"135"},{"rank":"27","allexp":"4847","exp":"538","stamina":"140"},{"rank":"28","allexp":"5428","exp":"581","stamina":"145"},{"rank":"29","allexp":"6054","exp":"626","stamina":"150"},{"rank":"30","allexp":"6726","exp":"672","stamina":"155"},{"rank":"31","allexp":"7446","exp":"720","stamina":"160"},{"rank":"32","allexp":"8216","exp":"770","stamina":"165"},{"rank":"33","allexp":"9037","exp":"821","stamina":"170"},{"rank":"34","allexp":"9911","exp":"874","stamina":"175"},{"rank":"35","allexp":"10840","exp":"929","stamina":"180"},{"rank":"36","allexp":"11824","exp":"984","stamina":"185"},{"rank":"37","allexp":"12867","exp":"1043","stamina":"190"},{"rank":"38","allexp":"13970","exp":"1103","stamina":"195"},{"rank":"39","allexp":"15133","exp":"1163","stamina":"200"},{"rank":"40","allexp":"16360","exp":"1227","stamina":"200"},{"rank":"41","allexp":"17651","exp":"1291","stamina":"200"},{"rank":"42","allexp":"19008","exp":"1357","stamina":"200"},{"rank":"43","allexp":"20433","exp":"1425","stamina":"200"},{"rank":"44","allexp":"21927","exp":"1494","stamina":"200"},{"rank":"45","allexp":"23493","exp":"1566","stamina":"200"},{"rank":"46","allexp":"25131","exp":"1638","stamina":"200"},{"rank":"47","allexp":"26844","exp":"1713","stamina":"200"},{"rank":"48","allexp":"28633","exp":"1789","stamina":"200"},{"rank":"49","allexp":"30500","exp":"1867","stamina":"200"},{"rank":"50","allexp":"32446","exp":"1946","stamina":"200"},{"rank":"51","allexp":"34474","exp":"2028","stamina":"200"},{"rank":"52","allexp":"36584","exp":"2110","stamina":"200"},{"rank":"53","allexp":"38778","exp":"2194","stamina":"200"},{"rank":"54","allexp":"41059","exp":"2281","stamina":"200"},{"rank":"55","allexp":"43427","exp":"2368","stamina":"200"},{"rank":"56","allexp":"45884","exp":"2457","stamina":"200"},{"rank":"57","allexp":"48433","exp":"2549","stamina":"200"},{"rank":"58","allexp":"51074","exp":"2641","stamina":"200"},{"rank":"59","allexp":"53810","exp":"2736","stamina":"200"},{"rank":"60","allexp":"56641","exp":"2831","stamina":"200"},{"rank":"61","allexp":"59571","exp":"2930","stamina":"200"},{"rank":"62","allexp":"62608","exp":"3037","stamina":"200"},{"rank":"63","allexp":"65760","exp":"3152","stamina":"200"},{"rank":"64","allexp":"69039","exp":"3279","stamina":"200"},{"rank":"65","allexp":"72456","exp":"3417","stamina":"200"},{"rank":"66","allexp":"76021","exp":"3565","stamina":"200"},{"rank":"67","allexp":"79748","exp":"3727","stamina":"200"},{"rank":"68","allexp":"83647","exp":"3899","stamina":"200"},{"rank":"69","allexp":"87731","exp":"4084","stamina":"200"},{"rank":"70","allexp":"92012","exp":"4281","stamina":"200"},{"rank":"71","allexp":"96503","exp":"4491","stamina":"200"},{"rank":"72","allexp":"101217","exp":"4714","stamina":"200"},{"rank":"73","allexp":"106166","exp":"4949","stamina":"200"},{"rank":"74","allexp":"111363","exp":"5197","stamina":"200"},{"rank":"75","allexp":"116823","exp":"5460","stamina":"200"},{"rank":"76","allexp":"122557","exp":"5734","stamina":"200"},{"rank":"77","allexp":"128580","exp":"6023","stamina":"200"},{"rank":"78","allexp":"134904","exp":"6324","stamina":"200"},{"rank":"79","allexp":"141544","exp":"6640","stamina":"200"},{"rank":"80","allexp":"148513","exp":"6969","stamina":"200"},{"rank":"81","allexp":"155826","exp":"7313","stamina":"200"},{"rank":"82","allexp":"163495","exp":"7669","stamina":"200"},{"rank":"83","allexp":"171535","exp":"8040","stamina":"200"},{"rank":"84","allexp":"179960","exp":"8425","stamina":"200"},{"rank":"85","allexp":"188784","exp":"8824","stamina":"200"},{"rank":"86","allexp":"198022","exp":"9238","stamina":"200"},{"rank":"87","allexp":"207687","exp":"9665","stamina":"200"},{"rank":"88","allexp":"217795","exp":"10108","stamina":"200"},{"rank":"89","allexp":"228359","exp":"10564","stamina":"200"},{"rank":"90","allexp":"239394","exp":"11035","stamina":"200"},{"rank":"91","allexp":"250915","exp":"11521","stamina":"200"},{"rank":"92","allexp":"262936","exp":"12021","stamina":"200"},{"rank":"93","allexp":"275472","exp":"12536","stamina":"200"},{"rank":"94","allexp":"288538","exp":"13066","stamina":"200"},{"rank":"95","allexp":"302149","exp":"13611","stamina":"200"},{"rank":"96","allexp":"316319","exp":"14170","stamina":"200"},{"rank":"97","allexp":"331064","exp":"14745","stamina":"200"},{"rank":"98","allexp":"346398","exp":"15334","stamina":"200"},{"rank":"99","allexp":"362338","exp":"15940","stamina":"200"},{"rank":"100","allexp":"378834","exp":"16496","stamina":"200"},{"rank":"101","allexp":"395836","exp":"17002","stamina":"200"},{"rank":"102","allexp":"413294","exp":"17458","stamina":"200"},{"rank":"103","allexp":"431158","exp":"17864","stamina":"200"},{"rank":"104","allexp":"449378","exp":"18220","stamina":"200"},{"rank":"105","allexp":"467914","exp":"18536","stamina":"200"},{"rank":"106","allexp":"486726","exp":"18812","stamina":"200"},{"rank":"107","allexp":"505774","exp":"19048","stamina":"200"},{"rank":"108","allexp":"525018","exp":"19244","stamina":"200"},{"rank":"109","allexp":"544438","exp":"19420","stamina":"200"},{"rank":"110","allexp":"564014","exp":"19576","stamina":"200"},{"rank":"111","allexp":"583726","exp":"19712","stamina":"200"},{"rank":"112","allexp":"603554","exp":"19828","stamina":"200"},{"rank":"113","allexp":"623488","exp":"19934","stamina":"200"},{"rank":"114","allexp":"643518","exp":"20030","stamina":"200"},{"rank":"115","allexp":"663634","exp":"20116","stamina":"200"},{"rank":"116","allexp":"683826","exp":"20192","stamina":"200"},{"rank":"117","allexp":"704084","exp":"20258","stamina":"200"},{"rank":"118","allexp":"724398","exp":"20314","stamina":"200"},{"rank":"119","allexp":"744758","exp":"20360","stamina":"200"},{"rank":"120","allexp":"765154","exp":"20396","stamina":"200"},{"rank":"121","allexp":"785576","exp":"20422","stamina":"200"},{"rank":"122","allexp":"806014","exp":"20438","stamina":"200"},{"rank":"123","allexp":"826460","exp":"20446","stamina":"200"},{"rank":"124","allexp":"846912","exp":"20452","stamina":"200"},{"rank":"125","allexp":"867370","exp":"20458","stamina":"200"},{"rank":"126","allexp":"887834","exp":"20464","stamina":"200"},{"rank":"127","allexp":"908304","exp":"20470","stamina":"200"},{"rank":"128","allexp":"928780","exp":"20476","stamina":"200"},{"rank":"129","allexp":"949262","exp":"20482","stamina":"200"},{"rank":"130","allexp":"969750","exp":"20488","stamina":"200"},{"rank":"131","allexp":"990244","exp":"20494","stamina":"200"},{"rank":"132","allexp":"1010744","exp":"20500","stamina":"200"},{"rank":"133","allexp":"1031250","exp":"20506","stamina":"200"},{"rank":"134","allexp":"1051762","exp":"20512","stamina":"200"},{"rank":"135","allexp":"1072280","exp":"20518","stamina":"200"},{"rank":"136","allexp":"1092804","exp":"20524","stamina":"200"},{"rank":"137","allexp":"1113334","exp":"20530","stamina":"200"},{"rank":"138","allexp":"1133870","exp":"20536","stamina":"200"},{"rank":"139","allexp":"1154412","exp":"20542","stamina":"200"},{"rank":"140","allexp":"1174960","exp":"20548","stamina":"200"},{"rank":"141","allexp":"1195514","exp":"20554","stamina":"200"},{"rank":"142","allexp":"1216074","exp":"20560","stamina":"200"},{"rank":"143","allexp":"1236640","exp":"20566","stamina":"200"},{"rank":"144","allexp":"1257212","exp":"20572","stamina":"200"},{"rank":"145","allexp":"1277790","exp":"20578","stamina":"200"},{"rank":"146","allexp":"1298374","exp":"20584","stamina":"200"},{"rank":"147","allexp":"1318964","exp":"20590","stamina":"200"},{"rank":"148","allexp":"1339560","exp":"20596","stamina":"200"},{"rank":"149","allexp":"1360162","exp":"20602","stamina":"200"},{"rank":"150","allexp":"1380770","exp":"20608","stamina":"200"},{"rank":"151","allexp":"1401384","exp":"20614","stamina":"200"},{"rank":"152","allexp":"1422004","exp":"20620","stamina":"200"},{"rank":"153","allexp":"1442630","exp":"20626","stamina":"200"},{"rank":"154","allexp":"1463262","exp":"20632","stamina":"200"},{"rank":"155","allexp":"1483900","exp":"20638","stamina":"200"},{"rank":"156","allexp":"1504544","exp":"20644","stamina":"200"},{"rank":"157","allexp":"1525194","exp":"20650","stamina":"200"},{"rank":"158","allexp":"1545850","exp":"20656","stamina":"200"},{"rank":"159","allexp":"1566512","exp":"20662","stamina":"200"},{"rank":"160","allexp":"1587180","exp":"20668","stamina":"200"},{"rank":"161","allexp":"1607854","exp":"20674","stamina":"200"},{"rank":"162","allexp":"1628534","exp":"20680","stamina":"200"},{"rank":"163","allexp":"1649220","exp":"20686","stamina":"200"},{"rank":"164","allexp":"1669912","exp":"20692","stamina":"200"},{"rank":"165","allexp":"1690610","exp":"20698","stamina":"200"},{"rank":"166","allexp":"1711314","exp":"20704","stamina":"200"},{"rank":"167","allexp":"1732024","exp":"20710","stamina":"200"},{"rank":"168","allexp":"1752740","exp":"20716","stamina":"200"},{"rank":"169","allexp":"1773462","exp":"20722","stamina":"200"},{"rank":"170","allexp":"1794190","exp":"20728","stamina":"200"},{"rank":"171","allexp":"1814924","exp":"20734","stamina":"200"},{"rank":"172","allexp":"1835664","exp":"20740","stamina":"200"},{"rank":"173","allexp":"1856410","exp":"20746","stamina":"200"},{"rank":"174","allexp":"1877162","exp":"20752","stamina":"200"},{"rank":"175","allexp":"1897920","exp":"20758","stamina":"200"},{"rank":"176","allexp":"1918684","exp":"20764","stamina":"200"},{"rank":"177","allexp":"1939454","exp":"20770","stamina":"200"},{"rank":"178","allexp":"1960230","exp":"20776","stamina":"200"},{"rank":"179","allexp":"1981012","exp":"20782","stamina":"200"},{"rank":"180","allexp":"2001800","exp":"20788","stamina":"200"},{"rank":"181","allexp":"2022594","exp":"20794","stamina":"200"},{"rank":"182","allexp":"2043394","exp":"20800","stamina":"200"},{"rank":"183","allexp":"2064200","exp":"20806","stamina":"200"},{"rank":"184","allexp":"2085012","exp":"20812","stamina":"200"},{"rank":"185","allexp":"2105830","exp":"20818","stamina":"200"},{"rank":"186","allexp":"2126654","exp":"20824","stamina":"200"},{"rank":"187","allexp":"2147484","exp":"20830","stamina":"200"},{"rank":"188","allexp":"2168320","exp":"20836","stamina":"200"},{"rank":"189","allexp":"2189162","exp":"20842","stamina":"200"},{"rank":"190","allexp":"2210010","exp":"20848","stamina":"200"},{"rank":"191","allexp":"2230864","exp":"20854","stamina":"200"},{"rank":"192","allexp":"2251724","exp":"20860","stamina":"200"},{"rank":"193","allexp":"2272590","exp":"20866","stamina":"200"},{"rank":"194","allexp":"2293462","exp":"20872","stamina":"200"},{"rank":"195","allexp":"2314340","exp":"20878","stamina":"200"},{"rank":"196","allexp":"2335224","exp":"20884","stamina":"200"},{"rank":"197","allexp":"2356114","exp":"20890","stamina":"200"},{"rank":"198","allexp":"2377010","exp":"20896","stamina":"200"},{"rank":"199","allexp":"2397912","exp":"20902","stamina":"200"},{"rank":"200","allexp":"2418820","exp":"20908","stamina":"200"},{"rank":"201","allexp":"2439734","exp":"20914","stamina":"200"},{"rank":"202","allexp":"2460654","exp":"20920","stamina":"200"},{"rank":"203","allexp":"2481580","exp":"20926","stamina":"200"},{"rank":"204","allexp":"2502512","exp":"20932","stamina":"200"},{"rank":"205","allexp":"2523450","exp":"20938","stamina":"200"},{"rank":"206","allexp":"2544394","exp":"20944","stamina":"200"},{"rank":"207","allexp":"2565344","exp":"20950","stamina":"200"},{"rank":"208","allexp":"2586300","exp":"20956","stamina":"200"},{"rank":"209","allexp":"2607262","exp":"20962","stamina":"200"},{"rank":"210","allexp":"2628230","exp":"20968","stamina":"200"},{"rank":"211","allexp":"2649204","exp":"20974","stamina":"200"},{"rank":"212","allexp":"2670184","exp":"20980","stamina":"200"},{"rank":"213","allexp":"2691170","exp":"20986","stamina":"200"},{"rank":"214","allexp":"2712162","exp":"20992","stamina":"200"},{"rank":"215","allexp":"2733160","exp":"20998","stamina":"200"},{"rank":"216","allexp":"2754164","exp":"21004","stamina":"200"},{"rank":"217","allexp":"2775174","exp":"21010","stamina":"200"},{"rank":"218","allexp":"2796190","exp":"21016","stamina":"200"},{"rank":"219","allexp":"2817212","exp":"21022","stamina":"200"},{"rank":"220","allexp":"2838240","exp":"21028","stamina":"200"},{"rank":"221","allexp":"2859274","exp":"21034","stamina":"200"},{"rank":"222","allexp":"2880314","exp":"21040","stamina":"200"},{"rank":"223","allexp":"2901360","exp":"21046","stamina":"200"},{"rank":"224","allexp":"2922412","exp":"21052","stamina":"200"},{"rank":"225","allexp":"2943470","exp":"21058","stamina":"200"},{"rank":"226","allexp":"2964534","exp":"21064","stamina":"200"},{"rank":"227","allexp":"2985604","exp":"21070","stamina":"200"},{"rank":"228","allexp":"3006680","exp":"21076","stamina":"200"},{"rank":"229","allexp":"3027762","exp":"21082","stamina":"200"},{"rank":"230","allexp":"3048850","exp":"21088","stamina":"200"},{"rank":"231","allexp":"3069944","exp":"21094","stamina":"200"},{"rank":"232","allexp":"3091044","exp":"21100","stamina":"200"},{"rank":"233","allexp":"3112150","exp":"21106","stamina":"200"},{"rank":"234","allexp":"3133262","exp":"21112","stamina":"200"},{"rank":"235","allexp":"3154380","exp":"21118","stamina":"200"},{"rank":"236","allexp":"3175504","exp":"21124","stamina":"200"},{"rank":"237","allexp":"3196634","exp":"21130","stamina":"200"},{"rank":"238","allexp":"3217770","exp":"21136","stamina":"200"},{"rank":"239","allexp":"3238912","exp":"21142","stamina":"200"},{"rank":"240","allexp":"3260060","exp":"21148","stamina":"200"},{"rank":"241","allexp":"3281214","exp":"21154","stamina":"200"},{"rank":"242","allexp":"3302374","exp":"21160","stamina":"200"},{"rank":"243","allexp":"3323540","exp":"21166","stamina":"200"},{"rank":"244","allexp":"3344712","exp":"21172","stamina":"200"},{"rank":"245","allexp":"3365890","exp":"21178","stamina":"200"},{"rank":"246","allexp":"3387074","exp":"21184","stamina":"200"},{"rank":"247","allexp":"3408264","exp":"21190","stamina":"200"},{"rank":"248","allexp":"3429460","exp":"21196","stamina":"200"},{"rank":"249","allexp":"3450662","exp":"21202","stamina":"200"},{"rank":"250","allexp":"3471870","exp":"21208","stamina":"200"}]
+[
+  {
+    "rank": "1",
+    "allexp": "0",
+    "exp": "0",
+    "stamina": "10"
+  },
+  {
+    "rank": "2",
+    "allexp": "5",
+    "exp": "5",
+    "stamina": "15"
+  },
+  {
+    "rank": "3",
+    "allexp": "13",
+    "exp": "8",
+    "stamina": "20"
+  },
+  {
+    "rank": "4",
+    "allexp": "33",
+    "exp": "20",
+    "stamina": "25"
+  },
+  {
+    "rank": "5",
+    "allexp": "58",
+    "exp": "25",
+    "stamina": "30"
+  },
+  {
+    "rank": "6",
+    "allexp": "96",
+    "exp": "38",
+    "stamina": "35"
+  },
+  {
+    "rank": "7",
+    "allexp": "144",
+    "exp": "48",
+    "stamina": "40"
+  },
+  {
+    "rank": "8",
+    "allexp": "192",
+    "exp": "48",
+    "stamina": "45"
+  },
+  {
+    "rank": "9",
+    "allexp": "240",
+    "exp": "48",
+    "stamina": "50"
+  },
+  {
+    "rank": "10",
+    "allexp": "288",
+    "exp": "48",
+    "stamina": "55"
+  },
+  {
+    "rank": "11",
+    "allexp": "336",
+    "exp": "48",
+    "stamina": "60"
+  },
+  {
+    "rank": "12",
+    "allexp": "399",
+    "exp": "63",
+    "stamina": "65"
+  },
+  {
+    "rank": "13",
+    "allexp": "502",
+    "exp": "103",
+    "stamina": "70"
+  },
+  {
+    "rank": "14",
+    "allexp": "606",
+    "exp": "104",
+    "stamina": "75"
+  },
+  {
+    "rank": "15",
+    "allexp": "757",
+    "exp": "151",
+    "stamina": "80"
+  },
+  {
+    "rank": "16",
+    "allexp": "931",
+    "exp": "174",
+    "stamina": "85"
+  },
+  {
+    "rank": "17",
+    "allexp": "1130",
+    "exp": "199",
+    "stamina": "90"
+  },
+  {
+    "rank": "18",
+    "allexp": "1355",
+    "exp": "225",
+    "stamina": "95"
+  },
+  {
+    "rank": "19",
+    "allexp": "1608",
+    "exp": "253",
+    "stamina": "100"
+  },
+  {
+    "rank": "20",
+    "allexp": "1892",
+    "exp": "284",
+    "stamina": "105"
+  },
+  {
+    "rank": "21",
+    "allexp": "2206",
+    "exp": "314",
+    "stamina": "110"
+  },
+  {
+    "rank": "22",
+    "allexp": "2554",
+    "exp": "348",
+    "stamina": "115"
+  },
+  {
+    "rank": "23",
+    "allexp": "2937",
+    "exp": "383",
+    "stamina": "120"
+  },
+  {
+    "rank": "24",
+    "allexp": "3356",
+    "exp": "419",
+    "stamina": "125"
+  },
+  {
+    "rank": "25",
+    "allexp": "3813",
+    "exp": "457",
+    "stamina": "130"
+  },
+  {
+    "rank": "26",
+    "allexp": "4309",
+    "exp": "496",
+    "stamina": "135"
+  },
+  {
+    "rank": "27",
+    "allexp": "4847",
+    "exp": "538",
+    "stamina": "140"
+  },
+  {
+    "rank": "28",
+    "allexp": "5428",
+    "exp": "581",
+    "stamina": "145"
+  },
+  {
+    "rank": "29",
+    "allexp": "6054",
+    "exp": "626",
+    "stamina": "150"
+  },
+  {
+    "rank": "30",
+    "allexp": "6726",
+    "exp": "672",
+    "stamina": "155"
+  },
+  {
+    "rank": "31",
+    "allexp": "7446",
+    "exp": "720",
+    "stamina": "160"
+  },
+  {
+    "rank": "32",
+    "allexp": "8216",
+    "exp": "770",
+    "stamina": "165"
+  },
+  {
+    "rank": "33",
+    "allexp": "9037",
+    "exp": "821",
+    "stamina": "170"
+  },
+  {
+    "rank": "34",
+    "allexp": "9911",
+    "exp": "874",
+    "stamina": "175"
+  },
+  {
+    "rank": "35",
+    "allexp": "10840",
+    "exp": "929",
+    "stamina": "180"
+  },
+  {
+    "rank": "36",
+    "allexp": "11824",
+    "exp": "984",
+    "stamina": "185"
+  },
+  {
+    "rank": "37",
+    "allexp": "12867",
+    "exp": "1043",
+    "stamina": "190"
+  },
+  {
+    "rank": "38",
+    "allexp": "13970",
+    "exp": "1103",
+    "stamina": "195"
+  },
+  {
+    "rank": "39",
+    "allexp": "15133",
+    "exp": "1163",
+    "stamina": "200"
+  },
+  {
+    "rank": "40",
+    "allexp": "16360",
+    "exp": "1227",
+    "stamina": "200"
+  },
+  {
+    "rank": "41",
+    "allexp": "17651",
+    "exp": "1291",
+    "stamina": "200"
+  },
+  {
+    "rank": "42",
+    "allexp": "19008",
+    "exp": "1357",
+    "stamina": "200"
+  },
+  {
+    "rank": "43",
+    "allexp": "20433",
+    "exp": "1425",
+    "stamina": "200"
+  },
+  {
+    "rank": "44",
+    "allexp": "21927",
+    "exp": "1494",
+    "stamina": "200"
+  },
+  {
+    "rank": "45",
+    "allexp": "23493",
+    "exp": "1566",
+    "stamina": "200"
+  },
+  {
+    "rank": "46",
+    "allexp": "25131",
+    "exp": "1638",
+    "stamina": "200"
+  },
+  {
+    "rank": "47",
+    "allexp": "26844",
+    "exp": "1713",
+    "stamina": "200"
+  },
+  {
+    "rank": "48",
+    "allexp": "28633",
+    "exp": "1789",
+    "stamina": "200"
+  },
+  {
+    "rank": "49",
+    "allexp": "30500",
+    "exp": "1867",
+    "stamina": "200"
+  },
+  {
+    "rank": "50",
+    "allexp": "32446",
+    "exp": "1946",
+    "stamina": "200"
+  },
+  {
+    "rank": "51",
+    "allexp": "34474",
+    "exp": "2028",
+    "stamina": "200"
+  },
+  {
+    "rank": "52",
+    "allexp": "36584",
+    "exp": "2110",
+    "stamina": "200"
+  },
+  {
+    "rank": "53",
+    "allexp": "38778",
+    "exp": "2194",
+    "stamina": "200"
+  },
+  {
+    "rank": "54",
+    "allexp": "41059",
+    "exp": "2281",
+    "stamina": "200"
+  },
+  {
+    "rank": "55",
+    "allexp": "43427",
+    "exp": "2368",
+    "stamina": "200"
+  },
+  {
+    "rank": "56",
+    "allexp": "45884",
+    "exp": "2457",
+    "stamina": "200"
+  },
+  {
+    "rank": "57",
+    "allexp": "48433",
+    "exp": "2549",
+    "stamina": "200"
+  },
+  {
+    "rank": "58",
+    "allexp": "51074",
+    "exp": "2641",
+    "stamina": "200"
+  },
+  {
+    "rank": "59",
+    "allexp": "53810",
+    "exp": "2736",
+    "stamina": "200"
+  },
+  {
+    "rank": "60",
+    "allexp": "56641",
+    "exp": "2831",
+    "stamina": "200"
+  },
+  {
+    "rank": "61",
+    "allexp": "59571",
+    "exp": "2930",
+    "stamina": "200"
+  },
+  {
+    "rank": "62",
+    "allexp": "62608",
+    "exp": "3037",
+    "stamina": "200"
+  },
+  {
+    "rank": "63",
+    "allexp": "65760",
+    "exp": "3152",
+    "stamina": "200"
+  },
+  {
+    "rank": "64",
+    "allexp": "69039",
+    "exp": "3279",
+    "stamina": "200"
+  },
+  {
+    "rank": "65",
+    "allexp": "72456",
+    "exp": "3417",
+    "stamina": "200"
+  },
+  {
+    "rank": "66",
+    "allexp": "76021",
+    "exp": "3565",
+    "stamina": "200"
+  },
+  {
+    "rank": "67",
+    "allexp": "79748",
+    "exp": "3727",
+    "stamina": "200"
+  },
+  {
+    "rank": "68",
+    "allexp": "83647",
+    "exp": "3899",
+    "stamina": "200"
+  },
+  {
+    "rank": "69",
+    "allexp": "87731",
+    "exp": "4084",
+    "stamina": "200"
+  },
+  {
+    "rank": "70",
+    "allexp": "92012",
+    "exp": "4281",
+    "stamina": "200"
+  },
+  {
+    "rank": "71",
+    "allexp": "96503",
+    "exp": "4491",
+    "stamina": "200"
+  },
+  {
+    "rank": "72",
+    "allexp": "101217",
+    "exp": "4714",
+    "stamina": "200"
+  },
+  {
+    "rank": "73",
+    "allexp": "106166",
+    "exp": "4949",
+    "stamina": "200"
+  },
+  {
+    "rank": "74",
+    "allexp": "111363",
+    "exp": "5197",
+    "stamina": "200"
+  },
+  {
+    "rank": "75",
+    "allexp": "116823",
+    "exp": "5460",
+    "stamina": "200"
+  },
+  {
+    "rank": "76",
+    "allexp": "122557",
+    "exp": "5734",
+    "stamina": "200"
+  },
+  {
+    "rank": "77",
+    "allexp": "128580",
+    "exp": "6023",
+    "stamina": "200"
+  },
+  {
+    "rank": "78",
+    "allexp": "134904",
+    "exp": "6324",
+    "stamina": "200"
+  },
+  {
+    "rank": "79",
+    "allexp": "141544",
+    "exp": "6640",
+    "stamina": "200"
+  },
+  {
+    "rank": "80",
+    "allexp": "148513",
+    "exp": "6969",
+    "stamina": "200"
+  },
+  {
+    "rank": "81",
+    "allexp": "155826",
+    "exp": "7313",
+    "stamina": "200"
+  },
+  {
+    "rank": "82",
+    "allexp": "163495",
+    "exp": "7669",
+    "stamina": "200"
+  },
+  {
+    "rank": "83",
+    "allexp": "171535",
+    "exp": "8040",
+    "stamina": "200"
+  },
+  {
+    "rank": "84",
+    "allexp": "179960",
+    "exp": "8425",
+    "stamina": "200"
+  },
+  {
+    "rank": "85",
+    "allexp": "188784",
+    "exp": "8824",
+    "stamina": "200"
+  },
+  {
+    "rank": "86",
+    "allexp": "198022",
+    "exp": "9238",
+    "stamina": "200"
+  },
+  {
+    "rank": "87",
+    "allexp": "207687",
+    "exp": "9665",
+    "stamina": "200"
+  },
+  {
+    "rank": "88",
+    "allexp": "217795",
+    "exp": "10108",
+    "stamina": "200"
+  },
+  {
+    "rank": "89",
+    "allexp": "228359",
+    "exp": "10564",
+    "stamina": "200"
+  },
+  {
+    "rank": "90",
+    "allexp": "239394",
+    "exp": "11035",
+    "stamina": "200"
+  },
+  {
+    "rank": "91",
+    "allexp": "250915",
+    "exp": "11521",
+    "stamina": "200"
+  },
+  {
+    "rank": "92",
+    "allexp": "262936",
+    "exp": "12021",
+    "stamina": "200"
+  },
+  {
+    "rank": "93",
+    "allexp": "275472",
+    "exp": "12536",
+    "stamina": "200"
+  },
+  {
+    "rank": "94",
+    "allexp": "288538",
+    "exp": "13066",
+    "stamina": "200"
+  },
+  {
+    "rank": "95",
+    "allexp": "302149",
+    "exp": "13611",
+    "stamina": "200"
+  },
+  {
+    "rank": "96",
+    "allexp": "316319",
+    "exp": "14170",
+    "stamina": "200"
+  },
+  {
+    "rank": "97",
+    "allexp": "331064",
+    "exp": "14745",
+    "stamina": "200"
+  },
+  {
+    "rank": "98",
+    "allexp": "346398",
+    "exp": "15334",
+    "stamina": "200"
+  },
+  {
+    "rank": "99",
+    "allexp": "362338",
+    "exp": "15940",
+    "stamina": "200"
+  },
+  {
+    "rank": "100",
+    "allexp": "378834",
+    "exp": "16496",
+    "stamina": "200"
+  },
+  {
+    "rank": "101",
+    "allexp": "395836",
+    "exp": "17002",
+    "stamina": "200"
+  },
+  {
+    "rank": "102",
+    "allexp": "413294",
+    "exp": "17458",
+    "stamina": "200"
+  },
+  {
+    "rank": "103",
+    "allexp": "431158",
+    "exp": "17864",
+    "stamina": "200"
+  },
+  {
+    "rank": "104",
+    "allexp": "449378",
+    "exp": "18220",
+    "stamina": "200"
+  },
+  {
+    "rank": "105",
+    "allexp": "467914",
+    "exp": "18536",
+    "stamina": "200"
+  },
+  {
+    "rank": "106",
+    "allexp": "486726",
+    "exp": "18812",
+    "stamina": "200"
+  },
+  {
+    "rank": "107",
+    "allexp": "505774",
+    "exp": "19048",
+    "stamina": "200"
+  },
+  {
+    "rank": "108",
+    "allexp": "525018",
+    "exp": "19244",
+    "stamina": "200"
+  },
+  {
+    "rank": "109",
+    "allexp": "544438",
+    "exp": "19420",
+    "stamina": "200"
+  },
+  {
+    "rank": "110",
+    "allexp": "564014",
+    "exp": "19576",
+    "stamina": "200"
+  },
+  {
+    "rank": "111",
+    "allexp": "583726",
+    "exp": "19712",
+    "stamina": "200"
+  },
+  {
+    "rank": "112",
+    "allexp": "603554",
+    "exp": "19828",
+    "stamina": "200"
+  },
+  {
+    "rank": "113",
+    "allexp": "623488",
+    "exp": "19934",
+    "stamina": "200"
+  },
+  {
+    "rank": "114",
+    "allexp": "643518",
+    "exp": "20030",
+    "stamina": "200"
+  },
+  {
+    "rank": "115",
+    "allexp": "663634",
+    "exp": "20116",
+    "stamina": "200"
+  },
+  {
+    "rank": "116",
+    "allexp": "683826",
+    "exp": "20192",
+    "stamina": "200"
+  },
+  {
+    "rank": "117",
+    "allexp": "704084",
+    "exp": "20258",
+    "stamina": "200"
+  },
+  {
+    "rank": "118",
+    "allexp": "724398",
+    "exp": "20314",
+    "stamina": "200"
+  },
+  {
+    "rank": "119",
+    "allexp": "744758",
+    "exp": "20360",
+    "stamina": "200"
+  },
+  {
+    "rank": "120",
+    "allexp": "765154",
+    "exp": "20396",
+    "stamina": "200"
+  },
+  {
+    "rank": "121",
+    "allexp": "785576",
+    "exp": "20422",
+    "stamina": "200"
+  },
+  {
+    "rank": "122",
+    "allexp": "806014",
+    "exp": "20438",
+    "stamina": "200"
+  },
+  {
+    "rank": "123",
+    "allexp": "826460",
+    "exp": "20446",
+    "stamina": "200"
+  },
+  {
+    "rank": "124",
+    "allexp": "846912",
+    "exp": "20452",
+    "stamina": "200"
+  },
+  {
+    "rank": "125",
+    "allexp": "867370",
+    "exp": "20458",
+    "stamina": "200"
+  },
+  {
+    "rank": "126",
+    "allexp": "887834",
+    "exp": "20464",
+    "stamina": "200"
+  },
+  {
+    "rank": "127",
+    "allexp": "908304",
+    "exp": "20470",
+    "stamina": "200"
+  },
+  {
+    "rank": "128",
+    "allexp": "928780",
+    "exp": "20476",
+    "stamina": "200"
+  },
+  {
+    "rank": "129",
+    "allexp": "949262",
+    "exp": "20482",
+    "stamina": "200"
+  },
+  {
+    "rank": "130",
+    "allexp": "969750",
+    "exp": "20488",
+    "stamina": "200"
+  },
+  {
+    "rank": "131",
+    "allexp": "990244",
+    "exp": "20494",
+    "stamina": "200"
+  },
+  {
+    "rank": "132",
+    "allexp": "1010744",
+    "exp": "20500",
+    "stamina": "200"
+  },
+  {
+    "rank": "133",
+    "allexp": "1031250",
+    "exp": "20506",
+    "stamina": "200"
+  },
+  {
+    "rank": "134",
+    "allexp": "1051762",
+    "exp": "20512",
+    "stamina": "200"
+  },
+  {
+    "rank": "135",
+    "allexp": "1072280",
+    "exp": "20518",
+    "stamina": "200"
+  },
+  {
+    "rank": "136",
+    "allexp": "1092804",
+    "exp": "20524",
+    "stamina": "200"
+  },
+  {
+    "rank": "137",
+    "allexp": "1113334",
+    "exp": "20530",
+    "stamina": "200"
+  },
+  {
+    "rank": "138",
+    "allexp": "1133870",
+    "exp": "20536",
+    "stamina": "200"
+  },
+  {
+    "rank": "139",
+    "allexp": "1154412",
+    "exp": "20542",
+    "stamina": "200"
+  },
+  {
+    "rank": "140",
+    "allexp": "1174960",
+    "exp": "20548",
+    "stamina": "200"
+  },
+  {
+    "rank": "141",
+    "allexp": "1195514",
+    "exp": "20554",
+    "stamina": "200"
+  },
+  {
+    "rank": "142",
+    "allexp": "1216074",
+    "exp": "20560",
+    "stamina": "200"
+  },
+  {
+    "rank": "143",
+    "allexp": "1236640",
+    "exp": "20566",
+    "stamina": "200"
+  },
+  {
+    "rank": "144",
+    "allexp": "1257212",
+    "exp": "20572",
+    "stamina": "200"
+  },
+  {
+    "rank": "145",
+    "allexp": "1277790",
+    "exp": "20578",
+    "stamina": "200"
+  },
+  {
+    "rank": "146",
+    "allexp": "1298374",
+    "exp": "20584",
+    "stamina": "200"
+  },
+  {
+    "rank": "147",
+    "allexp": "1318964",
+    "exp": "20590",
+    "stamina": "200"
+  },
+  {
+    "rank": "148",
+    "allexp": "1339560",
+    "exp": "20596",
+    "stamina": "200"
+  },
+  {
+    "rank": "149",
+    "allexp": "1360162",
+    "exp": "20602",
+    "stamina": "200"
+  },
+  {
+    "rank": "150",
+    "allexp": "1380770",
+    "exp": "20608",
+    "stamina": "200"
+  },
+  {
+    "rank": "151",
+    "allexp": "1401384",
+    "exp": "20614",
+    "stamina": "200"
+  },
+  {
+    "rank": "152",
+    "allexp": "1422004",
+    "exp": "20620",
+    "stamina": "200"
+  },
+  {
+    "rank": "153",
+    "allexp": "1442630",
+    "exp": "20626",
+    "stamina": "200"
+  },
+  {
+    "rank": "154",
+    "allexp": "1463262",
+    "exp": "20632",
+    "stamina": "200"
+  },
+  {
+    "rank": "155",
+    "allexp": "1483900",
+    "exp": "20638",
+    "stamina": "200"
+  },
+  {
+    "rank": "156",
+    "allexp": "1504544",
+    "exp": "20644",
+    "stamina": "200"
+  },
+  {
+    "rank": "157",
+    "allexp": "1525194",
+    "exp": "20650",
+    "stamina": "200"
+  },
+  {
+    "rank": "158",
+    "allexp": "1545850",
+    "exp": "20656",
+    "stamina": "200"
+  },
+  {
+    "rank": "159",
+    "allexp": "1566512",
+    "exp": "20662",
+    "stamina": "200"
+  },
+  {
+    "rank": "160",
+    "allexp": "1587180",
+    "exp": "20668",
+    "stamina": "200"
+  },
+  {
+    "rank": "161",
+    "allexp": "1607854",
+    "exp": "20674",
+    "stamina": "200"
+  },
+  {
+    "rank": "162",
+    "allexp": "1628534",
+    "exp": "20680",
+    "stamina": "200"
+  },
+  {
+    "rank": "163",
+    "allexp": "1649220",
+    "exp": "20686",
+    "stamina": "200"
+  },
+  {
+    "rank": "164",
+    "allexp": "1669912",
+    "exp": "20692",
+    "stamina": "200"
+  },
+  {
+    "rank": "165",
+    "allexp": "1690610",
+    "exp": "20698",
+    "stamina": "200"
+  },
+  {
+    "rank": "166",
+    "allexp": "1711314",
+    "exp": "20704",
+    "stamina": "200"
+  },
+  {
+    "rank": "167",
+    "allexp": "1732024",
+    "exp": "20710",
+    "stamina": "200"
+  },
+  {
+    "rank": "168",
+    "allexp": "1752740",
+    "exp": "20716",
+    "stamina": "200"
+  },
+  {
+    "rank": "169",
+    "allexp": "1773462",
+    "exp": "20722",
+    "stamina": "200"
+  },
+  {
+    "rank": "170",
+    "allexp": "1794190",
+    "exp": "20728",
+    "stamina": "200"
+  },
+  {
+    "rank": "171",
+    "allexp": "1814924",
+    "exp": "20734",
+    "stamina": "200"
+  },
+  {
+    "rank": "172",
+    "allexp": "1835664",
+    "exp": "20740",
+    "stamina": "200"
+  },
+  {
+    "rank": "173",
+    "allexp": "1856410",
+    "exp": "20746",
+    "stamina": "200"
+  },
+  {
+    "rank": "174",
+    "allexp": "1877162",
+    "exp": "20752",
+    "stamina": "200"
+  },
+  {
+    "rank": "175",
+    "allexp": "1897920",
+    "exp": "20758",
+    "stamina": "200"
+  },
+  {
+    "rank": "176",
+    "allexp": "1918684",
+    "exp": "20764",
+    "stamina": "200"
+  },
+  {
+    "rank": "177",
+    "allexp": "1939454",
+    "exp": "20770",
+    "stamina": "200"
+  },
+  {
+    "rank": "178",
+    "allexp": "1960230",
+    "exp": "20776",
+    "stamina": "200"
+  },
+  {
+    "rank": "179",
+    "allexp": "1981012",
+    "exp": "20782",
+    "stamina": "200"
+  },
+  {
+    "rank": "180",
+    "allexp": "2001800",
+    "exp": "20788",
+    "stamina": "200"
+  },
+  {
+    "rank": "181",
+    "allexp": "2022594",
+    "exp": "20794",
+    "stamina": "200"
+  },
+  {
+    "rank": "182",
+    "allexp": "2043394",
+    "exp": "20800",
+    "stamina": "200"
+  },
+  {
+    "rank": "183",
+    "allexp": "2064200",
+    "exp": "20806",
+    "stamina": "200"
+  },
+  {
+    "rank": "184",
+    "allexp": "2085012",
+    "exp": "20812",
+    "stamina": "200"
+  },
+  {
+    "rank": "185",
+    "allexp": "2105830",
+    "exp": "20818",
+    "stamina": "200"
+  },
+  {
+    "rank": "186",
+    "allexp": "2126654",
+    "exp": "20824",
+    "stamina": "200"
+  },
+  {
+    "rank": "187",
+    "allexp": "2147484",
+    "exp": "20830",
+    "stamina": "200"
+  },
+  {
+    "rank": "188",
+    "allexp": "2168320",
+    "exp": "20836",
+    "stamina": "200"
+  },
+  {
+    "rank": "189",
+    "allexp": "2189162",
+    "exp": "20842",
+    "stamina": "200"
+  },
+  {
+    "rank": "190",
+    "allexp": "2210010",
+    "exp": "20848",
+    "stamina": "200"
+  },
+  {
+    "rank": "191",
+    "allexp": "2230864",
+    "exp": "20854",
+    "stamina": "200"
+  },
+  {
+    "rank": "192",
+    "allexp": "2251724",
+    "exp": "20860",
+    "stamina": "200"
+  },
+  {
+    "rank": "193",
+    "allexp": "2272590",
+    "exp": "20866",
+    "stamina": "200"
+  },
+  {
+    "rank": "194",
+    "allexp": "2293462",
+    "exp": "20872",
+    "stamina": "200"
+  },
+  {
+    "rank": "195",
+    "allexp": "2314340",
+    "exp": "20878",
+    "stamina": "200"
+  },
+  {
+    "rank": "196",
+    "allexp": "2335224",
+    "exp": "20884",
+    "stamina": "200"
+  },
+  {
+    "rank": "197",
+    "allexp": "2356114",
+    "exp": "20890",
+    "stamina": "200"
+  },
+  {
+    "rank": "198",
+    "allexp": "2377010",
+    "exp": "20896",
+    "stamina": "200"
+  },
+  {
+    "rank": "199",
+    "allexp": "2397912",
+    "exp": "20902",
+    "stamina": "200"
+  },
+  {
+    "rank": "200",
+    "allexp": "2418820",
+    "exp": "20908",
+    "stamina": "200"
+  },
+  {
+    "rank": "201",
+    "allexp": "2439734",
+    "exp": "20914",
+    "stamina": "200"
+  },
+  {
+    "rank": "202",
+    "allexp": "2460654",
+    "exp": "20920",
+    "stamina": "200"
+  },
+  {
+    "rank": "203",
+    "allexp": "2481580",
+    "exp": "20926",
+    "stamina": "200"
+  },
+  {
+    "rank": "204",
+    "allexp": "2502512",
+    "exp": "20932",
+    "stamina": "200"
+  },
+  {
+    "rank": "205",
+    "allexp": "2523450",
+    "exp": "20938",
+    "stamina": "200"
+  },
+  {
+    "rank": "206",
+    "allexp": "2544394",
+    "exp": "20944",
+    "stamina": "200"
+  },
+  {
+    "rank": "207",
+    "allexp": "2565344",
+    "exp": "20950",
+    "stamina": "200"
+  },
+  {
+    "rank": "208",
+    "allexp": "2586300",
+    "exp": "20956",
+    "stamina": "200"
+  },
+  {
+    "rank": "209",
+    "allexp": "2607262",
+    "exp": "20962",
+    "stamina": "200"
+  },
+  {
+    "rank": "210",
+    "allexp": "2628230",
+    "exp": "20968",
+    "stamina": "200"
+  },
+  {
+    "rank": "211",
+    "allexp": "2649204",
+    "exp": "20974",
+    "stamina": "200"
+  },
+  {
+    "rank": "212",
+    "allexp": "2670184",
+    "exp": "20980",
+    "stamina": "200"
+  },
+  {
+    "rank": "213",
+    "allexp": "2691170",
+    "exp": "20986",
+    "stamina": "200"
+  },
+  {
+    "rank": "214",
+    "allexp": "2712162",
+    "exp": "20992",
+    "stamina": "200"
+  },
+  {
+    "rank": "215",
+    "allexp": "2733160",
+    "exp": "20998",
+    "stamina": "200"
+  },
+  {
+    "rank": "216",
+    "allexp": "2754164",
+    "exp": "21004",
+    "stamina": "200"
+  },
+  {
+    "rank": "217",
+    "allexp": "2775174",
+    "exp": "21010",
+    "stamina": "200"
+  },
+  {
+    "rank": "218",
+    "allexp": "2796190",
+    "exp": "21016",
+    "stamina": "200"
+  },
+  {
+    "rank": "219",
+    "allexp": "2817212",
+    "exp": "21022",
+    "stamina": "200"
+  },
+  {
+    "rank": "220",
+    "allexp": "2838240",
+    "exp": "21028",
+    "stamina": "200"
+  },
+  {
+    "rank": "221",
+    "allexp": "2859274",
+    "exp": "21034",
+    "stamina": "200"
+  },
+  {
+    "rank": "222",
+    "allexp": "2880314",
+    "exp": "21040",
+    "stamina": "200"
+  },
+  {
+    "rank": "223",
+    "allexp": "2901360",
+    "exp": "21046",
+    "stamina": "200"
+  },
+  {
+    "rank": "224",
+    "allexp": "2922412",
+    "exp": "21052",
+    "stamina": "200"
+  },
+  {
+    "rank": "225",
+    "allexp": "2943470",
+    "exp": "21058",
+    "stamina": "200"
+  },
+  {
+    "rank": "226",
+    "allexp": "2964534",
+    "exp": "21064",
+    "stamina": "200"
+  },
+  {
+    "rank": "227",
+    "allexp": "2985604",
+    "exp": "21070",
+    "stamina": "200"
+  },
+  {
+    "rank": "228",
+    "allexp": "3006680",
+    "exp": "21076",
+    "stamina": "200"
+  },
+  {
+    "rank": "229",
+    "allexp": "3027762",
+    "exp": "21082",
+    "stamina": "200"
+  },
+  {
+    "rank": "230",
+    "allexp": "3048850",
+    "exp": "21088",
+    "stamina": "200"
+  },
+  {
+    "rank": "231",
+    "allexp": "3069944",
+    "exp": "21094",
+    "stamina": "200"
+  },
+  {
+    "rank": "232",
+    "allexp": "3091044",
+    "exp": "21100",
+    "stamina": "200"
+  },
+  {
+    "rank": "233",
+    "allexp": "3112150",
+    "exp": "21106",
+    "stamina": "200"
+  },
+  {
+    "rank": "234",
+    "allexp": "3133262",
+    "exp": "21112",
+    "stamina": "200"
+  },
+  {
+    "rank": "235",
+    "allexp": "3154380",
+    "exp": "21118",
+    "stamina": "200"
+  },
+  {
+    "rank": "236",
+    "allexp": "3175504",
+    "exp": "21124",
+    "stamina": "200"
+  },
+  {
+    "rank": "237",
+    "allexp": "3196634",
+    "exp": "21130",
+    "stamina": "200"
+  },
+  {
+    "rank": "238",
+    "allexp": "3217770",
+    "exp": "21136",
+    "stamina": "200"
+  },
+  {
+    "rank": "239",
+    "allexp": "3238912",
+    "exp": "21142",
+    "stamina": "200"
+  },
+  {
+    "rank": "240",
+    "allexp": "3260060",
+    "exp": "21148",
+    "stamina": "200"
+  },
+  {
+    "rank": "241",
+    "allexp": "3281214",
+    "exp": "21154",
+    "stamina": "200"
+  },
+  {
+    "rank": "242",
+    "allexp": "3302374",
+    "exp": "21160",
+    "stamina": "200"
+  },
+  {
+    "rank": "243",
+    "allexp": "3323540",
+    "exp": "21166",
+    "stamina": "200"
+  },
+  {
+    "rank": "244",
+    "allexp": "3344712",
+    "exp": "21172",
+    "stamina": "200"
+  },
+  {
+    "rank": "245",
+    "allexp": "3365890",
+    "exp": "21178",
+    "stamina": "200"
+  },
+  {
+    "rank": "246",
+    "allexp": "3387074",
+    "exp": "21184",
+    "stamina": "200"
+  },
+  {
+    "rank": "247",
+    "allexp": "3408264",
+    "exp": "21190",
+    "stamina": "200"
+  },
+  {
+    "rank": "248",
+    "allexp": "3429460",
+    "exp": "21196",
+    "stamina": "200"
+  },
+  {
+    "rank": "249",
+    "allexp": "3450662",
+    "exp": "21202",
+    "stamina": "200"
+  },
+  {
+    "rank": "250",
+    "allexp": "3471870",
+    "exp": "21208",
+    "stamina": "200"
+  }
+]

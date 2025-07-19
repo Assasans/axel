@@ -1,1 +1,938 @@
-[{"id":"2011101","group_id":"20111","count_point":"400000","navi_play_place":"event_top_boss_2011101","boss_image":"0","start_at":"2021\/11\/9 0:00","pack_id":"50244"},{"id":"2011102","group_id":"20111","count_point":"800000","navi_play_place":"event_top_boss_2011102","boss_image":"0","start_at":"2021\/11\/9 0:00","pack_id":"50245"},{"id":"2011103","group_id":"20111","count_point":"1200000","navi_play_place":"event_top_boss_2011103","boss_image":"0","start_at":"2021\/11\/9 0:00","pack_id":"50246"},{"id":"2011104","group_id":"20111","count_point":"2000000","navi_play_place":"event_top_boss_2011104","boss_image":"0","start_at":"2021\/11\/9 0:00","pack_id":"50247"},{"id":"2011105","group_id":"20111","count_point":"3000000","navi_play_place":"event_top_boss_2011104","boss_image":"0","start_at":"2021\/11\/9 0:00","pack_id":"50249"},{"id":"2011106","group_id":"20111","count_point":"4000000","navi_play_place":"event_top_boss_2011104","boss_image":"0","start_at":"2021\/11\/9 0:00","pack_id":"50250"},{"id":"2103101","group_id":"21031","count_point":"400000","navi_play_place":"event_top_boss_2103101","boss_image":"0","start_at":"2022\/8\/23 0:00","pack_id":"50364"},{"id":"2103102","group_id":"21031","count_point":"800000","navi_play_place":"event_top_boss_2103102","boss_image":"0","start_at":"2022\/8\/23 0:00","pack_id":"50365"},{"id":"2103103","group_id":"21031","count_point":"1200000","navi_play_place":"event_top_boss_2103103","boss_image":"0","start_at":"2022\/8\/23 0:00","pack_id":"50366"},{"id":"2103104","group_id":"21031","count_point":"2000000","navi_play_place":"event_top_boss_2103104","boss_image":"0","start_at":"2022\/8\/23 0:00","pack_id":"50367"},{"id":"2103105","group_id":"21031","count_point":"3000000","navi_play_place":"event_top_boss_2103104","boss_image":"0","start_at":"2022\/8\/23 0:00","pack_id":"50368"},{"id":"2103106","group_id":"21031","count_point":"4000000","navi_play_place":"event_top_boss_2103104","boss_image":"0","start_at":"2022\/8\/23 0:00","pack_id":"50365"},{"id":"2105101","group_id":"21051","count_point":"400000","navi_play_place":"event_top_boss_2105101","boss_image":"0","start_at":"2022\/5\/26 0:00","pack_id":"50425"},{"id":"2105102","group_id":"21051","count_point":"800000","navi_play_place":"event_top_boss_2105102","boss_image":"0","start_at":"2022\/5\/26 0:00","pack_id":"50426"},{"id":"2105103","group_id":"21051","count_point":"1000000","navi_play_place":"event_top_boss_2105103","boss_image":"0","start_at":"2022\/5\/26 0:00","pack_id":"50427"},{"id":"2105104","group_id":"21051","count_point":"1500000","navi_play_place":"event_top_boss_2105104","boss_image":"0","start_at":"2022\/5\/26 0:00","pack_id":"50425"},{"id":"2105105","group_id":"21051","count_point":"2000000","navi_play_place":"event_top_boss_2105105","boss_image":"0","start_at":"2022\/5\/26 0:00","pack_id":"50428"},{"id":"2105106","group_id":"21051","count_point":"3000000","navi_play_place":"event_top_boss_2105106","boss_image":"0","start_at":"2022\/5\/26 0:00","pack_id":"50425"},{"id":"2105107","group_id":"21051","count_point":"4000000","navi_play_place":"event_top_boss_2105106","boss_image":"0","start_at":"2022\/5\/26 0:00","pack_id":"50429"},{"id":"2105108","group_id":"21051","count_point":"5000000","navi_play_place":"event_top_boss_2105106","boss_image":"0","start_at":"2022\/5\/26 0:00","pack_id":"50426"},{"id":"2109101","group_id":"21091","count_point":"400000","navi_play_place":"event_top_boss_2109101","boss_image":"0","start_at":"2022\/12\/7 0:00","pack_id":"50545"},{"id":"2109102","group_id":"21091","count_point":"800000","navi_play_place":"event_top_boss_2109102","boss_image":"0","start_at":"2022\/12\/7 0:00","pack_id":"50365"},{"id":"2109103","group_id":"21091","count_point":"1200000","navi_play_place":"event_top_boss_2109103","boss_image":"0","start_at":"2022\/12\/7 0:00","pack_id":"50546"},{"id":"2109104","group_id":"21091","count_point":"2000000","navi_play_place":"event_top_boss_2109104","boss_image":"0","start_at":"2022\/12\/7 0:00","pack_id":"50366"},{"id":"2109105","group_id":"21091","count_point":"3000000","navi_play_place":"event_top_boss_2109105","boss_image":"0","start_at":"2022\/12\/7 0:00","pack_id":"50547"},{"id":"2109106","group_id":"21091","count_point":"4000000","navi_play_place":"event_top_boss_2109106","boss_image":"0","start_at":"2022\/12\/7 0:00","pack_id":"50427"},{"id":"2109107","group_id":"21091","count_point":"5000000","navi_play_place":"event_top_boss_2109107","boss_image":"0","start_at":"2022\/12\/7 0:00","pack_id":"50365"},{"id":"2111101","group_id":"21111","count_point":"300000","navi_play_place":"event_top_boss_2111101","boss_image":"0","start_at":"2023\/2\/21 0:00","pack_id":"50604"},{"id":"2111102","group_id":"21111","count_point":"500000","navi_play_place":"event_top_boss_2111102","boss_image":"0","start_at":"2023\/2\/21 0:00","pack_id":"50426"},{"id":"2111103","group_id":"21111","count_point":"800000","navi_play_place":"event_top_boss_2111103","boss_image":"0","start_at":"2023\/2\/21 0:00","pack_id":"50546"},{"id":"2111104","group_id":"21111","count_point":"1200000","navi_play_place":"event_top_boss_2111104","boss_image":"0","start_at":"2023\/2\/21 0:00","pack_id":"50428"},{"id":"2111105","group_id":"21111","count_point":"2000000","navi_play_place":"event_top_boss_2111105","boss_image":"0","start_at":"2023\/2\/21 0:00","pack_id":"50429"},{"id":"2111106","group_id":"21111","count_point":"3000000","navi_play_place":"event_top_boss_2111105","boss_image":"0","start_at":"2023\/2\/21 0:00","pack_id":"50427"},{"id":"2111107","group_id":"21111","count_point":"4000000","navi_play_place":"event_top_boss_2111105","boss_image":"0","start_at":"2023\/2\/21 0:00","pack_id":"50426"},{"id":"2203101","group_id":"22031","count_point":"400000","navi_play_place":"event_top_boss_2203101","boss_image":"0","start_at":"2023\/7\/28 0:00","pack_id":"50724"},{"id":"2203102","group_id":"22031","count_point":"800000","navi_play_place":"event_top_boss_2203102","boss_image":"0","start_at":"2023\/7\/28 0:00","pack_id":"50426"},{"id":"2203103","group_id":"22031","count_point":"1000000","navi_play_place":"event_top_boss_2203103","boss_image":"0","start_at":"2023\/7\/28 0:00","pack_id":"50546"},{"id":"2203104","group_id":"22031","count_point":"1500000","navi_play_place":"event_top_boss_2203104","boss_image":"0","start_at":"2023\/7\/28 0:00","pack_id":"50428"},{"id":"2203105","group_id":"22031","count_point":"2000000","navi_play_place":"event_top_boss_2203105","boss_image":"0","start_at":"2023\/7\/28 0:00","pack_id":"50429"},{"id":"2203106","group_id":"22031","count_point":"3000000","navi_play_place":"event_top_boss_2203105","boss_image":"0","start_at":"2023\/8\/7 0:00","pack_id":"50724"},{"id":"2203107","group_id":"22031","count_point":"4000000","navi_play_place":"event_top_boss_2203105","boss_image":"0","start_at":"2023\/8\/7 0:00","pack_id":"50427"},{"id":"2203108","group_id":"22031","count_point":"5000000","navi_play_place":"event_top_boss_2203105","boss_image":"0","start_at":"2023\/8\/7 0:00","pack_id":"50426"},{"id":"2205101","group_id":"22051","count_point":"1000000","navi_play_place":"event_top_boss_2205101","boss_image":"0","start_at":"2122\/05\/11 15:00","pack_id":"50795"},{"id":"2205102","group_id":"22051","count_point":"2000000","navi_play_place":"event_top_boss_2205102","boss_image":"0","start_at":"2122\/05\/11 15:00","pack_id":"50426"},{"id":"2205103","group_id":"22051","count_point":"3000000","navi_play_place":"event_top_boss_2205103","boss_image":"0","start_at":"2122\/05\/11 15:00","pack_id":"50796"},{"id":"2205104","group_id":"22051","count_point":"5000000","navi_play_place":"event_top_boss_2205104","boss_image":"0","start_at":"2122\/05\/11 15:00","pack_id":"50428"},{"id":"2205105","group_id":"22051","count_point":"7500000","navi_play_place":"event_top_boss_2205105","boss_image":"0","start_at":"2122\/05\/11 15:00","pack_id":"50429"},{"id":"2205106","group_id":"22051","count_point":"10000000","navi_play_place":"event_top_boss_2205105","boss_image":"0","start_at":"2122\/05\/11 15:00","pack_id":"50795"},{"id":"2205107","group_id":"22051","count_point":"12500000","navi_play_place":"event_top_boss_2205105","boss_image":"0","start_at":"2122\/05\/11 15:00","pack_id":"50796"},{"id":"2205108","group_id":"22051","count_point":"15000000","navi_play_place":"event_top_boss_2205105","boss_image":"0","start_at":"2122\/05\/11 15:00","pack_id":"50427"},{"id":"2209101","group_id":"22091","count_point":"100000","navi_play_place":"event_top_boss_2209101","boss_image":"0","start_at":"2023\/11\/10 0:00","pack_id":"50904"},{"id":"2209102","group_id":"22091","count_point":"300000","navi_play_place":"event_top_boss_2209102","boss_image":"0","start_at":"2023\/11\/10 0:00","pack_id":"50426"},{"id":"2209103","group_id":"22091","count_point":"600000","navi_play_place":"event_top_boss_2209103","boss_image":"0","start_at":"2023\/11\/10 0:00","pack_id":"50546"},{"id":"2209104","group_id":"22091","count_point":"1000000","navi_play_place":"event_top_boss_2209104","boss_image":"0","start_at":"2023\/11\/10 0:00","pack_id":"50905"},{"id":"2209105","group_id":"22091","count_point":"1500000","navi_play_place":"event_top_boss_2209105","boss_image":"0","start_at":"2023\/11\/10 0:00","pack_id":"50429"},{"id":"2211101","group_id":"22111","count_point":"1000000","navi_play_place":"event_top_boss_2211101","boss_image":"0","start_at":"2122\/10\/30 15:00","pack_id":"50965"},{"id":"2211102","group_id":"22111","count_point":"2000000","navi_play_place":"event_top_boss_2211102","boss_image":"0","start_at":"2122\/10\/30 15:00","pack_id":"50968"},{"id":"2211103","group_id":"22111","count_point":"3000000","navi_play_place":"event_top_boss_2211103","boss_image":"0","start_at":"2122\/10\/30 15:00","pack_id":"50967"},{"id":"2211104","group_id":"22111","count_point":"5000000","navi_play_place":"event_top_boss_2211104","boss_image":"0","start_at":"2122\/10\/30 15:00","pack_id":"50428"},{"id":"2211105","group_id":"22111","count_point":"7500000","navi_play_place":"event_top_boss_2211105","boss_image":"0","start_at":"2122\/10\/30 15:00","pack_id":"50429"},{"id":"2211106","group_id":"22111","count_point":"10000000","navi_play_place":"event_top_boss_2211106","boss_image":"0","start_at":"2122\/10\/30 15:00","pack_id":"50969"},{"id":"2212101","group_id":"22121","count_point":"100000","navi_play_place":"event_top_boss_2212101","boss_image":"0","start_at":"2024\/1\/9 0:00","pack_id":"50994"},{"id":"2212102","group_id":"22121","count_point":"300000","navi_play_place":"event_top_boss_2212101","boss_image":"0","start_at":"2024\/1\/9 0:00","pack_id":"50426"},{"id":"2212103","group_id":"22121","count_point":"600000","navi_play_place":"event_top_boss_2212102","boss_image":"0","start_at":"2024\/1\/9 0:00","pack_id":"50546"},{"id":"2212104","group_id":"22121","count_point":"1000000","navi_play_place":"event_top_boss_2212102","boss_image":"0","start_at":"2024\/1\/9 0:00","pack_id":"50995"},{"id":"2212105","group_id":"22121","count_point":"1500000","navi_play_place":"event_top_boss_2212102","boss_image":"0","start_at":"2024\/1\/9 0:00","pack_id":"50429"},{"id":"2212106","group_id":"22121","count_point":"2000000","navi_play_place":"event_top_boss_2212106","boss_image":"0","start_at":"2024\/1\/9 0:00","pack_id":"50994"},{"id":"2301301","group_id":"23013","count_point":"1000000","navi_play_place":"event_top_boss_2301301","boss_image":"0","start_at":"2123\/01\/20 15:00","pack_id":"51044"},{"id":"2301302","group_id":"23013","count_point":"2000000","navi_play_place":"event_top_boss_2301302","boss_image":"0","start_at":"2123\/01\/20 15:00","pack_id":"50995"},{"id":"2301303","group_id":"23013","count_point":"3000000","navi_play_place":"event_top_boss_2301303","boss_image":"0","start_at":"2123\/01\/20 15:00","pack_id":"51045"},{"id":"2301304","group_id":"23013","count_point":"5000000","navi_play_place":"event_top_boss_2301304","boss_image":"0","start_at":"2123\/01\/20 15:00","pack_id":"51046"},{"id":"2301305","group_id":"23013","count_point":"7500000","navi_play_place":"event_top_boss_2301305","boss_image":"0","start_at":"2123\/01\/20 15:00","pack_id":"50547"},{"id":"2301306","group_id":"23013","count_point":"10000000","navi_play_place":"event_top_boss_2301306","boss_image":"0","start_at":"2123\/01\/20 15:00","pack_id":"51047"},{"id":"2303101","group_id":"23031","count_point":"100000","navi_play_place":"event_top_boss_2303101","boss_image":"0","start_at":"2024\/3\/15 0:00","pack_id":"51075"},{"id":"2303102","group_id":"23031","count_point":"300000","navi_play_place":"event_top_boss_2303102","boss_image":"0","start_at":"2024\/3\/15 0:00","pack_id":"50968"},{"id":"2303103","group_id":"23031","count_point":"500000","navi_play_place":"event_top_boss_2303103","boss_image":"0","start_at":"2024\/3\/15 0:00","pack_id":"51076"},{"id":"2303104","group_id":"23031","count_point":"700000","navi_play_place":"event_top_boss_2303104","boss_image":"0","start_at":"2024\/3\/15 0:00","pack_id":"51046"},{"id":"2303105","group_id":"23031","count_point":"1000000","navi_play_place":"event_top_boss_2303105","boss_image":"0","start_at":"2024\/3\/15 0:00","pack_id":"50547"},{"id":"2305301","group_id":"23053","count_point":"1000000","navi_play_place":"event_top_boss_2305301","boss_image":"0","start_at":"2123\/05\/20 15:00","pack_id":"51164"},{"id":"2305302","group_id":"23053","count_point":"2000000","navi_play_place":"event_top_boss_2305302","boss_image":"0","start_at":"2123\/05\/20 15:00","pack_id":"51166"},{"id":"2305303","group_id":"23053","count_point":"3000000","navi_play_place":"event_top_boss_2305303","boss_image":"0","start_at":"2123\/05\/20 15:00","pack_id":"51165"},{"id":"2305304","group_id":"23053","count_point":"5000000","navi_play_place":"event_top_boss_2305304","boss_image":"0","start_at":"2123\/05\/20 15:00","pack_id":"51167"},{"id":"2305305","group_id":"23053","count_point":"7500000","navi_play_place":"event_top_boss_2305305","boss_image":"0","start_at":"2123\/05\/20 15:00","pack_id":"50968"},{"id":"2308101","group_id":"23081","count_point":"1000000","navi_play_place":"event_top_boss_2308101","boss_image":"0","start_at":"2123\/07\/31 15:00","pack_id":"51234"},{"id":"2308102","group_id":"23081","count_point":"2000000","navi_play_place":"event_top_boss_2308102","boss_image":"0","start_at":"2123\/07\/31 15:00","pack_id":"51235"},{"id":"2308103","group_id":"23081","count_point":"3000000","navi_play_place":"event_top_boss_2308103","boss_image":"0","start_at":"2123\/07\/31 15:00","pack_id":"51165"},{"id":"2308104","group_id":"23081","count_point":"5000000","navi_play_place":"event_top_boss_2308104","boss_image":"0","start_at":"2123\/07\/31 15:00","pack_id":"51235"},{"id":"2308105","group_id":"23081","count_point":"7500000","navi_play_place":"event_top_boss_2308105","boss_image":"0","start_at":"2123\/07\/31 15:00","pack_id":"50968"},{"id":"2309101","group_id":"23091","count_point":"100000","navi_play_place":"event_top_boss_2309101","boss_image":"0","start_at":"2024\/8\/16 0:00","pack_id":"51264"},{"id":"2309102","group_id":"23091","count_point":"300000","navi_play_place":"event_top_boss_2309102","boss_image":"0","start_at":"2024\/8\/16 0:00","pack_id":"50426"},{"id":"2309103","group_id":"23091","count_point":"500000","navi_play_place":"event_top_boss_2309103","boss_image":"0","start_at":"2024\/8\/16 0:00","pack_id":"50546"},{"id":"2309104","group_id":"23091","count_point":"700000","navi_play_place":"event_top_boss_2309104","boss_image":"0","start_at":"2024\/8\/16 0:00","pack_id":"50995"},{"id":"2309105","group_id":"23091","count_point":"1000000","navi_play_place":"event_top_boss_2309105","boss_image":"0","start_at":"2024\/8\/16 0:00","pack_id":"50547"},{"id":"2402101","group_id":"24021","count_point":"1000000","navi_play_place":"event_top_boss_2402101","boss_image":"0","start_at":"2124\/01\/31 15:00","pack_id":"51414"},{"id":"2402102","group_id":"24021","count_point":"2000000","navi_play_place":"event_top_boss_2402102","boss_image":"0","start_at":"2124\/01\/31 15:00","pack_id":"51416"},{"id":"2402103","group_id":"24021","count_point":"3000000","navi_play_place":"event_top_boss_2402103","boss_image":"0","start_at":"2124\/01\/31 15:00","pack_id":"51417"},{"id":"2402104","group_id":"24021","count_point":"5000000","navi_play_place":"event_top_boss_2402104","boss_image":"0","start_at":"2124\/01\/31 15:00","pack_id":"51416"},{"id":"2402105","group_id":"24021","count_point":"7500000","navi_play_place":"event_top_boss_2402105","boss_image":"0","start_at":"2124\/01\/31 15:00","pack_id":"51418"},{"id":"2402106","group_id":"24021","count_point":"10000000","navi_play_place":"event_top_boss_2402106","boss_image":"0","start_at":"2124\/01\/31 15:00","pack_id":"51415"},{"id":"2404101","group_id":"24041","count_point":"100000","navi_play_place":"event_top_boss_2404101","boss_image":"0","start_at":"2025\/1\/14 0:00","pack_id":"50994"},{"id":"2404102","group_id":"24041","count_point":"300000","navi_play_place":"event_top_boss_2404102","boss_image":"0","start_at":"2025\/1\/14 0:00","pack_id":"50426"},{"id":"2404103","group_id":"24041","count_point":"500000","navi_play_place":"event_top_boss_2404103","boss_image":"0","start_at":"2025\/1\/14 0:00","pack_id":"50546"},{"id":"2404104","group_id":"24041","count_point":"700000","navi_play_place":"event_top_boss_2404104","boss_image":"0","start_at":"2025\/1\/14 0:00","pack_id":"50995"},{"id":"2404105","group_id":"24041","count_point":"1000000","navi_play_place":"event_top_boss_2404105","boss_image":"0","start_at":"2025\/1\/14 0:00","pack_id":"50429"}]
+[
+  {
+    "id": "2011101",
+    "group_id": "20111",
+    "count_point": "400000",
+    "navi_play_place": "event_top_boss_2011101",
+    "boss_image": "0",
+    "start_at": "2021/11/9 0:00",
+    "pack_id": "50244"
+  },
+  {
+    "id": "2011102",
+    "group_id": "20111",
+    "count_point": "800000",
+    "navi_play_place": "event_top_boss_2011102",
+    "boss_image": "0",
+    "start_at": "2021/11/9 0:00",
+    "pack_id": "50245"
+  },
+  {
+    "id": "2011103",
+    "group_id": "20111",
+    "count_point": "1200000",
+    "navi_play_place": "event_top_boss_2011103",
+    "boss_image": "0",
+    "start_at": "2021/11/9 0:00",
+    "pack_id": "50246"
+  },
+  {
+    "id": "2011104",
+    "group_id": "20111",
+    "count_point": "2000000",
+    "navi_play_place": "event_top_boss_2011104",
+    "boss_image": "0",
+    "start_at": "2021/11/9 0:00",
+    "pack_id": "50247"
+  },
+  {
+    "id": "2011105",
+    "group_id": "20111",
+    "count_point": "3000000",
+    "navi_play_place": "event_top_boss_2011104",
+    "boss_image": "0",
+    "start_at": "2021/11/9 0:00",
+    "pack_id": "50249"
+  },
+  {
+    "id": "2011106",
+    "group_id": "20111",
+    "count_point": "4000000",
+    "navi_play_place": "event_top_boss_2011104",
+    "boss_image": "0",
+    "start_at": "2021/11/9 0:00",
+    "pack_id": "50250"
+  },
+  {
+    "id": "2103101",
+    "group_id": "21031",
+    "count_point": "400000",
+    "navi_play_place": "event_top_boss_2103101",
+    "boss_image": "0",
+    "start_at": "2022/8/23 0:00",
+    "pack_id": "50364"
+  },
+  {
+    "id": "2103102",
+    "group_id": "21031",
+    "count_point": "800000",
+    "navi_play_place": "event_top_boss_2103102",
+    "boss_image": "0",
+    "start_at": "2022/8/23 0:00",
+    "pack_id": "50365"
+  },
+  {
+    "id": "2103103",
+    "group_id": "21031",
+    "count_point": "1200000",
+    "navi_play_place": "event_top_boss_2103103",
+    "boss_image": "0",
+    "start_at": "2022/8/23 0:00",
+    "pack_id": "50366"
+  },
+  {
+    "id": "2103104",
+    "group_id": "21031",
+    "count_point": "2000000",
+    "navi_play_place": "event_top_boss_2103104",
+    "boss_image": "0",
+    "start_at": "2022/8/23 0:00",
+    "pack_id": "50367"
+  },
+  {
+    "id": "2103105",
+    "group_id": "21031",
+    "count_point": "3000000",
+    "navi_play_place": "event_top_boss_2103104",
+    "boss_image": "0",
+    "start_at": "2022/8/23 0:00",
+    "pack_id": "50368"
+  },
+  {
+    "id": "2103106",
+    "group_id": "21031",
+    "count_point": "4000000",
+    "navi_play_place": "event_top_boss_2103104",
+    "boss_image": "0",
+    "start_at": "2022/8/23 0:00",
+    "pack_id": "50365"
+  },
+  {
+    "id": "2105101",
+    "group_id": "21051",
+    "count_point": "400000",
+    "navi_play_place": "event_top_boss_2105101",
+    "boss_image": "0",
+    "start_at": "2022/5/26 0:00",
+    "pack_id": "50425"
+  },
+  {
+    "id": "2105102",
+    "group_id": "21051",
+    "count_point": "800000",
+    "navi_play_place": "event_top_boss_2105102",
+    "boss_image": "0",
+    "start_at": "2022/5/26 0:00",
+    "pack_id": "50426"
+  },
+  {
+    "id": "2105103",
+    "group_id": "21051",
+    "count_point": "1000000",
+    "navi_play_place": "event_top_boss_2105103",
+    "boss_image": "0",
+    "start_at": "2022/5/26 0:00",
+    "pack_id": "50427"
+  },
+  {
+    "id": "2105104",
+    "group_id": "21051",
+    "count_point": "1500000",
+    "navi_play_place": "event_top_boss_2105104",
+    "boss_image": "0",
+    "start_at": "2022/5/26 0:00",
+    "pack_id": "50425"
+  },
+  {
+    "id": "2105105",
+    "group_id": "21051",
+    "count_point": "2000000",
+    "navi_play_place": "event_top_boss_2105105",
+    "boss_image": "0",
+    "start_at": "2022/5/26 0:00",
+    "pack_id": "50428"
+  },
+  {
+    "id": "2105106",
+    "group_id": "21051",
+    "count_point": "3000000",
+    "navi_play_place": "event_top_boss_2105106",
+    "boss_image": "0",
+    "start_at": "2022/5/26 0:00",
+    "pack_id": "50425"
+  },
+  {
+    "id": "2105107",
+    "group_id": "21051",
+    "count_point": "4000000",
+    "navi_play_place": "event_top_boss_2105106",
+    "boss_image": "0",
+    "start_at": "2022/5/26 0:00",
+    "pack_id": "50429"
+  },
+  {
+    "id": "2105108",
+    "group_id": "21051",
+    "count_point": "5000000",
+    "navi_play_place": "event_top_boss_2105106",
+    "boss_image": "0",
+    "start_at": "2022/5/26 0:00",
+    "pack_id": "50426"
+  },
+  {
+    "id": "2109101",
+    "group_id": "21091",
+    "count_point": "400000",
+    "navi_play_place": "event_top_boss_2109101",
+    "boss_image": "0",
+    "start_at": "2022/12/7 0:00",
+    "pack_id": "50545"
+  },
+  {
+    "id": "2109102",
+    "group_id": "21091",
+    "count_point": "800000",
+    "navi_play_place": "event_top_boss_2109102",
+    "boss_image": "0",
+    "start_at": "2022/12/7 0:00",
+    "pack_id": "50365"
+  },
+  {
+    "id": "2109103",
+    "group_id": "21091",
+    "count_point": "1200000",
+    "navi_play_place": "event_top_boss_2109103",
+    "boss_image": "0",
+    "start_at": "2022/12/7 0:00",
+    "pack_id": "50546"
+  },
+  {
+    "id": "2109104",
+    "group_id": "21091",
+    "count_point": "2000000",
+    "navi_play_place": "event_top_boss_2109104",
+    "boss_image": "0",
+    "start_at": "2022/12/7 0:00",
+    "pack_id": "50366"
+  },
+  {
+    "id": "2109105",
+    "group_id": "21091",
+    "count_point": "3000000",
+    "navi_play_place": "event_top_boss_2109105",
+    "boss_image": "0",
+    "start_at": "2022/12/7 0:00",
+    "pack_id": "50547"
+  },
+  {
+    "id": "2109106",
+    "group_id": "21091",
+    "count_point": "4000000",
+    "navi_play_place": "event_top_boss_2109106",
+    "boss_image": "0",
+    "start_at": "2022/12/7 0:00",
+    "pack_id": "50427"
+  },
+  {
+    "id": "2109107",
+    "group_id": "21091",
+    "count_point": "5000000",
+    "navi_play_place": "event_top_boss_2109107",
+    "boss_image": "0",
+    "start_at": "2022/12/7 0:00",
+    "pack_id": "50365"
+  },
+  {
+    "id": "2111101",
+    "group_id": "21111",
+    "count_point": "300000",
+    "navi_play_place": "event_top_boss_2111101",
+    "boss_image": "0",
+    "start_at": "2023/2/21 0:00",
+    "pack_id": "50604"
+  },
+  {
+    "id": "2111102",
+    "group_id": "21111",
+    "count_point": "500000",
+    "navi_play_place": "event_top_boss_2111102",
+    "boss_image": "0",
+    "start_at": "2023/2/21 0:00",
+    "pack_id": "50426"
+  },
+  {
+    "id": "2111103",
+    "group_id": "21111",
+    "count_point": "800000",
+    "navi_play_place": "event_top_boss_2111103",
+    "boss_image": "0",
+    "start_at": "2023/2/21 0:00",
+    "pack_id": "50546"
+  },
+  {
+    "id": "2111104",
+    "group_id": "21111",
+    "count_point": "1200000",
+    "navi_play_place": "event_top_boss_2111104",
+    "boss_image": "0",
+    "start_at": "2023/2/21 0:00",
+    "pack_id": "50428"
+  },
+  {
+    "id": "2111105",
+    "group_id": "21111",
+    "count_point": "2000000",
+    "navi_play_place": "event_top_boss_2111105",
+    "boss_image": "0",
+    "start_at": "2023/2/21 0:00",
+    "pack_id": "50429"
+  },
+  {
+    "id": "2111106",
+    "group_id": "21111",
+    "count_point": "3000000",
+    "navi_play_place": "event_top_boss_2111105",
+    "boss_image": "0",
+    "start_at": "2023/2/21 0:00",
+    "pack_id": "50427"
+  },
+  {
+    "id": "2111107",
+    "group_id": "21111",
+    "count_point": "4000000",
+    "navi_play_place": "event_top_boss_2111105",
+    "boss_image": "0",
+    "start_at": "2023/2/21 0:00",
+    "pack_id": "50426"
+  },
+  {
+    "id": "2203101",
+    "group_id": "22031",
+    "count_point": "400000",
+    "navi_play_place": "event_top_boss_2203101",
+    "boss_image": "0",
+    "start_at": "2023/7/28 0:00",
+    "pack_id": "50724"
+  },
+  {
+    "id": "2203102",
+    "group_id": "22031",
+    "count_point": "800000",
+    "navi_play_place": "event_top_boss_2203102",
+    "boss_image": "0",
+    "start_at": "2023/7/28 0:00",
+    "pack_id": "50426"
+  },
+  {
+    "id": "2203103",
+    "group_id": "22031",
+    "count_point": "1000000",
+    "navi_play_place": "event_top_boss_2203103",
+    "boss_image": "0",
+    "start_at": "2023/7/28 0:00",
+    "pack_id": "50546"
+  },
+  {
+    "id": "2203104",
+    "group_id": "22031",
+    "count_point": "1500000",
+    "navi_play_place": "event_top_boss_2203104",
+    "boss_image": "0",
+    "start_at": "2023/7/28 0:00",
+    "pack_id": "50428"
+  },
+  {
+    "id": "2203105",
+    "group_id": "22031",
+    "count_point": "2000000",
+    "navi_play_place": "event_top_boss_2203105",
+    "boss_image": "0",
+    "start_at": "2023/7/28 0:00",
+    "pack_id": "50429"
+  },
+  {
+    "id": "2203106",
+    "group_id": "22031",
+    "count_point": "3000000",
+    "navi_play_place": "event_top_boss_2203105",
+    "boss_image": "0",
+    "start_at": "2023/8/7 0:00",
+    "pack_id": "50724"
+  },
+  {
+    "id": "2203107",
+    "group_id": "22031",
+    "count_point": "4000000",
+    "navi_play_place": "event_top_boss_2203105",
+    "boss_image": "0",
+    "start_at": "2023/8/7 0:00",
+    "pack_id": "50427"
+  },
+  {
+    "id": "2203108",
+    "group_id": "22031",
+    "count_point": "5000000",
+    "navi_play_place": "event_top_boss_2203105",
+    "boss_image": "0",
+    "start_at": "2023/8/7 0:00",
+    "pack_id": "50426"
+  },
+  {
+    "id": "2205101",
+    "group_id": "22051",
+    "count_point": "1000000",
+    "navi_play_place": "event_top_boss_2205101",
+    "boss_image": "0",
+    "start_at": "2122/05/11 15:00",
+    "pack_id": "50795"
+  },
+  {
+    "id": "2205102",
+    "group_id": "22051",
+    "count_point": "2000000",
+    "navi_play_place": "event_top_boss_2205102",
+    "boss_image": "0",
+    "start_at": "2122/05/11 15:00",
+    "pack_id": "50426"
+  },
+  {
+    "id": "2205103",
+    "group_id": "22051",
+    "count_point": "3000000",
+    "navi_play_place": "event_top_boss_2205103",
+    "boss_image": "0",
+    "start_at": "2122/05/11 15:00",
+    "pack_id": "50796"
+  },
+  {
+    "id": "2205104",
+    "group_id": "22051",
+    "count_point": "5000000",
+    "navi_play_place": "event_top_boss_2205104",
+    "boss_image": "0",
+    "start_at": "2122/05/11 15:00",
+    "pack_id": "50428"
+  },
+  {
+    "id": "2205105",
+    "group_id": "22051",
+    "count_point": "7500000",
+    "navi_play_place": "event_top_boss_2205105",
+    "boss_image": "0",
+    "start_at": "2122/05/11 15:00",
+    "pack_id": "50429"
+  },
+  {
+    "id": "2205106",
+    "group_id": "22051",
+    "count_point": "10000000",
+    "navi_play_place": "event_top_boss_2205105",
+    "boss_image": "0",
+    "start_at": "2122/05/11 15:00",
+    "pack_id": "50795"
+  },
+  {
+    "id": "2205107",
+    "group_id": "22051",
+    "count_point": "12500000",
+    "navi_play_place": "event_top_boss_2205105",
+    "boss_image": "0",
+    "start_at": "2122/05/11 15:00",
+    "pack_id": "50796"
+  },
+  {
+    "id": "2205108",
+    "group_id": "22051",
+    "count_point": "15000000",
+    "navi_play_place": "event_top_boss_2205105",
+    "boss_image": "0",
+    "start_at": "2122/05/11 15:00",
+    "pack_id": "50427"
+  },
+  {
+    "id": "2209101",
+    "group_id": "22091",
+    "count_point": "100000",
+    "navi_play_place": "event_top_boss_2209101",
+    "boss_image": "0",
+    "start_at": "2023/11/10 0:00",
+    "pack_id": "50904"
+  },
+  {
+    "id": "2209102",
+    "group_id": "22091",
+    "count_point": "300000",
+    "navi_play_place": "event_top_boss_2209102",
+    "boss_image": "0",
+    "start_at": "2023/11/10 0:00",
+    "pack_id": "50426"
+  },
+  {
+    "id": "2209103",
+    "group_id": "22091",
+    "count_point": "600000",
+    "navi_play_place": "event_top_boss_2209103",
+    "boss_image": "0",
+    "start_at": "2023/11/10 0:00",
+    "pack_id": "50546"
+  },
+  {
+    "id": "2209104",
+    "group_id": "22091",
+    "count_point": "1000000",
+    "navi_play_place": "event_top_boss_2209104",
+    "boss_image": "0",
+    "start_at": "2023/11/10 0:00",
+    "pack_id": "50905"
+  },
+  {
+    "id": "2209105",
+    "group_id": "22091",
+    "count_point": "1500000",
+    "navi_play_place": "event_top_boss_2209105",
+    "boss_image": "0",
+    "start_at": "2023/11/10 0:00",
+    "pack_id": "50429"
+  },
+  {
+    "id": "2211101",
+    "group_id": "22111",
+    "count_point": "1000000",
+    "navi_play_place": "event_top_boss_2211101",
+    "boss_image": "0",
+    "start_at": "2122/10/30 15:00",
+    "pack_id": "50965"
+  },
+  {
+    "id": "2211102",
+    "group_id": "22111",
+    "count_point": "2000000",
+    "navi_play_place": "event_top_boss_2211102",
+    "boss_image": "0",
+    "start_at": "2122/10/30 15:00",
+    "pack_id": "50968"
+  },
+  {
+    "id": "2211103",
+    "group_id": "22111",
+    "count_point": "3000000",
+    "navi_play_place": "event_top_boss_2211103",
+    "boss_image": "0",
+    "start_at": "2122/10/30 15:00",
+    "pack_id": "50967"
+  },
+  {
+    "id": "2211104",
+    "group_id": "22111",
+    "count_point": "5000000",
+    "navi_play_place": "event_top_boss_2211104",
+    "boss_image": "0",
+    "start_at": "2122/10/30 15:00",
+    "pack_id": "50428"
+  },
+  {
+    "id": "2211105",
+    "group_id": "22111",
+    "count_point": "7500000",
+    "navi_play_place": "event_top_boss_2211105",
+    "boss_image": "0",
+    "start_at": "2122/10/30 15:00",
+    "pack_id": "50429"
+  },
+  {
+    "id": "2211106",
+    "group_id": "22111",
+    "count_point": "10000000",
+    "navi_play_place": "event_top_boss_2211106",
+    "boss_image": "0",
+    "start_at": "2122/10/30 15:00",
+    "pack_id": "50969"
+  },
+  {
+    "id": "2212101",
+    "group_id": "22121",
+    "count_point": "100000",
+    "navi_play_place": "event_top_boss_2212101",
+    "boss_image": "0",
+    "start_at": "2024/1/9 0:00",
+    "pack_id": "50994"
+  },
+  {
+    "id": "2212102",
+    "group_id": "22121",
+    "count_point": "300000",
+    "navi_play_place": "event_top_boss_2212101",
+    "boss_image": "0",
+    "start_at": "2024/1/9 0:00",
+    "pack_id": "50426"
+  },
+  {
+    "id": "2212103",
+    "group_id": "22121",
+    "count_point": "600000",
+    "navi_play_place": "event_top_boss_2212102",
+    "boss_image": "0",
+    "start_at": "2024/1/9 0:00",
+    "pack_id": "50546"
+  },
+  {
+    "id": "2212104",
+    "group_id": "22121",
+    "count_point": "1000000",
+    "navi_play_place": "event_top_boss_2212102",
+    "boss_image": "0",
+    "start_at": "2024/1/9 0:00",
+    "pack_id": "50995"
+  },
+  {
+    "id": "2212105",
+    "group_id": "22121",
+    "count_point": "1500000",
+    "navi_play_place": "event_top_boss_2212102",
+    "boss_image": "0",
+    "start_at": "2024/1/9 0:00",
+    "pack_id": "50429"
+  },
+  {
+    "id": "2212106",
+    "group_id": "22121",
+    "count_point": "2000000",
+    "navi_play_place": "event_top_boss_2212106",
+    "boss_image": "0",
+    "start_at": "2024/1/9 0:00",
+    "pack_id": "50994"
+  },
+  {
+    "id": "2301301",
+    "group_id": "23013",
+    "count_point": "1000000",
+    "navi_play_place": "event_top_boss_2301301",
+    "boss_image": "0",
+    "start_at": "2123/01/20 15:00",
+    "pack_id": "51044"
+  },
+  {
+    "id": "2301302",
+    "group_id": "23013",
+    "count_point": "2000000",
+    "navi_play_place": "event_top_boss_2301302",
+    "boss_image": "0",
+    "start_at": "2123/01/20 15:00",
+    "pack_id": "50995"
+  },
+  {
+    "id": "2301303",
+    "group_id": "23013",
+    "count_point": "3000000",
+    "navi_play_place": "event_top_boss_2301303",
+    "boss_image": "0",
+    "start_at": "2123/01/20 15:00",
+    "pack_id": "51045"
+  },
+  {
+    "id": "2301304",
+    "group_id": "23013",
+    "count_point": "5000000",
+    "navi_play_place": "event_top_boss_2301304",
+    "boss_image": "0",
+    "start_at": "2123/01/20 15:00",
+    "pack_id": "51046"
+  },
+  {
+    "id": "2301305",
+    "group_id": "23013",
+    "count_point": "7500000",
+    "navi_play_place": "event_top_boss_2301305",
+    "boss_image": "0",
+    "start_at": "2123/01/20 15:00",
+    "pack_id": "50547"
+  },
+  {
+    "id": "2301306",
+    "group_id": "23013",
+    "count_point": "10000000",
+    "navi_play_place": "event_top_boss_2301306",
+    "boss_image": "0",
+    "start_at": "2123/01/20 15:00",
+    "pack_id": "51047"
+  },
+  {
+    "id": "2303101",
+    "group_id": "23031",
+    "count_point": "100000",
+    "navi_play_place": "event_top_boss_2303101",
+    "boss_image": "0",
+    "start_at": "2024/3/15 0:00",
+    "pack_id": "51075"
+  },
+  {
+    "id": "2303102",
+    "group_id": "23031",
+    "count_point": "300000",
+    "navi_play_place": "event_top_boss_2303102",
+    "boss_image": "0",
+    "start_at": "2024/3/15 0:00",
+    "pack_id": "50968"
+  },
+  {
+    "id": "2303103",
+    "group_id": "23031",
+    "count_point": "500000",
+    "navi_play_place": "event_top_boss_2303103",
+    "boss_image": "0",
+    "start_at": "2024/3/15 0:00",
+    "pack_id": "51076"
+  },
+  {
+    "id": "2303104",
+    "group_id": "23031",
+    "count_point": "700000",
+    "navi_play_place": "event_top_boss_2303104",
+    "boss_image": "0",
+    "start_at": "2024/3/15 0:00",
+    "pack_id": "51046"
+  },
+  {
+    "id": "2303105",
+    "group_id": "23031",
+    "count_point": "1000000",
+    "navi_play_place": "event_top_boss_2303105",
+    "boss_image": "0",
+    "start_at": "2024/3/15 0:00",
+    "pack_id": "50547"
+  },
+  {
+    "id": "2305301",
+    "group_id": "23053",
+    "count_point": "1000000",
+    "navi_play_place": "event_top_boss_2305301",
+    "boss_image": "0",
+    "start_at": "2123/05/20 15:00",
+    "pack_id": "51164"
+  },
+  {
+    "id": "2305302",
+    "group_id": "23053",
+    "count_point": "2000000",
+    "navi_play_place": "event_top_boss_2305302",
+    "boss_image": "0",
+    "start_at": "2123/05/20 15:00",
+    "pack_id": "51166"
+  },
+  {
+    "id": "2305303",
+    "group_id": "23053",
+    "count_point": "3000000",
+    "navi_play_place": "event_top_boss_2305303",
+    "boss_image": "0",
+    "start_at": "2123/05/20 15:00",
+    "pack_id": "51165"
+  },
+  {
+    "id": "2305304",
+    "group_id": "23053",
+    "count_point": "5000000",
+    "navi_play_place": "event_top_boss_2305304",
+    "boss_image": "0",
+    "start_at": "2123/05/20 15:00",
+    "pack_id": "51167"
+  },
+  {
+    "id": "2305305",
+    "group_id": "23053",
+    "count_point": "7500000",
+    "navi_play_place": "event_top_boss_2305305",
+    "boss_image": "0",
+    "start_at": "2123/05/20 15:00",
+    "pack_id": "50968"
+  },
+  {
+    "id": "2308101",
+    "group_id": "23081",
+    "count_point": "1000000",
+    "navi_play_place": "event_top_boss_2308101",
+    "boss_image": "0",
+    "start_at": "2123/07/31 15:00",
+    "pack_id": "51234"
+  },
+  {
+    "id": "2308102",
+    "group_id": "23081",
+    "count_point": "2000000",
+    "navi_play_place": "event_top_boss_2308102",
+    "boss_image": "0",
+    "start_at": "2123/07/31 15:00",
+    "pack_id": "51235"
+  },
+  {
+    "id": "2308103",
+    "group_id": "23081",
+    "count_point": "3000000",
+    "navi_play_place": "event_top_boss_2308103",
+    "boss_image": "0",
+    "start_at": "2123/07/31 15:00",
+    "pack_id": "51165"
+  },
+  {
+    "id": "2308104",
+    "group_id": "23081",
+    "count_point": "5000000",
+    "navi_play_place": "event_top_boss_2308104",
+    "boss_image": "0",
+    "start_at": "2123/07/31 15:00",
+    "pack_id": "51235"
+  },
+  {
+    "id": "2308105",
+    "group_id": "23081",
+    "count_point": "7500000",
+    "navi_play_place": "event_top_boss_2308105",
+    "boss_image": "0",
+    "start_at": "2123/07/31 15:00",
+    "pack_id": "50968"
+  },
+  {
+    "id": "2309101",
+    "group_id": "23091",
+    "count_point": "100000",
+    "navi_play_place": "event_top_boss_2309101",
+    "boss_image": "0",
+    "start_at": "2024/8/16 0:00",
+    "pack_id": "51264"
+  },
+  {
+    "id": "2309102",
+    "group_id": "23091",
+    "count_point": "300000",
+    "navi_play_place": "event_top_boss_2309102",
+    "boss_image": "0",
+    "start_at": "2024/8/16 0:00",
+    "pack_id": "50426"
+  },
+  {
+    "id": "2309103",
+    "group_id": "23091",
+    "count_point": "500000",
+    "navi_play_place": "event_top_boss_2309103",
+    "boss_image": "0",
+    "start_at": "2024/8/16 0:00",
+    "pack_id": "50546"
+  },
+  {
+    "id": "2309104",
+    "group_id": "23091",
+    "count_point": "700000",
+    "navi_play_place": "event_top_boss_2309104",
+    "boss_image": "0",
+    "start_at": "2024/8/16 0:00",
+    "pack_id": "50995"
+  },
+  {
+    "id": "2309105",
+    "group_id": "23091",
+    "count_point": "1000000",
+    "navi_play_place": "event_top_boss_2309105",
+    "boss_image": "0",
+    "start_at": "2024/8/16 0:00",
+    "pack_id": "50547"
+  },
+  {
+    "id": "2402101",
+    "group_id": "24021",
+    "count_point": "1000000",
+    "navi_play_place": "event_top_boss_2402101",
+    "boss_image": "0",
+    "start_at": "2124/01/31 15:00",
+    "pack_id": "51414"
+  },
+  {
+    "id": "2402102",
+    "group_id": "24021",
+    "count_point": "2000000",
+    "navi_play_place": "event_top_boss_2402102",
+    "boss_image": "0",
+    "start_at": "2124/01/31 15:00",
+    "pack_id": "51416"
+  },
+  {
+    "id": "2402103",
+    "group_id": "24021",
+    "count_point": "3000000",
+    "navi_play_place": "event_top_boss_2402103",
+    "boss_image": "0",
+    "start_at": "2124/01/31 15:00",
+    "pack_id": "51417"
+  },
+  {
+    "id": "2402104",
+    "group_id": "24021",
+    "count_point": "5000000",
+    "navi_play_place": "event_top_boss_2402104",
+    "boss_image": "0",
+    "start_at": "2124/01/31 15:00",
+    "pack_id": "51416"
+  },
+  {
+    "id": "2402105",
+    "group_id": "24021",
+    "count_point": "7500000",
+    "navi_play_place": "event_top_boss_2402105",
+    "boss_image": "0",
+    "start_at": "2124/01/31 15:00",
+    "pack_id": "51418"
+  },
+  {
+    "id": "2402106",
+    "group_id": "24021",
+    "count_point": "10000000",
+    "navi_play_place": "event_top_boss_2402106",
+    "boss_image": "0",
+    "start_at": "2124/01/31 15:00",
+    "pack_id": "51415"
+  },
+  {
+    "id": "2404101",
+    "group_id": "24041",
+    "count_point": "100000",
+    "navi_play_place": "event_top_boss_2404101",
+    "boss_image": "0",
+    "start_at": "2025/1/14 0:00",
+    "pack_id": "50994"
+  },
+  {
+    "id": "2404102",
+    "group_id": "24041",
+    "count_point": "300000",
+    "navi_play_place": "event_top_boss_2404102",
+    "boss_image": "0",
+    "start_at": "2025/1/14 0:00",
+    "pack_id": "50426"
+  },
+  {
+    "id": "2404103",
+    "group_id": "24041",
+    "count_point": "500000",
+    "navi_play_place": "event_top_boss_2404103",
+    "boss_image": "0",
+    "start_at": "2025/1/14 0:00",
+    "pack_id": "50546"
+  },
+  {
+    "id": "2404104",
+    "group_id": "24041",
+    "count_point": "700000",
+    "navi_play_place": "event_top_boss_2404104",
+    "boss_image": "0",
+    "start_at": "2025/1/14 0:00",
+    "pack_id": "50995"
+  },
+  {
+    "id": "2404105",
+    "group_id": "24041",
+    "count_point": "1000000",
+    "navi_play_place": "event_top_boss_2404105",
+    "boss_image": "0",
+    "start_at": "2025/1/14 0:00",
+    "pack_id": "50429"
+  }
+]

@@ -1,1 +1,28 @@
-[{"surprise_quest_stage_id":"10001","title":"STAGE_TITLE_SURPRISE_1_1","time_limit":"30","attr1":"0","attr2":"0","wave":"1","background":"1162","bgm":"1060002","recommend":"0","ng_character":"0","ng_assist":"0"},{"surprise_quest_stage_id":"10002","title":"STAGE_TITLE_SURPRISE_10002","time_limit":"30","attr1":"0","attr2":"0","wave":"10002","background":"1400","bgm":"1060002","recommend":"0","ng_character":"0","ng_assist":"20014003"}]
+[
+  {
+    "surprise_quest_stage_id": "10001",
+    "title": "STAGE_TITLE_SURPRISE_1_1",
+    "time_limit": "30",
+    "attr1": "0",
+    "attr2": "0",
+    "wave": "1",
+    "background": "1162",
+    "bgm": "1060002",
+    "recommend": "0",
+    "ng_character": "0",
+    "ng_assist": "0"
+  },
+  {
+    "surprise_quest_stage_id": "10002",
+    "title": "STAGE_TITLE_SURPRISE_10002",
+    "time_limit": "30",
+    "attr1": "0",
+    "attr2": "0",
+    "wave": "10002",
+    "background": "1400",
+    "bgm": "1060002",
+    "recommend": "0",
+    "ng_character": "0",
+    "ng_assist": "20014003"
+  }
+]

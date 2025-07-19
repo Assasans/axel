@@ -1,1 +1,730 @@
-[{"id":"111011","benefit_type":"11101","level":"1","value":"80","description":"DUNGEON_BENEFIT_DESCRIPTION_111011"},{"id":"111021","benefit_type":"11102","level":"1","value":"60","description":"DUNGEON_BENEFIT_DESCRIPTION_111021"},{"id":"111031","benefit_type":"11103","level":"1","value":"50111031","description":"DUNGEON_BENEFIT_DESCRIPTION_111031"},{"id":"111032","benefit_type":"11103","level":"2","value":"50111032","description":"DUNGEON_BENEFIT_DESCRIPTION_111032"},{"id":"111033","benefit_type":"11103","level":"3","value":"50111033","description":"DUNGEON_BENEFIT_DESCRIPTION_111033"},{"id":"111034","benefit_type":"11103","level":"4","value":"50111034","description":"DUNGEON_BENEFIT_DESCRIPTION_111034"},{"id":"111041","benefit_type":"11104","level":"1","value":"50111041","description":"DUNGEON_BENEFIT_DESCRIPTION_111041"},{"id":"112011","benefit_type":"11201","level":"1","value":"50112011","description":"DUNGEON_BENEFIT_DESCRIPTION_112011"},{"id":"112012","benefit_type":"11201","level":"2","value":"50112012","description":"DUNGEON_BENEFIT_DESCRIPTION_112012"},{"id":"112013","benefit_type":"11201","level":"3","value":"50112013","description":"DUNGEON_BENEFIT_DESCRIPTION_112013"},{"id":"112014","benefit_type":"11201","level":"4","value":"50112014","description":"DUNGEON_BENEFIT_DESCRIPTION_112014"},{"id":"112021","benefit_type":"11202","level":"1","value":"50112021","description":"DUNGEON_BENEFIT_DESCRIPTION_112021"},{"id":"113011","benefit_type":"11301","level":"1","value":"50113011","description":"DUNGEON_BENEFIT_DESCRIPTION_113011"},{"id":"113012","benefit_type":"11301","level":"2","value":"50113012","description":"DUNGEON_BENEFIT_DESCRIPTION_113012"},{"id":"113013","benefit_type":"11301","level":"3","value":"50113013","description":"DUNGEON_BENEFIT_DESCRIPTION_113013"},{"id":"113014","benefit_type":"11301","level":"4","value":"50113014","description":"DUNGEON_BENEFIT_DESCRIPTION_113014"},{"id":"113021","benefit_type":"11302","level":"1","value":"50113021","description":"DUNGEON_BENEFIT_DESCRIPTION_113021"},{"id":"121011","benefit_type":"12101","level":"1","value":"80","description":"DUNGEON_BENEFIT_DESCRIPTION_121011"},{"id":"121021","benefit_type":"12102","level":"1","value":"60","description":"DUNGEON_BENEFIT_DESCRIPTION_121021"},{"id":"121031","benefit_type":"12103","level":"1","value":"50121031","description":"DUNGEON_BENEFIT_DESCRIPTION_121031"},{"id":"121032","benefit_type":"12103","level":"2","value":"50121032","description":"DUNGEON_BENEFIT_DESCRIPTION_121032"},{"id":"121033","benefit_type":"12103","level":"3","value":"50121033","description":"DUNGEON_BENEFIT_DESCRIPTION_121033"},{"id":"121034","benefit_type":"12103","level":"4","value":"50121034","description":"DUNGEON_BENEFIT_DESCRIPTION_121034"},{"id":"121041","benefit_type":"12104","level":"1","value":"50121041","description":"DUNGEON_BENEFIT_DESCRIPTION_121041"},{"id":"121051","benefit_type":"12105","level":"1","value":"25","description":"DUNGEON_BENEFIT_DESCRIPTION_121051"},{"id":"121052","benefit_type":"12105","level":"2","value":"50","description":"DUNGEON_BENEFIT_DESCRIPTION_121052"},{"id":"121053","benefit_type":"12105","level":"3","value":"75","description":"DUNGEON_BENEFIT_DESCRIPTION_121053"},{"id":"121054","benefit_type":"12105","level":"4","value":"100","description":"DUNGEON_BENEFIT_DESCRIPTION_121054"},{"id":"122011","benefit_type":"12201","level":"1","value":"50122011","description":"DUNGEON_BENEFIT_DESCRIPTION_122011"},{"id":"122012","benefit_type":"12201","level":"2","value":"50122012","description":"DUNGEON_BENEFIT_DESCRIPTION_122012"},{"id":"122013","benefit_type":"12201","level":"3","value":"50122013","description":"DUNGEON_BENEFIT_DESCRIPTION_122013"},{"id":"122014","benefit_type":"12201","level":"4","value":"50122014","description":"DUNGEON_BENEFIT_DESCRIPTION_122014"},{"id":"122021","benefit_type":"12202","level":"1","value":"50122021","description":"DUNGEON_BENEFIT_DESCRIPTION_122021"},{"id":"122031","benefit_type":"12203","level":"1","value":"50122031","description":"DUNGEON_BENEFIT_DESCRIPTION_122031"},{"id":"122032","benefit_type":"12203","level":"2","value":"50122032","description":"DUNGEON_BENEFIT_DESCRIPTION_122032"},{"id":"122033","benefit_type":"12203","level":"3","value":"50122033","description":"DUNGEON_BENEFIT_DESCRIPTION_122033"},{"id":"122034","benefit_type":"12203","level":"4","value":"50122034","description":"DUNGEON_BENEFIT_DESCRIPTION_122034"},{"id":"122041","benefit_type":"12204","level":"1","value":"50122041","description":"DUNGEON_BENEFIT_DESCRIPTION_122041"},{"id":"122051","benefit_type":"12205","level":"1","value":"50122051","description":"DUNGEON_BENEFIT_DESCRIPTION_122051"},{"id":"122052","benefit_type":"12205","level":"2","value":"50122052","description":"DUNGEON_BENEFIT_DESCRIPTION_122052"},{"id":"122053","benefit_type":"12205","level":"3","value":"50122053","description":"DUNGEON_BENEFIT_DESCRIPTION_122053"},{"id":"122054","benefit_type":"12205","level":"4","value":"50122054","description":"DUNGEON_BENEFIT_DESCRIPTION_122054"},{"id":"122061","benefit_type":"12206","level":"1","value":"50122061","description":"DUNGEON_BENEFIT_DESCRIPTION_122061"},{"id":"122071","benefit_type":"12207","level":"1","value":"25","description":"DUNGEON_BENEFIT_DESCRIPTION_122071"},{"id":"123011","benefit_type":"12301","level":"1","value":"7","description":"DUNGEON_BENEFIT_DESCRIPTION_123011"},{"id":"123012","benefit_type":"12301","level":"2","value":"14","description":"DUNGEON_BENEFIT_DESCRIPTION_123012"},{"id":"123013","benefit_type":"12301","level":"3","value":"21","description":"DUNGEON_BENEFIT_DESCRIPTION_123013"},{"id":"123014","benefit_type":"12301","level":"4","value":"28","description":"DUNGEON_BENEFIT_DESCRIPTION_123014"},{"id":"123021","benefit_type":"12302","level":"1","value":"20","description":"DUNGEON_BENEFIT_DESCRIPTION_123021"},{"id":"123031","benefit_type":"12303","level":"1","value":"50123031","description":"DUNGEON_BENEFIT_DESCRIPTION_123031"},{"id":"123032","benefit_type":"12303","level":"2","value":"50123032","description":"DUNGEON_BENEFIT_DESCRIPTION_123032"},{"id":"123033","benefit_type":"12303","level":"3","value":"50123033","description":"DUNGEON_BENEFIT_DESCRIPTION_123033"},{"id":"123034","benefit_type":"12303","level":"4","value":"50123034","description":"DUNGEON_BENEFIT_DESCRIPTION_123034"},{"id":"123041","benefit_type":"12304","level":"1","value":"50123041","description":"DUNGEON_BENEFIT_DESCRIPTION_123041"},{"id":"131011","benefit_type":"13101","level":"1","value":"80","description":"DUNGEON_BENEFIT_DESCRIPTION_131011"},{"id":"131021","benefit_type":"13102","level":"1","value":"0","description":"DUNGEON_BENEFIT_DESCRIPTION_131021"},{"id":"131031","benefit_type":"13103","level":"1","value":"60","description":"DUNGEON_BENEFIT_DESCRIPTION_131031"},{"id":"131041","benefit_type":"13104","level":"1","value":"50131041","description":"DUNGEON_BENEFIT_DESCRIPTION_131041"},{"id":"131042","benefit_type":"13104","level":"2","value":"50131042","description":"DUNGEON_BENEFIT_DESCRIPTION_131042"},{"id":"131043","benefit_type":"13104","level":"3","value":"50131043","description":"DUNGEON_BENEFIT_DESCRIPTION_131043"},{"id":"131044","benefit_type":"13104","level":"4","value":"50131044","description":"DUNGEON_BENEFIT_DESCRIPTION_131044"},{"id":"131051","benefit_type":"13105","level":"1","value":"50131051","description":"DUNGEON_BENEFIT_DESCRIPTION_131051"},{"id":"131061","benefit_type":"13106","level":"1","value":"25","description":"DUNGEON_BENEFIT_DESCRIPTION_131061"},{"id":"131062","benefit_type":"13106","level":"2","value":"50","description":"DUNGEON_BENEFIT_DESCRIPTION_131062"},{"id":"131063","benefit_type":"13106","level":"3","value":"75","description":"DUNGEON_BENEFIT_DESCRIPTION_131063"},{"id":"131064","benefit_type":"13106","level":"4","value":"100","description":"DUNGEON_BENEFIT_DESCRIPTION_131064"},{"id":"132011","benefit_type":"13201","level":"1","value":"50132011","description":"DUNGEON_BENEFIT_DESCRIPTION_132011"},{"id":"132012","benefit_type":"13201","level":"2","value":"50132012","description":"DUNGEON_BENEFIT_DESCRIPTION_132012"},{"id":"132013","benefit_type":"13201","level":"3","value":"50132013","description":"DUNGEON_BENEFIT_DESCRIPTION_132013"},{"id":"132014","benefit_type":"13201","level":"4","value":"50132014","description":"DUNGEON_BENEFIT_DESCRIPTION_132014"},{"id":"132021","benefit_type":"13202","level":"1","value":"50132021","description":"DUNGEON_BENEFIT_DESCRIPTION_132021"},{"id":"132031","benefit_type":"13203","level":"1","value":"50132031","description":"DUNGEON_BENEFIT_DESCRIPTION_132031"},{"id":"132032","benefit_type":"13203","level":"2","value":"50132032","description":"DUNGEON_BENEFIT_DESCRIPTION_132032"},{"id":"132033","benefit_type":"13203","level":"3","value":"50132033","description":"DUNGEON_BENEFIT_DESCRIPTION_132033"},{"id":"132034","benefit_type":"13203","level":"4","value":"50132034","description":"DUNGEON_BENEFIT_DESCRIPTION_132034"},{"id":"132041","benefit_type":"13204","level":"1","value":"50132041","description":"DUNGEON_BENEFIT_DESCRIPTION_132041"},{"id":"132051","benefit_type":"13205","level":"1","value":"50132051","description":"DUNGEON_BENEFIT_DESCRIPTION_132051"},{"id":"132052","benefit_type":"13205","level":"2","value":"50132052","description":"DUNGEON_BENEFIT_DESCRIPTION_132052"},{"id":"132053","benefit_type":"13205","level":"3","value":"50132053","description":"DUNGEON_BENEFIT_DESCRIPTION_132053"},{"id":"132054","benefit_type":"13205","level":"4","value":"50132054","description":"DUNGEON_BENEFIT_DESCRIPTION_132054"},{"id":"132061","benefit_type":"13206","level":"1","value":"50132061","description":"DUNGEON_BENEFIT_DESCRIPTION_132061"},{"id":"132071","benefit_type":"13207","level":"1","value":"50132071","description":"DUNGEON_BENEFIT_DESCRIPTION_132071"},{"id":"132072","benefit_type":"13207","level":"2","value":"50132072","description":"DUNGEON_BENEFIT_DESCRIPTION_132072"},{"id":"132073","benefit_type":"13207","level":"3","value":"50132073","description":"DUNGEON_BENEFIT_DESCRIPTION_132073"},{"id":"132074","benefit_type":"13207","level":"4","value":"50132074","description":"DUNGEON_BENEFIT_DESCRIPTION_132074"},{"id":"132081","benefit_type":"13208","level":"1","value":"50132081","description":"DUNGEON_BENEFIT_DESCRIPTION_132081"},{"id":"132091","benefit_type":"13209","level":"1","value":"50132091","description":"DUNGEON_BENEFIT_DESCRIPTION_132091"},{"id":"132092","benefit_type":"13209","level":"2","value":"50132092","description":"DUNGEON_BENEFIT_DESCRIPTION_132092"},{"id":"132093","benefit_type":"13209","level":"3","value":"50132093","description":"DUNGEON_BENEFIT_DESCRIPTION_132093"},{"id":"132094","benefit_type":"13209","level":"4","value":"50132094","description":"DUNGEON_BENEFIT_DESCRIPTION_132094"},{"id":"132101","benefit_type":"13210","level":"1","value":"50132101","description":"DUNGEON_BENEFIT_DESCRIPTION_132101"},{"id":"132111","benefit_type":"13211","level":"1","value":"25","description":"DUNGEON_BENEFIT_DESCRIPTION_132111"},{"id":"133011","benefit_type":"13301","level":"1","value":"7","description":"DUNGEON_BENEFIT_DESCRIPTION_133011"},{"id":"133012","benefit_type":"13301","level":"2","value":"14","description":"DUNGEON_BENEFIT_DESCRIPTION_133012"},{"id":"133013","benefit_type":"13301","level":"3","value":"21","description":"DUNGEON_BENEFIT_DESCRIPTION_133013"},{"id":"133014","benefit_type":"13301","level":"4","value":"28","description":"DUNGEON_BENEFIT_DESCRIPTION_133014"},{"id":"133021","benefit_type":"13302","level":"1","value":"20","description":"DUNGEON_BENEFIT_DESCRIPTION_133021"},{"id":"133031","benefit_type":"13303","level":"1","value":"50133031","description":"DUNGEON_BENEFIT_DESCRIPTION_133031"},{"id":"133032","benefit_type":"13303","level":"2","value":"50133032","description":"DUNGEON_BENEFIT_DESCRIPTION_133032"},{"id":"133033","benefit_type":"13303","level":"3","value":"50133033","description":"DUNGEON_BENEFIT_DESCRIPTION_133033"},{"id":"133034","benefit_type":"13303","level":"4","value":"50133034","description":"DUNGEON_BENEFIT_DESCRIPTION_133034"},{"id":"133041","benefit_type":"13304","level":"1","value":"50133041","description":"DUNGEON_BENEFIT_DESCRIPTION_133041"},{"id":"133051","benefit_type":"13305","level":"1","value":"50133051","description":"DUNGEON_BENEFIT_DESCRIPTION_133051"},{"id":"133052","benefit_type":"13305","level":"2","value":"50133052","description":"DUNGEON_BENEFIT_DESCRIPTION_133052"}]
+[
+  {
+    "id": "111011",
+    "benefit_type": "11101",
+    "level": "1",
+    "value": "80",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_111011"
+  },
+  {
+    "id": "111021",
+    "benefit_type": "11102",
+    "level": "1",
+    "value": "60",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_111021"
+  },
+  {
+    "id": "111031",
+    "benefit_type": "11103",
+    "level": "1",
+    "value": "50111031",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_111031"
+  },
+  {
+    "id": "111032",
+    "benefit_type": "11103",
+    "level": "2",
+    "value": "50111032",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_111032"
+  },
+  {
+    "id": "111033",
+    "benefit_type": "11103",
+    "level": "3",
+    "value": "50111033",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_111033"
+  },
+  {
+    "id": "111034",
+    "benefit_type": "11103",
+    "level": "4",
+    "value": "50111034",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_111034"
+  },
+  {
+    "id": "111041",
+    "benefit_type": "11104",
+    "level": "1",
+    "value": "50111041",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_111041"
+  },
+  {
+    "id": "112011",
+    "benefit_type": "11201",
+    "level": "1",
+    "value": "50112011",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_112011"
+  },
+  {
+    "id": "112012",
+    "benefit_type": "11201",
+    "level": "2",
+    "value": "50112012",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_112012"
+  },
+  {
+    "id": "112013",
+    "benefit_type": "11201",
+    "level": "3",
+    "value": "50112013",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_112013"
+  },
+  {
+    "id": "112014",
+    "benefit_type": "11201",
+    "level": "4",
+    "value": "50112014",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_112014"
+  },
+  {
+    "id": "112021",
+    "benefit_type": "11202",
+    "level": "1",
+    "value": "50112021",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_112021"
+  },
+  {
+    "id": "113011",
+    "benefit_type": "11301",
+    "level": "1",
+    "value": "50113011",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_113011"
+  },
+  {
+    "id": "113012",
+    "benefit_type": "11301",
+    "level": "2",
+    "value": "50113012",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_113012"
+  },
+  {
+    "id": "113013",
+    "benefit_type": "11301",
+    "level": "3",
+    "value": "50113013",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_113013"
+  },
+  {
+    "id": "113014",
+    "benefit_type": "11301",
+    "level": "4",
+    "value": "50113014",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_113014"
+  },
+  {
+    "id": "113021",
+    "benefit_type": "11302",
+    "level": "1",
+    "value": "50113021",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_113021"
+  },
+  {
+    "id": "121011",
+    "benefit_type": "12101",
+    "level": "1",
+    "value": "80",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_121011"
+  },
+  {
+    "id": "121021",
+    "benefit_type": "12102",
+    "level": "1",
+    "value": "60",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_121021"
+  },
+  {
+    "id": "121031",
+    "benefit_type": "12103",
+    "level": "1",
+    "value": "50121031",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_121031"
+  },
+  {
+    "id": "121032",
+    "benefit_type": "12103",
+    "level": "2",
+    "value": "50121032",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_121032"
+  },
+  {
+    "id": "121033",
+    "benefit_type": "12103",
+    "level": "3",
+    "value": "50121033",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_121033"
+  },
+  {
+    "id": "121034",
+    "benefit_type": "12103",
+    "level": "4",
+    "value": "50121034",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_121034"
+  },
+  {
+    "id": "121041",
+    "benefit_type": "12104",
+    "level": "1",
+    "value": "50121041",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_121041"
+  },
+  {
+    "id": "121051",
+    "benefit_type": "12105",
+    "level": "1",
+    "value": "25",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_121051"
+  },
+  {
+    "id": "121052",
+    "benefit_type": "12105",
+    "level": "2",
+    "value": "50",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_121052"
+  },
+  {
+    "id": "121053",
+    "benefit_type": "12105",
+    "level": "3",
+    "value": "75",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_121053"
+  },
+  {
+    "id": "121054",
+    "benefit_type": "12105",
+    "level": "4",
+    "value": "100",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_121054"
+  },
+  {
+    "id": "122011",
+    "benefit_type": "12201",
+    "level": "1",
+    "value": "50122011",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122011"
+  },
+  {
+    "id": "122012",
+    "benefit_type": "12201",
+    "level": "2",
+    "value": "50122012",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122012"
+  },
+  {
+    "id": "122013",
+    "benefit_type": "12201",
+    "level": "3",
+    "value": "50122013",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122013"
+  },
+  {
+    "id": "122014",
+    "benefit_type": "12201",
+    "level": "4",
+    "value": "50122014",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122014"
+  },
+  {
+    "id": "122021",
+    "benefit_type": "12202",
+    "level": "1",
+    "value": "50122021",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122021"
+  },
+  {
+    "id": "122031",
+    "benefit_type": "12203",
+    "level": "1",
+    "value": "50122031",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122031"
+  },
+  {
+    "id": "122032",
+    "benefit_type": "12203",
+    "level": "2",
+    "value": "50122032",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122032"
+  },
+  {
+    "id": "122033",
+    "benefit_type": "12203",
+    "level": "3",
+    "value": "50122033",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122033"
+  },
+  {
+    "id": "122034",
+    "benefit_type": "12203",
+    "level": "4",
+    "value": "50122034",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122034"
+  },
+  {
+    "id": "122041",
+    "benefit_type": "12204",
+    "level": "1",
+    "value": "50122041",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122041"
+  },
+  {
+    "id": "122051",
+    "benefit_type": "12205",
+    "level": "1",
+    "value": "50122051",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122051"
+  },
+  {
+    "id": "122052",
+    "benefit_type": "12205",
+    "level": "2",
+    "value": "50122052",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122052"
+  },
+  {
+    "id": "122053",
+    "benefit_type": "12205",
+    "level": "3",
+    "value": "50122053",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122053"
+  },
+  {
+    "id": "122054",
+    "benefit_type": "12205",
+    "level": "4",
+    "value": "50122054",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122054"
+  },
+  {
+    "id": "122061",
+    "benefit_type": "12206",
+    "level": "1",
+    "value": "50122061",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122061"
+  },
+  {
+    "id": "122071",
+    "benefit_type": "12207",
+    "level": "1",
+    "value": "25",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_122071"
+  },
+  {
+    "id": "123011",
+    "benefit_type": "12301",
+    "level": "1",
+    "value": "7",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_123011"
+  },
+  {
+    "id": "123012",
+    "benefit_type": "12301",
+    "level": "2",
+    "value": "14",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_123012"
+  },
+  {
+    "id": "123013",
+    "benefit_type": "12301",
+    "level": "3",
+    "value": "21",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_123013"
+  },
+  {
+    "id": "123014",
+    "benefit_type": "12301",
+    "level": "4",
+    "value": "28",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_123014"
+  },
+  {
+    "id": "123021",
+    "benefit_type": "12302",
+    "level": "1",
+    "value": "20",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_123021"
+  },
+  {
+    "id": "123031",
+    "benefit_type": "12303",
+    "level": "1",
+    "value": "50123031",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_123031"
+  },
+  {
+    "id": "123032",
+    "benefit_type": "12303",
+    "level": "2",
+    "value": "50123032",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_123032"
+  },
+  {
+    "id": "123033",
+    "benefit_type": "12303",
+    "level": "3",
+    "value": "50123033",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_123033"
+  },
+  {
+    "id": "123034",
+    "benefit_type": "12303",
+    "level": "4",
+    "value": "50123034",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_123034"
+  },
+  {
+    "id": "123041",
+    "benefit_type": "12304",
+    "level": "1",
+    "value": "50123041",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_123041"
+  },
+  {
+    "id": "131011",
+    "benefit_type": "13101",
+    "level": "1",
+    "value": "80",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_131011"
+  },
+  {
+    "id": "131021",
+    "benefit_type": "13102",
+    "level": "1",
+    "value": "0",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_131021"
+  },
+  {
+    "id": "131031",
+    "benefit_type": "13103",
+    "level": "1",
+    "value": "60",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_131031"
+  },
+  {
+    "id": "131041",
+    "benefit_type": "13104",
+    "level": "1",
+    "value": "50131041",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_131041"
+  },
+  {
+    "id": "131042",
+    "benefit_type": "13104",
+    "level": "2",
+    "value": "50131042",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_131042"
+  },
+  {
+    "id": "131043",
+    "benefit_type": "13104",
+    "level": "3",
+    "value": "50131043",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_131043"
+  },
+  {
+    "id": "131044",
+    "benefit_type": "13104",
+    "level": "4",
+    "value": "50131044",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_131044"
+  },
+  {
+    "id": "131051",
+    "benefit_type": "13105",
+    "level": "1",
+    "value": "50131051",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_131051"
+  },
+  {
+    "id": "131061",
+    "benefit_type": "13106",
+    "level": "1",
+    "value": "25",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_131061"
+  },
+  {
+    "id": "131062",
+    "benefit_type": "13106",
+    "level": "2",
+    "value": "50",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_131062"
+  },
+  {
+    "id": "131063",
+    "benefit_type": "13106",
+    "level": "3",
+    "value": "75",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_131063"
+  },
+  {
+    "id": "131064",
+    "benefit_type": "13106",
+    "level": "4",
+    "value": "100",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_131064"
+  },
+  {
+    "id": "132011",
+    "benefit_type": "13201",
+    "level": "1",
+    "value": "50132011",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132011"
+  },
+  {
+    "id": "132012",
+    "benefit_type": "13201",
+    "level": "2",
+    "value": "50132012",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132012"
+  },
+  {
+    "id": "132013",
+    "benefit_type": "13201",
+    "level": "3",
+    "value": "50132013",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132013"
+  },
+  {
+    "id": "132014",
+    "benefit_type": "13201",
+    "level": "4",
+    "value": "50132014",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132014"
+  },
+  {
+    "id": "132021",
+    "benefit_type": "13202",
+    "level": "1",
+    "value": "50132021",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132021"
+  },
+  {
+    "id": "132031",
+    "benefit_type": "13203",
+    "level": "1",
+    "value": "50132031",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132031"
+  },
+  {
+    "id": "132032",
+    "benefit_type": "13203",
+    "level": "2",
+    "value": "50132032",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132032"
+  },
+  {
+    "id": "132033",
+    "benefit_type": "13203",
+    "level": "3",
+    "value": "50132033",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132033"
+  },
+  {
+    "id": "132034",
+    "benefit_type": "13203",
+    "level": "4",
+    "value": "50132034",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132034"
+  },
+  {
+    "id": "132041",
+    "benefit_type": "13204",
+    "level": "1",
+    "value": "50132041",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132041"
+  },
+  {
+    "id": "132051",
+    "benefit_type": "13205",
+    "level": "1",
+    "value": "50132051",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132051"
+  },
+  {
+    "id": "132052",
+    "benefit_type": "13205",
+    "level": "2",
+    "value": "50132052",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132052"
+  },
+  {
+    "id": "132053",
+    "benefit_type": "13205",
+    "level": "3",
+    "value": "50132053",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132053"
+  },
+  {
+    "id": "132054",
+    "benefit_type": "13205",
+    "level": "4",
+    "value": "50132054",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132054"
+  },
+  {
+    "id": "132061",
+    "benefit_type": "13206",
+    "level": "1",
+    "value": "50132061",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132061"
+  },
+  {
+    "id": "132071",
+    "benefit_type": "13207",
+    "level": "1",
+    "value": "50132071",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132071"
+  },
+  {
+    "id": "132072",
+    "benefit_type": "13207",
+    "level": "2",
+    "value": "50132072",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132072"
+  },
+  {
+    "id": "132073",
+    "benefit_type": "13207",
+    "level": "3",
+    "value": "50132073",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132073"
+  },
+  {
+    "id": "132074",
+    "benefit_type": "13207",
+    "level": "4",
+    "value": "50132074",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132074"
+  },
+  {
+    "id": "132081",
+    "benefit_type": "13208",
+    "level": "1",
+    "value": "50132081",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132081"
+  },
+  {
+    "id": "132091",
+    "benefit_type": "13209",
+    "level": "1",
+    "value": "50132091",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132091"
+  },
+  {
+    "id": "132092",
+    "benefit_type": "13209",
+    "level": "2",
+    "value": "50132092",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132092"
+  },
+  {
+    "id": "132093",
+    "benefit_type": "13209",
+    "level": "3",
+    "value": "50132093",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132093"
+  },
+  {
+    "id": "132094",
+    "benefit_type": "13209",
+    "level": "4",
+    "value": "50132094",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132094"
+  },
+  {
+    "id": "132101",
+    "benefit_type": "13210",
+    "level": "1",
+    "value": "50132101",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132101"
+  },
+  {
+    "id": "132111",
+    "benefit_type": "13211",
+    "level": "1",
+    "value": "25",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_132111"
+  },
+  {
+    "id": "133011",
+    "benefit_type": "13301",
+    "level": "1",
+    "value": "7",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_133011"
+  },
+  {
+    "id": "133012",
+    "benefit_type": "13301",
+    "level": "2",
+    "value": "14",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_133012"
+  },
+  {
+    "id": "133013",
+    "benefit_type": "13301",
+    "level": "3",
+    "value": "21",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_133013"
+  },
+  {
+    "id": "133014",
+    "benefit_type": "13301",
+    "level": "4",
+    "value": "28",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_133014"
+  },
+  {
+    "id": "133021",
+    "benefit_type": "13302",
+    "level": "1",
+    "value": "20",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_133021"
+  },
+  {
+    "id": "133031",
+    "benefit_type": "13303",
+    "level": "1",
+    "value": "50133031",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_133031"
+  },
+  {
+    "id": "133032",
+    "benefit_type": "13303",
+    "level": "2",
+    "value": "50133032",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_133032"
+  },
+  {
+    "id": "133033",
+    "benefit_type": "13303",
+    "level": "3",
+    "value": "50133033",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_133033"
+  },
+  {
+    "id": "133034",
+    "benefit_type": "13303",
+    "level": "4",
+    "value": "50133034",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_133034"
+  },
+  {
+    "id": "133041",
+    "benefit_type": "13304",
+    "level": "1",
+    "value": "50133041",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_133041"
+  },
+  {
+    "id": "133051",
+    "benefit_type": "13305",
+    "level": "1",
+    "value": "50133051",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_133051"
+  },
+  {
+    "id": "133052",
+    "benefit_type": "13305",
+    "level": "2",
+    "value": "50133052",
+    "description": "DUNGEON_BENEFIT_DESCRIPTION_133052"
+  }
+]

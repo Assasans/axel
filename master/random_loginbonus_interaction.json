@@ -1,1 +1,522 @@
-[{"interaction_id":"1","voice_id":"312100001","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_1_1","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"0"},{"interaction_id":"1","voice_id":"312102041","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_1_2","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"2","voice_id":"312100002","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_2_1","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"0"},{"interaction_id":"2","voice_id":"312102042","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_2_2","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"3","voice_id":"312100003","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_3_1","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"0"},{"interaction_id":"3","voice_id":"312102043","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_3_2","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"4","voice_id":"312100004","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_4_1","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"0"},{"interaction_id":"4","voice_id":"312102044","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_4_2","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"5","voice_id":"312100005","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_5_1","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"0"},{"interaction_id":"5","voice_id":"312102045","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_5_2","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"6","voice_id":"312100006","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_6_1","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"0"},{"interaction_id":"6","voice_id":"312102046","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_6_2","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"7","voice_id":"312100007","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_7_1","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"0"},{"interaction_id":"7","voice_id":"312102047","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_7_2","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"8","voice_id":"312100008","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_8_1","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"0"},{"interaction_id":"8","voice_id":"312102048","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_8_2","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"9","voice_id":"312100009","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_9_1","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"0"},{"interaction_id":"9","voice_id":"312102049","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_9_2","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"10","voice_id":"312100010","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_10_1","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"0"},{"interaction_id":"10","voice_id":"312102050","serif":"ASSET_LOGINBONUS_IETERACTION_2021081_10_2","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"21101001","voice_id":"312102052","serif":"ASSET_LOGINBONUS_IETERACTION_2021101_1","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"0","chara_image":"0"},{"interaction_id":"21101002","voice_id":"312102053","serif":"ASSET_LOGINBONUS_IETERACTION_2021101_2","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"0","chara_image":"0"},{"interaction_id":"21101003","voice_id":"312102054","serif":"ASSET_LOGINBONUS_IETERACTION_2021101_3","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"0","chara_image":"0"},{"interaction_id":"21101004","voice_id":"312102055","serif":"ASSET_LOGINBONUS_IETERACTION_2021101_4","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"0","chara_image":"0"},{"interaction_id":"21101005","voice_id":"312102056","serif":"ASSET_LOGINBONUS_IETERACTION_2021101_5","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"0","chara_image":"0"},{"interaction_id":"21101006","voice_id":"312102057","serif":"ASSET_LOGINBONUS_IETERACTION_2021101_6","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"0","chara_image":"0"},{"interaction_id":"21101007","voice_id":"312102058","serif":"ASSET_LOGINBONUS_IETERACTION_2021101_7","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"0","chara_image":"0"},{"interaction_id":"21101008","voice_id":"312102059","serif":"ASSET_LOGINBONUS_IETERACTION_2021101_8","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"0","chara_image":"0"},{"interaction_id":"21101009","voice_id":"312102060","serif":"ASSET_LOGINBONUS_IETERACTION_2021101_9","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"0","chara_image":"0"},{"interaction_id":"21101010","voice_id":"312102061","serif":"ASSET_LOGINBONUS_IETERACTION_2021101_10","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"0","chara_image":"0"},{"interaction_id":"21101011","voice_id":"312102062","serif":"ASSET_LOGINBONUS_IETERACTION_2021101_11","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"0","chara_image":"0"},{"interaction_id":"21101012","voice_id":"312102063","serif":"ASSET_LOGINBONUS_IETERACTION_2021101_12","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"0","chara_image":"0"},{"interaction_id":"21101013","voice_id":"312102064","serif":"ASSET_LOGINBONUS_IETERACTION_2021101_13","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"0","chara_image":"0"},{"interaction_id":"21101014","voice_id":"312102065","serif":"ASSET_LOGINBONUS_IETERACTION_2021101_14","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"0","chara_image":"0"},{"interaction_id":"21101015","voice_id":"312102066","serif":"ASSET_LOGINBONUS_IETERACTION_2021101_15","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"0","chara_image":"0"},{"interaction_id":"22021001","voice_id":"312102067","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_1_1","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"random_loginbonus_sd_2022021_3"},{"interaction_id":"22021001","voice_id":"312100015","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_1_2","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"random_loginbonus_sd_2022021_4"},{"interaction_id":"22021002","voice_id":"312104001","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_2_1","chara_name":"ASSET_CHARA_NAME_104","use_in_result":"1","chara_image":"random_loginbonus_sd_2022021_9"},{"interaction_id":"22021002","voice_id":"312100020","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_2_2","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"random_loginbonus_sd_2022021_10"},{"interaction_id":"22021003","voice_id":"312111001","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_3_1","chara_name":"ASSET_CHARA_NAME_111","use_in_result":"1","chara_image":"random_loginbonus_sd_2022021_11"},{"interaction_id":"22021003","voice_id":"312100021","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_3_2","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"random_loginbonus_sd_2022021_12"},{"interaction_id":"22021004","voice_id":"312101001","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_4_1","chara_name":"ASSET_CHARA_NAME_101","use_in_result":"1","chara_image":"random_loginbonus_sd_2022021_1"},{"interaction_id":"22021004","voice_id":"312100014","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_4_2","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"random_loginbonus_sd_2022021_2"},{"interaction_id":"22021005","voice_id":"312103001","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_5_1","chara_name":"ASSET_CHARA_NAME_103","use_in_result":"1","chara_image":"random_loginbonus_sd_2022021_5"},{"interaction_id":"22021005","voice_id":"312100016","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_5_2","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"random_loginbonus_sd_2022021_6"},{"interaction_id":"22021006","voice_id":"312128001","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_6_1","chara_name":"ASSET_CHARA_NAME_128","use_in_result":"1","chara_image":"random_loginbonus_sd_2022021_7"},{"interaction_id":"22021006","voice_id":"312100017","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_6_2","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"random_loginbonus_sd_2022021_8"},{"interaction_id":"22021007","voice_id":"312134001","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_7_1","chara_name":"ASSET_CHARA_NAME_134","use_in_result":"1","chara_image":"random_loginbonus_sd_2022021_13"},{"interaction_id":"22021007","voice_id":"312100022","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_7_2","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"random_loginbonus_sd_2022021_14"},{"interaction_id":"22021008","voice_id":"312129001","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_8_1","chara_name":"ASSET_CHARA_NAME_129","use_in_result":"1","chara_image":"random_loginbonus_sd_2022021_15"},{"interaction_id":"22021008","voice_id":"312100023","serif":"ASSET_LOGINBONUS_IETERACTION_2022021_8_2","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"random_loginbonus_sd_2022021_16"},{"interaction_id":"202301101","voice_id":"312102073","serif":"ASSET_LOGINBONUS_IETERACTION_202301101","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"202301102","voice_id":"312102072","serif":"ASSET_LOGINBONUS_IETERACTION_202301102","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"202301103","voice_id":"312102071","serif":"ASSET_LOGINBONUS_IETERACTION_202301103","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"202301104","voice_id":"312102070","serif":"ASSET_LOGINBONUS_IETERACTION_202301104","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"202301105","voice_id":"312102069","serif":"ASSET_LOGINBONUS_IETERACTION_202301105","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"202301106","voice_id":"312102068","serif":"ASSET_LOGINBONUS_IETERACTION_202301106","chara_name":"ASSET_CHARA_NAME_102","use_in_result":"1","chara_image":"0"},{"interaction_id":"202305101","voice_id":"312207001","serif":"ASSET_LOGINBONUS_IETERACTION_202305101","chara_name":"ASSET_CHARA_NAME_207","use_in_result":"1","chara_image":"random_loginbonus_sd_2023051_1"},{"interaction_id":"202305101","voice_id":"312205002","serif":"ASSET_LOGINBONUS_IETERACTION_202305102","chara_name":"ASSET_CHARA_NAME_205","use_in_result":"0","chara_image":"random_loginbonus_sd_2023051_2"},{"interaction_id":"202305102","voice_id":"312150001","serif":"ASSET_LOGINBONUS_IETERACTION_202305103","chara_name":"ASSET_CHARA_NAME_150","use_in_result":"1","chara_image":"random_loginbonus_sd_2023051_5"},{"interaction_id":"202305102","voice_id":"312100026","serif":"ASSET_LOGINBONUS_IETERACTION_202305104","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"random_loginbonus_sd_2023051_6"},{"interaction_id":"202305103","voice_id":"312147001","serif":"ASSET_LOGINBONUS_IETERACTION_202305105","chara_name":"ASSET_CHARA_NAME_147","use_in_result":"1","chara_image":"random_loginbonus_sd_2023051_3"},{"interaction_id":"202305103","voice_id":"312205003","serif":"ASSET_LOGINBONUS_IETERACTION_202305106","chara_name":"ASSET_CHARA_NAME_205","use_in_result":"0","chara_image":"random_loginbonus_sd_2023051_4"},{"interaction_id":"202305104","voice_id":"312206001","serif":"ASSET_LOGINBONUS_IETERACTION_202305107","chara_name":"ASSET_CHARA_NAME_206","use_in_result":"1","chara_image":"random_loginbonus_sd_2023051_7"},{"interaction_id":"202305104","voice_id":"312100027","serif":"ASSET_LOGINBONUS_IETERACTION_202305108","chara_name":"ASSET_CHARA_NAME_100","use_in_result":"0","chara_image":"random_loginbonus_sd_2023051_8"}]
+[
+  {
+    "interaction_id": "1",
+    "voice_id": "312100001",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_1_1",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "1",
+    "voice_id": "312102041",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_1_2",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "2",
+    "voice_id": "312100002",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_2_1",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "2",
+    "voice_id": "312102042",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_2_2",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "3",
+    "voice_id": "312100003",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_3_1",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "3",
+    "voice_id": "312102043",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_3_2",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "4",
+    "voice_id": "312100004",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_4_1",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "4",
+    "voice_id": "312102044",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_4_2",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "5",
+    "voice_id": "312100005",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_5_1",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "5",
+    "voice_id": "312102045",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_5_2",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "6",
+    "voice_id": "312100006",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_6_1",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "6",
+    "voice_id": "312102046",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_6_2",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "7",
+    "voice_id": "312100007",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_7_1",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "7",
+    "voice_id": "312102047",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_7_2",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "8",
+    "voice_id": "312100008",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_8_1",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "8",
+    "voice_id": "312102048",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_8_2",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "9",
+    "voice_id": "312100009",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_9_1",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "9",
+    "voice_id": "312102049",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_9_2",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "10",
+    "voice_id": "312100010",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_10_1",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "10",
+    "voice_id": "312102050",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021081_10_2",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "21101001",
+    "voice_id": "312102052",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021101_1",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "21101002",
+    "voice_id": "312102053",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021101_2",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "21101003",
+    "voice_id": "312102054",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021101_3",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "21101004",
+    "voice_id": "312102055",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021101_4",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "21101005",
+    "voice_id": "312102056",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021101_5",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "21101006",
+    "voice_id": "312102057",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021101_6",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "21101007",
+    "voice_id": "312102058",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021101_7",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "21101008",
+    "voice_id": "312102059",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021101_8",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "21101009",
+    "voice_id": "312102060",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021101_9",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "21101010",
+    "voice_id": "312102061",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021101_10",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "21101011",
+    "voice_id": "312102062",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021101_11",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "21101012",
+    "voice_id": "312102063",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021101_12",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "21101013",
+    "voice_id": "312102064",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021101_13",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "21101014",
+    "voice_id": "312102065",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021101_14",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "21101015",
+    "voice_id": "312102066",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2021101_15",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "0",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "22021001",
+    "voice_id": "312102067",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_1_1",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "random_loginbonus_sd_2022021_3"
+  },
+  {
+    "interaction_id": "22021001",
+    "voice_id": "312100015",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_1_2",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "random_loginbonus_sd_2022021_4"
+  },
+  {
+    "interaction_id": "22021002",
+    "voice_id": "312104001",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_2_1",
+    "chara_name": "ASSET_CHARA_NAME_104",
+    "use_in_result": "1",
+    "chara_image": "random_loginbonus_sd_2022021_9"
+  },
+  {
+    "interaction_id": "22021002",
+    "voice_id": "312100020",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_2_2",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "random_loginbonus_sd_2022021_10"
+  },
+  {
+    "interaction_id": "22021003",
+    "voice_id": "312111001",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_3_1",
+    "chara_name": "ASSET_CHARA_NAME_111",
+    "use_in_result": "1",
+    "chara_image": "random_loginbonus_sd_2022021_11"
+  },
+  {
+    "interaction_id": "22021003",
+    "voice_id": "312100021",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_3_2",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "random_loginbonus_sd_2022021_12"
+  },
+  {
+    "interaction_id": "22021004",
+    "voice_id": "312101001",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_4_1",
+    "chara_name": "ASSET_CHARA_NAME_101",
+    "use_in_result": "1",
+    "chara_image": "random_loginbonus_sd_2022021_1"
+  },
+  {
+    "interaction_id": "22021004",
+    "voice_id": "312100014",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_4_2",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "random_loginbonus_sd_2022021_2"
+  },
+  {
+    "interaction_id": "22021005",
+    "voice_id": "312103001",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_5_1",
+    "chara_name": "ASSET_CHARA_NAME_103",
+    "use_in_result": "1",
+    "chara_image": "random_loginbonus_sd_2022021_5"
+  },
+  {
+    "interaction_id": "22021005",
+    "voice_id": "312100016",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_5_2",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "random_loginbonus_sd_2022021_6"
+  },
+  {
+    "interaction_id": "22021006",
+    "voice_id": "312128001",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_6_1",
+    "chara_name": "ASSET_CHARA_NAME_128",
+    "use_in_result": "1",
+    "chara_image": "random_loginbonus_sd_2022021_7"
+  },
+  {
+    "interaction_id": "22021006",
+    "voice_id": "312100017",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_6_2",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "random_loginbonus_sd_2022021_8"
+  },
+  {
+    "interaction_id": "22021007",
+    "voice_id": "312134001",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_7_1",
+    "chara_name": "ASSET_CHARA_NAME_134",
+    "use_in_result": "1",
+    "chara_image": "random_loginbonus_sd_2022021_13"
+  },
+  {
+    "interaction_id": "22021007",
+    "voice_id": "312100022",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_7_2",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "random_loginbonus_sd_2022021_14"
+  },
+  {
+    "interaction_id": "22021008",
+    "voice_id": "312129001",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_8_1",
+    "chara_name": "ASSET_CHARA_NAME_129",
+    "use_in_result": "1",
+    "chara_image": "random_loginbonus_sd_2022021_15"
+  },
+  {
+    "interaction_id": "22021008",
+    "voice_id": "312100023",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_2022021_8_2",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "random_loginbonus_sd_2022021_16"
+  },
+  {
+    "interaction_id": "202301101",
+    "voice_id": "312102073",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_202301101",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "202301102",
+    "voice_id": "312102072",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_202301102",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "202301103",
+    "voice_id": "312102071",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_202301103",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "202301104",
+    "voice_id": "312102070",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_202301104",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "202301105",
+    "voice_id": "312102069",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_202301105",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "202301106",
+    "voice_id": "312102068",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_202301106",
+    "chara_name": "ASSET_CHARA_NAME_102",
+    "use_in_result": "1",
+    "chara_image": "0"
+  },
+  {
+    "interaction_id": "202305101",
+    "voice_id": "312207001",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_202305101",
+    "chara_name": "ASSET_CHARA_NAME_207",
+    "use_in_result": "1",
+    "chara_image": "random_loginbonus_sd_2023051_1"
+  },
+  {
+    "interaction_id": "202305101",
+    "voice_id": "312205002",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_202305102",
+    "chara_name": "ASSET_CHARA_NAME_205",
+    "use_in_result": "0",
+    "chara_image": "random_loginbonus_sd_2023051_2"
+  },
+  {
+    "interaction_id": "202305102",
+    "voice_id": "312150001",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_202305103",
+    "chara_name": "ASSET_CHARA_NAME_150",
+    "use_in_result": "1",
+    "chara_image": "random_loginbonus_sd_2023051_5"
+  },
+  {
+    "interaction_id": "202305102",
+    "voice_id": "312100026",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_202305104",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "random_loginbonus_sd_2023051_6"
+  },
+  {
+    "interaction_id": "202305103",
+    "voice_id": "312147001",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_202305105",
+    "chara_name": "ASSET_CHARA_NAME_147",
+    "use_in_result": "1",
+    "chara_image": "random_loginbonus_sd_2023051_3"
+  },
+  {
+    "interaction_id": "202305103",
+    "voice_id": "312205003",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_202305106",
+    "chara_name": "ASSET_CHARA_NAME_205",
+    "use_in_result": "0",
+    "chara_image": "random_loginbonus_sd_2023051_4"
+  },
+  {
+    "interaction_id": "202305104",
+    "voice_id": "312206001",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_202305107",
+    "chara_name": "ASSET_CHARA_NAME_206",
+    "use_in_result": "1",
+    "chara_image": "random_loginbonus_sd_2023051_7"
+  },
+  {
+    "interaction_id": "202305104",
+    "voice_id": "312100027",
+    "serif": "ASSET_LOGINBONUS_IETERACTION_202305108",
+    "chara_name": "ASSET_CHARA_NAME_100",
+    "use_in_result": "0",
+    "chara_image": "random_loginbonus_sd_2023051_8"
+  }
+]

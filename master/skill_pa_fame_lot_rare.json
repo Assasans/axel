@@ -1,1 +1,107 @@
-[{"quest_rank_id":"1","rare":"3","weight":"1"},{"quest_rank_id":"1","rare":"2","weight":"15"},{"quest_rank_id":"1","rare":"1","weight":"84"},{"quest_rank_id":"2","rare":"3","weight":"5"},{"quest_rank_id":"2","rare":"2","weight":"15"},{"quest_rank_id":"2","rare":"1","weight":"80"},{"quest_rank_id":"3","rare":"3","weight":"10"},{"quest_rank_id":"3","rare":"2","weight":"20"},{"quest_rank_id":"3","rare":"1","weight":"70"},{"quest_rank_id":"4","rare":"3","weight":"15"},{"quest_rank_id":"4","rare":"2","weight":"25"},{"quest_rank_id":"4","rare":"1","weight":"60"},{"quest_rank_id":"5","rare":"3","weight":"15"},{"quest_rank_id":"5","rare":"2","weight":"30"},{"quest_rank_id":"5","rare":"1","weight":"55"},{"quest_rank_id":"6","rare":"3","weight":"20"},{"quest_rank_id":"6","rare":"2","weight":"30"},{"quest_rank_id":"6","rare":"1","weight":"50"},{"quest_rank_id":"7","rare":"3","weight":"20"},{"quest_rank_id":"7","rare":"2","weight":"35"},{"quest_rank_id":"7","rare":"1","weight":"45"}]
+[
+  {
+    "quest_rank_id": "1",
+    "rare": "3",
+    "weight": "1"
+  },
+  {
+    "quest_rank_id": "1",
+    "rare": "2",
+    "weight": "15"
+  },
+  {
+    "quest_rank_id": "1",
+    "rare": "1",
+    "weight": "84"
+  },
+  {
+    "quest_rank_id": "2",
+    "rare": "3",
+    "weight": "5"
+  },
+  {
+    "quest_rank_id": "2",
+    "rare": "2",
+    "weight": "15"
+  },
+  {
+    "quest_rank_id": "2",
+    "rare": "1",
+    "weight": "80"
+  },
+  {
+    "quest_rank_id": "3",
+    "rare": "3",
+    "weight": "10"
+  },
+  {
+    "quest_rank_id": "3",
+    "rare": "2",
+    "weight": "20"
+  },
+  {
+    "quest_rank_id": "3",
+    "rare": "1",
+    "weight": "70"
+  },
+  {
+    "quest_rank_id": "4",
+    "rare": "3",
+    "weight": "15"
+  },
+  {
+    "quest_rank_id": "4",
+    "rare": "2",
+    "weight": "25"
+  },
+  {
+    "quest_rank_id": "4",
+    "rare": "1",
+    "weight": "60"
+  },
+  {
+    "quest_rank_id": "5",
+    "rare": "3",
+    "weight": "15"
+  },
+  {
+    "quest_rank_id": "5",
+    "rare": "2",
+    "weight": "30"
+  },
+  {
+    "quest_rank_id": "5",
+    "rare": "1",
+    "weight": "55"
+  },
+  {
+    "quest_rank_id": "6",
+    "rare": "3",
+    "weight": "20"
+  },
+  {
+    "quest_rank_id": "6",
+    "rare": "2",
+    "weight": "30"
+  },
+  {
+    "quest_rank_id": "6",
+    "rare": "1",
+    "weight": "50"
+  },
+  {
+    "quest_rank_id": "7",
+    "rare": "3",
+    "weight": "20"
+  },
+  {
+    "quest_rank_id": "7",
+    "rare": "2",
+    "weight": "35"
+  },
+  {
+    "quest_rank_id": "7",
+    "rare": "1",
+    "weight": "45"
+  }
+]

@@ -1,1 +1,12 @@
-[{"surprise_event_id":"10001","surprise_quest_stage_id":"10001","score_type_id":"101"},{"surprise_event_id":"10002","surprise_quest_stage_id":"10002","score_type_id":"102"}]
+[
+  {
+    "surprise_event_id": "10001",
+    "surprise_quest_stage_id": "10001",
+    "score_type_id": "101"
+  },
+  {
+    "surprise_event_id": "10002",
+    "surprise_quest_stage_id": "10002",
+    "score_type_id": "102"
+  }
+]

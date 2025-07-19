@@ -1,1 +1,22 @@
-[{"rare":"1","medal_rate":"5","medal_rate_limit":"10"},{"rare":"2","medal_rate":"10","medal_rate_limit":"20"},{"rare":"3","medal_rate":"20","medal_rate_limit":"40"},{"rare":"4","medal_rate":"50","medal_rate_limit":"100"}]
+[
+  {
+    "rare": "1",
+    "medal_rate": "5",
+    "medal_rate_limit": "10"
+  },
+  {
+    "rare": "2",
+    "medal_rate": "10",
+    "medal_rate_limit": "20"
+  },
+  {
+    "rare": "3",
+    "medal_rate": "20",
+    "medal_rate_limit": "40"
+  },
+  {
+    "rare": "4",
+    "medal_rate": "50",
+    "medal_rate_limit": "100"
+  }
+]

@@ -1,1 +1,7 @@
-[{"target_type_id":"100","target_type_name":"TARGET_TYPE_NAME100","display_start":"2022\/5\/12 0:00:00"}]
+[
+  {
+    "target_type_id": "100",
+    "target_type_name": "TARGET_TYPE_NAME100",
+    "display_start": "2022/5/12 0:00:00"
+  }
+]

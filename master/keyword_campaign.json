@@ -1,1 +1,15 @@
-[{"keyword_campaign_id":"230411","start_at":"2123\/04\/06 15:00","end_at":"2123\/07\/31 0:00","button_logo":"logo_keyword_button_1","title_name":"\u7206\u7114\u30a2\u30cb\u30e1\u9023\u52d5","title_logo":"logo_keyword_title_1","background":"keyword_bakuen_bg","bgm":"1030014","present_message_id":"PRESENT_KEYWORD_230411","text":"0","twitter_url":"https:\/\/twitter.com\/konosubafd?s=20&t=a2cxcu8wngKzPFcZqlyx6w"}]
+[
+  {
+    "keyword_campaign_id": "230411",
+    "start_at": "2123/04/06 15:00",
+    "end_at": "2123/07/31 0:00",
+    "button_logo": "logo_keyword_button_1",
+    "title_name": "爆焔アニメ連動",
+    "title_logo": "logo_keyword_title_1",
+    "background": "keyword_bakuen_bg",
+    "bgm": "1030014",
+    "present_message_id": "PRESENT_KEYWORD_230411",
+    "text": "0",
+    "twitter_url": "https://twitter.com/konosubafd?s=20&t=a2cxcu8wngKzPFcZqlyx6w"
+  }
+]

@@ -1,1 +1,920 @@
-[{"id":"1","scorechallenge_ex_id":"1","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2021\/11\/24 0:00","end_at":"2021\/12\/8 23:59","score_type_id":"102","info_url":"arena_ex\/20200821\/index.html"},{"id":"2","scorechallenge_ex_id":"2","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2021\/12\/9 0:00","end_at":"2021\/12\/22 23:59","score_type_id":"102","info_url":"arena_ex\/20200831\/index.html"},{"id":"3","scorechallenge_ex_id":"3","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2021\/12\/23 0:00","end_at":"2022\/1\/5 23:59","score_type_id":"102","info_url":"arena_ex\/20200917\/index.html"},{"id":"4","scorechallenge_ex_id":"4","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2022\/1\/6 0:00","end_at":"2022\/1\/19 23:59","score_type_id":"102","info_url":"arena_ex\/20200930\/index.html"},{"id":"5","scorechallenge_ex_id":"5","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2022\/4\/14 0:00","end_at":"2022\/4\/27 23:59","score_type_id":"102","info_url":"arena_ex\/20201012\/index.html"},{"id":"6","scorechallenge_ex_id":"6","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2021\/11\/9 0:00","end_at":"2021\/11\/23 23:59","score_type_id":"102","info_url":"arena_ex\/20201102\/index.html"},{"id":"7","scorechallenge_ex_id":"7","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2022\/3\/17 0:00","end_at":"2022\/3\/30 23:59","score_type_id":"103","info_url":"arena_ex\/20201112\/index.html"},{"id":"8","scorechallenge_ex_id":"8","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2022\/3\/3 0:00","end_at":"2022\/3\/16 23:59","score_type_id":"103","info_url":"arena_ex\/20201126\/index.html"},{"id":"9","scorechallenge_ex_id":"9","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2022\/3\/31 0:00","end_at":"2022\/4\/13 23:59","score_type_id":"103","info_url":"arena_ex\/20201210\/index.html"},{"id":"10","scorechallenge_ex_id":"10","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2022\/1\/20 0:00","end_at":"2022\/2\/2 23:59","score_type_id":"103","info_url":"arena_ex\/20201224\/index.html"},{"id":"11","scorechallenge_ex_id":"11","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2022\/2\/17 0:00","end_at":"2022\/3\/2 23:59","score_type_id":"103","info_url":"arena_ex\/20210107\/index.html"},{"id":"12","scorechallenge_ex_id":"12","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2022\/4\/28 0:00","end_at":"2022\/5\/11 23:59","score_type_id":"103","info_url":"arena_ex\/20210121\/index.html"},{"id":"13","scorechallenge_ex_id":"13","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2022\/2\/3 0:00","end_at":"2022\/2\/16 23:59","score_type_id":"103","info_url":"arena_ex\/20210204\/index.html"},{"id":"14","scorechallenge_ex_id":"14","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2022\/8\/4 0:00","end_at":"2022\/8\/17 23:59","score_type_id":"103","info_url":"arena_ex\/20210218\/index.html"},{"id":"15","scorechallenge_ex_id":"15","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2022\/9\/1 0:00","end_at":"2022\/9\/14 23:59","score_type_id":"103","info_url":"arena_ex\/20210304\/index.html"},{"id":"16","scorechallenge_ex_id":"16","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2122\/12\/8 0:00","end_at":"2122\/12\/21 23:59","score_type_id":"103","info_url":"arena_ex\/20210318\/index.html"},{"id":"17","scorechallenge_ex_id":"17","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2022\/6\/23 0:00","end_at":"2022\/7\/6 23:59","score_type_id":"103","info_url":"arena_ex\/20210401\/index.html"},{"id":"18","scorechallenge_ex_id":"18","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2022\/6\/10 0:00","end_at":"2022\/6\/22 23:59","score_type_id":"103","info_url":"arena_ex\/20210415\/index.html"},{"id":"19","scorechallenge_ex_id":"19","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2022\/5\/26 0:00","end_at":"2022\/6\/9 23:59","score_type_id":"103","info_url":"arena_ex\/20210504\/index.html"},{"id":"20","scorechallenge_ex_id":"20","theme_text":"ARENA_EX_BONUS_TYPE_6","start_at":"2022\/10\/13 0:00","end_at":"2022\/10\/26 23:59","score_type_id":"103","info_url":"arena_ex\/20210514\/index.html"},{"id":"21","scorechallenge_ex_id":"21","theme_text":"ARENA_EX_BONUS_TYPE_5","start_at":"2022\/9\/15 0:00","end_at":"2022\/9\/28 23:59","score_type_id":"103","info_url":"arena_ex\/20210527\/index.html"},{"id":"22","scorechallenge_ex_id":"22","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2022\/10\/27 0:00","end_at":"2022\/11\/09 23:59","score_type_id":"103","info_url":"arena_ex\/20210610\/index.html"},{"id":"23","scorechallenge_ex_id":"23","theme_text":"ARENA_EX_BONUS_TYPE_5","start_at":"2022\/7\/7 0:00","end_at":"2022\/7\/20 23:59","score_type_id":"103","info_url":"arena_ex\/20210624\/index.html"},{"id":"24","scorechallenge_ex_id":"24","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2022\/8\/18 0:00","end_at":"2022\/8\/31 23:59","score_type_id":"103","info_url":"arena_ex\/20210708\/index.html"},{"id":"25","scorechallenge_ex_id":"25","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2022\/5\/12 0:00","end_at":"2022\/5\/25 23:59","score_type_id":"103","info_url":"arena_ex\/20210204\/index.html"},{"id":"26","scorechallenge_ex_id":"26","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2122\/9\/29 0:00","end_at":"2122\/10\/11 23:59","score_type_id":"103","info_url":"arena_ex\/20210805\/index.html"},{"id":"27","scorechallenge_ex_id":"27","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2022\/12\/22 0:00","end_at":"2023\/1\/4 23:59","score_type_id":"103","info_url":"arena_ex\/20210819\/index.html"},{"id":"28","scorechallenge_ex_id":"28","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2121\/9\/2 12:00","end_at":"2121\/9\/16 12:00","score_type_id":"104","info_url":"arena_ex\/20210902\/index.html"},{"id":"29","scorechallenge_ex_id":"29","theme_text":"ARENA_EX_BONUS_TYPE_5","start_at":"2023\/1\/5 0:00","end_at":"2023\/1\/18 23:59","score_type_id":"103","info_url":"arena_ex\/20210916\/index.html"},{"id":"30","scorechallenge_ex_id":"30","theme_text":"ARENA_EX_BONUS_TYPE_6","start_at":"2023\/1\/19 0:00","end_at":"2023\/2\/1 23:59","score_type_id":"103","info_url":"arena_ex\/20210930\/index.html"},{"id":"31","scorechallenge_ex_id":"31","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2023\/6\/29 0:00","end_at":"2023\/7\/12 23:59","score_type_id":"104","info_url":"arena_ex\/20211014\/index.html"},{"id":"32","scorechallenge_ex_id":"32","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2023\/2\/2 0:00","end_at":"2023\/2\/22 23:59","score_type_id":"103","info_url":"arena_ex\/20211028\/index.html"},{"id":"33","scorechallenge_ex_id":"33","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2023\/2\/23 0:00","end_at":"2023\/3\/8 23:59","score_type_id":"103","info_url":"arena_ex\/20211104\/index.html"},{"id":"34","scorechallenge_ex_id":"34","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2023\/3\/9 0:00","end_at":"2023\/3\/22 23:59","score_type_id":"103","info_url":"arena_ex\/20211118\/index.html"},{"id":"35","scorechallenge_ex_id":"35","theme_text":"ARENA_EX_BONUS_TYPE_6","start_at":"2023\/6\/15 0:00","end_at":"2023\/6\/28 23:59","score_type_id":"104","info_url":"arena_ex\/20211125\/index.html"},{"id":"36","scorechallenge_ex_id":"36","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2023\/3\/23 0:00","end_at":"2023\/4\/5 23:59","score_type_id":"103","info_url":"arena_ex\/20211209\/index.html"},{"id":"37","scorechallenge_ex_id":"37","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2023\/4\/6 0:00","end_at":"2023\/4\/19 23:59","score_type_id":"103","info_url":"arena_ex\/20211223\/index.html"},{"id":"38","scorechallenge_ex_id":"38","theme_text":"ARENA_EX_BONUS_TYPE_5","start_at":"2023\/4\/20 0:00","end_at":"2023\/5\/3 23:59","score_type_id":"103","info_url":"arena_ex\/20220106\/index.html"},{"id":"39","scorechallenge_ex_id":"39","theme_text":"ARENA_EX_BONUS_TYPE_6","start_at":"2023\/5\/4 0:00","end_at":"2023\/5\/17 23:59","score_type_id":"103","info_url":"arena_ex\/20220120\/index.html"},{"id":"40","scorechallenge_ex_id":"40","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2023\/5\/18 0:00","end_at":"2023\/5\/31 23:59","score_type_id":"103","info_url":"arena_ex\/20220203\/index.html"},{"id":"41","scorechallenge_ex_id":"41","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2023\/7\/27 0:00","end_at":"2023\/8\/9 23:59","score_type_id":"104","info_url":"arena_ex\/20220217\/index.html"},{"id":"42","scorechallenge_ex_id":"42","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2023\/8\/10 0:00","end_at":"2023\/8\/23 23:59","score_type_id":"104","info_url":"arena_ex\/20220303\/index.html"},{"id":"43","scorechallenge_ex_id":"43","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2023\/8\/24 0:00","end_at":"2023\/9\/6 23:59","score_type_id":"104","info_url":"arena_ex\/20220317\/index.html"},{"id":"44","scorechallenge_ex_id":"44","theme_text":"ARENA_EX_BONUS_TYPE_6","start_at":"2023\/9\/7 0:00","end_at":"2023\/9\/20 23:59","score_type_id":"104","info_url":"arena_ex\/20220331\/index.html"},{"id":"45","scorechallenge_ex_id":"45","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2023\/9\/21 0:00","end_at":"2023\/10\/4 23:59","score_type_id":"104","info_url":"arena_ex\/20220414\/index.html"},{"id":"46","scorechallenge_ex_id":"46","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2023\/10\/5 0:00","end_at":"2023\/10\/18 23:59","score_type_id":"104","info_url":"\/news\/detail\/20220428_arena_ex.html"},{"id":"47","scorechallenge_ex_id":"47","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2122\/5\/12 12:00","end_at":"2122\/5\/26 12:00","score_type_id":"104","info_url":"\/news\/detail\/20220512_arena_ex.html"},{"id":"48","scorechallenge_ex_id":"48","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2023\/10\/19 0:00","end_at":"2023\/11\/1 23:59","score_type_id":"104","info_url":"\/news\/detail\/20220526_arena_ex.html"},{"id":"49","scorechallenge_ex_id":"49","theme_text":"ARENA_EX_BONUS_TYPE_6","start_at":"2023\/11\/2 0:00","end_at":"2023\/11\/15 23:59","score_type_id":"104","info_url":"\/news\/detail\/20220609_arena_ex.html"},{"id":"50","scorechallenge_ex_id":"50","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2023\/11\/16 0:00","end_at":"2023\/11\/29 23:59","score_type_id":"104","info_url":"\/news\/detail\/20220623_arena_ex.html"},{"id":"51","scorechallenge_ex_id":"51","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2023\/11\/30 0:00","end_at":"2023\/12\/13 23:59","score_type_id":"104","info_url":"\/news\/detail\/20220707_arena_ex.html"},{"id":"52","scorechallenge_ex_id":"52","theme_text":"ARENA_EX_BONUS_TYPE_6","start_at":"2023\/12\/28 0:00","end_at":"2024\/1\/10 23:59","score_type_id":"104","info_url":"\/news\/detail\/20220721_arena_ex.html"},{"id":"53","scorechallenge_ex_id":"53","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2024\/5\/30 0:00","end_at":"2024\/6\/12 23:59","score_type_id":"104","info_url":"\/news\/detail\/20220804_arena_ex.html"},{"id":"54","scorechallenge_ex_id":"54","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2024\/1\/11 0:00","end_at":"2024\/1\/24 23:59","score_type_id":"104","info_url":"\/news\/detail\/20220818_arena_ex.html"},{"id":"55","scorechallenge_ex_id":"55","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2024\/1\/25 0:00","end_at":"2024\/2\/7 23:59","score_type_id":"104","info_url":"\/news\/detail\/20220901_arena_ex.html"},{"id":"56","scorechallenge_ex_id":"56","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2024\/2\/8 0:00","end_at":"2024\/2\/21 23:59","score_type_id":"104","info_url":"\/news\/detail\/20220915_arena_ex.html"},{"id":"57","scorechallenge_ex_id":"57","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2024\/2\/22 0:00","end_at":"2024\/3\/6 23:59","score_type_id":"104","info_url":"\/news\/detail\/20220929_arena_ex.html"},{"id":"58","scorechallenge_ex_id":"58","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2024\/3\/7 0:00","end_at":"2024\/3\/20 23:59","score_type_id":"104","info_url":"\/news\/detail\/20221013_arena_ex.html"},{"id":"59","scorechallenge_ex_id":"59","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2023\/12\/14 0:00","end_at":"2023\/12\/27 23:59","score_type_id":"104","info_url":"\/news\/detail\/20221027_arena_ex.html"},{"id":"60","scorechallenge_ex_id":"60","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2024\/3\/21 0:00","end_at":"2024\/4\/3 23:59","score_type_id":"104","info_url":"\/news\/detail\/20221110_arena_ex.html"},{"id":"61","scorechallenge_ex_id":"61","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2024\/4\/4 0:00","end_at":"2024\/4\/17 23:59","score_type_id":"104","info_url":"\/news\/detail\/20221124_arena_ex.html"},{"id":"62","scorechallenge_ex_id":"62","theme_text":"ARENA_EX_BONUS_TYPE_6","start_at":"2024\/4\/18 0:00","end_at":"2024\/5\/1 23:59","score_type_id":"104","info_url":"\/news\/detail\/20221208_arena_ex.html"},{"id":"63","scorechallenge_ex_id":"63","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2024\/5\/2 0:00","end_at":"2024\/5\/15 23:59","score_type_id":"104","info_url":"\/news\/detail\/20221222_arena_ex.html"},{"id":"64","scorechallenge_ex_id":"64","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2024\/5\/16 0:00","end_at":"2024\/5\/29 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230105_arena_ex.html"},{"id":"65","scorechallenge_ex_id":"65","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2024\/6\/13 0:00","end_at":"2024\/6\/26 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230119_arena_ex.html"},{"id":"66","scorechallenge_ex_id":"66","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2123\/2\/2 12:00","end_at":"2123\/2\/16 12:00","score_type_id":"104","info_url":"\/news\/detail\/20230202_arena_ex.html"},{"id":"67","scorechallenge_ex_id":"67","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2024\/6\/27 0:00","end_at":"2024\/7\/10 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230216_arena_ex.html"},{"id":"68","scorechallenge_ex_id":"68","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2024\/7\/11 0:00","end_at":"2024\/7\/24 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230302_arena_ex.html"},{"id":"69","scorechallenge_ex_id":"69","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2024\/7\/25 0:00","end_at":"2024\/8\/7 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230316_arena_ex.html"},{"id":"70","scorechallenge_ex_id":"70","theme_text":"ARENA_EX_BONUS_TYPE_6","start_at":"2024\/8\/8 0:00","end_at":"2024\/8\/21 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230330_arena_ex.html"},{"id":"71","scorechallenge_ex_id":"71","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2024\/8\/22 0:00","end_at":"2024\/9\/4 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230413_arena_ex.html"},{"id":"72","scorechallenge_ex_id":"72","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2024\/9\/5 0:00","end_at":"2024\/9\/18 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230427_arena_ex.html"},{"id":"73","scorechallenge_ex_id":"73","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2024\/9\/19 0:00","end_at":"2024\/10\/2 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230511_arena_ex.html"},{"id":"74","scorechallenge_ex_id":"74","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2123\/5\/25 12:00","end_at":"2123\/6\/8 12:00","score_type_id":"104","info_url":"\/news\/detail\/20230525_arena_ex.html"},{"id":"75","scorechallenge_ex_id":"75","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2024\/10\/3 0:00","end_at":"2024\/10\/16 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230608_arena_ex.html"},{"id":"76","scorechallenge_ex_id":"76","theme_text":"ARENA_EX_BONUS_TYPE_6","start_at":"2024\/10\/17 0:00","end_at":"2024\/10\/30 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230622_arena_ex.html"},{"id":"77","scorechallenge_ex_id":"77","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2024\/10\/31 0:00","end_at":"2024\/11\/13 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230706_arena_ex.html"},{"id":"78","scorechallenge_ex_id":"78","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2024\/11\/14 0:00","end_at":"2024\/11\/27 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230720_arena_ex.html"},{"id":"79","scorechallenge_ex_id":"79","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2123\/8\/3 12:00","end_at":"2123\/8\/17 12:00","score_type_id":"104","info_url":"\/news\/detail\/20230803_arena_ex.html"},{"id":"80","scorechallenge_ex_id":"80","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2024\/11\/28 0:00","end_at":"2024\/12\/11 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230817_arena_ex.html"},{"id":"81","scorechallenge_ex_id":"81","theme_text":"ARENA_EX_BONUS_TYPE_6","start_at":"2024\/12\/12 0:00","end_at":"2024\/12\/25 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230831_arena_ex.html"},{"id":"82","scorechallenge_ex_id":"82","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2024\/12\/26 0:00","end_at":"2025\/1\/8 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230914_arena_ex.html"},{"id":"83","scorechallenge_ex_id":"83","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2025\/1\/9 0:00","end_at":"2025\/1\/22 23:59","score_type_id":"104","info_url":"\/news\/detail\/20230928_arena_ex.html"},{"id":"84","scorechallenge_ex_id":"84","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2025\/1\/23 0:00","end_at":"2025\/1\/30 06:00","score_type_id":"104","info_url":"\/news\/detail\/20231012_arena_ex.html"},{"id":"85","scorechallenge_ex_id":"85","theme_text":"ARENA_EX_BONUS_TYPE_6","start_at":"2123\/10\/26 12:00","end_at":"2123\/11\/9 12:00","score_type_id":"104","info_url":"\/news\/detail\/20231026_arena_ex.html"},{"id":"86","scorechallenge_ex_id":"86","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2123\/11\/9 12:00","end_at":"2123\/11\/23 12:00","score_type_id":"104","info_url":"\/news\/detail\/20231109_arena_ex.html"},{"id":"87","scorechallenge_ex_id":"87","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2123\/11\/23 12:00","end_at":"2123\/12\/7 12:00","score_type_id":"104","info_url":"\/news\/detail\/20231123_arena_ex.html"},{"id":"88","scorechallenge_ex_id":"88","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2123\/12\/7 12:00","end_at":"2123\/12\/21 12:00","score_type_id":"104","info_url":"\/news\/detail\/20231207_arena_ex.html"},{"id":"89","scorechallenge_ex_id":"89","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2123\/12\/21 12:00","end_at":"2124\/1\/4 12:00","score_type_id":"104","info_url":"\/news\/detail\/20231221_arena_ex.html"},{"id":"90","scorechallenge_ex_id":"90","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2124\/1\/4 12:00","end_at":"2124\/1\/18 12:00","score_type_id":"104","info_url":"\/news\/detail\/20240104_arena_ex.html"},{"id":"91","scorechallenge_ex_id":"91","theme_text":"ARENA_EX_BONUS_TYPE_6","start_at":"2124\/1\/18 12:00","end_at":"2124\/2\/1 12:00","score_type_id":"104","info_url":"\/news\/detail\/20240118_arena_ex.html"},{"id":"92","scorechallenge_ex_id":"92","theme_text":"ARENA_EX_BONUS_TYPE_4","start_at":"2124\/2\/1 12:00","end_at":"2124\/2\/15 12:00","score_type_id":"104","info_url":"\/news\/detail\/20240201_arena_ex.html"},{"id":"93","scorechallenge_ex_id":"93","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2124\/2\/15 12:00","end_at":"2124\/2\/29 12:00","score_type_id":"104","info_url":"\/news\/detail\/20240215_arena_ex.html"},{"id":"2003","scorechallenge_ex_id":"2003","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2022\/7\/21 0:00","end_at":"2022\/8\/3 23:59","score_type_id":"103","info_url":"arena_ex\/20200917\/index.html"},{"id":"2004","scorechallenge_ex_id":"2004","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2022\/9\/29 0:00","end_at":"2022\/10\/12 23:59","score_type_id":"103","info_url":"arena_ex\/20210415\/index.html"},{"id":"2005","scorechallenge_ex_id":"2005","theme_text":"ARENA_EX_BONUS_TYPE_6","start_at":"2122\/11\/10 0:00","end_at":"2122\/11\/23 23:59","score_type_id":"103","info_url":"arena_ex\/20210401\/index.html"},{"id":"2006","scorechallenge_ex_id":"2006","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2022\/11\/10 0:00","end_at":"2022\/11\/23 23:59","score_type_id":"103","info_url":"arena_ex\/20210624\/index.html"},{"id":"2007","scorechallenge_ex_id":"2007","theme_text":"ARENA_EX_BONUS_TYPE_3","start_at":"2022\/11\/24 0:00","end_at":"2022\/12\/7 23:59","score_type_id":"103","info_url":"arena_ex\/20200917\/index.html"},{"id":"2008","scorechallenge_ex_id":"2008","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2022\/12\/8 0:00","end_at":"2022\/12\/21 23:59","score_type_id":"103","info_url":"arena_ex\/20210902\/index.html"},{"id":"2009","scorechallenge_ex_id":"2009","theme_text":"ARENA_EX_BONUS_TYPE_2","start_at":"2023\/6\/1 0:00","end_at":"2023\/6\/14 23:59","score_type_id":"104","info_url":"arena_ex\/20211028\/index.html"},{"id":"2010","scorechallenge_ex_id":"2010","theme_text":"ARENA_EX_BONUS_TYPE_1","start_at":"2023\/7\/13 0:00","end_at":"2023\/7\/26 23:59","score_type_id":"104","info_url":"arena_ex\/20211118\/index.html"},{"id":"2011","scorechallenge_ex_id":"2011","theme_text":"ARENA_EX_BONUS_TYPE_6","start_at":"2123\/7\/27 0:00","end_at":"2123\/8\/9 23:59","score_type_id":"104","info_url":"arena_ex\/20220120\/index.html"}]
+[
+  {
+    "id": "1",
+    "scorechallenge_ex_id": "1",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2021/11/24 0:00",
+    "end_at": "2021/12/8 23:59",
+    "score_type_id": "102",
+    "info_url": "arena_ex/20200821/index.html"
+  },
+  {
+    "id": "2",
+    "scorechallenge_ex_id": "2",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2021/12/9 0:00",
+    "end_at": "2021/12/22 23:59",
+    "score_type_id": "102",
+    "info_url": "arena_ex/20200831/index.html"
+  },
+  {
+    "id": "3",
+    "scorechallenge_ex_id": "3",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2021/12/23 0:00",
+    "end_at": "2022/1/5 23:59",
+    "score_type_id": "102",
+    "info_url": "arena_ex/20200917/index.html"
+  },
+  {
+    "id": "4",
+    "scorechallenge_ex_id": "4",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2022/1/6 0:00",
+    "end_at": "2022/1/19 23:59",
+    "score_type_id": "102",
+    "info_url": "arena_ex/20200930/index.html"
+  },
+  {
+    "id": "5",
+    "scorechallenge_ex_id": "5",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2022/4/14 0:00",
+    "end_at": "2022/4/27 23:59",
+    "score_type_id": "102",
+    "info_url": "arena_ex/20201012/index.html"
+  },
+  {
+    "id": "6",
+    "scorechallenge_ex_id": "6",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2021/11/9 0:00",
+    "end_at": "2021/11/23 23:59",
+    "score_type_id": "102",
+    "info_url": "arena_ex/20201102/index.html"
+  },
+  {
+    "id": "7",
+    "scorechallenge_ex_id": "7",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2022/3/17 0:00",
+    "end_at": "2022/3/30 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20201112/index.html"
+  },
+  {
+    "id": "8",
+    "scorechallenge_ex_id": "8",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2022/3/3 0:00",
+    "end_at": "2022/3/16 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20201126/index.html"
+  },
+  {
+    "id": "9",
+    "scorechallenge_ex_id": "9",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2022/3/31 0:00",
+    "end_at": "2022/4/13 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20201210/index.html"
+  },
+  {
+    "id": "10",
+    "scorechallenge_ex_id": "10",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2022/1/20 0:00",
+    "end_at": "2022/2/2 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20201224/index.html"
+  },
+  {
+    "id": "11",
+    "scorechallenge_ex_id": "11",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2022/2/17 0:00",
+    "end_at": "2022/3/2 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210107/index.html"
+  },
+  {
+    "id": "12",
+    "scorechallenge_ex_id": "12",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2022/4/28 0:00",
+    "end_at": "2022/5/11 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210121/index.html"
+  },
+  {
+    "id": "13",
+    "scorechallenge_ex_id": "13",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2022/2/3 0:00",
+    "end_at": "2022/2/16 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210204/index.html"
+  },
+  {
+    "id": "14",
+    "scorechallenge_ex_id": "14",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2022/8/4 0:00",
+    "end_at": "2022/8/17 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210218/index.html"
+  },
+  {
+    "id": "15",
+    "scorechallenge_ex_id": "15",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2022/9/1 0:00",
+    "end_at": "2022/9/14 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210304/index.html"
+  },
+  {
+    "id": "16",
+    "scorechallenge_ex_id": "16",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2122/12/8 0:00",
+    "end_at": "2122/12/21 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210318/index.html"
+  },
+  {
+    "id": "17",
+    "scorechallenge_ex_id": "17",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2022/6/23 0:00",
+    "end_at": "2022/7/6 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210401/index.html"
+  },
+  {
+    "id": "18",
+    "scorechallenge_ex_id": "18",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2022/6/10 0:00",
+    "end_at": "2022/6/22 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210415/index.html"
+  },
+  {
+    "id": "19",
+    "scorechallenge_ex_id": "19",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2022/5/26 0:00",
+    "end_at": "2022/6/9 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210504/index.html"
+  },
+  {
+    "id": "20",
+    "scorechallenge_ex_id": "20",
+    "theme_text": "ARENA_EX_BONUS_TYPE_6",
+    "start_at": "2022/10/13 0:00",
+    "end_at": "2022/10/26 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210514/index.html"
+  },
+  {
+    "id": "21",
+    "scorechallenge_ex_id": "21",
+    "theme_text": "ARENA_EX_BONUS_TYPE_5",
+    "start_at": "2022/9/15 0:00",
+    "end_at": "2022/9/28 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210527/index.html"
+  },
+  {
+    "id": "22",
+    "scorechallenge_ex_id": "22",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2022/10/27 0:00",
+    "end_at": "2022/11/09 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210610/index.html"
+  },
+  {
+    "id": "23",
+    "scorechallenge_ex_id": "23",
+    "theme_text": "ARENA_EX_BONUS_TYPE_5",
+    "start_at": "2022/7/7 0:00",
+    "end_at": "2022/7/20 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210624/index.html"
+  },
+  {
+    "id": "24",
+    "scorechallenge_ex_id": "24",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2022/8/18 0:00",
+    "end_at": "2022/8/31 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210708/index.html"
+  },
+  {
+    "id": "25",
+    "scorechallenge_ex_id": "25",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2022/5/12 0:00",
+    "end_at": "2022/5/25 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210204/index.html"
+  },
+  {
+    "id": "26",
+    "scorechallenge_ex_id": "26",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2122/9/29 0:00",
+    "end_at": "2122/10/11 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210805/index.html"
+  },
+  {
+    "id": "27",
+    "scorechallenge_ex_id": "27",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2022/12/22 0:00",
+    "end_at": "2023/1/4 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210819/index.html"
+  },
+  {
+    "id": "28",
+    "scorechallenge_ex_id": "28",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2121/9/2 12:00",
+    "end_at": "2121/9/16 12:00",
+    "score_type_id": "104",
+    "info_url": "arena_ex/20210902/index.html"
+  },
+  {
+    "id": "29",
+    "scorechallenge_ex_id": "29",
+    "theme_text": "ARENA_EX_BONUS_TYPE_5",
+    "start_at": "2023/1/5 0:00",
+    "end_at": "2023/1/18 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210916/index.html"
+  },
+  {
+    "id": "30",
+    "scorechallenge_ex_id": "30",
+    "theme_text": "ARENA_EX_BONUS_TYPE_6",
+    "start_at": "2023/1/19 0:00",
+    "end_at": "2023/2/1 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210930/index.html"
+  },
+  {
+    "id": "31",
+    "scorechallenge_ex_id": "31",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2023/6/29 0:00",
+    "end_at": "2023/7/12 23:59",
+    "score_type_id": "104",
+    "info_url": "arena_ex/20211014/index.html"
+  },
+  {
+    "id": "32",
+    "scorechallenge_ex_id": "32",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2023/2/2 0:00",
+    "end_at": "2023/2/22 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20211028/index.html"
+  },
+  {
+    "id": "33",
+    "scorechallenge_ex_id": "33",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2023/2/23 0:00",
+    "end_at": "2023/3/8 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20211104/index.html"
+  },
+  {
+    "id": "34",
+    "scorechallenge_ex_id": "34",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2023/3/9 0:00",
+    "end_at": "2023/3/22 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20211118/index.html"
+  },
+  {
+    "id": "35",
+    "scorechallenge_ex_id": "35",
+    "theme_text": "ARENA_EX_BONUS_TYPE_6",
+    "start_at": "2023/6/15 0:00",
+    "end_at": "2023/6/28 23:59",
+    "score_type_id": "104",
+    "info_url": "arena_ex/20211125/index.html"
+  },
+  {
+    "id": "36",
+    "scorechallenge_ex_id": "36",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2023/3/23 0:00",
+    "end_at": "2023/4/5 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20211209/index.html"
+  },
+  {
+    "id": "37",
+    "scorechallenge_ex_id": "37",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2023/4/6 0:00",
+    "end_at": "2023/4/19 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20211223/index.html"
+  },
+  {
+    "id": "38",
+    "scorechallenge_ex_id": "38",
+    "theme_text": "ARENA_EX_BONUS_TYPE_5",
+    "start_at": "2023/4/20 0:00",
+    "end_at": "2023/5/3 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20220106/index.html"
+  },
+  {
+    "id": "39",
+    "scorechallenge_ex_id": "39",
+    "theme_text": "ARENA_EX_BONUS_TYPE_6",
+    "start_at": "2023/5/4 0:00",
+    "end_at": "2023/5/17 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20220120/index.html"
+  },
+  {
+    "id": "40",
+    "scorechallenge_ex_id": "40",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2023/5/18 0:00",
+    "end_at": "2023/5/31 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20220203/index.html"
+  },
+  {
+    "id": "41",
+    "scorechallenge_ex_id": "41",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2023/7/27 0:00",
+    "end_at": "2023/8/9 23:59",
+    "score_type_id": "104",
+    "info_url": "arena_ex/20220217/index.html"
+  },
+  {
+    "id": "42",
+    "scorechallenge_ex_id": "42",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2023/8/10 0:00",
+    "end_at": "2023/8/23 23:59",
+    "score_type_id": "104",
+    "info_url": "arena_ex/20220303/index.html"
+  },
+  {
+    "id": "43",
+    "scorechallenge_ex_id": "43",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2023/8/24 0:00",
+    "end_at": "2023/9/6 23:59",
+    "score_type_id": "104",
+    "info_url": "arena_ex/20220317/index.html"
+  },
+  {
+    "id": "44",
+    "scorechallenge_ex_id": "44",
+    "theme_text": "ARENA_EX_BONUS_TYPE_6",
+    "start_at": "2023/9/7 0:00",
+    "end_at": "2023/9/20 23:59",
+    "score_type_id": "104",
+    "info_url": "arena_ex/20220331/index.html"
+  },
+  {
+    "id": "45",
+    "scorechallenge_ex_id": "45",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2023/9/21 0:00",
+    "end_at": "2023/10/4 23:59",
+    "score_type_id": "104",
+    "info_url": "arena_ex/20220414/index.html"
+  },
+  {
+    "id": "46",
+    "scorechallenge_ex_id": "46",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2023/10/5 0:00",
+    "end_at": "2023/10/18 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20220428_arena_ex.html"
+  },
+  {
+    "id": "47",
+    "scorechallenge_ex_id": "47",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2122/5/12 12:00",
+    "end_at": "2122/5/26 12:00",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20220512_arena_ex.html"
+  },
+  {
+    "id": "48",
+    "scorechallenge_ex_id": "48",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2023/10/19 0:00",
+    "end_at": "2023/11/1 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20220526_arena_ex.html"
+  },
+  {
+    "id": "49",
+    "scorechallenge_ex_id": "49",
+    "theme_text": "ARENA_EX_BONUS_TYPE_6",
+    "start_at": "2023/11/2 0:00",
+    "end_at": "2023/11/15 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20220609_arena_ex.html"
+  },
+  {
+    "id": "50",
+    "scorechallenge_ex_id": "50",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2023/11/16 0:00",
+    "end_at": "2023/11/29 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20220623_arena_ex.html"
+  },
+  {
+    "id": "51",
+    "scorechallenge_ex_id": "51",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2023/11/30 0:00",
+    "end_at": "2023/12/13 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20220707_arena_ex.html"
+  },
+  {
+    "id": "52",
+    "scorechallenge_ex_id": "52",
+    "theme_text": "ARENA_EX_BONUS_TYPE_6",
+    "start_at": "2023/12/28 0:00",
+    "end_at": "2024/1/10 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20220721_arena_ex.html"
+  },
+  {
+    "id": "53",
+    "scorechallenge_ex_id": "53",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2024/5/30 0:00",
+    "end_at": "2024/6/12 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20220804_arena_ex.html"
+  },
+  {
+    "id": "54",
+    "scorechallenge_ex_id": "54",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2024/1/11 0:00",
+    "end_at": "2024/1/24 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20220818_arena_ex.html"
+  },
+  {
+    "id": "55",
+    "scorechallenge_ex_id": "55",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2024/1/25 0:00",
+    "end_at": "2024/2/7 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20220901_arena_ex.html"
+  },
+  {
+    "id": "56",
+    "scorechallenge_ex_id": "56",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2024/2/8 0:00",
+    "end_at": "2024/2/21 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20220915_arena_ex.html"
+  },
+  {
+    "id": "57",
+    "scorechallenge_ex_id": "57",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2024/2/22 0:00",
+    "end_at": "2024/3/6 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20220929_arena_ex.html"
+  },
+  {
+    "id": "58",
+    "scorechallenge_ex_id": "58",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2024/3/7 0:00",
+    "end_at": "2024/3/20 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20221013_arena_ex.html"
+  },
+  {
+    "id": "59",
+    "scorechallenge_ex_id": "59",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2023/12/14 0:00",
+    "end_at": "2023/12/27 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20221027_arena_ex.html"
+  },
+  {
+    "id": "60",
+    "scorechallenge_ex_id": "60",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2024/3/21 0:00",
+    "end_at": "2024/4/3 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20221110_arena_ex.html"
+  },
+  {
+    "id": "61",
+    "scorechallenge_ex_id": "61",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2024/4/4 0:00",
+    "end_at": "2024/4/17 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20221124_arena_ex.html"
+  },
+  {
+    "id": "62",
+    "scorechallenge_ex_id": "62",
+    "theme_text": "ARENA_EX_BONUS_TYPE_6",
+    "start_at": "2024/4/18 0:00",
+    "end_at": "2024/5/1 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20221208_arena_ex.html"
+  },
+  {
+    "id": "63",
+    "scorechallenge_ex_id": "63",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2024/5/2 0:00",
+    "end_at": "2024/5/15 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20221222_arena_ex.html"
+  },
+  {
+    "id": "64",
+    "scorechallenge_ex_id": "64",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2024/5/16 0:00",
+    "end_at": "2024/5/29 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230105_arena_ex.html"
+  },
+  {
+    "id": "65",
+    "scorechallenge_ex_id": "65",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2024/6/13 0:00",
+    "end_at": "2024/6/26 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230119_arena_ex.html"
+  },
+  {
+    "id": "66",
+    "scorechallenge_ex_id": "66",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2123/2/2 12:00",
+    "end_at": "2123/2/16 12:00",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230202_arena_ex.html"
+  },
+  {
+    "id": "67",
+    "scorechallenge_ex_id": "67",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2024/6/27 0:00",
+    "end_at": "2024/7/10 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230216_arena_ex.html"
+  },
+  {
+    "id": "68",
+    "scorechallenge_ex_id": "68",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2024/7/11 0:00",
+    "end_at": "2024/7/24 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230302_arena_ex.html"
+  },
+  {
+    "id": "69",
+    "scorechallenge_ex_id": "69",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2024/7/25 0:00",
+    "end_at": "2024/8/7 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230316_arena_ex.html"
+  },
+  {
+    "id": "70",
+    "scorechallenge_ex_id": "70",
+    "theme_text": "ARENA_EX_BONUS_TYPE_6",
+    "start_at": "2024/8/8 0:00",
+    "end_at": "2024/8/21 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230330_arena_ex.html"
+  },
+  {
+    "id": "71",
+    "scorechallenge_ex_id": "71",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2024/8/22 0:00",
+    "end_at": "2024/9/4 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230413_arena_ex.html"
+  },
+  {
+    "id": "72",
+    "scorechallenge_ex_id": "72",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2024/9/5 0:00",
+    "end_at": "2024/9/18 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230427_arena_ex.html"
+  },
+  {
+    "id": "73",
+    "scorechallenge_ex_id": "73",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2024/9/19 0:00",
+    "end_at": "2024/10/2 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230511_arena_ex.html"
+  },
+  {
+    "id": "74",
+    "scorechallenge_ex_id": "74",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2123/5/25 12:00",
+    "end_at": "2123/6/8 12:00",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230525_arena_ex.html"
+  },
+  {
+    "id": "75",
+    "scorechallenge_ex_id": "75",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2024/10/3 0:00",
+    "end_at": "2024/10/16 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230608_arena_ex.html"
+  },
+  {
+    "id": "76",
+    "scorechallenge_ex_id": "76",
+    "theme_text": "ARENA_EX_BONUS_TYPE_6",
+    "start_at": "2024/10/17 0:00",
+    "end_at": "2024/10/30 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230622_arena_ex.html"
+  },
+  {
+    "id": "77",
+    "scorechallenge_ex_id": "77",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2024/10/31 0:00",
+    "end_at": "2024/11/13 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230706_arena_ex.html"
+  },
+  {
+    "id": "78",
+    "scorechallenge_ex_id": "78",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2024/11/14 0:00",
+    "end_at": "2024/11/27 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230720_arena_ex.html"
+  },
+  {
+    "id": "79",
+    "scorechallenge_ex_id": "79",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2123/8/3 12:00",
+    "end_at": "2123/8/17 12:00",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230803_arena_ex.html"
+  },
+  {
+    "id": "80",
+    "scorechallenge_ex_id": "80",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2024/11/28 0:00",
+    "end_at": "2024/12/11 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230817_arena_ex.html"
+  },
+  {
+    "id": "81",
+    "scorechallenge_ex_id": "81",
+    "theme_text": "ARENA_EX_BONUS_TYPE_6",
+    "start_at": "2024/12/12 0:00",
+    "end_at": "2024/12/25 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230831_arena_ex.html"
+  },
+  {
+    "id": "82",
+    "scorechallenge_ex_id": "82",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2024/12/26 0:00",
+    "end_at": "2025/1/8 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230914_arena_ex.html"
+  },
+  {
+    "id": "83",
+    "scorechallenge_ex_id": "83",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2025/1/9 0:00",
+    "end_at": "2025/1/22 23:59",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20230928_arena_ex.html"
+  },
+  {
+    "id": "84",
+    "scorechallenge_ex_id": "84",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2025/1/23 0:00",
+    "end_at": "2025/1/30 06:00",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20231012_arena_ex.html"
+  },
+  {
+    "id": "85",
+    "scorechallenge_ex_id": "85",
+    "theme_text": "ARENA_EX_BONUS_TYPE_6",
+    "start_at": "2123/10/26 12:00",
+    "end_at": "2123/11/9 12:00",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20231026_arena_ex.html"
+  },
+  {
+    "id": "86",
+    "scorechallenge_ex_id": "86",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2123/11/9 12:00",
+    "end_at": "2123/11/23 12:00",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20231109_arena_ex.html"
+  },
+  {
+    "id": "87",
+    "scorechallenge_ex_id": "87",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2123/11/23 12:00",
+    "end_at": "2123/12/7 12:00",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20231123_arena_ex.html"
+  },
+  {
+    "id": "88",
+    "scorechallenge_ex_id": "88",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2123/12/7 12:00",
+    "end_at": "2123/12/21 12:00",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20231207_arena_ex.html"
+  },
+  {
+    "id": "89",
+    "scorechallenge_ex_id": "89",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2123/12/21 12:00",
+    "end_at": "2124/1/4 12:00",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20231221_arena_ex.html"
+  },
+  {
+    "id": "90",
+    "scorechallenge_ex_id": "90",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2124/1/4 12:00",
+    "end_at": "2124/1/18 12:00",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20240104_arena_ex.html"
+  },
+  {
+    "id": "91",
+    "scorechallenge_ex_id": "91",
+    "theme_text": "ARENA_EX_BONUS_TYPE_6",
+    "start_at": "2124/1/18 12:00",
+    "end_at": "2124/2/1 12:00",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20240118_arena_ex.html"
+  },
+  {
+    "id": "92",
+    "scorechallenge_ex_id": "92",
+    "theme_text": "ARENA_EX_BONUS_TYPE_4",
+    "start_at": "2124/2/1 12:00",
+    "end_at": "2124/2/15 12:00",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20240201_arena_ex.html"
+  },
+  {
+    "id": "93",
+    "scorechallenge_ex_id": "93",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2124/2/15 12:00",
+    "end_at": "2124/2/29 12:00",
+    "score_type_id": "104",
+    "info_url": "/news/detail/20240215_arena_ex.html"
+  },
+  {
+    "id": "2003",
+    "scorechallenge_ex_id": "2003",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2022/7/21 0:00",
+    "end_at": "2022/8/3 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20200917/index.html"
+  },
+  {
+    "id": "2004",
+    "scorechallenge_ex_id": "2004",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2022/9/29 0:00",
+    "end_at": "2022/10/12 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210415/index.html"
+  },
+  {
+    "id": "2005",
+    "scorechallenge_ex_id": "2005",
+    "theme_text": "ARENA_EX_BONUS_TYPE_6",
+    "start_at": "2122/11/10 0:00",
+    "end_at": "2122/11/23 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210401/index.html"
+  },
+  {
+    "id": "2006",
+    "scorechallenge_ex_id": "2006",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2022/11/10 0:00",
+    "end_at": "2022/11/23 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210624/index.html"
+  },
+  {
+    "id": "2007",
+    "scorechallenge_ex_id": "2007",
+    "theme_text": "ARENA_EX_BONUS_TYPE_3",
+    "start_at": "2022/11/24 0:00",
+    "end_at": "2022/12/7 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20200917/index.html"
+  },
+  {
+    "id": "2008",
+    "scorechallenge_ex_id": "2008",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2022/12/8 0:00",
+    "end_at": "2022/12/21 23:59",
+    "score_type_id": "103",
+    "info_url": "arena_ex/20210902/index.html"
+  },
+  {
+    "id": "2009",
+    "scorechallenge_ex_id": "2009",
+    "theme_text": "ARENA_EX_BONUS_TYPE_2",
+    "start_at": "2023/6/1 0:00",
+    "end_at": "2023/6/14 23:59",
+    "score_type_id": "104",
+    "info_url": "arena_ex/20211028/index.html"
+  },
+  {
+    "id": "2010",
+    "scorechallenge_ex_id": "2010",
+    "theme_text": "ARENA_EX_BONUS_TYPE_1",
+    "start_at": "2023/7/13 0:00",
+    "end_at": "2023/7/26 23:59",
+    "score_type_id": "104",
+    "info_url": "arena_ex/20211118/index.html"
+  },
+  {
+    "id": "2011",
+    "scorechallenge_ex_id": "2011",
+    "theme_text": "ARENA_EX_BONUS_TYPE_6",
+    "start_at": "2123/7/27 0:00",
+    "end_at": "2123/8/9 23:59",
+    "score_type_id": "104",
+    "info_url": "arena_ex/20220120/index.html"
+  }
+]

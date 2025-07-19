@@ -1,1 +1,9 @@
-[{"id":"1","start_at":"2024\/8\/16 0:00","end_at":"2064\/8\/16 0:00","comeback_days":"14","appeal_image":"comeback_present_1"}]
+[
+  {
+    "id": "1",
+    "start_at": "2024/8/16 0:00",
+    "end_at": "2064/8/16 0:00",
+    "comeback_days": "14",
+    "appeal_image": "comeback_present_1"
+  }
+]

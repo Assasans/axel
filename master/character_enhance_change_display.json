@@ -1,1 +1,22 @@
-[{"display_number":"1","next_display_number":"2","direction":"3"},{"display_number":"1","next_display_number":"3","direction":"0"},{"display_number":"2","next_display_number":"1","direction":"2"},{"display_number":"3","next_display_number":"1","direction":"1"}]
+[
+  {
+    "display_number": "1",
+    "next_display_number": "2",
+    "direction": "3"
+  },
+  {
+    "display_number": "1",
+    "next_display_number": "3",
+    "direction": "0"
+  },
+  {
+    "display_number": "2",
+    "next_display_number": "1",
+    "direction": "2"
+  },
+  {
+    "display_number": "3",
+    "next_display_number": "1",
+    "direction": "1"
+  }
+]

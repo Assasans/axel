@@ -1,1 +1,112 @@
-[{"movie":"MovieStory100505,movie_story_100505_brightshow","story_id":"100505","group_id":"2101050","list_icon":"210105001","title":"GALLERY_MOVIE_TITLE_210105001","artist_name":"GALLERY_MOVIE_ARTIST_NAME_210105001","scale_type":"0","display_start":"0"},{"movie":"MovieStory101006,movie_story_101006_deartomorrow","story_id":"101006","group_id":"2101100","list_icon":"210110001","title":"GALLERY_MOVIE_TITLE_210110001","artist_name":"GALLERY_MOVIE_ARTIST_NAME_210110001","scale_type":"0","display_start":"0"},{"movie":"MovieStory101106,movie_story_101106_ed","story_id":"101106","group_id":"2101110","list_icon":"210111001","title":"GALLERY_MOVIE_TITLE_210111001","artist_name":"GALLERY_MOVIE_ARTIST_NAME_210111001","scale_type":"1","display_start":"0"},{"movie":"MovieStory120506,movie_story_200506_myfavorite","story_id":"120506","group_id":"2102050","list_icon":"210205001","title":"GALLERY_MOVIE_TITLE_210205001","artist_name":"GALLERY_MOVIE_ARTIST_NAME_210205001","scale_type":"0","display_start":"0"},{"movie":"MovieStory121106,movie_story_201106_smilesurprise","story_id":"121106","group_id":"2102110","list_icon":"210211001","title":"GALLERY_MOVIE_TITLE_210211001","artist_name":"GALLERY_MOVIE_ARTIST_NAME_210211001","scale_type":"0","display_start":"2022\/11\/22 0:00"},{"movie":"MovieStory131106,movie_story_301106_ed","story_id":"131106","group_id":"2103110","list_icon":"210111001","title":"GALLERY_MOVIE_TITLE_210111001","artist_name":"GALLERY_MOVIE_ARTIST_NAME_210111001","scale_type":"1","display_start":"0"},{"movie":"MovieStory140606,movie_story_401106_ed","story_id":"140606","group_id":"2104060","list_icon":"210111001","title":"GALLERY_MOVIE_TITLE_210111001","artist_name":"GALLERY_MOVIE_ARTIST_NAME_210111001","scale_type":"1","display_start":"0"},{"movie":"MovieStory150401,movie_story_150401_fantasticcurtaincall","story_id":"150401","group_id":"2105040","list_icon":"210504001","title":"GALLERY_MOVIE_TITLE_210504001","artist_name":"GALLERY_MOVIE_ARTIST_NAME_210504001","scale_type":"1","display_start":"2025\/1\/21 0:00"},{"movie":"MovieStory42103105,movie_story_42103105_ikezunakajitsu","story_id":"42103105","group_id":"2421031","list_icon":"242103101","title":"GALLERY_MOVIE_TITLE_242103101","artist_name":"GALLERY_MOVIE_ARTIST_NAME_242103101","scale_type":"0","display_start":"2022\/8\/23 0:00"},{"movie":"MovieStory42209106,movie_story_220901_bestparty","story_id":"42209106","group_id":"2422091","list_icon":"242209101","title":"GALLERY_MOVIE_TITLE_242209101","artist_name":"GALLERY_MOVIE_ARTIST_NAME_242209101","scale_type":"0","display_start":"0"},{"movie":"MovieStory42209202,movie_story_22091_cuitestar","story_id":"42209202","group_id":"2422092","list_icon":"242209201","title":"GALLERY_MOVIE_TITLE_242209201","artist_name":"GALLERY_MOVIE_ARTIST_NAME_242209201","scale_type":"0","display_start":"0"}]
+[
+  {
+    "movie": "MovieStory100505,movie_story_100505_brightshow",
+    "story_id": "100505",
+    "group_id": "2101050",
+    "list_icon": "210105001",
+    "title": "GALLERY_MOVIE_TITLE_210105001",
+    "artist_name": "GALLERY_MOVIE_ARTIST_NAME_210105001",
+    "scale_type": "0",
+    "display_start": "0"
+  },
+  {
+    "movie": "MovieStory101006,movie_story_101006_deartomorrow",
+    "story_id": "101006",
+    "group_id": "2101100",
+    "list_icon": "210110001",
+    "title": "GALLERY_MOVIE_TITLE_210110001",
+    "artist_name": "GALLERY_MOVIE_ARTIST_NAME_210110001",
+    "scale_type": "0",
+    "display_start": "0"
+  },
+  {
+    "movie": "MovieStory101106,movie_story_101106_ed",
+    "story_id": "101106",
+    "group_id": "2101110",
+    "list_icon": "210111001",
+    "title": "GALLERY_MOVIE_TITLE_210111001",
+    "artist_name": "GALLERY_MOVIE_ARTIST_NAME_210111001",
+    "scale_type": "1",
+    "display_start": "0"
+  },
+  {
+    "movie": "MovieStory120506,movie_story_200506_myfavorite",
+    "story_id": "120506",
+    "group_id": "2102050",
+    "list_icon": "210205001",
+    "title": "GALLERY_MOVIE_TITLE_210205001",
+    "artist_name": "GALLERY_MOVIE_ARTIST_NAME_210205001",
+    "scale_type": "0",
+    "display_start": "0"
+  },
+  {
+    "movie": "MovieStory121106,movie_story_201106_smilesurprise",
+    "story_id": "121106",
+    "group_id": "2102110",
+    "list_icon": "210211001",
+    "title": "GALLERY_MOVIE_TITLE_210211001",
+    "artist_name": "GALLERY_MOVIE_ARTIST_NAME_210211001",
+    "scale_type": "0",
+    "display_start": "2022/11/22 0:00"
+  },
+  {
+    "movie": "MovieStory131106,movie_story_301106_ed",
+    "story_id": "131106",
+    "group_id": "2103110",
+    "list_icon": "210111001",
+    "title": "GALLERY_MOVIE_TITLE_210111001",
+    "artist_name": "GALLERY_MOVIE_ARTIST_NAME_210111001",
+    "scale_type": "1",
+    "display_start": "0"
+  },
+  {
+    "movie": "MovieStory140606,movie_story_401106_ed",
+    "story_id": "140606",
+    "group_id": "2104060",
+    "list_icon": "210111001",
+    "title": "GALLERY_MOVIE_TITLE_210111001",
+    "artist_name": "GALLERY_MOVIE_ARTIST_NAME_210111001",
+    "scale_type": "1",
+    "display_start": "0"
+  },
+  {
+    "movie": "MovieStory150401,movie_story_150401_fantasticcurtaincall",
+    "story_id": "150401",
+    "group_id": "2105040",
+    "list_icon": "210504001",
+    "title": "GALLERY_MOVIE_TITLE_210504001",
+    "artist_name": "GALLERY_MOVIE_ARTIST_NAME_210504001",
+    "scale_type": "1",
+    "display_start": "2025/1/21 0:00"
+  },
+  {
+    "movie": "MovieStory42103105,movie_story_42103105_ikezunakajitsu",
+    "story_id": "42103105",
+    "group_id": "2421031",
+    "list_icon": "242103101",
+    "title": "GALLERY_MOVIE_TITLE_242103101",
+    "artist_name": "GALLERY_MOVIE_ARTIST_NAME_242103101",
+    "scale_type": "0",
+    "display_start": "2022/8/23 0:00"
+  },
+  {
+    "movie": "MovieStory42209106,movie_story_220901_bestparty",
+    "story_id": "42209106",
+    "group_id": "2422091",
+    "list_icon": "242209101",
+    "title": "GALLERY_MOVIE_TITLE_242209101",
+    "artist_name": "GALLERY_MOVIE_ARTIST_NAME_242209101",
+    "scale_type": "0",
+    "display_start": "0"
+  },
+  {
+    "movie": "MovieStory42209202,movie_story_22091_cuitestar",
+    "story_id": "42209202",
+    "group_id": "2422092",
+    "list_icon": "242209201",
+    "title": "GALLERY_MOVIE_TITLE_242209201",
+    "artist_name": "GALLERY_MOVIE_ARTIST_NAME_242209201",
+    "scale_type": "0",
+    "display_start": "0"
+  }
+]

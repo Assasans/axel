@@ -1,1 +1,66 @@
-[{"box_id":"23014","release_time":"100","item_type":"21","item_id":"31","item_num":"3","navi_id":"SPECIAL_BOX_GACHA_SP_REWARD100"},{"box_id":"23014","release_time":"150","item_type":"6","item_id":"344116","item_num":"1","navi_id":"SPECIAL_BOX_GACHA_SP_REWARD150"},{"box_id":"23014","release_time":"200","item_type":"20","item_id":"230141","item_num":"1","navi_id":"SPECIAL_BOX_GACHA_SP_REWARD200"},{"box_id":"23014","release_time":"300","item_type":"44","item_id":"1","item_num":"100","navi_id":"SPECIAL_BOX_GACHA_SP_REWARD300"},{"box_id":"23014","release_time":"400","item_type":"20","item_id":"230151","item_num":"1","navi_id":"SPECIAL_BOX_GACHA_SP_REWARD400"},{"box_id":"23014","release_time":"500","item_type":"15","item_id":"7004","item_num":"1","navi_id":"SPECIAL_BOX_GACHA_SP_REWARD500"},{"box_id":"23014","release_time":"600","item_type":"21","item_id":"31","item_num":"3","navi_id":"SPECIAL_BOX_GACHA_SP_REWARD600"},{"box_id":"23014","release_time":"649","item_type":"3","item_id":"1","item_num":"1000","navi_id":"SPECIAL_BOX_GACHA_SP_REWARD649"}]
+[
+  {
+    "box_id": "23014",
+    "release_time": "100",
+    "item_type": "21",
+    "item_id": "31",
+    "item_num": "3",
+    "navi_id": "SPECIAL_BOX_GACHA_SP_REWARD100"
+  },
+  {
+    "box_id": "23014",
+    "release_time": "150",
+    "item_type": "6",
+    "item_id": "344116",
+    "item_num": "1",
+    "navi_id": "SPECIAL_BOX_GACHA_SP_REWARD150"
+  },
+  {
+    "box_id": "23014",
+    "release_time": "200",
+    "item_type": "20",
+    "item_id": "230141",
+    "item_num": "1",
+    "navi_id": "SPECIAL_BOX_GACHA_SP_REWARD200"
+  },
+  {
+    "box_id": "23014",
+    "release_time": "300",
+    "item_type": "44",
+    "item_id": "1",
+    "item_num": "100",
+    "navi_id": "SPECIAL_BOX_GACHA_SP_REWARD300"
+  },
+  {
+    "box_id": "23014",
+    "release_time": "400",
+    "item_type": "20",
+    "item_id": "230151",
+    "item_num": "1",
+    "navi_id": "SPECIAL_BOX_GACHA_SP_REWARD400"
+  },
+  {
+    "box_id": "23014",
+    "release_time": "500",
+    "item_type": "15",
+    "item_id": "7004",
+    "item_num": "1",
+    "navi_id": "SPECIAL_BOX_GACHA_SP_REWARD500"
+  },
+  {
+    "box_id": "23014",
+    "release_time": "600",
+    "item_type": "21",
+    "item_id": "31",
+    "item_num": "3",
+    "navi_id": "SPECIAL_BOX_GACHA_SP_REWARD600"
+  },
+  {
+    "box_id": "23014",
+    "release_time": "649",
+    "item_type": "3",
+    "item_id": "1",
+    "item_num": "1000",
+    "navi_id": "SPECIAL_BOX_GACHA_SP_REWARD649"
+  }
+]

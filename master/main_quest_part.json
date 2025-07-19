@@ -1,1 +1,34 @@
-[{"id":"1","part":"1","title":"PART_TITLE_MAIN1","unlock_clearstage":"0","unlock_date_start":"0","unlock_date_end":"0"},{"id":"2","part":"2","title":"PART_TITLE_MAIN2","unlock_clearstage":"111201","unlock_date_start":"2022\/1\/12 0:00","unlock_date_end":"0"},{"id":"3","part":"3","title":"PART_TITLE_MAIN3","unlock_clearstage":"122201","unlock_date_start":"2023\/1\/10 0:00","unlock_date_end":"0"},{"id":"4","part":"4","title":"PART_TITLE_MAIN4","unlock_clearstage":"133201","unlock_date_start":"2024\/4\/26 0:00","unlock_date_end":"0"}]
+[
+  {
+    "id": "1",
+    "part": "1",
+    "title": "PART_TITLE_MAIN1",
+    "unlock_clearstage": "0",
+    "unlock_date_start": "0",
+    "unlock_date_end": "0"
+  },
+  {
+    "id": "2",
+    "part": "2",
+    "title": "PART_TITLE_MAIN2",
+    "unlock_clearstage": "111201",
+    "unlock_date_start": "2022/1/12 0:00",
+    "unlock_date_end": "0"
+  },
+  {
+    "id": "3",
+    "part": "3",
+    "title": "PART_TITLE_MAIN3",
+    "unlock_clearstage": "122201",
+    "unlock_date_start": "2023/1/10 0:00",
+    "unlock_date_end": "0"
+  },
+  {
+    "id": "4",
+    "part": "4",
+    "title": "PART_TITLE_MAIN4",
+    "unlock_clearstage": "133201",
+    "unlock_date_start": "2024/4/26 0:00",
+    "unlock_date_end": "0"
+  }
+]

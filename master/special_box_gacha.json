@@ -1,1 +1,9 @@
-[{"id":"23014","start_at":"2123\/1\/20 15:00","end_at":"2123\/2\/21 0:00","ticket_id":"230141","navi_id":"SPECIAL_BOX_GACHA_TOP_23014"}]
+[
+  {
+    "id": "23014",
+    "start_at": "2123/1/20 15:00",
+    "end_at": "2123/2/21 0:00",
+    "ticket_id": "230141",
+    "navi_id": "SPECIAL_BOX_GACHA_TOP_23014"
+  }
+]

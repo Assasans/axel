@@ -1,1 +1,17 @@
-[{"\ufeffid":"1","story_id":"59001","button_image":"story_iconband_densetsu"},{"\ufeffid":"2","story_id":"59002","button_image":"story_iconband_kindan"},{"\ufeffid":"3","story_id":"59003","button_image":"story_iconband_gensou"}]
+[
+  {
+    "﻿id": "1",
+    "story_id": "59001",
+    "button_image": "story_iconband_densetsu"
+  },
+  {
+    "﻿id": "2",
+    "story_id": "59002",
+    "button_image": "story_iconband_kindan"
+  },
+  {
+    "﻿id": "3",
+    "story_id": "59003",
+    "button_image": "story_iconband_gensou"
+  }
+]

@@ -1,1 +1,254 @@
-[{"sound_id":"1010002","cpk_name":"bgm_outgame_title_002"},{"sound_id":"1010003","cpk_name":"bgm_outgame_title_003"},{"sound_id":"1010004","cpk_name":"bgm_outgame_title_004"},{"sound_id":"1010005","cpk_name":"bgm_outgame_title_005"},{"sound_id":"1020001","cpk_name":"bgm_outgame_menu_001"},{"sound_id":"1030001","cpk_name":"bgm_outgame_story_001"},{"sound_id":"1030007","cpk_name":"bgm_outgame_story_007"},{"sound_id":"1030008","cpk_name":"bgm_outgame_story_008"},{"sound_id":"1030010","cpk_name":"bgm_outgame_story_010"},{"sound_id":"1030014","cpk_name":"bgm_outgame_birthday_001"},{"sound_id":"1030019","cpk_name":"bgm_outgame_story_016"},{"sound_id":"1030020","cpk_name":"bgm_outgame_story_019"},{"sound_id":"1030021","cpk_name":"bgm_outgame_story_020"},{"sound_id":"1030018","cpk_name":"bgm_outgame_story_018"},{"sound_id":"1040001","cpk_name":"bgm_outgame_gacha_performance_001"},{"sound_id":"1040002","cpk_name":"bgm_outgame_gacha_performance_002"},{"sound_id":"1040003","cpk_name":"bgm_outgame_gacha_performance_003"},{"sound_id":"1040004","cpk_name":"bgm_outgame_gacha_performance_004"},{"sound_id":"1040005","cpk_name":"bgm_outgame_gacha_performance_005"},{"sound_id":"1050001","cpk_name":"bgm_ingame_quest_001"},{"sound_id":"1050002","cpk_name":"bgm_ingame_quest_002"},{"sound_id":"1050003","cpk_name":"bgm_ingame_quest_003"},{"sound_id":"1050004","cpk_name":"bgm_ingame_quest_004"},{"sound_id":"1050005","cpk_name":"bgm_ingame_quest_005"},{"sound_id":"1050006","cpk_name":"bgm_ingame_quest_006"},{"sound_id":"1050007","cpk_name":"bgm_ingame_quest_007"},{"sound_id":"1050008","cpk_name":"bgm_ingame_quest_008"},{"sound_id":"1050009","cpk_name":"bgm_ingame_quest_009"},{"sound_id":"1050010","cpk_name":"bgm_ingame_quest_010"},{"sound_id":"1050011","cpk_name":"bgm_ingame_quest_011"},{"sound_id":"1050012","cpk_name":"bgm_ingame_quest_012"},{"sound_id":"1050013","cpk_name":"bgm_ingame_quest_013"},{"sound_id":"1050014","cpk_name":"bgm_ingame_quest_014"},{"sound_id":"1050015","cpk_name":"bgm_ingame_quest_015"},{"sound_id":"1050016","cpk_name":"bgm_ingame_quest_016"},{"sound_id":"1060001","cpk_name":"bgm_ingame_battle_001"},{"sound_id":"1060002","cpk_name":"bgm_ingame_battle_002"},{"sound_id":"1060003","cpk_name":"bgm_ingame_battle_003"},{"sound_id":"1070001","cpk_name":"bgm_ingame_battle_boss_001"},{"sound_id":"1070002","cpk_name":"bgm_ingame_battle_boss_002"},{"sound_id":"1070003","cpk_name":"bgm_ingame_battle_boss_003"},{"sound_id":"1070004","cpk_name":"bgm_ingame_battle_004"},{"sound_id":"1070005","cpk_name":"bgm_ingame_battle_boss_005"},{"sound_id":"1070007","cpk_name":"bgm_ingame_battle_005"},{"sound_id":"1070008","cpk_name":"bgm_ingame_battle_boss_006"},{"sound_id":"1070009","cpk_name":"bgm_ingame_battle_boss_007"},{"sound_id":"1070010","cpk_name":"bgm_ingame_battle_006"},{"sound_id":"1070011","cpk_name":"bgm_ingame_battle_boss_008"},{"sound_id":"1070012","cpk_name":"bgm_ingame_battle_007"},{"sound_id":"1070013","cpk_name":"bgm_ingame_battle_boss_009"},{"sound_id":"1070014","cpk_name":"bgm_ingame_battle_boss_010"},{"sound_id":"1070015","cpk_name":"bgm_ingame_battle_boss_011"},{"sound_id":"1070016","cpk_name":"bgm_ingame_battle_boss_012"},{"sound_id":"1080001","cpk_name":"bgm_ingame_result_001"},{"sound_id":"1030023","cpk_name":"bgm_outgame_story_022"},{"sound_id":"1030024","cpk_name":"bgm_outgame_story_023"},{"sound_id":"1030025","cpk_name":"bgm_outgame_story_024"},{"sound_id":"1030026","cpk_name":"bgm_outgame_story_025"},{"sound_id":"1030028","cpk_name":"bgm_outgame_story_027"},{"sound_id":"1030031","cpk_name":"bgm_outgame_story_031"},{"sound_id":"1030032","cpk_name":"bgm_outgame_story_032"},{"sound_id":"1030033","cpk_name":"bgm_outgame_story_033"},{"sound_id":"1030034","cpk_name":"bgm_outgame_story_034"}]
+[
+  {
+    "sound_id": "1010002",
+    "cpk_name": "bgm_outgame_title_002"
+  },
+  {
+    "sound_id": "1010003",
+    "cpk_name": "bgm_outgame_title_003"
+  },
+  {
+    "sound_id": "1010004",
+    "cpk_name": "bgm_outgame_title_004"
+  },
+  {
+    "sound_id": "1010005",
+    "cpk_name": "bgm_outgame_title_005"
+  },
+  {
+    "sound_id": "1020001",
+    "cpk_name": "bgm_outgame_menu_001"
+  },
+  {
+    "sound_id": "1030001",
+    "cpk_name": "bgm_outgame_story_001"
+  },
+  {
+    "sound_id": "1030007",
+    "cpk_name": "bgm_outgame_story_007"
+  },
+  {
+    "sound_id": "1030008",
+    "cpk_name": "bgm_outgame_story_008"
+  },
+  {
+    "sound_id": "1030010",
+    "cpk_name": "bgm_outgame_story_010"
+  },
+  {
+    "sound_id": "1030014",
+    "cpk_name": "bgm_outgame_birthday_001"
+  },
+  {
+    "sound_id": "1030019",
+    "cpk_name": "bgm_outgame_story_016"
+  },
+  {
+    "sound_id": "1030020",
+    "cpk_name": "bgm_outgame_story_019"
+  },
+  {
+    "sound_id": "1030021",
+    "cpk_name": "bgm_outgame_story_020"
+  },
+  {
+    "sound_id": "1030018",
+    "cpk_name": "bgm_outgame_story_018"
+  },
+  {
+    "sound_id": "1040001",
+    "cpk_name": "bgm_outgame_gacha_performance_001"
+  },
+  {
+    "sound_id": "1040002",
+    "cpk_name": "bgm_outgame_gacha_performance_002"
+  },
+  {
+    "sound_id": "1040003",
+    "cpk_name": "bgm_outgame_gacha_performance_003"
+  },
+  {
+    "sound_id": "1040004",
+    "cpk_name": "bgm_outgame_gacha_performance_004"
+  },
+  {
+    "sound_id": "1040005",
+    "cpk_name": "bgm_outgame_gacha_performance_005"
+  },
+  {
+    "sound_id": "1050001",
+    "cpk_name": "bgm_ingame_quest_001"
+  },
+  {
+    "sound_id": "1050002",
+    "cpk_name": "bgm_ingame_quest_002"
+  },
+  {
+    "sound_id": "1050003",
+    "cpk_name": "bgm_ingame_quest_003"
+  },
+  {
+    "sound_id": "1050004",
+    "cpk_name": "bgm_ingame_quest_004"
+  },
+  {
+    "sound_id": "1050005",
+    "cpk_name": "bgm_ingame_quest_005"
+  },
+  {
+    "sound_id": "1050006",
+    "cpk_name": "bgm_ingame_quest_006"
+  },
+  {
+    "sound_id": "1050007",
+    "cpk_name": "bgm_ingame_quest_007"
+  },
+  {
+    "sound_id": "1050008",
+    "cpk_name": "bgm_ingame_quest_008"
+  },
+  {
+    "sound_id": "1050009",
+    "cpk_name": "bgm_ingame_quest_009"
+  },
+  {
+    "sound_id": "1050010",
+    "cpk_name": "bgm_ingame_quest_010"
+  },
+  {
+    "sound_id": "1050011",
+    "cpk_name": "bgm_ingame_quest_011"
+  },
+  {
+    "sound_id": "1050012",
+    "cpk_name": "bgm_ingame_quest_012"
+  },
+  {
+    "sound_id": "1050013",
+    "cpk_name": "bgm_ingame_quest_013"
+  },
+  {
+    "sound_id": "1050014",
+    "cpk_name": "bgm_ingame_quest_014"
+  },
+  {
+    "sound_id": "1050015",
+    "cpk_name": "bgm_ingame_quest_015"
+  },
+  {
+    "sound_id": "1050016",
+    "cpk_name": "bgm_ingame_quest_016"
+  },
+  {
+    "sound_id": "1060001",
+    "cpk_name": "bgm_ingame_battle_001"
+  },
+  {
+    "sound_id": "1060002",
+    "cpk_name": "bgm_ingame_battle_002"
+  },
+  {
+    "sound_id": "1060003",
+    "cpk_name": "bgm_ingame_battle_003"
+  },
+  {
+    "sound_id": "1070001",
+    "cpk_name": "bgm_ingame_battle_boss_001"
+  },
+  {
+    "sound_id": "1070002",
+    "cpk_name": "bgm_ingame_battle_boss_002"
+  },
+  {
+    "sound_id": "1070003",
+    "cpk_name": "bgm_ingame_battle_boss_003"
+  },
+  {
+    "sound_id": "1070004",
+    "cpk_name": "bgm_ingame_battle_004"
+  },
+  {
+    "sound_id": "1070005",
+    "cpk_name": "bgm_ingame_battle_boss_005"
+  },
+  {
+    "sound_id": "1070007",
+    "cpk_name": "bgm_ingame_battle_005"
+  },
+  {
+    "sound_id": "1070008",
+    "cpk_name": "bgm_ingame_battle_boss_006"
+  },
+  {
+    "sound_id": "1070009",
+    "cpk_name": "bgm_ingame_battle_boss_007"
+  },
+  {
+    "sound_id": "1070010",
+    "cpk_name": "bgm_ingame_battle_006"
+  },
+  {
+    "sound_id": "1070011",
+    "cpk_name": "bgm_ingame_battle_boss_008"
+  },
+  {
+    "sound_id": "1070012",
+    "cpk_name": "bgm_ingame_battle_007"
+  },
+  {
+    "sound_id": "1070013",
+    "cpk_name": "bgm_ingame_battle_boss_009"
+  },
+  {
+    "sound_id": "1070014",
+    "cpk_name": "bgm_ingame_battle_boss_010"
+  },
+  {
+    "sound_id": "1070015",
+    "cpk_name": "bgm_ingame_battle_boss_011"
+  },
+  {
+    "sound_id": "1070016",
+    "cpk_name": "bgm_ingame_battle_boss_012"
+  },
+  {
+    "sound_id": "1080001",
+    "cpk_name": "bgm_ingame_result_001"
+  },
+  {
+    "sound_id": "1030023",
+    "cpk_name": "bgm_outgame_story_022"
+  },
+  {
+    "sound_id": "1030024",
+    "cpk_name": "bgm_outgame_story_023"
+  },
+  {
+    "sound_id": "1030025",
+    "cpk_name": "bgm_outgame_story_024"
+  },
+  {
+    "sound_id": "1030026",
+    "cpk_name": "bgm_outgame_story_025"
+  },
+  {
+    "sound_id": "1030028",
+    "cpk_name": "bgm_outgame_story_027"
+  },
+  {
+    "sound_id": "1030031",
+    "cpk_name": "bgm_outgame_story_031"
+  },
+  {
+    "sound_id": "1030032",
+    "cpk_name": "bgm_outgame_story_032"
+  },
+  {
+    "sound_id": "1030033",
+    "cpk_name": "bgm_outgame_story_033"
+  },
+  {
+    "sound_id": "1030034",
+    "cpk_name": "bgm_outgame_story_034"
+  }
+]

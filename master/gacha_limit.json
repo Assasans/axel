@@ -1,1 +1,2270 @@
-[{"limit_id":"100001","times":"250","limit_info_url":"gacha\/gacha_100001\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_3"},{"limit_id":"319111","times":"250","limit_info_url":"gacha\/gacha_319111\/charge.html","item_type":"20","item_id":"1191111","num":"1","name_text":"TEXT_GACHA_TABTEXT_1"},{"limit_id":"320031","times":"250","limit_info_url":"gacha\/gacha_320031\/charge.html","item_type":"20","item_id":"1200311","num":"1","name_text":"TEXT_GACHA_TABTEXT_4"},{"limit_id":"320032","times":"250","limit_info_url":"gacha\/gacha_320032\/charge.html","item_type":"20","item_id":"1200321","num":"1","name_text":"TEXT_GACHA_TABTEXT_5"},{"limit_id":"420001","times":"250","limit_info_url":"gacha\/gacha_420001\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_7"},{"limit_id":"320041","times":"250","limit_info_url":"gacha\/gacha_320041\/charge.html","item_type":"20","item_id":"1200411","num":"1","name_text":"TEXT_GACHA_TABTEXT_8"},{"limit_id":"420002","times":"250","limit_info_url":"gacha\/gacha_420002\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_9"},{"limit_id":"320042","times":"250","limit_info_url":"gacha\/gacha_320042\/charge.html","item_type":"20","item_id":"1200421","num":"1","name_text":"TEXT_GACHA_TABTEXT_10"},{"limit_id":"420003","times":"250","limit_info_url":"gacha\/gacha_420003\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_11"},{"limit_id":"320043","times":"250","limit_info_url":"gacha\/gacha_320043\/charge.html","item_type":"20","item_id":"1200431","num":"1","name_text":"TEXT_GACHA_TABTEXT_12"},{"limit_id":"420004","times":"250","limit_info_url":"gacha\/gacha_420004\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_13"},{"limit_id":"320051","times":"250","limit_info_url":"gacha\/gacha_320051\/charge.html","item_type":"20","item_id":"1200511","num":"1","name_text":"TEXT_GACHA_TABTEXT_16"},{"limit_id":"420005","times":"250","limit_info_url":"gacha\/gacha_420005\/charge.html","item_type":"20","item_id":"4200051","num":"1","name_text":"TEXT_GACHA_TABTEXT_999"},{"limit_id":"320052","times":"250","limit_info_url":"gacha\/gacha_320052\/charge.html","item_type":"20","item_id":"1200521","num":"1","name_text":"TEXT_GACHA_TABTEXT_18"},{"limit_id":"420006","times":"250","limit_info_url":"gacha\/gacha_420006\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_19"},{"limit_id":"320053","times":"250","limit_info_url":"gacha\/gacha_320053\/charge.html","item_type":"20","item_id":"1200531","num":"1","name_text":"TEXT_GACHA_TABTEXT_21"},{"limit_id":"420007","times":"250","limit_info_url":"gacha\/gacha_420007\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_22"},{"limit_id":"320061","times":"250","limit_info_url":"gacha\/gacha_320061\/charge.html","item_type":"20","item_id":"1200611","num":"1","name_text":"TEXT_GACHA_TABTEXT_23"},{"limit_id":"420008","times":"250","limit_info_url":"gacha\/gacha_420008\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_7"},{"limit_id":"320062","times":"250","limit_info_url":"gacha\/gacha_320062\/charge.html","item_type":"20","item_id":"1200621","num":"1","name_text":"TEXT_GACHA_TABTEXT_25"},{"limit_id":"420009","times":"250","limit_info_url":"gacha\/gacha_420009\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_13"},{"limit_id":"320063","times":"250","limit_info_url":"gacha\/gacha_320063\/charge.html","item_type":"20","item_id":"1200631","num":"1","name_text":"TEXT_GACHA_TABTEXT_27"},{"limit_id":"420010","times":"250","limit_info_url":"gacha\/gacha_420010\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_9"},{"limit_id":"320071","times":"250","limit_info_url":"gacha\/gacha_320071\/charge.html","item_type":"20","item_id":"1200711","num":"1","name_text":"TEXT_GACHA_TABTEXT_28"},{"limit_id":"420011","times":"250","limit_info_url":"gacha\/gacha_420011\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_11"},{"limit_id":"320072","times":"250","limit_info_url":"gacha\/gacha_320072\/charge.html","item_type":"20","item_id":"1200721","num":"1","name_text":"TEXT_GACHA_TABTEXT_30"},{"limit_id":"420012","times":"250","limit_info_url":"gacha\/gacha_420012\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_22"},{"limit_id":"320073","times":"250","limit_info_url":"gacha\/gacha_320073\/charge.html","item_type":"20","item_id":"1200731","num":"1","name_text":"TEXT_GACHA_TABTEXT_32"},{"limit_id":"320081","times":"250","limit_info_url":"gacha\/gacha_320081\/charge.html","item_type":"20","item_id":"1200811","num":"1","name_text":"TEXT_GACHA_TABTEXT_33"},{"limit_id":"420014","times":"250","limit_info_url":"gacha\/gacha_420014\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_13"},{"limit_id":"320082","times":"250","limit_info_url":"gacha\/gacha_320082\/charge.html","item_type":"20","item_id":"1200821","num":"1","name_text":"TEXT_GACHA_TABTEXT_35"},{"limit_id":"320083","times":"250","limit_info_url":"gacha\/gacha_320083\/charge.html","item_type":"20","item_id":"1200831","num":"1","name_text":"TEXT_GACHA_TABTEXT_37"},{"limit_id":"320091","times":"250","limit_info_url":"gacha\/gacha_320091\/charge.html","item_type":"20","item_id":"1200911","num":"1","name_text":"TEXT_GACHA_TABTEXT_40"},{"limit_id":"320092","times":"250","limit_info_url":"gacha\/gacha_320092\/charge.html","item_type":"20","item_id":"1200921","num":"1","name_text":"TEXT_GACHA_TABTEXT_41"},{"limit_id":"320093","times":"250","limit_info_url":"gacha\/gacha_320093\/charge.html","item_type":"20","item_id":"1200931","num":"1","name_text":"TEXT_GACHA_TABTEXT_42"},{"limit_id":"320101","times":"250","limit_info_url":"gacha\/gacha_320101\/charge.html","item_type":"20","item_id":"1201011","num":"1","name_text":"TEXT_GACHA_TABTEXT_43"},{"limit_id":"320102","times":"250","limit_info_url":"gacha\/gacha_320102\/charge.html","item_type":"20","item_id":"1201021","num":"1","name_text":"TEXT_GACHA_TABTEXT_45"},{"limit_id":"320103","times":"250","limit_info_url":"gacha\/gacha_320103\/charge.html","item_type":"20","item_id":"1201031","num":"1","name_text":"TEXT_GACHA_TABTEXT_47"},{"limit_id":"320111","times":"250","limit_info_url":"gacha\/gacha_320111\/charge.html","item_type":"20","item_id":"1201111","num":"1","name_text":"TEXT_GACHA_TABTEXT_49"},{"limit_id":"320112","times":"250","limit_info_url":"gacha\/gacha_320112\/charge.html","item_type":"20","item_id":"1201121","num":"1","name_text":"TEXT_GACHA_TABTEXT_51"},{"limit_id":"320113","times":"250","limit_info_url":"gacha\/gacha_320113\/charge.html","item_type":"20","item_id":"1201131","num":"1","name_text":"TEXT_GACHA_TABTEXT_53"},{"limit_id":"320121","times":"250","limit_info_url":"gacha\/gacha_320121\/charge.html","item_type":"20","item_id":"1201211","num":"1","name_text":"TEXT_GACHA_TABTEXT_54"},{"limit_id":"320122","times":"250","limit_info_url":"gacha\/gacha_320122\/charge.html","item_type":"20","item_id":"1201221","num":"1","name_text":"TEXT_GACHA_TABTEXT_4"},{"limit_id":"320123","times":"250","limit_info_url":"gacha\/gacha_320123\/charge.html","item_type":"20","item_id":"1201231","num":"1","name_text":"TEXT_GACHA_TABTEXT_55"},{"limit_id":"321011","times":"250","limit_info_url":"gacha\/gacha_321011\/charge.html","item_type":"20","item_id":"1210111","num":"1","name_text":"TEXT_GACHA_TABTEXT_57"},{"limit_id":"321012","times":"250","limit_info_url":"gacha\/gacha_321012\/charge.html","item_type":"20","item_id":"1210121","num":"1","name_text":"TEXT_GACHA_TABTEXT_55"},{"limit_id":"321013","times":"250","limit_info_url":"gacha\/gacha_321013\/charge.html","item_type":"20","item_id":"1210131","num":"1","name_text":"TEXT_GACHA_TABTEXT_8"},{"limit_id":"321021","times":"250","limit_info_url":"gacha\/gacha_321021\/charge.html","item_type":"20","item_id":"1210211","num":"1","name_text":"TEXT_GACHA_TABTEXT_60"},{"limit_id":"321022","times":"250","limit_info_url":"gacha\/gacha_321022\/charge.html","item_type":"20","item_id":"1210221","num":"1","name_text":"TEXT_GACHA_TABTEXT_62"},{"limit_id":"321023","times":"250","limit_info_url":"gacha\/gacha_321023\/charge.html","item_type":"20","item_id":"1210231","num":"1","name_text":"TEXT_GACHA_TABTEXT_64"},{"limit_id":"321031","times":"250","limit_info_url":"gacha\/gacha_321031\/charge.html","item_type":"20","item_id":"1210311","num":"1","name_text":"TEXT_GACHA_TABTEXT_65"},{"limit_id":"321032","times":"250","limit_info_url":"gacha\/gacha_321032\/charge.html","item_type":"20","item_id":"1210321","num":"1","name_text":"TEXT_GACHA_TABTEXT_66"},{"limit_id":"321033","times":"250","limit_info_url":"gacha\/gacha_321033\/charge.html","item_type":"20","item_id":"1210331","num":"1","name_text":"TEXT_GACHA_TABTEXT_67"},{"limit_id":"321041","times":"250","limit_info_url":"gacha\/gacha_321041\/charge.html","item_type":"20","item_id":"1210411","num":"1","name_text":"TEXT_GACHA_TABTEXT_69"},{"limit_id":"321042","times":"250","limit_info_url":"gacha\/gacha_321042\/charge.html","item_type":"20","item_id":"1210421","num":"1","name_text":"TEXT_GACHA_TABTEXT_70"},{"limit_id":"321043","times":"250","limit_info_url":"gacha\/gacha_321043\/charge.html","item_type":"20","item_id":"1210431","num":"1","name_text":"TEXT_GACHA_TABTEXT_71"},{"limit_id":"321051","times":"250","limit_info_url":"gacha\/gacha_321051\/charge.html","item_type":"20","item_id":"1210511","num":"1","name_text":"TEXT_GACHA_TABTEXT_72"},{"limit_id":"321052","times":"250","limit_info_url":"gacha\/gacha_321052\/charge.html","item_type":"20","item_id":"1210521","num":"1","name_text":"TEXT_GACHA_TABTEXT_74"},{"limit_id":"321053","times":"250","limit_info_url":"gacha\/gacha_321053\/charge.html","item_type":"20","item_id":"1210531","num":"1","name_text":"TEXT_GACHA_TABTEXT_75"},{"limit_id":"321061","times":"250","limit_info_url":"gacha\/gacha_321061\/charge.html","item_type":"20","item_id":"1210611","num":"1","name_text":"TEXT_GACHA_TABTEXT_76"},{"limit_id":"321062","times":"250","limit_info_url":"gacha\/gacha_321062\/charge.html","item_type":"20","item_id":"1210621","num":"1","name_text":"TEXT_GACHA_TABTEXT_77"},{"limit_id":"321063","times":"250","limit_info_url":"gacha\/gacha_321063\/charge.html","item_type":"20","item_id":"1210631","num":"1","name_text":"TEXT_GACHA_TABTEXT_78"},{"limit_id":"321071","times":"250","limit_info_url":"gacha\/gacha_321071\/charge.html","item_type":"20","item_id":"1210711","num":"1","name_text":"TEXT_GACHA_TABTEXT_79"},{"limit_id":"321072","times":"250","limit_info_url":"gacha\/gacha_321072\/charge.html","item_type":"20","item_id":"1210721","num":"1","name_text":"TEXT_GACHA_TABTEXT_82"},{"limit_id":"321073","times":"250","limit_info_url":"gacha\/gacha_321073\/charge.html","item_type":"20","item_id":"1210731","num":"1","name_text":"TEXT_GACHA_TABTEXT_84"},{"limit_id":"321081","times":"250","limit_info_url":"gacha\/gacha_321081\/charge.html","item_type":"20","item_id":"1210811","num":"1","name_text":"TEXT_GACHA_TABTEXT_85"},{"limit_id":"321082","times":"250","limit_info_url":"gacha\/gacha_321082\/charge.html","item_type":"20","item_id":"1210821","num":"1","name_text":"TEXT_GACHA_TABTEXT_86"},{"limit_id":"321083","times":"250","limit_info_url":"gacha\/gacha_321083\/charge.html","item_type":"20","item_id":"1210831","num":"1","name_text":"TEXT_GACHA_TABTEXT_85"},{"limit_id":"321091","times":"250","limit_info_url":"gacha\/gacha_321091\/charge.html","item_type":"20","item_id":"1210911","num":"1","name_text":"TEXT_GACHA_TABTEXT_89"},{"limit_id":"321092","times":"250","limit_info_url":"gacha\/gacha_321092\/charge.html","item_type":"20","item_id":"1210921","num":"1","name_text":"TEXT_GACHA_TABTEXT_92"},{"limit_id":"321093","times":"250","limit_info_url":"gacha\/gacha_321093\/charge.html","item_type":"20","item_id":"1210931","num":"1","name_text":"TEXT_GACHA_TABTEXT_94"},{"limit_id":"321101","times":"250","limit_info_url":"gacha\/gacha_321101\/charge.html","item_type":"20","item_id":"1211011","num":"1","name_text":"TEXT_GACHA_TABTEXT_97"},{"limit_id":"321102","times":"250","limit_info_url":"gacha\/gacha_321102\/charge.html","item_type":"20","item_id":"1211021","num":"1","name_text":"TEXT_GACHA_TABTEXT_98"},{"limit_id":"321103","times":"250","limit_info_url":"gacha\/gacha_321103\/charge.html","item_type":"20","item_id":"1211031","num":"1","name_text":"TEXT_GACHA_TABTEXT_99"},{"limit_id":"321111","times":"250","limit_info_url":"gacha\/gacha_321111\/charge.html","item_type":"20","item_id":"1211111","num":"1","name_text":"TEXT_GACHA_TABTEXT_100"},{"limit_id":"321112","times":"250","limit_info_url":"gacha\/gacha_321112\/charge.html","item_type":"20","item_id":"1211121","num":"1","name_text":"TEXT_GACHA_TABTEXT_107"},{"limit_id":"321113","times":"250","limit_info_url":"gacha\/gacha_321113\/charge.html","item_type":"20","item_id":"1211131","num":"1","name_text":"TEXT_GACHA_TABTEXT_106"},{"limit_id":"321121","times":"250","limit_info_url":"gacha\/gacha_321121\/charge.html","item_type":"20","item_id":"1211211","num":"1","name_text":"TEXT_GACHA_TABTEXT_54"},{"limit_id":"321122","times":"250","limit_info_url":"gacha\/gacha_321122\/charge.html","item_type":"20","item_id":"1211221","num":"1","name_text":"TEXT_GACHA_TABTEXT_110"},{"limit_id":"321123","times":"250","limit_info_url":"gacha\/gacha_321123\/charge.html","item_type":"20","item_id":"1211231","num":"1","name_text":"TEXT_GACHA_TABTEXT_55"},{"limit_id":"322011","times":"250","limit_info_url":"gacha\/gacha_322011\/charge.html","item_type":"20","item_id":"1220111","num":"1","name_text":"TEXT_GACHA_TABTEXT_111"},{"limit_id":"322012","times":"250","limit_info_url":"gacha\/gacha_322012\/charge.html","item_type":"20","item_id":"1220121","num":"1","name_text":"TEXT_GACHA_TABTEXT_112"},{"limit_id":"322013","times":"250","limit_info_url":"gacha\/gacha_322013\/charge.html","item_type":"20","item_id":"1220131","num":"1","name_text":"TEXT_GACHA_TABTEXT_55"},{"limit_id":"322021","times":"250","limit_info_url":"gacha\/gacha_322021\/charge.html","item_type":"20","item_id":"1220211","num":"1","name_text":"TEXT_GACHA_TABTEXT_113"},{"limit_id":"322022","times":"250","limit_info_url":"gacha\/gacha_322022\/charge.html","item_type":"20","item_id":"1220221","num":"1","name_text":"TEXT_GACHA_TABTEXT_114"},{"limit_id":"322023","times":"250","limit_info_url":"gacha\/gacha_322023\/charge.html","item_type":"20","item_id":"1220231","num":"1","name_text":"TEXT_GACHA_TABTEXT_115"},{"limit_id":"322031","times":"250","limit_info_url":"gacha\/gacha_322031\/charge.html","item_type":"20","item_id":"1220311","num":"1","name_text":"TEXT_GACHA_TABTEXT_118"},{"limit_id":"322032","times":"250","limit_info_url":"gacha\/gacha_322032\/charge.html","item_type":"20","item_id":"1220321","num":"1","name_text":"TEXT_GACHA_TABTEXT_122"},{"limit_id":"322033","times":"250","limit_info_url":"gacha\/gacha_322033\/charge.html","item_type":"20","item_id":"1220331","num":"1","name_text":"TEXT_GACHA_TABTEXT_120"},{"limit_id":"322041","times":"250","limit_info_url":"gacha\/gacha_322041\/charge.html","item_type":"20","item_id":"1220411","num":"1","name_text":"TEXT_GACHA_TABTEXT_123"},{"limit_id":"322042","times":"250","limit_info_url":"gacha\/gacha_322042\/charge.html","item_type":"20","item_id":"1220421","num":"1","name_text":"TEXT_GACHA_TABTEXT_126"},{"limit_id":"322043","times":"250","limit_info_url":"\/news\/detail\/322043charge.html","item_type":"20","item_id":"1220431","num":"1","name_text":"TEXT_GACHA_TABTEXT_128"},{"limit_id":"322051","times":"250","limit_info_url":"\/news\/detail\/322051charge.html","item_type":"20","item_id":"1220511","num":"1","name_text":"TEXT_GACHA_TABTEXT_131"},{"limit_id":"322052","times":"250","limit_info_url":"\/news\/detail\/322052charge.html","item_type":"20","item_id":"1220521","num":"1","name_text":"TEXT_GACHA_TABTEXT_129"},{"limit_id":"322053","times":"250","limit_info_url":"\/news\/detail\/322053charge.html","item_type":"20","item_id":"1220531","num":"1","name_text":"TEXT_GACHA_TABTEXT_132"},{"limit_id":"322061","times":"250","limit_info_url":"\/news\/detail\/322061charge.html","item_type":"20","item_id":"1220611","num":"1","name_text":"TEXT_GACHA_TABTEXT_133"},{"limit_id":"322062","times":"250","limit_info_url":"\/news\/detail\/322062charge.html","item_type":"20","item_id":"1220621","num":"1","name_text":"TEXT_GACHA_TABTEXT_134"},{"limit_id":"322063","times":"250","limit_info_url":"\/news\/detail\/322063charge.html","item_type":"20","item_id":"1220631","num":"1","name_text":"TEXT_GACHA_TABTEXT_135"},{"limit_id":"322071","times":"250","limit_info_url":"\/news\/detail\/322071charge.html","item_type":"20","item_id":"1220711","num":"1","name_text":"TEXT_GACHA_TABTEXT_136"},{"limit_id":"322072","times":"250","limit_info_url":"\/news\/detail\/322072charge.html","item_type":"20","item_id":"1220721","num":"1","name_text":"TEXT_GACHA_TABTEXT_82"},{"limit_id":"322073","times":"250","limit_info_url":"\/news\/detail\/322073charge.html","item_type":"20","item_id":"1220731","num":"1","name_text":"TEXT_GACHA_TABTEXT_84"},{"limit_id":"322081","times":"250","limit_info_url":"\/news\/detail\/322081charge.html","item_type":"20","item_id":"1220811","num":"1","name_text":"TEXT_GACHA_TABTEXT_139"},{"limit_id":"322082","times":"250","limit_info_url":"\/news\/detail\/322082charge.html","item_type":"20","item_id":"1220821","num":"1","name_text":"TEXT_GACHA_TABTEXT_141"},{"limit_id":"322083","times":"250","limit_info_url":"\/news\/detail\/322083charge.html","item_type":"20","item_id":"1220831","num":"1","name_text":"TEXT_GACHA_TABTEXT_142"},{"limit_id":"322084","times":"250","limit_info_url":"\/news\/detail\/322084charge.html","item_type":"20","item_id":"1220841","num":"1","name_text":"TEXT_GACHA_TABTEXT_140"},{"limit_id":"322091","times":"250","limit_info_url":"\/news\/detail\/322091charge.html","item_type":"20","item_id":"1220911","num":"1","name_text":"TEXT_GACHA_TABTEXT_143"},{"limit_id":"322092","times":"250","limit_info_url":"\/news\/detail\/322092charge.html","item_type":"20","item_id":"1220921","num":"1","name_text":"TEXT_GACHA_TABTEXT_144"},{"limit_id":"322093","times":"250","limit_info_url":"\/news\/detail\/322093charge.html","item_type":"20","item_id":"1220931","num":"1","name_text":"TEXT_GACHA_TABTEXT_145"},{"limit_id":"322101","times":"250","limit_info_url":"\/news\/detail\/322101charge.html","item_type":"20","item_id":"1221011","num":"1","name_text":"TEXT_GACHA_TABTEXT_43"},{"limit_id":"322102","times":"250","limit_info_url":"\/news\/detail\/322102charge.html","item_type":"20","item_id":"1221021","num":"1","name_text":"TEXT_GACHA_TABTEXT_98"},{"limit_id":"322103","times":"250","limit_info_url":"\/news\/detail\/322103charge.html","item_type":"20","item_id":"1221031","num":"1","name_text":"TEXT_GACHA_TABTEXT_149"},{"limit_id":"322111","times":"250","limit_info_url":"\/news\/detail\/322111charge.html","item_type":"20","item_id":"1221111","num":"1","name_text":"TEXT_GACHA_TABTEXT_150"},{"limit_id":"322112","times":"250","limit_info_url":"\/news\/detail\/322112charge.html","item_type":"20","item_id":"1221121","num":"1","name_text":"TEXT_GACHA_TABTEXT_152"},{"limit_id":"322113","times":"250","limit_info_url":"\/news\/detail\/322113charge.html","item_type":"20","item_id":"1221131","num":"1","name_text":"TEXT_GACHA_TABTEXT_151"},{"limit_id":"322121","times":"250","limit_info_url":"\/news\/detail\/322121charge.html","item_type":"20","item_id":"1221211","num":"1","name_text":"TEXT_GACHA_TABTEXT_153"},{"limit_id":"322122","times":"250","limit_info_url":"\/news\/detail\/322122charge.html","item_type":"20","item_id":"1221221","num":"1","name_text":"TEXT_GACHA_TABTEXT_54"},{"limit_id":"322123","times":"250","limit_info_url":"\/news\/detail\/322123charge.html","item_type":"20","item_id":"1221231","num":"1","name_text":"TEXT_GACHA_TABTEXT_110"},{"limit_id":"323011","times":"250","limit_info_url":"\/news\/detail\/323011charge.html","item_type":"20","item_id":"1230111","num":"1","name_text":"TEXT_GACHA_TABTEXT_157"},{"limit_id":"323012","times":"250","limit_info_url":"\/news\/detail\/323012charge.html","item_type":"20","item_id":"1230121","num":"1","name_text":"TEXT_GACHA_TABTEXT_158"},{"limit_id":"323013","times":"250","limit_info_url":"\/news\/detail\/323013charge.html","item_type":"20","item_id":"1230131","num":"1","name_text":"TEXT_GACHA_TABTEXT_159"},{"limit_id":"323021","times":"250","limit_info_url":"\/news\/detail\/323021charge.html","item_type":"20","item_id":"1230211","num":"1","name_text":"TEXT_GACHA_TABTEXT_160"},{"limit_id":"323022","times":"250","limit_info_url":"\/news\/detail\/323022charge.html","item_type":"20","item_id":"1230221","num":"1","name_text":"TEXT_GACHA_TABTEXT_161"},{"limit_id":"323023","times":"250","limit_info_url":"\/news\/detail\/323023charge.html","item_type":"20","item_id":"1230231","num":"1","name_text":"TEXT_GACHA_TABTEXT_162"},{"limit_id":"323031","times":"250","limit_info_url":"\/news\/detail\/323031charge.html","item_type":"20","item_id":"1230311","num":"1","name_text":"TEXT_GACHA_TABTEXT_163"},{"limit_id":"323032","times":"250","limit_info_url":"\/news\/detail\/323032charge.html","item_type":"20","item_id":"1230321","num":"1","name_text":"TEXT_GACHA_TABTEXT_164"},{"limit_id":"323033","times":"250","limit_info_url":"\/news\/detail\/323033charge.html","item_type":"20","item_id":"1230331","num":"1","name_text":"TEXT_GACHA_TABTEXT_165"},{"limit_id":"323041","times":"250","limit_info_url":"\/news\/detail\/323041charge.html","item_type":"20","item_id":"1230411","num":"1","name_text":"TEXT_GACHA_TABTEXT_23"},{"limit_id":"323042","times":"250","limit_info_url":"\/news\/detail\/323042charge.html","item_type":"20","item_id":"1230421","num":"1","name_text":"TEXT_GACHA_TABTEXT_166"},{"limit_id":"323043","times":"250","limit_info_url":"\/news\/detail\/323043charge.html","item_type":"20","item_id":"1230431","num":"1","name_text":"TEXT_GACHA_TABTEXT_167"},{"limit_id":"323051","times":"250","limit_info_url":"\/news\/detail\/323051charge.html","item_type":"20","item_id":"1230511","num":"1","name_text":"TEXT_GACHA_TABTEXT_168"},{"limit_id":"323052","times":"250","limit_info_url":"\/news\/detail\/323052charge.html","item_type":"20","item_id":"1230521","num":"1","name_text":"TEXT_GACHA_TABTEXT_169"},{"limit_id":"323053","times":"250","limit_info_url":"\/news\/detail\/323053charge.html","item_type":"20","item_id":"1230531","num":"1","name_text":"TEXT_GACHA_TABTEXT_171"},{"limit_id":"323061","times":"250","limit_info_url":"\/news\/detail\/323061charge.html","item_type":"20","item_id":"1230611","num":"1","name_text":"TEXT_GACHA_TABTEXT_173"},{"limit_id":"323062","times":"250","limit_info_url":"\/news\/detail\/323062charge.html","item_type":"20","item_id":"1230621","num":"1","name_text":"TEXT_GACHA_TABTEXT_174"},{"limit_id":"323063","times":"250","limit_info_url":"\/news\/detail\/323063charge.html","item_type":"20","item_id":"1230631","num":"1","name_text":"TEXT_GACHA_TABTEXT_175"},{"limit_id":"323071","times":"250","limit_info_url":"\/news\/detail\/323071charge.html","item_type":"20","item_id":"1230711","num":"1","name_text":"TEXT_GACHA_TABTEXT_179"},{"limit_id":"323072","times":"250","limit_info_url":"\/news\/detail\/323072charge.html","item_type":"20","item_id":"1230721","num":"1","name_text":"TEXT_GACHA_TABTEXT_181"},{"limit_id":"323073","times":"250","limit_info_url":"\/news\/detail\/323073charge.html","item_type":"20","item_id":"1230731","num":"1","name_text":"TEXT_GACHA_TABTEXT_183"},{"limit_id":"323081","times":"250","limit_info_url":"\/news\/detail\/323081charge.html","item_type":"20","item_id":"1230811","num":"1","name_text":"TEXT_GACHA_TABTEXT_185"},{"limit_id":"323082","times":"250","limit_info_url":"\/news\/detail\/323082charge.html","item_type":"20","item_id":"1230821","num":"1","name_text":"TEXT_GACHA_TABTEXT_186"},{"limit_id":"323083","times":"250","limit_info_url":"\/news\/detail\/323083charge.html","item_type":"20","item_id":"1230831","num":"1","name_text":"TEXT_GACHA_TABTEXT_187"},{"limit_id":"323091","times":"250","limit_info_url":"\/news\/detail\/323091charge.html","item_type":"20","item_id":"1230911","num":"1","name_text":"TEXT_GACHA_TABTEXT_188"},{"limit_id":"323092","times":"250","limit_info_url":"\/news\/detail\/323092charge.html","item_type":"20","item_id":"1230921","num":"1","name_text":"TEXT_GACHA_TABTEXT_190"},{"limit_id":"323093","times":"250","limit_info_url":"\/news\/detail\/323093charge.html","item_type":"20","item_id":"1230931","num":"1","name_text":"TEXT_GACHA_TABTEXT_192"},{"limit_id":"323101","times":"250","limit_info_url":"\/news\/detail\/323101charge.html","item_type":"20","item_id":"1231011","num":"1","name_text":"TEXT_GACHA_TABTEXT_193"},{"limit_id":"323102","times":"250","limit_info_url":"\/news\/detail\/323102charge.html","item_type":"20","item_id":"1231021","num":"1","name_text":"TEXT_GACHA_TABTEXT_195"},{"limit_id":"323103","times":"250","limit_info_url":"\/news\/detail\/323103charge.html","item_type":"20","item_id":"1231031","num":"1","name_text":"TEXT_GACHA_TABTEXT_197"},{"limit_id":"323111","times":"250","limit_info_url":"\/news\/detail\/323111charge.html","item_type":"20","item_id":"1231111","num":"1","name_text":"TEXT_GACHA_TABTEXT_198"},{"limit_id":"323112","times":"250","limit_info_url":"\/news\/detail\/323112charge.html","item_type":"20","item_id":"1231121","num":"1","name_text":"TEXT_GACHA_TABTEXT_202"},{"limit_id":"323113","times":"250","limit_info_url":"\/news\/detail\/323113charge.html","item_type":"20","item_id":"1231131","num":"1","name_text":"TEXT_GACHA_TABTEXT_203"},{"limit_id":"323121","times":"250","limit_info_url":"\/news\/detail\/323121charge.html","item_type":"20","item_id":"1231211","num":"1","name_text":"TEXT_GACHA_TABTEXT_204"},{"limit_id":"323122","times":"250","limit_info_url":"\/news\/detail\/323122charge.html","item_type":"20","item_id":"1231221","num":"1","name_text":"TEXT_GACHA_TABTEXT_207"},{"limit_id":"323123","times":"250","limit_info_url":"\/news\/detail\/323123charge.html","item_type":"20","item_id":"1231231","num":"1","name_text":"TEXT_GACHA_TABTEXT_208"},{"limit_id":"324011","times":"250","limit_info_url":"\/news\/detail\/324011charge.html","item_type":"20","item_id":"1240111","num":"1","name_text":"TEXT_GACHA_TABTEXT_209"},{"limit_id":"324012","times":"250","limit_info_url":"\/news\/detail\/324012charge.html","item_type":"20","item_id":"1240121","num":"1","name_text":"TEXT_GACHA_TABTEXT_211"},{"limit_id":"324013","times":"250","limit_info_url":"\/news\/detail\/324013charge.html","item_type":"20","item_id":"1240131","num":"1","name_text":"TEXT_GACHA_TABTEXT_212"},{"limit_id":"324021","times":"250","limit_info_url":"\/news\/detail\/324021charge.html","item_type":"20","item_id":"1240211","num":"1","name_text":"TEXT_GACHA_TABTEXT_213"},{"limit_id":"324022","times":"250","limit_info_url":"\/news\/detail\/324022charge.html","item_type":"20","item_id":"1240221","num":"1","name_text":"TEXT_GACHA_TABTEXT_214"},{"limit_id":"324023","times":"250","limit_info_url":"\/news\/detail\/324023charge.html","item_type":"20","item_id":"1240231","num":"1","name_text":"TEXT_GACHA_TABTEXT_215"},{"limit_id":"324041","times":"250","limit_info_url":"\/news\/detail\/324041charge.html","item_type":"20","item_id":"1240411","num":"1","name_text":"TEXT_GACHA_TABTEXT_221"},{"limit_id":"410020","times":"250","limit_info_url":"gacha\/gacha_410020\/charge.html","item_type":"20","item_id":"1200941","num":"1","name_text":"TEXT_GACHA_TABTEXT_38"},{"limit_id":"410082","times":"250","limit_info_url":"gacha\/gacha_410082\/charge.html","item_type":"20","item_id":"1210741","num":"1","name_text":"TEXT_GACHA_TABTEXT_80"},{"limit_id":"410085","times":"250","limit_info_url":"gacha\/gacha_410085\/charge.html","item_type":"20","item_id":"1210751","num":"1","name_text":"TEXT_GACHA_TABTEXT_83"},{"limit_id":"410094","times":"250","limit_info_url":"gacha\/gacha_410094\/charge.html","item_type":"20","item_id":"1210841","num":"1","name_text":"TEXT_GACHA_TABTEXT_87"},{"limit_id":"410102","times":"250","limit_info_url":"gacha\/gacha_410102\/charge.html","item_type":"20","item_id":"1210941","num":"1","name_text":"TEXT_GACHA_TABTEXT_91"},{"limit_id":"410104","times":"250","limit_info_url":"gacha\/gacha_410104\/charge.html","item_type":"20","item_id":"1210951","num":"1","name_text":"TEXT_GACHA_TABTEXT_93"},{"limit_id":"410113","times":"250","limit_info_url":"gacha\/gacha_410113\/charge.html","item_type":"20","item_id":"1210961","num":"1","name_text":"TEXT_GACHA_TABTEXT_96"},{"limit_id":"410142","times":"250","limit_info_url":"gacha\/gacha_410142\/charge.html","item_type":"20","item_id":"1211251","num":"1","name_text":"TEXT_GACHA_TABTEXT_109"},{"limit_id":"410178","times":"250","limit_info_url":"gacha\/gacha_410178\/charge.html","item_type":"20","item_id":"1220241","num":"1","name_text":"TEXT_GACHA_TABTEXT_116"},{"limit_id":"410180","times":"250","limit_info_url":"gacha\/gacha_410180\/charge.html","item_type":"20","item_id":"1220251","num":"1","name_text":"TEXT_GACHA_TABTEXT_117"},{"limit_id":"410185","times":"250","limit_info_url":"gacha\/gacha_410185\/charge.html","item_type":"20","item_id":"1220341","num":"1","name_text":"TEXT_GACHA_TABTEXT_119"},{"limit_id":"410215","times":"250","limit_info_url":"gacha\/gacha_410215\/charge.html","item_type":"20","item_id":"1220351","num":"1","name_text":"TEXT_GACHA_TABTEXT_121"},{"limit_id":"410234","times":"250","limit_info_url":"gacha\/gacha_410234\/charge.html","item_type":"20","item_id":"1220451","num":"1","name_text":"TEXT_GACHA_TABTEXT_124"},{"limit_id":"410235","times":"250","limit_info_url":"gacha\/gacha_410235\/charge.html","item_type":"20","item_id":"1220461","num":"1","name_text":"TEXT_GACHA_TABTEXT_125"},{"limit_id":"410240","times":"250","limit_info_url":"gacha\/gacha_410240\/charge.html","item_type":"20","item_id":"1220471","num":"1","name_text":"TEXT_GACHA_TABTEXT_127"},{"limit_id":"410253","times":"250","limit_info_url":"\/news\/detail\/410253charge.html","item_type":"20","item_id":"1220541","num":"1","name_text":"TEXT_GACHA_TABTEXT_130"},{"limit_id":"410274","times":"250","limit_info_url":"\/news\/detail\/410274charge.html","item_type":"20","item_id":"1220641","num":"1","name_text":"TEXT_GACHA_TABTEXT_119"},{"limit_id":"410280","times":"250","limit_info_url":"\/news\/detail\/410280charge.html","item_type":"20","item_id":"1220651","num":"1","name_text":"TEXT_GACHA_TABTEXT_121"},{"limit_id":"410290","times":"250","limit_info_url":"\/news\/detail\/410290charge.html","item_type":"20","item_id":"1220741","num":"1","name_text":"TEXT_GACHA_TABTEXT_80"},{"limit_id":"410294","times":"250","limit_info_url":"\/news\/detail\/410294charge.html","item_type":"20","item_id":"1220751","num":"1","name_text":"TEXT_GACHA_TABTEXT_83"},{"limit_id":"410322","times":"250","limit_info_url":"\/news\/detail\/410322charge.html","item_type":"20","item_id":"1220941","num":"1","name_text":"TEXT_GACHA_TABTEXT_119"},{"limit_id":"410328","times":"250","limit_info_url":"\/news\/detail\/410328charge.html","item_type":"20","item_id":"1220951","num":"1","name_text":"TEXT_GACHA_TABTEXT_121"},{"limit_id":"410336","times":"250","limit_info_url":"\/news\/detail\/410336charge.html","item_type":"20","item_id":"1221041","num":"1","name_text":"TEXT_GACHA_TABTEXT_146"},{"limit_id":"410341","times":"250","limit_info_url":"\/news\/detail\/410341charge.html","item_type":"20","item_id":"1221051","num":"1","name_text":"TEXT_GACHA_TABTEXT_147"},{"limit_id":"410343","times":"250","limit_info_url":"\/news\/detail\/410343charge.html","item_type":"20","item_id":"1221061","num":"1","name_text":"TEXT_GACHA_TABTEXT_148"},{"limit_id":"410368","times":"250","limit_info_url":"\/news\/detail\/410368charge.html","item_type":"20","item_id":"1221251","num":"1","name_text":"TEXT_GACHA_TABTEXT_154"},{"limit_id":"410369","times":"250","limit_info_url":"\/news\/detail\/410369charge.html","item_type":"20","item_id":"1221261","num":"1","name_text":"TEXT_GACHA_TABTEXT_155"},{"limit_id":"410380","times":"250","limit_info_url":"\/news\/detail\/410380charge.html","item_type":"20","item_id":"1221281","num":"1","name_text":"TEXT_GACHA_TABTEXT_109"},{"limit_id":"410383","times":"250","limit_info_url":"\/news\/detail\/410383charge.html","item_type":"20","item_id":"1221291","num":"1","name_text":"TEXT_GACHA_TABTEXT_156"},{"limit_id":"410412","times":"250","limit_info_url":"\/news\/detail\/410412charge.html","item_type":"20","item_id":"1230241","num":"1","name_text":"TEXT_GACHA_TABTEXT_11"},{"limit_id":"410466","times":"250","limit_info_url":"\/news\/detail\/410466charge.html","item_type":"20","item_id":"1230541","num":"1","name_text":"TEXT_GACHA_TABTEXT_170"},{"limit_id":"410487","times":"250","limit_info_url":"\/news\/detail\/410487charge.html","item_type":"20","item_id":"1230551","num":"1","name_text":"TEXT_GACHA_TABTEXT_172"},{"limit_id":"410501","times":"250","limit_info_url":"\/news\/detail\/410501charge.html","item_type":"20","item_id":"1230641","num":"1","name_text":"TEXT_GACHA_TABTEXT_176"},{"limit_id":"410502","times":"250","limit_info_url":"\/news\/detail\/410502charge.html","item_type":"20","item_id":"1230651","num":"1","name_text":"TEXT_GACHA_TABTEXT_177"},{"limit_id":"410503","times":"250","limit_info_url":"\/news\/detail\/410503charge.html","item_type":"20","item_id":"1230661","num":"1","name_text":"TEXT_GACHA_TABTEXT_178"},{"limit_id":"410510","times":"250","limit_info_url":"\/news\/detail\/410510charge.html","item_type":"20","item_id":"1230741","num":"1","name_text":"TEXT_GACHA_TABTEXT_180"},{"limit_id":"410516","times":"250","limit_info_url":"\/news\/detail\/410516charge.html","item_type":"20","item_id":"1230751","num":"1","name_text":"TEXT_GACHA_TABTEXT_182"},{"limit_id":"410526","times":"250","limit_info_url":"\/news\/detail\/410526charge.html","item_type":"20","item_id":"1230761","num":"1","name_text":"TEXT_GACHA_TABTEXT_184"},{"limit_id":"410569","times":"250","limit_info_url":"\/news\/detail\/410569charge.html","item_type":"20","item_id":"1230941","num":"1","name_text":"TEXT_GACHA_TABTEXT_189"},{"limit_id":"410575","times":"250","limit_info_url":"\/news\/detail\/410575charge.html","item_type":"20","item_id":"1230951","num":"1","name_text":"TEXT_GACHA_TABTEXT_191"},{"limit_id":"410587","times":"250","limit_info_url":"\/news\/detail\/410587charge.html","item_type":"20","item_id":"1231041","num":"1","name_text":"TEXT_GACHA_TABTEXT_194"},{"limit_id":"410598","times":"250","limit_info_url":"\/news\/detail\/410598charge.html","item_type":"20","item_id":"1231051","num":"1","name_text":"TEXT_GACHA_TABTEXT_196"},{"limit_id":"410609","times":"250","limit_info_url":"\/news\/detail\/410609charge.html","item_type":"20","item_id":"1231141","num":"1","name_text":"TEXT_GACHA_TABTEXT_199"},{"limit_id":"410610","times":"250","limit_info_url":"\/news\/detail\/410610charge.html","item_type":"20","item_id":"1231151","num":"1","name_text":"TEXT_GACHA_TABTEXT_200"},{"limit_id":"410611","times":"250","limit_info_url":"\/news\/detail\/410611charge.html","item_type":"20","item_id":"1231161","num":"1","name_text":"TEXT_GACHA_TABTEXT_201"},{"limit_id":"410628","times":"250","limit_info_url":"\/news\/detail\/410628charge.html","item_type":"20","item_id":"1231241","num":"1","name_text":"TEXT_GACHA_TABTEXT_205"},{"limit_id":"410630","times":"250","limit_info_url":"\/news\/detail\/410630charge.html","item_type":"20","item_id":"1231251","num":"1","name_text":"TEXT_GACHA_TABTEXT_206"},{"limit_id":"410654","times":"250","limit_info_url":"\/news\/detail\/410654charge.html","item_type":"20","item_id":"1240141","num":"1","name_text":"TEXT_GACHA_TABTEXT_210"},{"limit_id":"410855","times":"100","limit_info_url":"\/news\/detail\/410855charge.html","item_type":"20","item_id":"1241111","num":"1","name_text":"TEXT_GACHA_TABTEXT_252"},{"limit_id":"420015","times":"250","limit_info_url":"gacha\/gacha_420015\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_17"},{"limit_id":"420016","times":"250","limit_info_url":"gacha\/gacha_420016\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_9"},{"limit_id":"420017","times":"250","limit_info_url":"gacha\/gacha_420017\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_19"},{"limit_id":"420018","times":"250","limit_info_url":"gacha\/gacha_420018\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_7"},{"limit_id":"420019","times":"250","limit_info_url":"gacha\/gacha_420019\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_11"},{"limit_id":"420020","times":"250","limit_info_url":"gacha\/gacha_420020\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_22"},{"limit_id":"420021","times":"250","limit_info_url":"gacha\/gacha_420021\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_13"},{"limit_id":"420022","times":"250","limit_info_url":"gacha\/gacha_420022\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_19"},{"limit_id":"420023","times":"250","limit_info_url":"gacha\/gacha_420023\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_17"},{"limit_id":"420024","times":"250","limit_info_url":"gacha\/gacha_420024\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_9"},{"limit_id":"420025","times":"250","limit_info_url":"gacha\/gacha_420025\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_22"},{"limit_id":"420026","times":"250","limit_info_url":"gacha\/gacha_420026\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_19"},{"limit_id":"420027","times":"250","limit_info_url":"gacha\/gacha_420027\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_13"},{"limit_id":"420028","times":"250","limit_info_url":"gacha\/gacha_420028\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_22"},{"limit_id":"420029","times":"250","limit_info_url":"gacha\/gacha_420029\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_17"},{"limit_id":"420030","times":"250","limit_info_url":"gacha\/gacha_420030\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_7"},{"limit_id":"420031","times":"250","limit_info_url":"gacha\/gacha_420031\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_9"},{"limit_id":"420032","times":"250","limit_info_url":"gacha\/gacha_420032\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_11"},{"limit_id":"420033","times":"250","limit_info_url":"gacha\/gacha_420033\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_22"},{"limit_id":"420034","times":"250","limit_info_url":"gacha\/gacha_420034\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_19"},{"limit_id":"420035","times":"250","limit_info_url":"gacha\/gacha_420035\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_9"},{"limit_id":"420036","times":"250","limit_info_url":"gacha\/gacha_420036\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_11"},{"limit_id":"420037","times":"250","limit_info_url":"gacha\/gacha_420037\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_7"},{"limit_id":"420038","times":"250","limit_info_url":"gacha\/gacha_420038\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_13"},{"limit_id":"420040","times":"250","limit_info_url":"gacha\/gacha_420040\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_9"},{"limit_id":"420041","times":"250","limit_info_url":"gacha\/gacha_420041\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_13"},{"limit_id":"420042","times":"250","limit_info_url":"gacha\/gacha_420042\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_17"},{"limit_id":"420043","times":"250","limit_info_url":"gacha\/gacha_420043\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_11"},{"limit_id":"420045","times":"250","limit_info_url":"gacha\/gacha_420045\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_19"},{"limit_id":"420046","times":"250","limit_info_url":"gacha\/gacha_420046\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_9"},{"limit_id":"420047","times":"250","limit_info_url":"gacha\/gacha_420047\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_13"},{"limit_id":"420048","times":"250","limit_info_url":"gacha\/gacha_420048\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_13"},{"limit_id":"420050","times":"250","limit_info_url":"gacha\/gacha_420050\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_7"},{"limit_id":"420053","times":"250","limit_info_url":"gacha\/gacha_420053\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_19"},{"limit_id":"420062","times":"250","limit_info_url":"gacha\/gacha_420062\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_22"},{"limit_id":"420064","times":"250","limit_info_url":"gacha\/gacha_420064\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_13"},{"limit_id":"420066","times":"250","limit_info_url":"gacha\/gacha_420066\/charge.html","item_type":"21","item_id":"3","num":"1","name_text":"TEXT_GACHA_TABTEXT_7"},{"limit_id":"420075","times":"250","limit_info_url":"gacha\/gacha_420075\/charge.html","item_type":"20","item_id":"1220441","num":"1","name_text":"TEXT_GACHA_TABTEXT_13"},{"limit_id":"420077","times":"250","limit_info_url":"\/news\/detail\/420077charge.html","item_type":"20","item_id":"1220481","num":"1","name_text":"TEXT_GACHA_TABTEXT_19"},{"limit_id":"420086","times":"250","limit_info_url":"\/news\/detail\/420086charge.html","item_type":"20","item_id":"1220661","num":"1","name_text":"TEXT_GACHA_TABTEXT_19"},{"limit_id":"420088","times":"250","limit_info_url":"\/news\/detail\/420088charge.html","item_type":"20","item_id":"1220671","num":"1","name_text":"TEXT_GACHA_TABTEXT_17"},{"limit_id":"420097","times":"250","limit_info_url":"\/news\/detail\/420097charge.html","item_type":"20","item_id":"1221071","num":"1","name_text":"TEXT_GACHA_TABTEXT_7"},{"limit_id":"491013","times":"250","limit_info_url":"gacha\/gacha_491013\/charge.htlm","item_type":"20","item_id":"1910131","num":"1","name_text":"TEXT_GACHA_TABTEXT_997"}]
+[
+  {
+    "limit_id": "100001",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_100001/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_3"
+  },
+  {
+    "limit_id": "319111",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_319111/charge.html",
+    "item_type": "20",
+    "item_id": "1191111",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_1"
+  },
+  {
+    "limit_id": "320031",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320031/charge.html",
+    "item_type": "20",
+    "item_id": "1200311",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_4"
+  },
+  {
+    "limit_id": "320032",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320032/charge.html",
+    "item_type": "20",
+    "item_id": "1200321",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_5"
+  },
+  {
+    "limit_id": "420001",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420001/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_7"
+  },
+  {
+    "limit_id": "320041",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320041/charge.html",
+    "item_type": "20",
+    "item_id": "1200411",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_8"
+  },
+  {
+    "limit_id": "420002",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420002/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_9"
+  },
+  {
+    "limit_id": "320042",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320042/charge.html",
+    "item_type": "20",
+    "item_id": "1200421",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_10"
+  },
+  {
+    "limit_id": "420003",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420003/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_11"
+  },
+  {
+    "limit_id": "320043",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320043/charge.html",
+    "item_type": "20",
+    "item_id": "1200431",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_12"
+  },
+  {
+    "limit_id": "420004",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420004/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_13"
+  },
+  {
+    "limit_id": "320051",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320051/charge.html",
+    "item_type": "20",
+    "item_id": "1200511",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_16"
+  },
+  {
+    "limit_id": "420005",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420005/charge.html",
+    "item_type": "20",
+    "item_id": "4200051",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_999"
+  },
+  {
+    "limit_id": "320052",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320052/charge.html",
+    "item_type": "20",
+    "item_id": "1200521",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_18"
+  },
+  {
+    "limit_id": "420006",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420006/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_19"
+  },
+  {
+    "limit_id": "320053",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320053/charge.html",
+    "item_type": "20",
+    "item_id": "1200531",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_21"
+  },
+  {
+    "limit_id": "420007",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420007/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_22"
+  },
+  {
+    "limit_id": "320061",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320061/charge.html",
+    "item_type": "20",
+    "item_id": "1200611",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_23"
+  },
+  {
+    "limit_id": "420008",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420008/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_7"
+  },
+  {
+    "limit_id": "320062",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320062/charge.html",
+    "item_type": "20",
+    "item_id": "1200621",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_25"
+  },
+  {
+    "limit_id": "420009",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420009/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_13"
+  },
+  {
+    "limit_id": "320063",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320063/charge.html",
+    "item_type": "20",
+    "item_id": "1200631",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_27"
+  },
+  {
+    "limit_id": "420010",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420010/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_9"
+  },
+  {
+    "limit_id": "320071",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320071/charge.html",
+    "item_type": "20",
+    "item_id": "1200711",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_28"
+  },
+  {
+    "limit_id": "420011",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420011/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_11"
+  },
+  {
+    "limit_id": "320072",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320072/charge.html",
+    "item_type": "20",
+    "item_id": "1200721",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_30"
+  },
+  {
+    "limit_id": "420012",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420012/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_22"
+  },
+  {
+    "limit_id": "320073",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320073/charge.html",
+    "item_type": "20",
+    "item_id": "1200731",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_32"
+  },
+  {
+    "limit_id": "320081",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320081/charge.html",
+    "item_type": "20",
+    "item_id": "1200811",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_33"
+  },
+  {
+    "limit_id": "420014",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420014/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_13"
+  },
+  {
+    "limit_id": "320082",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320082/charge.html",
+    "item_type": "20",
+    "item_id": "1200821",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_35"
+  },
+  {
+    "limit_id": "320083",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320083/charge.html",
+    "item_type": "20",
+    "item_id": "1200831",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_37"
+  },
+  {
+    "limit_id": "320091",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320091/charge.html",
+    "item_type": "20",
+    "item_id": "1200911",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_40"
+  },
+  {
+    "limit_id": "320092",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320092/charge.html",
+    "item_type": "20",
+    "item_id": "1200921",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_41"
+  },
+  {
+    "limit_id": "320093",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320093/charge.html",
+    "item_type": "20",
+    "item_id": "1200931",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_42"
+  },
+  {
+    "limit_id": "320101",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320101/charge.html",
+    "item_type": "20",
+    "item_id": "1201011",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_43"
+  },
+  {
+    "limit_id": "320102",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320102/charge.html",
+    "item_type": "20",
+    "item_id": "1201021",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_45"
+  },
+  {
+    "limit_id": "320103",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320103/charge.html",
+    "item_type": "20",
+    "item_id": "1201031",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_47"
+  },
+  {
+    "limit_id": "320111",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320111/charge.html",
+    "item_type": "20",
+    "item_id": "1201111",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_49"
+  },
+  {
+    "limit_id": "320112",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320112/charge.html",
+    "item_type": "20",
+    "item_id": "1201121",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_51"
+  },
+  {
+    "limit_id": "320113",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320113/charge.html",
+    "item_type": "20",
+    "item_id": "1201131",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_53"
+  },
+  {
+    "limit_id": "320121",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320121/charge.html",
+    "item_type": "20",
+    "item_id": "1201211",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_54"
+  },
+  {
+    "limit_id": "320122",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320122/charge.html",
+    "item_type": "20",
+    "item_id": "1201221",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_4"
+  },
+  {
+    "limit_id": "320123",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_320123/charge.html",
+    "item_type": "20",
+    "item_id": "1201231",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_55"
+  },
+  {
+    "limit_id": "321011",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321011/charge.html",
+    "item_type": "20",
+    "item_id": "1210111",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_57"
+  },
+  {
+    "limit_id": "321012",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321012/charge.html",
+    "item_type": "20",
+    "item_id": "1210121",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_55"
+  },
+  {
+    "limit_id": "321013",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321013/charge.html",
+    "item_type": "20",
+    "item_id": "1210131",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_8"
+  },
+  {
+    "limit_id": "321021",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321021/charge.html",
+    "item_type": "20",
+    "item_id": "1210211",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_60"
+  },
+  {
+    "limit_id": "321022",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321022/charge.html",
+    "item_type": "20",
+    "item_id": "1210221",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_62"
+  },
+  {
+    "limit_id": "321023",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321023/charge.html",
+    "item_type": "20",
+    "item_id": "1210231",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_64"
+  },
+  {
+    "limit_id": "321031",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321031/charge.html",
+    "item_type": "20",
+    "item_id": "1210311",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_65"
+  },
+  {
+    "limit_id": "321032",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321032/charge.html",
+    "item_type": "20",
+    "item_id": "1210321",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_66"
+  },
+  {
+    "limit_id": "321033",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321033/charge.html",
+    "item_type": "20",
+    "item_id": "1210331",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_67"
+  },
+  {
+    "limit_id": "321041",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321041/charge.html",
+    "item_type": "20",
+    "item_id": "1210411",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_69"
+  },
+  {
+    "limit_id": "321042",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321042/charge.html",
+    "item_type": "20",
+    "item_id": "1210421",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_70"
+  },
+  {
+    "limit_id": "321043",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321043/charge.html",
+    "item_type": "20",
+    "item_id": "1210431",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_71"
+  },
+  {
+    "limit_id": "321051",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321051/charge.html",
+    "item_type": "20",
+    "item_id": "1210511",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_72"
+  },
+  {
+    "limit_id": "321052",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321052/charge.html",
+    "item_type": "20",
+    "item_id": "1210521",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_74"
+  },
+  {
+    "limit_id": "321053",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321053/charge.html",
+    "item_type": "20",
+    "item_id": "1210531",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_75"
+  },
+  {
+    "limit_id": "321061",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321061/charge.html",
+    "item_type": "20",
+    "item_id": "1210611",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_76"
+  },
+  {
+    "limit_id": "321062",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321062/charge.html",
+    "item_type": "20",
+    "item_id": "1210621",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_77"
+  },
+  {
+    "limit_id": "321063",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321063/charge.html",
+    "item_type": "20",
+    "item_id": "1210631",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_78"
+  },
+  {
+    "limit_id": "321071",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321071/charge.html",
+    "item_type": "20",
+    "item_id": "1210711",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_79"
+  },
+  {
+    "limit_id": "321072",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321072/charge.html",
+    "item_type": "20",
+    "item_id": "1210721",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_82"
+  },
+  {
+    "limit_id": "321073",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321073/charge.html",
+    "item_type": "20",
+    "item_id": "1210731",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_84"
+  },
+  {
+    "limit_id": "321081",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321081/charge.html",
+    "item_type": "20",
+    "item_id": "1210811",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_85"
+  },
+  {
+    "limit_id": "321082",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321082/charge.html",
+    "item_type": "20",
+    "item_id": "1210821",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_86"
+  },
+  {
+    "limit_id": "321083",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321083/charge.html",
+    "item_type": "20",
+    "item_id": "1210831",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_85"
+  },
+  {
+    "limit_id": "321091",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321091/charge.html",
+    "item_type": "20",
+    "item_id": "1210911",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_89"
+  },
+  {
+    "limit_id": "321092",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321092/charge.html",
+    "item_type": "20",
+    "item_id": "1210921",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_92"
+  },
+  {
+    "limit_id": "321093",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321093/charge.html",
+    "item_type": "20",
+    "item_id": "1210931",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_94"
+  },
+  {
+    "limit_id": "321101",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321101/charge.html",
+    "item_type": "20",
+    "item_id": "1211011",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_97"
+  },
+  {
+    "limit_id": "321102",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321102/charge.html",
+    "item_type": "20",
+    "item_id": "1211021",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_98"
+  },
+  {
+    "limit_id": "321103",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321103/charge.html",
+    "item_type": "20",
+    "item_id": "1211031",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_99"
+  },
+  {
+    "limit_id": "321111",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321111/charge.html",
+    "item_type": "20",
+    "item_id": "1211111",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_100"
+  },
+  {
+    "limit_id": "321112",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321112/charge.html",
+    "item_type": "20",
+    "item_id": "1211121",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_107"
+  },
+  {
+    "limit_id": "321113",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321113/charge.html",
+    "item_type": "20",
+    "item_id": "1211131",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_106"
+  },
+  {
+    "limit_id": "321121",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321121/charge.html",
+    "item_type": "20",
+    "item_id": "1211211",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_54"
+  },
+  {
+    "limit_id": "321122",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321122/charge.html",
+    "item_type": "20",
+    "item_id": "1211221",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_110"
+  },
+  {
+    "limit_id": "321123",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_321123/charge.html",
+    "item_type": "20",
+    "item_id": "1211231",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_55"
+  },
+  {
+    "limit_id": "322011",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_322011/charge.html",
+    "item_type": "20",
+    "item_id": "1220111",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_111"
+  },
+  {
+    "limit_id": "322012",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_322012/charge.html",
+    "item_type": "20",
+    "item_id": "1220121",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_112"
+  },
+  {
+    "limit_id": "322013",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_322013/charge.html",
+    "item_type": "20",
+    "item_id": "1220131",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_55"
+  },
+  {
+    "limit_id": "322021",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_322021/charge.html",
+    "item_type": "20",
+    "item_id": "1220211",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_113"
+  },
+  {
+    "limit_id": "322022",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_322022/charge.html",
+    "item_type": "20",
+    "item_id": "1220221",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_114"
+  },
+  {
+    "limit_id": "322023",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_322023/charge.html",
+    "item_type": "20",
+    "item_id": "1220231",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_115"
+  },
+  {
+    "limit_id": "322031",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_322031/charge.html",
+    "item_type": "20",
+    "item_id": "1220311",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_118"
+  },
+  {
+    "limit_id": "322032",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_322032/charge.html",
+    "item_type": "20",
+    "item_id": "1220321",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_122"
+  },
+  {
+    "limit_id": "322033",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_322033/charge.html",
+    "item_type": "20",
+    "item_id": "1220331",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_120"
+  },
+  {
+    "limit_id": "322041",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_322041/charge.html",
+    "item_type": "20",
+    "item_id": "1220411",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_123"
+  },
+  {
+    "limit_id": "322042",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_322042/charge.html",
+    "item_type": "20",
+    "item_id": "1220421",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_126"
+  },
+  {
+    "limit_id": "322043",
+    "times": "250",
+    "limit_info_url": "/news/detail/322043charge.html",
+    "item_type": "20",
+    "item_id": "1220431",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_128"
+  },
+  {
+    "limit_id": "322051",
+    "times": "250",
+    "limit_info_url": "/news/detail/322051charge.html",
+    "item_type": "20",
+    "item_id": "1220511",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_131"
+  },
+  {
+    "limit_id": "322052",
+    "times": "250",
+    "limit_info_url": "/news/detail/322052charge.html",
+    "item_type": "20",
+    "item_id": "1220521",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_129"
+  },
+  {
+    "limit_id": "322053",
+    "times": "250",
+    "limit_info_url": "/news/detail/322053charge.html",
+    "item_type": "20",
+    "item_id": "1220531",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_132"
+  },
+  {
+    "limit_id": "322061",
+    "times": "250",
+    "limit_info_url": "/news/detail/322061charge.html",
+    "item_type": "20",
+    "item_id": "1220611",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_133"
+  },
+  {
+    "limit_id": "322062",
+    "times": "250",
+    "limit_info_url": "/news/detail/322062charge.html",
+    "item_type": "20",
+    "item_id": "1220621",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_134"
+  },
+  {
+    "limit_id": "322063",
+    "times": "250",
+    "limit_info_url": "/news/detail/322063charge.html",
+    "item_type": "20",
+    "item_id": "1220631",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_135"
+  },
+  {
+    "limit_id": "322071",
+    "times": "250",
+    "limit_info_url": "/news/detail/322071charge.html",
+    "item_type": "20",
+    "item_id": "1220711",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_136"
+  },
+  {
+    "limit_id": "322072",
+    "times": "250",
+    "limit_info_url": "/news/detail/322072charge.html",
+    "item_type": "20",
+    "item_id": "1220721",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_82"
+  },
+  {
+    "limit_id": "322073",
+    "times": "250",
+    "limit_info_url": "/news/detail/322073charge.html",
+    "item_type": "20",
+    "item_id": "1220731",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_84"
+  },
+  {
+    "limit_id": "322081",
+    "times": "250",
+    "limit_info_url": "/news/detail/322081charge.html",
+    "item_type": "20",
+    "item_id": "1220811",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_139"
+  },
+  {
+    "limit_id": "322082",
+    "times": "250",
+    "limit_info_url": "/news/detail/322082charge.html",
+    "item_type": "20",
+    "item_id": "1220821",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_141"
+  },
+  {
+    "limit_id": "322083",
+    "times": "250",
+    "limit_info_url": "/news/detail/322083charge.html",
+    "item_type": "20",
+    "item_id": "1220831",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_142"
+  },
+  {
+    "limit_id": "322084",
+    "times": "250",
+    "limit_info_url": "/news/detail/322084charge.html",
+    "item_type": "20",
+    "item_id": "1220841",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_140"
+  },
+  {
+    "limit_id": "322091",
+    "times": "250",
+    "limit_info_url": "/news/detail/322091charge.html",
+    "item_type": "20",
+    "item_id": "1220911",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_143"
+  },
+  {
+    "limit_id": "322092",
+    "times": "250",
+    "limit_info_url": "/news/detail/322092charge.html",
+    "item_type": "20",
+    "item_id": "1220921",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_144"
+  },
+  {
+    "limit_id": "322093",
+    "times": "250",
+    "limit_info_url": "/news/detail/322093charge.html",
+    "item_type": "20",
+    "item_id": "1220931",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_145"
+  },
+  {
+    "limit_id": "322101",
+    "times": "250",
+    "limit_info_url": "/news/detail/322101charge.html",
+    "item_type": "20",
+    "item_id": "1221011",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_43"
+  },
+  {
+    "limit_id": "322102",
+    "times": "250",
+    "limit_info_url": "/news/detail/322102charge.html",
+    "item_type": "20",
+    "item_id": "1221021",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_98"
+  },
+  {
+    "limit_id": "322103",
+    "times": "250",
+    "limit_info_url": "/news/detail/322103charge.html",
+    "item_type": "20",
+    "item_id": "1221031",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_149"
+  },
+  {
+    "limit_id": "322111",
+    "times": "250",
+    "limit_info_url": "/news/detail/322111charge.html",
+    "item_type": "20",
+    "item_id": "1221111",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_150"
+  },
+  {
+    "limit_id": "322112",
+    "times": "250",
+    "limit_info_url": "/news/detail/322112charge.html",
+    "item_type": "20",
+    "item_id": "1221121",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_152"
+  },
+  {
+    "limit_id": "322113",
+    "times": "250",
+    "limit_info_url": "/news/detail/322113charge.html",
+    "item_type": "20",
+    "item_id": "1221131",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_151"
+  },
+  {
+    "limit_id": "322121",
+    "times": "250",
+    "limit_info_url": "/news/detail/322121charge.html",
+    "item_type": "20",
+    "item_id": "1221211",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_153"
+  },
+  {
+    "limit_id": "322122",
+    "times": "250",
+    "limit_info_url": "/news/detail/322122charge.html",
+    "item_type": "20",
+    "item_id": "1221221",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_54"
+  },
+  {
+    "limit_id": "322123",
+    "times": "250",
+    "limit_info_url": "/news/detail/322123charge.html",
+    "item_type": "20",
+    "item_id": "1221231",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_110"
+  },
+  {
+    "limit_id": "323011",
+    "times": "250",
+    "limit_info_url": "/news/detail/323011charge.html",
+    "item_type": "20",
+    "item_id": "1230111",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_157"
+  },
+  {
+    "limit_id": "323012",
+    "times": "250",
+    "limit_info_url": "/news/detail/323012charge.html",
+    "item_type": "20",
+    "item_id": "1230121",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_158"
+  },
+  {
+    "limit_id": "323013",
+    "times": "250",
+    "limit_info_url": "/news/detail/323013charge.html",
+    "item_type": "20",
+    "item_id": "1230131",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_159"
+  },
+  {
+    "limit_id": "323021",
+    "times": "250",
+    "limit_info_url": "/news/detail/323021charge.html",
+    "item_type": "20",
+    "item_id": "1230211",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_160"
+  },
+  {
+    "limit_id": "323022",
+    "times": "250",
+    "limit_info_url": "/news/detail/323022charge.html",
+    "item_type": "20",
+    "item_id": "1230221",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_161"
+  },
+  {
+    "limit_id": "323023",
+    "times": "250",
+    "limit_info_url": "/news/detail/323023charge.html",
+    "item_type": "20",
+    "item_id": "1230231",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_162"
+  },
+  {
+    "limit_id": "323031",
+    "times": "250",
+    "limit_info_url": "/news/detail/323031charge.html",
+    "item_type": "20",
+    "item_id": "1230311",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_163"
+  },
+  {
+    "limit_id": "323032",
+    "times": "250",
+    "limit_info_url": "/news/detail/323032charge.html",
+    "item_type": "20",
+    "item_id": "1230321",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_164"
+  },
+  {
+    "limit_id": "323033",
+    "times": "250",
+    "limit_info_url": "/news/detail/323033charge.html",
+    "item_type": "20",
+    "item_id": "1230331",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_165"
+  },
+  {
+    "limit_id": "323041",
+    "times": "250",
+    "limit_info_url": "/news/detail/323041charge.html",
+    "item_type": "20",
+    "item_id": "1230411",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_23"
+  },
+  {
+    "limit_id": "323042",
+    "times": "250",
+    "limit_info_url": "/news/detail/323042charge.html",
+    "item_type": "20",
+    "item_id": "1230421",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_166"
+  },
+  {
+    "limit_id": "323043",
+    "times": "250",
+    "limit_info_url": "/news/detail/323043charge.html",
+    "item_type": "20",
+    "item_id": "1230431",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_167"
+  },
+  {
+    "limit_id": "323051",
+    "times": "250",
+    "limit_info_url": "/news/detail/323051charge.html",
+    "item_type": "20",
+    "item_id": "1230511",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_168"
+  },
+  {
+    "limit_id": "323052",
+    "times": "250",
+    "limit_info_url": "/news/detail/323052charge.html",
+    "item_type": "20",
+    "item_id": "1230521",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_169"
+  },
+  {
+    "limit_id": "323053",
+    "times": "250",
+    "limit_info_url": "/news/detail/323053charge.html",
+    "item_type": "20",
+    "item_id": "1230531",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_171"
+  },
+  {
+    "limit_id": "323061",
+    "times": "250",
+    "limit_info_url": "/news/detail/323061charge.html",
+    "item_type": "20",
+    "item_id": "1230611",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_173"
+  },
+  {
+    "limit_id": "323062",
+    "times": "250",
+    "limit_info_url": "/news/detail/323062charge.html",
+    "item_type": "20",
+    "item_id": "1230621",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_174"
+  },
+  {
+    "limit_id": "323063",
+    "times": "250",
+    "limit_info_url": "/news/detail/323063charge.html",
+    "item_type": "20",
+    "item_id": "1230631",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_175"
+  },
+  {
+    "limit_id": "323071",
+    "times": "250",
+    "limit_info_url": "/news/detail/323071charge.html",
+    "item_type": "20",
+    "item_id": "1230711",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_179"
+  },
+  {
+    "limit_id": "323072",
+    "times": "250",
+    "limit_info_url": "/news/detail/323072charge.html",
+    "item_type": "20",
+    "item_id": "1230721",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_181"
+  },
+  {
+    "limit_id": "323073",
+    "times": "250",
+    "limit_info_url": "/news/detail/323073charge.html",
+    "item_type": "20",
+    "item_id": "1230731",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_183"
+  },
+  {
+    "limit_id": "323081",
+    "times": "250",
+    "limit_info_url": "/news/detail/323081charge.html",
+    "item_type": "20",
+    "item_id": "1230811",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_185"
+  },
+  {
+    "limit_id": "323082",
+    "times": "250",
+    "limit_info_url": "/news/detail/323082charge.html",
+    "item_type": "20",
+    "item_id": "1230821",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_186"
+  },
+  {
+    "limit_id": "323083",
+    "times": "250",
+    "limit_info_url": "/news/detail/323083charge.html",
+    "item_type": "20",
+    "item_id": "1230831",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_187"
+  },
+  {
+    "limit_id": "323091",
+    "times": "250",
+    "limit_info_url": "/news/detail/323091charge.html",
+    "item_type": "20",
+    "item_id": "1230911",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_188"
+  },
+  {
+    "limit_id": "323092",
+    "times": "250",
+    "limit_info_url": "/news/detail/323092charge.html",
+    "item_type": "20",
+    "item_id": "1230921",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_190"
+  },
+  {
+    "limit_id": "323093",
+    "times": "250",
+    "limit_info_url": "/news/detail/323093charge.html",
+    "item_type": "20",
+    "item_id": "1230931",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_192"
+  },
+  {
+    "limit_id": "323101",
+    "times": "250",
+    "limit_info_url": "/news/detail/323101charge.html",
+    "item_type": "20",
+    "item_id": "1231011",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_193"
+  },
+  {
+    "limit_id": "323102",
+    "times": "250",
+    "limit_info_url": "/news/detail/323102charge.html",
+    "item_type": "20",
+    "item_id": "1231021",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_195"
+  },
+  {
+    "limit_id": "323103",
+    "times": "250",
+    "limit_info_url": "/news/detail/323103charge.html",
+    "item_type": "20",
+    "item_id": "1231031",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_197"
+  },
+  {
+    "limit_id": "323111",
+    "times": "250",
+    "limit_info_url": "/news/detail/323111charge.html",
+    "item_type": "20",
+    "item_id": "1231111",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_198"
+  },
+  {
+    "limit_id": "323112",
+    "times": "250",
+    "limit_info_url": "/news/detail/323112charge.html",
+    "item_type": "20",
+    "item_id": "1231121",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_202"
+  },
+  {
+    "limit_id": "323113",
+    "times": "250",
+    "limit_info_url": "/news/detail/323113charge.html",
+    "item_type": "20",
+    "item_id": "1231131",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_203"
+  },
+  {
+    "limit_id": "323121",
+    "times": "250",
+    "limit_info_url": "/news/detail/323121charge.html",
+    "item_type": "20",
+    "item_id": "1231211",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_204"
+  },
+  {
+    "limit_id": "323122",
+    "times": "250",
+    "limit_info_url": "/news/detail/323122charge.html",
+    "item_type": "20",
+    "item_id": "1231221",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_207"
+  },
+  {
+    "limit_id": "323123",
+    "times": "250",
+    "limit_info_url": "/news/detail/323123charge.html",
+    "item_type": "20",
+    "item_id": "1231231",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_208"
+  },
+  {
+    "limit_id": "324011",
+    "times": "250",
+    "limit_info_url": "/news/detail/324011charge.html",
+    "item_type": "20",
+    "item_id": "1240111",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_209"
+  },
+  {
+    "limit_id": "324012",
+    "times": "250",
+    "limit_info_url": "/news/detail/324012charge.html",
+    "item_type": "20",
+    "item_id": "1240121",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_211"
+  },
+  {
+    "limit_id": "324013",
+    "times": "250",
+    "limit_info_url": "/news/detail/324013charge.html",
+    "item_type": "20",
+    "item_id": "1240131",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_212"
+  },
+  {
+    "limit_id": "324021",
+    "times": "250",
+    "limit_info_url": "/news/detail/324021charge.html",
+    "item_type": "20",
+    "item_id": "1240211",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_213"
+  },
+  {
+    "limit_id": "324022",
+    "times": "250",
+    "limit_info_url": "/news/detail/324022charge.html",
+    "item_type": "20",
+    "item_id": "1240221",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_214"
+  },
+  {
+    "limit_id": "324023",
+    "times": "250",
+    "limit_info_url": "/news/detail/324023charge.html",
+    "item_type": "20",
+    "item_id": "1240231",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_215"
+  },
+  {
+    "limit_id": "324041",
+    "times": "250",
+    "limit_info_url": "/news/detail/324041charge.html",
+    "item_type": "20",
+    "item_id": "1240411",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_221"
+  },
+  {
+    "limit_id": "410020",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_410020/charge.html",
+    "item_type": "20",
+    "item_id": "1200941",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_38"
+  },
+  {
+    "limit_id": "410082",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_410082/charge.html",
+    "item_type": "20",
+    "item_id": "1210741",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_80"
+  },
+  {
+    "limit_id": "410085",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_410085/charge.html",
+    "item_type": "20",
+    "item_id": "1210751",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_83"
+  },
+  {
+    "limit_id": "410094",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_410094/charge.html",
+    "item_type": "20",
+    "item_id": "1210841",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_87"
+  },
+  {
+    "limit_id": "410102",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_410102/charge.html",
+    "item_type": "20",
+    "item_id": "1210941",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_91"
+  },
+  {
+    "limit_id": "410104",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_410104/charge.html",
+    "item_type": "20",
+    "item_id": "1210951",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_93"
+  },
+  {
+    "limit_id": "410113",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_410113/charge.html",
+    "item_type": "20",
+    "item_id": "1210961",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_96"
+  },
+  {
+    "limit_id": "410142",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_410142/charge.html",
+    "item_type": "20",
+    "item_id": "1211251",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_109"
+  },
+  {
+    "limit_id": "410178",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_410178/charge.html",
+    "item_type": "20",
+    "item_id": "1220241",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_116"
+  },
+  {
+    "limit_id": "410180",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_410180/charge.html",
+    "item_type": "20",
+    "item_id": "1220251",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_117"
+  },
+  {
+    "limit_id": "410185",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_410185/charge.html",
+    "item_type": "20",
+    "item_id": "1220341",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_119"
+  },
+  {
+    "limit_id": "410215",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_410215/charge.html",
+    "item_type": "20",
+    "item_id": "1220351",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_121"
+  },
+  {
+    "limit_id": "410234",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_410234/charge.html",
+    "item_type": "20",
+    "item_id": "1220451",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_124"
+  },
+  {
+    "limit_id": "410235",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_410235/charge.html",
+    "item_type": "20",
+    "item_id": "1220461",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_125"
+  },
+  {
+    "limit_id": "410240",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_410240/charge.html",
+    "item_type": "20",
+    "item_id": "1220471",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_127"
+  },
+  {
+    "limit_id": "410253",
+    "times": "250",
+    "limit_info_url": "/news/detail/410253charge.html",
+    "item_type": "20",
+    "item_id": "1220541",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_130"
+  },
+  {
+    "limit_id": "410274",
+    "times": "250",
+    "limit_info_url": "/news/detail/410274charge.html",
+    "item_type": "20",
+    "item_id": "1220641",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_119"
+  },
+  {
+    "limit_id": "410280",
+    "times": "250",
+    "limit_info_url": "/news/detail/410280charge.html",
+    "item_type": "20",
+    "item_id": "1220651",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_121"
+  },
+  {
+    "limit_id": "410290",
+    "times": "250",
+    "limit_info_url": "/news/detail/410290charge.html",
+    "item_type": "20",
+    "item_id": "1220741",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_80"
+  },
+  {
+    "limit_id": "410294",
+    "times": "250",
+    "limit_info_url": "/news/detail/410294charge.html",
+    "item_type": "20",
+    "item_id": "1220751",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_83"
+  },
+  {
+    "limit_id": "410322",
+    "times": "250",
+    "limit_info_url": "/news/detail/410322charge.html",
+    "item_type": "20",
+    "item_id": "1220941",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_119"
+  },
+  {
+    "limit_id": "410328",
+    "times": "250",
+    "limit_info_url": "/news/detail/410328charge.html",
+    "item_type": "20",
+    "item_id": "1220951",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_121"
+  },
+  {
+    "limit_id": "410336",
+    "times": "250",
+    "limit_info_url": "/news/detail/410336charge.html",
+    "item_type": "20",
+    "item_id": "1221041",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_146"
+  },
+  {
+    "limit_id": "410341",
+    "times": "250",
+    "limit_info_url": "/news/detail/410341charge.html",
+    "item_type": "20",
+    "item_id": "1221051",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_147"
+  },
+  {
+    "limit_id": "410343",
+    "times": "250",
+    "limit_info_url": "/news/detail/410343charge.html",
+    "item_type": "20",
+    "item_id": "1221061",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_148"
+  },
+  {
+    "limit_id": "410368",
+    "times": "250",
+    "limit_info_url": "/news/detail/410368charge.html",
+    "item_type": "20",
+    "item_id": "1221251",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_154"
+  },
+  {
+    "limit_id": "410369",
+    "times": "250",
+    "limit_info_url": "/news/detail/410369charge.html",
+    "item_type": "20",
+    "item_id": "1221261",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_155"
+  },
+  {
+    "limit_id": "410380",
+    "times": "250",
+    "limit_info_url": "/news/detail/410380charge.html",
+    "item_type": "20",
+    "item_id": "1221281",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_109"
+  },
+  {
+    "limit_id": "410383",
+    "times": "250",
+    "limit_info_url": "/news/detail/410383charge.html",
+    "item_type": "20",
+    "item_id": "1221291",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_156"
+  },
+  {
+    "limit_id": "410412",
+    "times": "250",
+    "limit_info_url": "/news/detail/410412charge.html",
+    "item_type": "20",
+    "item_id": "1230241",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_11"
+  },
+  {
+    "limit_id": "410466",
+    "times": "250",
+    "limit_info_url": "/news/detail/410466charge.html",
+    "item_type": "20",
+    "item_id": "1230541",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_170"
+  },
+  {
+    "limit_id": "410487",
+    "times": "250",
+    "limit_info_url": "/news/detail/410487charge.html",
+    "item_type": "20",
+    "item_id": "1230551",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_172"
+  },
+  {
+    "limit_id": "410501",
+    "times": "250",
+    "limit_info_url": "/news/detail/410501charge.html",
+    "item_type": "20",
+    "item_id": "1230641",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_176"
+  },
+  {
+    "limit_id": "410502",
+    "times": "250",
+    "limit_info_url": "/news/detail/410502charge.html",
+    "item_type": "20",
+    "item_id": "1230651",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_177"
+  },
+  {
+    "limit_id": "410503",
+    "times": "250",
+    "limit_info_url": "/news/detail/410503charge.html",
+    "item_type": "20",
+    "item_id": "1230661",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_178"
+  },
+  {
+    "limit_id": "410510",
+    "times": "250",
+    "limit_info_url": "/news/detail/410510charge.html",
+    "item_type": "20",
+    "item_id": "1230741",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_180"
+  },
+  {
+    "limit_id": "410516",
+    "times": "250",
+    "limit_info_url": "/news/detail/410516charge.html",
+    "item_type": "20",
+    "item_id": "1230751",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_182"
+  },
+  {
+    "limit_id": "410526",
+    "times": "250",
+    "limit_info_url": "/news/detail/410526charge.html",
+    "item_type": "20",
+    "item_id": "1230761",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_184"
+  },
+  {
+    "limit_id": "410569",
+    "times": "250",
+    "limit_info_url": "/news/detail/410569charge.html",
+    "item_type": "20",
+    "item_id": "1230941",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_189"
+  },
+  {
+    "limit_id": "410575",
+    "times": "250",
+    "limit_info_url": "/news/detail/410575charge.html",
+    "item_type": "20",
+    "item_id": "1230951",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_191"
+  },
+  {
+    "limit_id": "410587",
+    "times": "250",
+    "limit_info_url": "/news/detail/410587charge.html",
+    "item_type": "20",
+    "item_id": "1231041",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_194"
+  },
+  {
+    "limit_id": "410598",
+    "times": "250",
+    "limit_info_url": "/news/detail/410598charge.html",
+    "item_type": "20",
+    "item_id": "1231051",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_196"
+  },
+  {
+    "limit_id": "410609",
+    "times": "250",
+    "limit_info_url": "/news/detail/410609charge.html",
+    "item_type": "20",
+    "item_id": "1231141",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_199"
+  },
+  {
+    "limit_id": "410610",
+    "times": "250",
+    "limit_info_url": "/news/detail/410610charge.html",
+    "item_type": "20",
+    "item_id": "1231151",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_200"
+  },
+  {
+    "limit_id": "410611",
+    "times": "250",
+    "limit_info_url": "/news/detail/410611charge.html",
+    "item_type": "20",
+    "item_id": "1231161",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_201"
+  },
+  {
+    "limit_id": "410628",
+    "times": "250",
+    "limit_info_url": "/news/detail/410628charge.html",
+    "item_type": "20",
+    "item_id": "1231241",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_205"
+  },
+  {
+    "limit_id": "410630",
+    "times": "250",
+    "limit_info_url": "/news/detail/410630charge.html",
+    "item_type": "20",
+    "item_id": "1231251",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_206"
+  },
+  {
+    "limit_id": "410654",
+    "times": "250",
+    "limit_info_url": "/news/detail/410654charge.html",
+    "item_type": "20",
+    "item_id": "1240141",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_210"
+  },
+  {
+    "limit_id": "410855",
+    "times": "100",
+    "limit_info_url": "/news/detail/410855charge.html",
+    "item_type": "20",
+    "item_id": "1241111",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_252"
+  },
+  {
+    "limit_id": "420015",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420015/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_17"
+  },
+  {
+    "limit_id": "420016",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420016/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_9"
+  },
+  {
+    "limit_id": "420017",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420017/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_19"
+  },
+  {
+    "limit_id": "420018",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420018/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_7"
+  },
+  {
+    "limit_id": "420019",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420019/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_11"
+  },
+  {
+    "limit_id": "420020",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420020/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_22"
+  },
+  {
+    "limit_id": "420021",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420021/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_13"
+  },
+  {
+    "limit_id": "420022",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420022/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_19"
+  },
+  {
+    "limit_id": "420023",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420023/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_17"
+  },
+  {
+    "limit_id": "420024",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420024/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_9"
+  },
+  {
+    "limit_id": "420025",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420025/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_22"
+  },
+  {
+    "limit_id": "420026",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420026/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_19"
+  },
+  {
+    "limit_id": "420027",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420027/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_13"
+  },
+  {
+    "limit_id": "420028",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420028/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_22"
+  },
+  {
+    "limit_id": "420029",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420029/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_17"
+  },
+  {
+    "limit_id": "420030",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420030/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_7"
+  },
+  {
+    "limit_id": "420031",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420031/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_9"
+  },
+  {
+    "limit_id": "420032",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420032/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_11"
+  },
+  {
+    "limit_id": "420033",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420033/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_22"
+  },
+  {
+    "limit_id": "420034",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420034/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_19"
+  },
+  {
+    "limit_id": "420035",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420035/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_9"
+  },
+  {
+    "limit_id": "420036",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420036/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_11"
+  },
+  {
+    "limit_id": "420037",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420037/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_7"
+  },
+  {
+    "limit_id": "420038",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420038/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_13"
+  },
+  {
+    "limit_id": "420040",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420040/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_9"
+  },
+  {
+    "limit_id": "420041",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420041/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_13"
+  },
+  {
+    "limit_id": "420042",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420042/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_17"
+  },
+  {
+    "limit_id": "420043",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420043/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_11"
+  },
+  {
+    "limit_id": "420045",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420045/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_19"
+  },
+  {
+    "limit_id": "420046",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420046/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_9"
+  },
+  {
+    "limit_id": "420047",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420047/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_13"
+  },
+  {
+    "limit_id": "420048",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420048/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_13"
+  },
+  {
+    "limit_id": "420050",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420050/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_7"
+  },
+  {
+    "limit_id": "420053",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420053/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_19"
+  },
+  {
+    "limit_id": "420062",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420062/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_22"
+  },
+  {
+    "limit_id": "420064",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420064/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_13"
+  },
+  {
+    "limit_id": "420066",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420066/charge.html",
+    "item_type": "21",
+    "item_id": "3",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_7"
+  },
+  {
+    "limit_id": "420075",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_420075/charge.html",
+    "item_type": "20",
+    "item_id": "1220441",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_13"
+  },
+  {
+    "limit_id": "420077",
+    "times": "250",
+    "limit_info_url": "/news/detail/420077charge.html",
+    "item_type": "20",
+    "item_id": "1220481",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_19"
+  },
+  {
+    "limit_id": "420086",
+    "times": "250",
+    "limit_info_url": "/news/detail/420086charge.html",
+    "item_type": "20",
+    "item_id": "1220661",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_19"
+  },
+  {
+    "limit_id": "420088",
+    "times": "250",
+    "limit_info_url": "/news/detail/420088charge.html",
+    "item_type": "20",
+    "item_id": "1220671",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_17"
+  },
+  {
+    "limit_id": "420097",
+    "times": "250",
+    "limit_info_url": "/news/detail/420097charge.html",
+    "item_type": "20",
+    "item_id": "1221071",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_7"
+  },
+  {
+    "limit_id": "491013",
+    "times": "250",
+    "limit_info_url": "gacha/gacha_491013/charge.htlm",
+    "item_type": "20",
+    "item_id": "1910131",
+    "num": "1",
+    "name_text": "TEXT_GACHA_TABTEXT_997"
+  }
+]

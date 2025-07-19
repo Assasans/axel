@@ -1,1 +1,356 @@
-[{"\ufeffnavi_id":"NAVI_EXPEDITION_STAGE01_ts_collab","play_place":"job","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_EXPEDITION_STAGE02_ts_collab","play_place":"job","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_BLACKSMITH01_ts_collab","play_place":"blacksmith","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_BLACKSMITH02_ts_collab","play_place":"blacksmith","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_STORY01_ts_collab","play_place":"story","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_STORY02_ts_collab","play_place":"story","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_CHARA01_ts_collab","play_place":"chara","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_CHARA02_ts_collab","play_place":"chara","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_MENU01_ts_collab","play_place":"menu","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_MENU02_ts_collab","play_place":"menu","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_SHOP01_ts_collab","play_place":"shop","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_SHOP02_ts_collab","play_place":"shop","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_EXCHANGE01_ts_collab","play_place":"exchange","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_EXCHANGE02_ts_collab","play_place":"exchange","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_MAIN_AREA01_ts_collab","play_place":"quest_top","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_MAIN_STAGE01_ts_collab","play_place":"main_area_select&main_stage_select","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE01_ts_collab","play_place":"free_area_select&free_stage_select","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE02_ts_collab","play_place":"free_stage_select_money","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE03_ts_collab","play_place":"free_stage_select_money_unlimited","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE04_ts_collab","play_place":"free_stage_select_lv","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE05_ts_collab","play_place":"free_stage_select_lv_unlimited","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE06_ts_collab","play_place":"free_stage_select_limit","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE07_ts_collab","play_place":"free_stage_select_limit_unlimited","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE08_ts_collab","play_place":"free_stage_select_wa","start_at":"2123\/12\/15 15:00","end_at":"2123\/12\/31 15:00"},{"\ufeffnavi_id":"NAVI_EXPEDITION_STAGE01_k_collab","play_place":"job","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_EXPEDITION_STAGE02_k_collab","play_place":"job","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_EXPEDITION_STAGE03_k_collab","play_place":"job","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_SHOP01_k_collab","play_place":"shop","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_SHOP02_k_collab","play_place":"shop","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_SHOP03_k_collab","play_place":"shop","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_EXCHANGE01_k_collab","play_place":"exchange","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_EXCHANGE02_k_collab","play_place":"exchange","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_EXCHANGE03_k_collab","play_place":"exchange","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_BLACKSMITH01_k_collab","play_place":"blacksmith","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_BLACKSMITH02_k_collab","play_place":"blacksmith","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_BLACKSMITH03_k_collab","play_place":"blacksmith","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_STORY01_k_collab","play_place":"story","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_STORY02_k_collab","play_place":"story","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_STORY03_k_collab","play_place":"story","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_CHARA01_k_collab","play_place":"chara","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_CHARA02_k_collab","play_place":"chara","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_CHARA03_k_collab","play_place":"chara","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_MAIN_AREA01_k_collab","play_place":"quest_top","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_MAIN_AREA02_k_collab","play_place":"quest_top","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_MAIN_AREA03_k_collab","play_place":"quest_top","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_MAIN_STAGE01_k_collab","play_place":"main_area_select&main_stage_select","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_MAIN_STAGE02_k_collab","play_place":"main_area_select&main_stage_select","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_MAIN_STAGE03_k_collab","play_place":"main_area_select&main_stage_select","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE01_k_collab","play_place":"free_area_select&free_stage_select","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE02_k_collab","play_place":"free_stage_select_money","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE03_k_collab","play_place":"free_stage_select_money_unlimited","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE04_k_collab","play_place":"free_stage_select_lv","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE05_k_collab","play_place":"free_stage_select_lv_unlimited","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE06_k_collab","play_place":"free_stage_select_limit","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE07_k_collab","play_place":"free_stage_select_limit_unlimited","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_HUNTINGQUEST_STAGE08_k_collab","play_place":"free_stage_select_wa","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_MENU01_k_collab_after","play_place":"menu","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_MENU02_k_collab_after","play_place":"menu","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"},{"\ufeffnavi_id":"NAVI_MENU03_k_collab_after","play_place":"menu","start_at":"2124\/1\/31 15:00","end_at":"2124\/2\/27 15:00"}]
+[
+  {
+    "﻿navi_id": "NAVI_EXPEDITION_STAGE01_ts_collab",
+    "play_place": "job",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_EXPEDITION_STAGE02_ts_collab",
+    "play_place": "job",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_BLACKSMITH01_ts_collab",
+    "play_place": "blacksmith",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_BLACKSMITH02_ts_collab",
+    "play_place": "blacksmith",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_STORY01_ts_collab",
+    "play_place": "story",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_STORY02_ts_collab",
+    "play_place": "story",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_CHARA01_ts_collab",
+    "play_place": "chara",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_CHARA02_ts_collab",
+    "play_place": "chara",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_MENU01_ts_collab",
+    "play_place": "menu",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_MENU02_ts_collab",
+    "play_place": "menu",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_SHOP01_ts_collab",
+    "play_place": "shop",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_SHOP02_ts_collab",
+    "play_place": "shop",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_EXCHANGE01_ts_collab",
+    "play_place": "exchange",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_EXCHANGE02_ts_collab",
+    "play_place": "exchange",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_MAIN_AREA01_ts_collab",
+    "play_place": "quest_top",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_MAIN_STAGE01_ts_collab",
+    "play_place": "main_area_select&main_stage_select",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE01_ts_collab",
+    "play_place": "free_area_select&free_stage_select",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE02_ts_collab",
+    "play_place": "free_stage_select_money",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE03_ts_collab",
+    "play_place": "free_stage_select_money_unlimited",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE04_ts_collab",
+    "play_place": "free_stage_select_lv",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE05_ts_collab",
+    "play_place": "free_stage_select_lv_unlimited",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE06_ts_collab",
+    "play_place": "free_stage_select_limit",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE07_ts_collab",
+    "play_place": "free_stage_select_limit_unlimited",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE08_ts_collab",
+    "play_place": "free_stage_select_wa",
+    "start_at": "2123/12/15 15:00",
+    "end_at": "2123/12/31 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_EXPEDITION_STAGE01_k_collab",
+    "play_place": "job",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_EXPEDITION_STAGE02_k_collab",
+    "play_place": "job",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_EXPEDITION_STAGE03_k_collab",
+    "play_place": "job",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_SHOP01_k_collab",
+    "play_place": "shop",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_SHOP02_k_collab",
+    "play_place": "shop",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_SHOP03_k_collab",
+    "play_place": "shop",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_EXCHANGE01_k_collab",
+    "play_place": "exchange",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_EXCHANGE02_k_collab",
+    "play_place": "exchange",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_EXCHANGE03_k_collab",
+    "play_place": "exchange",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_BLACKSMITH01_k_collab",
+    "play_place": "blacksmith",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_BLACKSMITH02_k_collab",
+    "play_place": "blacksmith",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_BLACKSMITH03_k_collab",
+    "play_place": "blacksmith",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_STORY01_k_collab",
+    "play_place": "story",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_STORY02_k_collab",
+    "play_place": "story",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_STORY03_k_collab",
+    "play_place": "story",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_CHARA01_k_collab",
+    "play_place": "chara",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_CHARA02_k_collab",
+    "play_place": "chara",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_CHARA03_k_collab",
+    "play_place": "chara",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_MAIN_AREA01_k_collab",
+    "play_place": "quest_top",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_MAIN_AREA02_k_collab",
+    "play_place": "quest_top",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_MAIN_AREA03_k_collab",
+    "play_place": "quest_top",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_MAIN_STAGE01_k_collab",
+    "play_place": "main_area_select&main_stage_select",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_MAIN_STAGE02_k_collab",
+    "play_place": "main_area_select&main_stage_select",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_MAIN_STAGE03_k_collab",
+    "play_place": "main_area_select&main_stage_select",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE01_k_collab",
+    "play_place": "free_area_select&free_stage_select",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE02_k_collab",
+    "play_place": "free_stage_select_money",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE03_k_collab",
+    "play_place": "free_stage_select_money_unlimited",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE04_k_collab",
+    "play_place": "free_stage_select_lv",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE05_k_collab",
+    "play_place": "free_stage_select_lv_unlimited",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE06_k_collab",
+    "play_place": "free_stage_select_limit",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE07_k_collab",
+    "play_place": "free_stage_select_limit_unlimited",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_HUNTINGQUEST_STAGE08_k_collab",
+    "play_place": "free_stage_select_wa",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_MENU01_k_collab_after",
+    "play_place": "menu",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_MENU02_k_collab_after",
+    "play_place": "menu",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  },
+  {
+    "﻿navi_id": "NAVI_MENU03_k_collab_after",
+    "play_place": "menu",
+    "start_at": "2124/1/31 15:00",
+    "end_at": "2124/2/27 15:00"
+  }
+]

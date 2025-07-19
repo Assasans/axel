@@ -1,1 +1,352 @@
-[{"id":"1","key":"test","value":"testvalue"},{"id":"2","key":"rulever","value":"3"},{"id":"3","key":"tax_rate","value":"10"},{"id":"4","key":"charge_limit_lt_16","value":"5000"},{"id":"5","key":"charge_limit_lt_20","value":"10000"},{"id":"6","key":"charge_alert_threshold","value":"100000"},{"id":"7","key":"default_home_member","value":"1011100"},{"id":"12","key":"rule_url_path","value":"terms\/index.html"},{"id":"13","key":"store_url_android","value":"https:\/\/play.google.com\/store\/apps\/details?id=com.nexon.konosuba"},{"id":"14","key":"store_review_url_android","value":"https:\/\/play.google.com\/store\/apps\/details?id=com.nexon.konosuba"},{"id":"15","key":"store_url_ios","value":"https:\/\/itunes.apple.com\/us\/app\/id1521793564?mt=8"},{"id":"16","key":"store_review_url_ios","value":"https:\/\/itunes.apple.com\/us\/app\/id1521793564?mt=8&action=write-review"},{"id":"17","key":"masterdata_total_size","value":"10000000"},{"id":"18","key":"localsettingdata_total_size","value":"10000000"},{"id":"19","key":"remotecatalog_size","value":"15000000"},{"id":"20","key":"crifile_transcription_max_size","value":"25000000"},{"id":"21","key":"event_story_guide_count","value":"5"},{"id":"22","key":"event_subjugation_guide_count","value":"6"},{"id":"23","key":"event_invasion_guide_count","value":"5"},{"id":"24","key":"send_battle_arena_log_threshold","value":"1200000"},{"id":"25","key":"blacksmith_material_leave_1","value":"100"},{"id":"26","key":"blacksmith_material_leave_2","value":"200"},{"id":"27","key":"multi_battle_room_status_update_interval","value":"3"},{"id":"28","key":"friend_beef_give","value":"20"},{"id":"29","key":"friend_beef_take","value":"10"},{"id":"30","key":"friend_beef_max","value":"100"},{"id":"31","key":"first_friend_url","value":"first_friend\/index.html"},{"id":"32","key":"pc_advance_camp_item_id","value":"1"},{"id":"33","key":"pc_advance_camp_item_type","value":"3"},{"id":"34","key":"pc_advance_camp_item_num","value":"2100"},{"id":"35","key":"pc_advance_camp_present_id","value":"51"},{"id":"36","key":"skip_ticket_max_per_request","value":"100"},{"id":"37","key":"home_initial_member_talk_data_count","value":"2"},{"id":"38","key":"home_member_talk_data_count_per_loop","value":"1"},{"id":"39","key":"home_normal_talk_data_count_per_loop","value":"2"},{"id":"40","key":"dungeon_benefit_re_lottery_limit","value":"3"},{"id":"42","key":"scorechallenge_ex_max_rarity_bonus_value","value":"2.5"},{"id":"43","key":"dungeon_regular_challenge_limit","value":"7"},{"id":"44","key":"dungeon_regular_member_num_1","value":"8"},{"id":"45","key":"dungeon_regular_member_num_2","value":"11"},{"id":"46","key":"dungeon_regular_member_num_3","value":"15"},{"id":"47","key":"dungeon_regular_challenge_initial_value","value":"3"},{"id":"48","key":"dungeon_skip_rank","value":"1"},{"id":"49","key":"metal_damage_by_normal_attack","value":"1"},{"id":"50","key":"metal_damage_by_single_target_skill","value":"3"},{"id":"51","key":"metal_damage_by_multi_target_skill","value":"1"},{"id":"52","key":"metal_damage_by_assist_skill","value":"1"},{"id":"53","key":"metal_damage_ratio_by_special_skill","value":"2"},{"id":"54","key":"score_challenge_score_limit","value":"50000000"},{"id":"55","key":"stamina_use_ratio_limit","value":"10"},{"id":"56","key":"required_score_rank_for_fame_rank_up","value":"5"},{"id":"57","key":"sub_assist_num","value":"1"},{"id":"58","key":"event_score_challenge_score_limit","value":"40000000"},{"id":"59","key":"fame_quest_score_reward_grouping","value":"5"},{"id":"60","key":"roulette_guaranteed_occurrence_days","value":"3"},{"id":"61","key":"surprise_mini_event_stock_limit","value":"4"},{"id":"62","key":"scorechallenge_misssion_start_id","value":"110"},{"id":"63","key":"sub_assist_1_unlock_fame_rank","value":"2"},{"id":"65","key":"fame_quest_status_hp","value":"100"},{"id":"66","key":"fame_quest_status_attack","value":"20"},{"id":"67","key":"fame_quest_status_magicattack","value":"20"},{"id":"68","key":"fame_quest_status_defense","value":"20"},{"id":"69","key":"fame_quest_status_magicdefense","value":"20"},{"id":"70","key":"battle_skip_timeout","value":"25"},{"id":"71","key":"fame_bonus_incidence","value":"20"},{"id":"72","key":"pa_skill_fame_possession_limit","value":"30"},{"id":"73","key":"fame_scroll_id","value":"1"},{"id":"74","key":"fame_supplement_id","value":"1"},{"id":"75","key":"fame_status_bonus_individual_limit","value":"25"},{"id":"77","key":"metal_add_damage","value":"1"}]
+[
+  {
+    "id": "1",
+    "key": "test",
+    "value": "testvalue"
+  },
+  {
+    "id": "2",
+    "key": "rulever",
+    "value": "3"
+  },
+  {
+    "id": "3",
+    "key": "tax_rate",
+    "value": "10"
+  },
+  {
+    "id": "4",
+    "key": "charge_limit_lt_16",
+    "value": "5000"
+  },
+  {
+    "id": "5",
+    "key": "charge_limit_lt_20",
+    "value": "10000"
+  },
+  {
+    "id": "6",
+    "key": "charge_alert_threshold",
+    "value": "100000"
+  },
+  {
+    "id": "7",
+    "key": "default_home_member",
+    "value": "1011100"
+  },
+  {
+    "id": "12",
+    "key": "rule_url_path",
+    "value": "terms/index.html"
+  },
+  {
+    "id": "13",
+    "key": "store_url_android",
+    "value": "https://play.google.com/store/apps/details?id=com.nexon.konosuba"
+  },
+  {
+    "id": "14",
+    "key": "store_review_url_android",
+    "value": "https://play.google.com/store/apps/details?id=com.nexon.konosuba"
+  },
+  {
+    "id": "15",
+    "key": "store_url_ios",
+    "value": "https://itunes.apple.com/us/app/id1521793564?mt=8"
+  },
+  {
+    "id": "16",
+    "key": "store_review_url_ios",
+    "value": "https://itunes.apple.com/us/app/id1521793564?mt=8&action=write-review"
+  },
+  {
+    "id": "17",
+    "key": "masterdata_total_size",
+    "value": "10000000"
+  },
+  {
+    "id": "18",
+    "key": "localsettingdata_total_size",
+    "value": "10000000"
+  },
+  {
+    "id": "19",
+    "key": "remotecatalog_size",
+    "value": "15000000"
+  },
+  {
+    "id": "20",
+    "key": "crifile_transcription_max_size",
+    "value": "25000000"
+  },
+  {
+    "id": "21",
+    "key": "event_story_guide_count",
+    "value": "5"
+  },
+  {
+    "id": "22",
+    "key": "event_subjugation_guide_count",
+    "value": "6"
+  },
+  {
+    "id": "23",
+    "key": "event_invasion_guide_count",
+    "value": "5"
+  },
+  {
+    "id": "24",
+    "key": "send_battle_arena_log_threshold",
+    "value": "1200000"
+  },
+  {
+    "id": "25",
+    "key": "blacksmith_material_leave_1",
+    "value": "100"
+  },
+  {
+    "id": "26",
+    "key": "blacksmith_material_leave_2",
+    "value": "200"
+  },
+  {
+    "id": "27",
+    "key": "multi_battle_room_status_update_interval",
+    "value": "3"
+  },
+  {
+    "id": "28",
+    "key": "friend_beef_give",
+    "value": "20"
+  },
+  {
+    "id": "29",
+    "key": "friend_beef_take",
+    "value": "10"
+  },
+  {
+    "id": "30",
+    "key": "friend_beef_max",
+    "value": "100"
+  },
+  {
+    "id": "31",
+    "key": "first_friend_url",
+    "value": "first_friend/index.html"
+  },
+  {
+    "id": "32",
+    "key": "pc_advance_camp_item_id",
+    "value": "1"
+  },
+  {
+    "id": "33",
+    "key": "pc_advance_camp_item_type",
+    "value": "3"
+  },
+  {
+    "id": "34",
+    "key": "pc_advance_camp_item_num",
+    "value": "2100"
+  },
+  {
+    "id": "35",
+    "key": "pc_advance_camp_present_id",
+    "value": "51"
+  },
+  {
+    "id": "36",
+    "key": "skip_ticket_max_per_request",
+    "value": "100"
+  },
+  {
+    "id": "37",
+    "key": "home_initial_member_talk_data_count",
+    "value": "2"
+  },
+  {
+    "id": "38",
+    "key": "home_member_talk_data_count_per_loop",
+    "value": "1"
+  },
+  {
+    "id": "39",
+    "key": "home_normal_talk_data_count_per_loop",
+    "value": "2"
+  },
+  {
+    "id": "40",
+    "key": "dungeon_benefit_re_lottery_limit",
+    "value": "3"
+  },
+  {
+    "id": "42",
+    "key": "scorechallenge_ex_max_rarity_bonus_value",
+    "value": "2.5"
+  },
+  {
+    "id": "43",
+    "key": "dungeon_regular_challenge_limit",
+    "value": "7"
+  },
+  {
+    "id": "44",
+    "key": "dungeon_regular_member_num_1",
+    "value": "8"
+  },
+  {
+    "id": "45",
+    "key": "dungeon_regular_member_num_2",
+    "value": "11"
+  },
+  {
+    "id": "46",
+    "key": "dungeon_regular_member_num_3",
+    "value": "15"
+  },
+  {
+    "id": "47",
+    "key": "dungeon_regular_challenge_initial_value",
+    "value": "3"
+  },
+  {
+    "id": "48",
+    "key": "dungeon_skip_rank",
+    "value": "1"
+  },
+  {
+    "id": "49",
+    "key": "metal_damage_by_normal_attack",
+    "value": "1"
+  },
+  {
+    "id": "50",
+    "key": "metal_damage_by_single_target_skill",
+    "value": "3"
+  },
+  {
+    "id": "51",
+    "key": "metal_damage_by_multi_target_skill",
+    "value": "1"
+  },
+  {
+    "id": "52",
+    "key": "metal_damage_by_assist_skill",
+    "value": "1"
+  },
+  {
+    "id": "53",
+    "key": "metal_damage_ratio_by_special_skill",
+    "value": "2"
+  },
+  {
+    "id": "54",
+    "key": "score_challenge_score_limit",
+    "value": "50000000"
+  },
+  {
+    "id": "55",
+    "key": "stamina_use_ratio_limit",
+    "value": "10"
+  },
+  {
+    "id": "56",
+    "key": "required_score_rank_for_fame_rank_up",
+    "value": "5"
+  },
+  {
+    "id": "57",
+    "key": "sub_assist_num",
+    "value": "1"
+  },
+  {
+    "id": "58",
+    "key": "event_score_challenge_score_limit",
+    "value": "40000000"
+  },
+  {
+    "id": "59",
+    "key": "fame_quest_score_reward_grouping",
+    "value": "5"
+  },
+  {
+    "id": "60",
+    "key": "roulette_guaranteed_occurrence_days",
+    "value": "3"
+  },
+  {
+    "id": "61",
+    "key": "surprise_mini_event_stock_limit",
+    "value": "4"
+  },
+  {
+    "id": "62",
+    "key": "scorechallenge_misssion_start_id",
+    "value": "110"
+  },
+  {
+    "id": "63",
+    "key": "sub_assist_1_unlock_fame_rank",
+    "value": "2"
+  },
+  {
+    "id": "65",
+    "key": "fame_quest_status_hp",
+    "value": "100"
+  },
+  {
+    "id": "66",
+    "key": "fame_quest_status_attack",
+    "value": "20"
+  },
+  {
+    "id": "67",
+    "key": "fame_quest_status_magicattack",
+    "value": "20"
+  },
+  {
+    "id": "68",
+    "key": "fame_quest_status_defense",
+    "value": "20"
+  },
+  {
+    "id": "69",
+    "key": "fame_quest_status_magicdefense",
+    "value": "20"
+  },
+  {
+    "id": "70",
+    "key": "battle_skip_timeout",
+    "value": "25"
+  },
+  {
+    "id": "71",
+    "key": "fame_bonus_incidence",
+    "value": "20"
+  },
+  {
+    "id": "72",
+    "key": "pa_skill_fame_possession_limit",
+    "value": "30"
+  },
+  {
+    "id": "73",
+    "key": "fame_scroll_id",
+    "value": "1"
+  },
+  {
+    "id": "74",
+    "key": "fame_supplement_id",
+    "value": "1"
+  },
+  {
+    "id": "75",
+    "key": "fame_status_bonus_individual_limit",
+    "value": "25"
+  },
+  {
+    "id": "77",
+    "key": "metal_add_damage",
+    "value": "1"
+  }
+]
