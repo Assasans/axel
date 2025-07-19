@@ -4,12 +4,11 @@ use std::io;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
-use anyhow::anyhow;
-use axum::body::{Body, Bytes};
+use axum::body::Body;
 use axum::extract::{MatchedPath, Path, Request};
 use axum::handler::HandlerWithoutStateExt;
 use axum::http::response::Builder;
-use axum::http::{HeaderMap, HeaderName, HeaderValue, StatusCode};
+use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::routing::get;
 use axum::{Json, Router, ServiceExt};
@@ -17,7 +16,6 @@ use reqwest::Client;
 use serde::Serialize;
 use tower::{Layer, Service};
 use tower_http::services::ServeDir;
-use tower_http::set_status::SetStatus;
 use tower_http::trace::TraceLayer;
 use tracing::info;
 use url::Url;
@@ -27,7 +25,7 @@ use crate::AppError;
 
 pub async fn start() -> io::Result<()> {
   let app = Router::new()
-    .route("/versions/:version", get(get_version))
+    .route("/versions/{version}", get(get_version))
     .nest_service(
       "/bundles",
       ServeDir::new("static/bundles").fallback(ServeRemoteResource::new(

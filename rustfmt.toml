@@ -4,3 +4,4 @@ imports_granularity = "Module"
 group_imports = "StdExternalCrate"
 trailing_comma = "Vertical"
 overflow_delimited_expr = true
+hex_literal_case = "Lower"

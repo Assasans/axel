@@ -1,3 +1,4 @@
+use std::env;
 use std::error::Error;
 use std::fs::{File, OpenOptions};
 use std::io::{self, stdin, stdout, BufRead, Read, Seek, SeekFrom, Write};
@@ -37,9 +38,11 @@ struct Args {
   url: Option<String>,
 
   /// PID of the `com.nexon.konosuba` process.
+  #[arg(long = "pid")]
   pid: u32,
 
   /// PEM-formatted RSA-1024 key for JWT
+  #[arg(long = "key")]
   key_file: PathBuf,
 }
 
@@ -168,9 +171,16 @@ fn get_suitable_regions(pid: u32) -> Vec<MemoryRegion> {
 }
 
 fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
+  let env_filter = EnvFilter::builder().parse_lossy(
+    env::var("RUST_LOG")
+      .as_deref()
+      .unwrap_or("info"),
+  );
+  let (non_blocking_stdout, _stdout_guard) = tracing_appender::non_blocking(stdout());
+  let console = tracing_subscriber::fmt::layer().with_writer(non_blocking_stdout);
   tracing_subscriber::registry()
-    .with(fmt::layer())
-    .with(EnvFilter::from_default_env())
+    .with(env_filter)
+    .with(console)
     .init();
 
   let args = Args::parse();

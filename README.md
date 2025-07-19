@@ -244,7 +244,7 @@ Clients just have to specify your domain while patching the game (e.g. `axel-rsa
 
 1. Start `KonoSuba: FD` in Waydroid and wait for the title screen to appear ("Connection Error" alert will appear — ignore it).
 2. Build the [RSA key patcher](rsa-patcher) — `cargo build --release`.
-3. And run it — `sudo RUST_LOG=debug ./target/release/axel-rsa-patcher $(pidof com.nexon.konosuba) key.pem --url https://static.konosuba.local/`.
+3. And run it — `sudo RUST_LOG=debug ./target/release/axel-rsa-patcher --pid $(pidof com.nexon.konosuba) --url https://static.konosuba.local/ --key ../pubkey.pem`.
 4. Press OK on the error alert, the game should now work.
 
 ## License

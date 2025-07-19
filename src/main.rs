@@ -75,10 +75,15 @@ struct AppState {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
-  tracing_subscriber::registry()
-    .with(fmt::layer())
-    .with(EnvFilter::from_default_env())
-    .init();
+  #[rustfmt::skip]
+  let env_filter = EnvFilter::builder().parse_lossy(
+    env::var("RUST_LOG")
+      .as_deref()
+      .unwrap_or("info"),
+  );
+  let (non_blocking_stdout, _stdout_guard) = tracing_appender::non_blocking(stdout());
+  let console = tracing_subscriber::fmt::layer().with_writer(non_blocking_stdout);
+  tracing_subscriber::registry().with(env_filter).with(console).init();
 
   info!("May There Be a Blessing on This Wonderful Server");
 
@@ -92,7 +97,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
   // initialize lazies
   get_masters().await;
 
-  info!("{}", serde_json::to_string(&GachaItem::new_simple(410211)).unwrap());
+  // info!("{}", serde_json::to_string(&GachaItem::new_simple(410211)).unwrap());
 
   // let result = Aes128CbcDec::new(AES_KEY.into(), AES_IV.into())
   //   .decrypt_padded_vec_mut::<Pkcs7>(include_bytes!(
@@ -108,7 +113,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
   };
 
   let app = Router::new()
-    .route("/api/*method", post(api_call))
+    .route("/api/{*method}", post(api_call))
     .layer(
       TraceLayer::new_for_http()
         // Create our own span for the request and include the matched path. The matched
