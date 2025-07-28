@@ -8,7 +8,7 @@ use axum::body::Body;
 use axum::extract::{MatchedPath, Path, Request};
 use axum::http::response::Builder;
 use axum::http::StatusCode;
-use axum::response::{IntoResponse, Response};
+use axum::response::{Html, IntoResponse, Response};
 use axum::routing::get;
 use axum::{Json, Router, ServiceExt};
 use reqwest::Client;
@@ -22,25 +22,28 @@ use url::Url;
 use crate::normalize_path::normalize_path;
 use crate::AppError;
 
+const UPSTREAM_URL: &str = "https://smb.assasans.dev/konofd/";
+
 pub async fn start() -> io::Result<()> {
   let app = Router::new()
+    .route("/", get(get_root_friendly))
     .route("/versions/{version}", get(get_version))
     .nest_service(
       "/bundles",
       ServeDir::new("static/bundles").fallback(ServeRemoteResource::new(
-        "https://smb.assasans.dev/konofd/bundles/".parse().unwrap(),
+        UPSTREAM_URL.parse::<Url>().unwrap().join("bundles/").unwrap(),
       )),
     )
     .nest_service(
       "/banners",
       ServeDir::new("static/banners").fallback(ServeRemoteResource::new(
-        "https://smb.assasans.dev/konofd/banners/".parse().unwrap(),
+        UPSTREAM_URL.parse::<Url>().unwrap().join("banners/").unwrap(),
       )),
     )
     .nest_service(
       "/webview",
       ServeDir::new("static/webview").fallback(ServeRemoteResource::new(
-        "https://smb.assasans.dev/konofd/webview/".parse().unwrap(),
+        UPSTREAM_URL.parse::<Url>().unwrap().join("webview/").unwrap(),
       )),
     )
     .layer(
@@ -135,10 +138,10 @@ async fn get_version(Path(version): Path<String>) -> axum::response::Result<impl
   Ok(Json(GetVersion {
     app_version: "4.11.6".to_string(),
     asset_version: "2025012110".to_string(),
-    api_url: "api.konosuba.local/".to_string(),
-    asset_url: "static.konosuba.local/bundles/4.11.6/".to_string(),
-    webview_url: "static.konosuba.local/webview/".to_string(),
-    banner_url: "static.konosuba.local/banners/".to_string(),
+    api_url: "axel.assasans.dev/api/".to_string(),
+    asset_url: "axel.assasans.dev/static/bundles/4.11.6/".to_string(),
+    webview_url: "axel.assasans.dev/static/webview/".to_string(),
+    banner_url: "axel.assasans.dev/static/banners/".to_string(),
     inquiry_url: "inquiry.sesisoft.com/".to_string(),
     enable_review: "false".to_string(),
   }))
@@ -154,4 +157,26 @@ pub struct GetVersion {
   pub banner_url: String,
   pub inquiry_url: String,
   pub enable_review: String,
+}
+
+async fn get_root_friendly() -> axum::response::Result<impl IntoResponse, AppError> {
+  let name = env!("CARGO_PKG_NAME");
+  let version = env!("CARGO_PKG_VERSION");
+
+  Ok(Html(format!(
+    "<DOCTYPE html>
+    <html>
+      <head>
+        <title>Axel static server</title>
+      </head>
+      <body>
+        <h1>Welcome to the Axel static server!</h1>
+        <p>This server provides initial configuration and static assets for the game.</p>
+        <p>Available endpoints: <code>/versions/{{version}}</code></p>
+        <p>Upstream URL: <a href=\"{UPSTREAM_URL}\">{UPSTREAM_URL}</a></p>
+        <hr />
+        <i>{name}/{version}</i>
+      </body>
+    </html>",
+  )))
 }

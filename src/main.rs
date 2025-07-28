@@ -20,8 +20,8 @@ use anyhow::anyhow;
 use axum::body::Bytes;
 use axum::extract::{MatchedPath, Path, Query, Request, State};
 use axum::http::{HeaderMap, StatusCode};
-use axum::response::{IntoResponse, Response};
-use axum::routing::post;
+use axum::response::{Html, IntoResponse, Response};
+use axum::routing::{get, post};
 use axum::{Router, ServiceExt};
 use base64::prelude::BASE64_STANDARD_NO_PAD;
 use base64::Engine;
@@ -113,6 +113,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
   };
 
   let app = Router::new()
+    .route("/", get(get_root_friendly))
     .route("/api/{*method}", post(api_call))
     .layer(
       TraceLayer::new_for_http()
@@ -383,6 +384,26 @@ async fn api_call(
   debug!("response jwt: {}", token);
 
   Ok(([(JWT_HEADER, token)], encrypted))
+}
+
+async fn get_root_friendly() -> axum::response::Result<impl IntoResponse, AppError> {
+  let name = env!("CARGO_PKG_NAME");
+  let version = env!("CARGO_PKG_VERSION");
+
+  Ok(Html(format!(
+    "<DOCTYPE html>
+    <html>
+      <head>
+        <title>Axel API server</title>
+      </head>
+      <body>
+        <h1>Welcome to the Axel API server!</h1>
+        <p>This server processes all API requests from the game client.</p>
+        <hr />
+        <i>{name}/{version}</i>
+      </body>
+    </html>",
+  )))
 }
 
 // Make our own error that wraps `anyhow::Error`.
