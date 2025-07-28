@@ -1,6 +1,7 @@
 pub mod api;
 pub mod bool_as_int;
 pub mod call;
+pub mod client_ip;
 pub mod master;
 mod normalize_path;
 pub mod session;
@@ -10,6 +11,7 @@ pub mod string_as_base64;
 use std::collections::{BTreeMap, HashMap};
 use std::error::Error;
 use std::io::stdout;
+use std::net::SocketAddr;
 use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
 use std::{env, fs, str};
@@ -22,7 +24,7 @@ use axum::extract::{MatchedPath, Path, Query, Request, State};
 use axum::http::{HeaderMap, StatusCode};
 use axum::response::{Html, IntoResponse, Response};
 use axum::routing::{get, post};
-use axum::{Router, ServiceExt};
+use axum::{middleware, Router, ServiceExt};
 use base64::prelude::BASE64_STANDARD_NO_PAD;
 use base64::Engine;
 use clap::Parser;
@@ -34,7 +36,7 @@ use reqwest::header::CONTENT_TYPE;
 use tokio::join;
 use tower::Layer;
 use tower_http::trace::TraceLayer;
-use tracing::{debug, info};
+use tracing::{debug, info, info_span};
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::EnvFilter;
@@ -45,6 +47,7 @@ use crate::api::{
   master_list, notice, party_info, profile, story_reward, ApiRequest,
 };
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
+use crate::client_ip::{add_client_ip, ClientIp};
 use crate::normalize_path::normalize_path;
 use crate::session::{Session, UserId};
 
@@ -119,22 +122,28 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
       TraceLayer::new_for_http()
         // Create our own span for the request and include the matched path. The matched
         // path is useful for figuring out which handler the request was routed to.
-        .make_span_with(|req: &Request| {
-          let method = req.method();
-          let uri = req.uri();
+        .make_span_with(|request: &Request| {
+          let method = request.method();
+          let uri = request.uri();
 
           // axum automatically adds this extension.
-          let matched_path = req
+          let matched_path = request
             .extensions()
             .get::<MatchedPath>()
             .map(|matched_path| matched_path.as_str());
+          let client_ip = request
+            .extensions()
+            .get::<ClientIp>()
+            .map(|client_ip| client_ip.0)
+            .unwrap();
 
-          tracing::info_span!("request", %method, %uri, matched_path)
+          info_span!("request", %client_ip, %method, %uri, matched_path)
         })
         // By default, `TraceLayer` will log 5xx responses but we're doing our specific
         // logging of errors so disable that
         .on_failure(()),
     )
+    .layer(middleware::from_fn(add_client_ip))
     .with_state(Arc::new(state));
   let middleware = tower::util::MapRequestLayer::new(normalize_path);
   let app = middleware.layer(app);
@@ -142,7 +151,10 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
   let listener = tokio::net::TcpListener::bind("0.0.0.0:2020").await.unwrap();
   info!("api server started at {:?}", listener.local_addr().unwrap());
 
-  let (static_result, _) = join!(static_server::start(), axum::serve(listener, app.into_make_service()));
+  let (static_result, _) = join!(
+    static_server::start(),
+    axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
+  );
   static_result.unwrap();
 
   Ok(())

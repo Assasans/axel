@@ -1,6 +1,7 @@
 use std::convert::Infallible;
 use std::future::Future;
 use std::io;
+use std::net::SocketAddr;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
@@ -10,15 +11,18 @@ use axum::http::response::Builder;
 use axum::http::StatusCode;
 use axum::response::{Html, IntoResponse, Response};
 use axum::routing::get;
-use axum::{Json, Router, ServiceExt};
+use axum::{middleware, Json, Router, ServiceExt};
+use chrono::Utc;
 use reqwest::Client;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 use tower::{Layer, Service};
 use tower_http::services::ServeDir;
 use tower_http::trace::TraceLayer;
-use tracing::{debug, info, warn};
+use tracing::{debug, info, info_span, warn};
 use url::Url;
 
+use crate::client_ip::{add_client_ip, ClientIp};
 use crate::normalize_path::normalize_path;
 use crate::AppError;
 
@@ -28,6 +32,7 @@ pub async fn start() -> io::Result<()> {
   let app = Router::new()
     .route("/", get(get_root_friendly))
     .route("/versions/{version}", get(get_version))
+    .route("/webview/EN/data/json/news.json", get(get_news))
     .nest_service(
       "/bundles",
       ServeDir::new("static/bundles").fallback(ServeRemoteResource::new(
@@ -50,28 +55,34 @@ pub async fn start() -> io::Result<()> {
       TraceLayer::new_for_http()
         // Create our own span for the request and include the matched path. The matched
         // path is useful for figuring out which handler the request was routed to.
-        .make_span_with(|req: &Request| {
-          let method = req.method();
-          let uri = req.uri();
+        .make_span_with(|request: &Request| {
+          let method = request.method();
+          let uri = request.uri();
 
           // axum automatically adds this extension.
-          let matched_path = req
+          let matched_path = request
             .extensions()
             .get::<MatchedPath>()
             .map(|matched_path| matched_path.as_str());
+          let client_ip = request
+            .extensions()
+            .get::<ClientIp>()
+            .map(|client_ip| client_ip.0)
+            .unwrap();
 
-          tracing::info_span!("request", %method, %uri, matched_path)
+          info_span!("request", %client_ip, %method, %uri, matched_path)
         })
         // By default, `TraceLayer` will log 5xx responses but we're doing our specific
         // logging of errors so disable that
         .on_failure(()),
-    );
+    )
+    .layer(middleware::from_fn(add_client_ip));
   let middleware = tower::util::MapRequestLayer::new(normalize_path);
   let app = middleware.layer(app);
 
   let listener = tokio::net::TcpListener::bind("0.0.0.0:2021").await.unwrap();
   info!("static server started at {:?}", listener.local_addr().unwrap());
-  axum::serve(listener, app.into_make_service()).await
+  axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>()).await
 }
 
 #[derive(Debug, Clone)]
@@ -130,6 +141,61 @@ impl Service<Request> for ServeRemoteResource {
       }))
     })
   }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct NewsItem {
+  pub title: String,
+  pub category: NewsCategory,
+  pub platform: NewsPlatform,
+  pub thumbnail: Option<String>,
+  pub banner: Option<String>,
+  pub url: String,
+  pub priority: Option<i64>,
+  pub start_at: i64,
+  pub end_at: i64,
+  pub date: String,
+}
+
+#[derive(Debug, Clone, Copy, Serialize_repr, Deserialize_repr)]
+#[repr(u8)]
+pub enum NewsCategory {
+  AnnouncementReportError = 1,
+  Event = 2,
+  EventRecruit = 3,
+  EventCampaign = 4,
+  AnnouncementNotice = 5,
+  Update = 6,
+  UpdateGameMaintenance = 7,
+}
+
+#[derive(Debug, Clone, Copy, Serialize_repr, Deserialize_repr)]
+#[repr(u8)]
+pub enum NewsPlatform {
+  All = 0,
+  Apple = 1,
+  Android = 2,
+  Pc = 3,
+}
+
+async fn get_news() -> axum::response::Result<impl IntoResponse, AppError> {
+  info!("get news");
+
+  let time = Utc::now();
+  let news = vec![NewsItem {
+    title: "May There Be a Blessing on This Wonderful Server!".to_string(),
+    category: NewsCategory::AnnouncementNotice,
+    platform: NewsPlatform::All,
+    thumbnail: None,
+    banner: Some("https://smb.assasans.dev/konofd/story-images/1013104.png".to_string()),
+    url: "./detail/00-axel.html".to_string(),
+    priority: Some(1),
+    start_at: (time - chrono::Duration::days(7)).timestamp(),
+    end_at: (time + chrono::Duration::days(7)).timestamp(),
+    date: "2025-07-28".to_owned(),
+  }];
+
+  Ok(Json(news))
 }
 
 async fn get_version(Path(version): Path<String>) -> axum::response::Result<impl IntoResponse, AppError> {
