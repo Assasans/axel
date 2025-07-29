@@ -1,5 +1,5 @@
 use jwt_simple::prelude::Serialize;
-use serde_json::Value;
+use serde_json::{json, Value};
 
 use crate::api::master_all::get_masters;
 use crate::api::{ApiRequest, NotificationData, RemoteData};
@@ -1381,4 +1381,98 @@ pub async fn gacha_normal(request: ApiRequest) -> anyhow::Result<(CallResponse<d
   ]);
 
   Ok((response, false))
+}
+
+// IDA static analysis, not real data
+pub async fn gacha_rate(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+  let gacha_id: u32 = request.body["gacha_id"].parse().unwrap();
+
+  let response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(GachaRate {
+    gacha_id,
+    rate: vec![GachaRateRate {
+      rare: 3,
+      itemid: 1023104,
+      rate: 10,
+      pickup: 0,
+      detailview: 0,
+      detailpriority: 0,
+    }],
+    limitrate: vec![GachaRateRate {
+      rare: 4,
+      itemid: 1814100,
+      rate: 20,
+      pickup: 0,
+      detailview: 0,
+      detailpriority: 0,
+    }],
+    rarerate: vec![GachaRateRate {
+      rare: 4,
+      itemid: 1024225,
+      rate: 30,
+      pickup: 1,
+      detailview: 0,
+      detailpriority: 0,
+    }],
+    limitrarerate: vec![GachaRateRate {
+      rare: 4,
+      itemid: 1024118,
+      rate: 40,
+      pickup: 1,
+      detailview: 0,
+      detailpriority: 0,
+    }],
+    bonus_per_draw_count: 10,
+    bonusrate: vec![
+      GachaRateBonusItem {
+        pack_id: 241039504,
+        rate: 7,
+      },
+      GachaRateBonusItem {
+        pack_id: 241039509,
+        rate: 8,
+      },
+    ],
+  }));
+
+  Ok((response, false))
+}
+
+#[derive(Default, Debug, Serialize)]
+pub struct GachaRate {
+  pub gacha_id: u32,
+  pub rate: Vec<GachaRateRate>,
+  pub limitrate: Vec<GachaRateRate>,
+  pub rarerate: Vec<GachaRateRate>,
+  pub limitrarerate: Vec<GachaRateRate>,
+  pub bonus_per_draw_count: i32,
+  pub bonusrate: Vec<GachaRateBonusItem>,
+}
+
+#[derive(Default, Debug, Serialize)]
+pub struct GachaRateRate {
+  pub rare: i32,
+  pub itemid: i64,
+  /// Three decimal places, e.g. 10.500 = 10.500%
+  pub rate: i32,
+  /// Non-zero displays "apperance rates up" in UI
+  pub pickup: i32,
+  pub detailview: i32,
+  pub detailpriority: i32,
+}
+
+#[derive(Default, Debug, Serialize)]
+pub struct GachaRateBonusItem {
+  pub pack_id: i64,
+  pub rate: i32,
+}
+
+impl CallCustom for GachaRate {}
+
+pub async fn gacha_log(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+  Ok((
+    CallResponse::new_success(Box::new(json!({
+      "goods":[{"itemtype":4,"itemid":1063113,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1034100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1152102,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1083110,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1122100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1093100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1132100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1002102,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1282100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1064217,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1192102,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1102102,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1143127,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1162100,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1192102,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1012100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1013100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1013116,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1013116,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535}],"status":0,"time":1723059245,"remotedata":[],"notificationdata":[]
+    }))),
+    false,
+  ))
 }

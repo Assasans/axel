@@ -333,6 +333,8 @@ async fn api_call(
       "gacha_tutorial_reward" => gacha::gacha_tutorial_reward(request).await?,
       "gachachain" => gacha::gacha_chain(request).await?,
       "gachanormal" => gacha::gacha_normal(request).await?,
+      "gacharate" => gacha::gacha_rate(request).await?,
+      "gachalog" => gacha::gacha_log(request).await?,
       "root_box_check" => (CallResponse::new_success(Box::new(())), false),
       "maintenancecheck" => maintenance_check::route(request).await?,
       "firebasetoken" => (CallResponse::new_success(Box::new(())), true),
