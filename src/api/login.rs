@@ -4,7 +4,7 @@ use jwt_simple::prelude::Serialize;
 use rand::random;
 use tracing::info;
 
-use crate::api::{ApiRequest, RemoteData};
+use crate::api::{ApiRequest, NotificationData, RemoteData};
 use crate::call::{CallCustom, CallResponse};
 use crate::session::{Session, UserId};
 
@@ -50,18 +50,69 @@ pub async fn route(
     tutorial: 99,
     created_at: "".to_string(),
   }));
-  response.add_remote_data(vec![
-    RemoteData::new(3, 0, 0, 0, 0, 0, "-".to_owned()),
-    RemoteData::new(4, 1, 0, 80000, 0, 0, "-".to_owned()),
-    RemoteData::new(4, 2, 0, 6000, 0, 0, "-".to_owned()),
-    RemoteData::new(4, 3, 0, 3000, 0, 0, "-".to_owned()),
-    RemoteData::new(4, 9, 0, 10, 0, 0, "-".to_owned()),
-    RemoteData::new(4, 10, 0, 0, 0, 0, "-".to_owned()),
-    RemoteData::new(4, 23, 0, 1, 0, 0, "-".to_owned()),
-    RemoteData::new(4, 28, 230731, 0, 0, 0, "-".to_owned()),
-    RemoteData::new(4, 34, 2, 3, 0, 0, "-".to_owned()),
-    RemoteData::new(4, 34, 1, 0, 0, 0, "-".to_owned()),
-    RemoteData::new(4, 40, 0, 1, 0, 0, "-".to_owned()),
+
+  // Keep it as a blob for now, it is very large...
+  let remote_data = include_str!("../login-remotedata.json");
+  let remote_data: Vec<RemoteData> = serde_json::from_str(remote_data).unwrap();
+  info!(?remote_data, "adding remote data");
+  response.add_remote_data(remote_data);
+
+  response.add_notifications(vec![
+    NotificationData::new(1, 7, 6, 0, "".to_string(), "".to_string()),
+    NotificationData::new(1, 8, 0, 0, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
+    NotificationData::new(1, 6, 1, 30030001, "".to_string(), "".to_string()),
+    NotificationData::new(1, 10, 230731, 52307325, "".to_string(), "".to_string()),
+    NotificationData::new(1, 10, 230831, 52308305, "".to_string(), "".to_string()),
+    NotificationData::new(1, 12, 19, 200012, "".to_string(), "".to_string()),
+    NotificationData::new(1, 12, 19, 410535, "".to_string(), "".to_string()),
+    NotificationData::new(1, 12, 19, 410536, "".to_string(), "".to_string()),
+    NotificationData::new(1, 12, 19, 410553, "".to_string(), "".to_string()),
+    NotificationData::new(1, 12, 19, 410123, "".to_string(), "".to_string()),
+    NotificationData::new(1, 12, 19, 410436, "".to_string(), "".to_string()),
+    NotificationData::new(1, 12, 19, 410565, "".to_string(), "".to_string()),
+    NotificationData::new(1, 12, 19, 410433, "".to_string(), "".to_string()),
+    NotificationData::new(1, 12, 19, 410564, "".to_string(), "".to_string()),
+    NotificationData::new(1, 12, 19, 410554, "".to_string(), "".to_string()),
+    NotificationData::new(1, 12, 19, 410554, "".to_string(), "".to_string()),
+    NotificationData::new(1, 12, 19, 410554, "".to_string(), "".to_string()),
+    NotificationData::new(1, 12, 19, 410554, "".to_string(), "".to_string()),
+    NotificationData::new(1, 12, 19, 410554, "".to_string(), "".to_string()),
+    NotificationData::new(1, 14, 21, 11003, "".to_string(), "".to_string()),
+    NotificationData::new(1, 14, 21, 31015, "".to_string(), "".to_string()),
+    NotificationData::new(1, 14, 21, 31016, "".to_string(), "".to_string()),
+    NotificationData::new(1, 14, 21, 31017, "".to_string(), "".to_string()),
+    NotificationData::new(1, 16, 1, 0, "".to_string(), "".to_string()),
+    NotificationData::new(1, 15, 1, 0, "".to_string(), "".to_string()),
+    NotificationData::new(1, 23, 3, 1, "".to_string(), "".to_string()),
+    NotificationData::new(1, 25, 3, 0, "0".to_string(), "".to_string()),
+    NotificationData::new(1, 14, 4, 1722609570, "".to_string(), "".to_string()),
+    NotificationData::new(1, 19, 5, 1722620388, "".to_string(), "100".to_string()),
+    NotificationData::new(1, 19, 5, 1722620388, "".to_string(), "101".to_string()),
+    NotificationData::new(1, 19, 5, 1722620388, "".to_string(), "102".to_string()),
+    NotificationData::new(1, 19, 5, 1722620388, "".to_string(), "103".to_string()),
+    NotificationData::new(1, 19, 5, 1722620388, "".to_string(), "104".to_string()),
+    NotificationData::new(1, 19, 5, 1722620388, "".to_string(), "105".to_string()),
+    NotificationData::new(1, 19, 5, 1722620388, "".to_string(), "106".to_string()),
+    NotificationData::new(1, 19, 5, 1722620388, "".to_string(), "107".to_string()),
+    NotificationData::new(1, 19, 5, 0, "".to_string(), "23083".to_string()),
+    NotificationData::new(1, 19, 5, 1722620388, "".to_string(), "50081".to_string()),
+    NotificationData::new(1, 7, 23, 1, "[\"12209\",\"12206\",\"12204\",\"12203\",\"12205\",\"12207\",\"12208\",\"12210\",\"12211\",\"12212\",\"12320\",\"12900\",\"12100\",\"12200\",\"12300\",\"12310\"]".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 401, 0, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 4011, 0, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 4012, 0, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 15, 0, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 16, 0, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 18, 1722864558, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 3, 2, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 13, 7, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 11, 0, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 12, 0, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 24, 0, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
   ]);
 
   Ok((response, true))

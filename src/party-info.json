@@ -10,7 +10,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -27,7 +27,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 477,
+          "strength": 421,
           "specialskill": {
             "special_skill_id": 101001,
             "trial": false
@@ -39,14 +39,14 @@
         {
           "id": 666431194,
           "form_no": 3,
-          "main": 10,
+          "main": 13,
           "sub1": 0,
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 487,
+          "strength": 387,
           "specialskill": {
-            "special_skill_id": 106001,
+            "special_skill_id": 102001,
             "trial": false
           },
           "skill_pa_fame": 0,
@@ -106,7 +106,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -202,7 +202,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -298,7 +298,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -394,7 +394,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -490,7 +490,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -586,7 +586,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -682,7 +682,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -778,7 +778,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -874,7 +874,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -970,7 +970,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -1066,7 +1066,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -1162,7 +1162,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -1258,7 +1258,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -1354,7 +1354,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -1450,7 +1450,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -1546,7 +1546,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -1642,7 +1642,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -1738,7 +1738,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -1834,7 +1834,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 444,
+          "strength": 393,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false
@@ -1924,8 +1924,8 @@
   "members": [
     {
       "id": 11,
-      "lv": 4,
-      "exp": 150,
+      "lv": 1,
+      "exp": 0,
       "member_id": 1001100,
       "ac_skill_lv_a": 1,
       "ac_skill_val_a": 110,
@@ -1933,11 +1933,11 @@
       "ac_skill_val_b": 0,
       "ac_skill_lv_c": 1,
       "ac_skill_val_c": 130,
-      "hp": 277,
-      "attack": 32,
-      "magicattack": 31,
-      "defense": 24,
-      "magicdefence": 22,
+      "hp": 245,
+      "attack": 27,
+      "magicattack": 26,
+      "defense": 20,
+      "magicdefence": 19,
       "agility": 72,
       "dexterity": 78,
       "luck": 88,
@@ -1974,8 +1974,8 @@
     },
     {
       "id": 12,
-      "lv": 4,
-      "exp": 150,
+      "lv": 1,
+      "exp": 0,
       "member_id": 1011100,
       "ac_skill_lv_a": 1,
       "ac_skill_val_a": 110,
@@ -1983,11 +1983,11 @@
       "ac_skill_val_b": 170,
       "ac_skill_lv_c": 1,
       "ac_skill_val_c": 152,
-      "hp": 285,
-      "attack": 33,
-      "magicattack": 37,
-      "defense": 25,
-      "magicdefence": 27,
+      "hp": 252,
+      "attack": 28,
+      "magicattack": 31,
+      "defense": 21,
+      "magicdefence": 23,
       "agility": 66,
       "dexterity": 76,
       "luck": 10,
@@ -2073,31 +2073,6 @@
       "is_undead": 0
     },
     {
-      "id": 15,
-      "lv": 1,
-      "exp": 0,
-      "member_id": 1061100,
-      "ac_skill_lv_a": 1,
-      "ac_skill_val_a": 100,
-      "ac_skill_lv_b": 1,
-      "ac_skill_val_b": 154,
-      "ac_skill_lv_c": 1,
-      "ac_skill_val_c": 122,
-      "hp": 214,
-      "attack": 25,
-      "magicattack": 30,
-      "defense": 19,
-      "magicdefence": 22,
-      "agility": 69,
-      "dexterity": 68,
-      "luck": 67,
-      "limit_break": 0,
-      "character_id": 106,
-      "waiting_room": 0,
-      "ex_flg": 0,
-      "is_undead": 0
-    },
-    {
       "id": 1,
       "lv": 1,
       "exp": 0,
@@ -2124,8 +2099,8 @@
     },
     {
       "id": 10,
-      "lv": 3,
-      "exp": 150,
+      "lv": 1,
+      "exp": 0,
       "member_id": 1064217,
       "ac_skill_lv_a": 1,
       "ac_skill_val_a": 100,
@@ -2133,11 +2108,11 @@
       "ac_skill_val_b": 128,
       "ac_skill_lv_c": 1,
       "ac_skill_val_c": 173,
-      "hp": 270,
-      "attack": 33,
-      "magicattack": 41,
-      "defense": 25,
-      "magicdefence": 29,
+      "hp": 247,
+      "attack": 29,
+      "magicattack": 36,
+      "defense": 22,
+      "magicdefence": 26,
       "agility": 69,
       "dexterity": 67,
       "luck": 68,
