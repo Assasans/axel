@@ -19,6 +19,8 @@ pub mod master_list;
 pub mod notice;
 pub mod party_info;
 pub mod profile;
+pub mod quest;
+pub mod story;
 pub mod story_reward;
 
 #[derive(Debug, Serialize)]

@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use serde_json::{json, Value};
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
@@ -106,6 +107,81 @@ pub struct Member {
 
 pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
   let response = include_str!("../party-info.json");
-  let response: PartyInfo = serde_json::from_str(response).unwrap();
-  Ok((CallResponse::new_success(Box::new(response)), true))
+  let response: Value = serde_json::from_str(response).unwrap();
+  return Ok((CallResponse::new_success(Box::new(response)), true));
+  Ok((
+    CallResponse::new_success(Box::new(json!({
+      "party": [
+        {
+          "party_forms": [
+            {
+              "id": 1000001,
+              "form_no": 1,
+              "main": 1011100,
+              "sub1": 1011100,
+              "sub2": 1011100,
+              "weapon": 42090,
+              "acc": 36014,
+              "strength": 393,
+              "specialskill": {
+                "special_skill_id": 0,
+                "trial": false
+              },
+              "skill_pa_fame": 0,
+              "party_no": 1,
+              "name": "Party1"
+            }
+          ],
+          "party_no": 1,
+          "assist": 0,
+          "sub_assists": [],
+          "party_passive_skill": {
+            "skill_id": 0,
+            "user_member_id": 0
+          }
+        }
+      ],
+      "members": [
+        {
+          "id": 1011100,
+          "lv": 1,
+          "exp": 0,
+          "member_id": 1011100,
+          "ac_skill_lv_a": 1,
+          "ac_skill_val_a": 93,
+          "ac_skill_lv_b": 1,
+          "ac_skill_val_b": 128,
+          "ac_skill_lv_c": 1,
+          "ac_skill_val_c": 122,
+          "hp": 239,
+          "attack": 25,
+          "magicattack": 32,
+          "defense": 24,
+          "magicdefence": 24,
+          "agility": 71,
+          "dexterity": 74,
+          "luck": 72,
+          "limit_break": 0,
+          "character_id": 101,
+          "waiting_room": 0,
+          "ex_flg": 0,
+          "is_undead": 0
+        }
+      ],
+      "weapons": [
+        {
+          "id": 42090,
+          "weapon_id": 42090,
+          "trial": false,
+        }
+      ],
+      "accessories": [
+        {
+          "id": 36014,
+          "accessory_id": 36014
+        }
+      ]
+    }))),
+    true,
+  ))
 }
