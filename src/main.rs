@@ -44,8 +44,9 @@ use tracing_subscriber::EnvFilter;
 use crate::api::login::ensure_session_exists;
 use crate::api::master_all::get_masters;
 use crate::api::{
-  battle, gacha, home, honor_list, idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check,
-  master_all, master_list, notice, party_info, profile, quest, story, story_reward, ApiRequest,
+  battle, dungeon, gacha, home, honor_list, idlink_confirm_google, interaction, items, login, login_bonus,
+  maintenance_check, master_all, master_list, notice, party_info, profile, quest_fame, quest_hunting, quest_main,
+  story, story_reward, ApiRequest,
 };
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::client_ip::{add_client_ip, ClientIp};
@@ -347,9 +348,16 @@ async fn api_call(
       "interaction" => interaction::route(request).await?,
       "partyinfo" => party_info::route(request).await?,
       "storylist" => story::story_list(request).await?,
-      "quest_main_part_list" => quest::quest_main_part_list(request).await?,
-      "quest_main_stage_list" => quest::quest_main_stage_list(request).await?,
-      "quest_main_area_list" => quest::quest_main_area_list(request).await?,
+      "quest_main_part_list" => quest_main::quest_main_part_list(request).await?,
+      "quest_main_stage_list" => quest_main::quest_main_stage_list(request).await?,
+      "quest_main_area_list" => quest_main::quest_main_area_list(request).await?,
+      "questhuntinglist" => quest_hunting::quest_hunting_list(request).await?,
+      "questhuntingstagelist" => quest_hunting::quest_hunting_stage_list(request).await?,
+      "fame_quest_rank_list" => quest_fame::fame_quest_rank_list(request).await?,
+      "fame_quest_area_list" => quest_fame::fame_quest_area_list(request).await?,
+      "fame_quest_stage_list" => quest_fame::fame_quest_stage_list(request).await?,
+      "dungeon_status" => dungeon::dungeon_status(request).await?,
+      "dungeon_area_top" => dungeon::dungeon_area_top(request).await?,
       "weaponlist" => items::weapon_list(request).await?,
       "accessorylist" => items::accessory_list(request).await?,
       "battlestart" => battle::battle_start(request).await?,

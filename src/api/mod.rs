@@ -9,6 +9,7 @@ use crate::call::ApiCallParams;
 use crate::AppState;
 
 pub mod battle;
+pub mod dungeon;
 pub mod gacha;
 pub mod home;
 pub mod honor_list;
@@ -23,7 +24,9 @@ pub mod master_list;
 pub mod notice;
 pub mod party_info;
 pub mod profile;
-pub mod quest;
+pub mod quest_fame;
+pub mod quest_hunting;
+pub mod quest_main;
 pub mod story;
 pub mod story_reward;
 
@@ -42,8 +45,10 @@ pub enum RemoteDataItemType {
   Money,
   RealMoney,
   RealMoneyFree,
+  /// "Food" icon
   Stamina,
   Exp,
+  /// Called "rank" in game
   Level,
   Member(i32),
   MemberCostume,

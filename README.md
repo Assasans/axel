@@ -18,7 +18,7 @@ Battles work but no rewards are actually given and you can't change your party.
 <p>
   <img src="https://files.catbox.moe/xvvt4z.png" width="300px">
   <img src="https://files.catbox.moe/x6a55m.png" width="300px">
-  <img src="https://files.catbox.moe/oaq6dk.webp" width="300px">
+  <img src="https://files.catbox.moe/ghnpk8.webp" width="300px">
 </p>
 
 ## Setup
