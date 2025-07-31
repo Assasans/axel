@@ -1,4 +1,5 @@
-use std::sync::Arc;
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
 
 use jwt_simple::prelude::Serialize;
 use rand::random;
@@ -18,6 +19,21 @@ pub struct Login {
 }
 
 impl CallCustom for Login {}
+
+/// Helper for development purposes to ensure a valid session exists for a user even after server restart
+pub fn ensure_session_exists(user_id: UserId, sessions: &Mutex<HashMap<UserId, Arc<Session>>>) -> Arc<Session> {
+  let mut sessions = sessions.lock().unwrap();
+  if let Some(session) = sessions.get(&user_id) {
+    session.clone()
+  } else {
+    // Create a new session if it does not exist
+    let session = Arc::new(Session::new(user_id));
+    session.rotate_user_key();
+
+    sessions.insert(user_id, session.clone());
+    session
+  }
+}
 
 pub async fn route(
   request: ApiRequest,

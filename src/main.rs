@@ -41,6 +41,7 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::EnvFilter;
 
+use crate::api::login::ensure_session_exists;
 use crate::api::master_all::get_masters;
 use crate::api::{
   battle, gacha, home, honor_list, idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check,
@@ -206,8 +207,7 @@ async fn api_call(
 
   let mut session = params
     .user_id
-    .map(|user_id| state.sessions.lock().unwrap().get(&user_id).cloned())
-    .flatten();
+    .map(|user_id| ensure_session_exists(user_id, &state.sessions));
 
   let iv = meta
     .uk
