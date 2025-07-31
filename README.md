@@ -4,7 +4,7 @@
 
 </div>
 
-**Current progress**
+### Current progress
 
 The first scene ("And so the Adventure Begins!") works.
 The home and profile menus barely work.
@@ -12,9 +12,13 @@ The home and profile menus barely work.
 A lot of gacha banners (including collaborations ones) is visible, but still not all 947 of them.
 Loot pool is hardcoded. **Gacha stories work** as they don't need to interact with the server.
 
+All main quests are enabled.
+Battles work but no rewards are actually given and you can't change your party.
+
 <p>
   <img src="https://files.catbox.moe/xvvt4z.png" width="300px">
   <img src="https://files.catbox.moe/x6a55m.png" width="300px">
+  <img src="https://files.catbox.moe/oaq6dk.webp" width="300px">
 </p>
 
 ## Setup
