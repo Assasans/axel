@@ -8,11 +8,13 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 use crate::call::ApiCallParams;
 use crate::AppState;
 
+pub mod battle;
 pub mod gacha;
 pub mod home;
 pub mod honor_list;
 pub mod idlink_confirm_google;
 pub mod interaction;
+pub mod items;
 pub mod login;
 pub mod login_bonus;
 pub mod maintenance_check;

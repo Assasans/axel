@@ -1454,7 +1454,7 @@ pub struct GachaRateRate {
   pub itemid: i64,
   /// Three decimal places, e.g. 10.500 = 10.500%
   pub rate: i32,
-  /// Non-zero displays "apperance rates up" in UI
+  /// Non-zero displays "appearance rates up" in UI
   pub pickup: i32,
   pub detailview: i32,
   pub detailpriority: i32,
