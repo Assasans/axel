@@ -10,7 +10,7 @@ use jwt_simple::prelude::{Deserialize, Serialize};
 use rand::random;
 use tracing::{debug, info};
 
-use crate::{Aes128CbcEnc, AES_IV, AES_KEY};
+use crate::api_server::{Aes128CbcEnc, AES_IV, AES_KEY};
 
 #[derive(Copy, Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Hash, Serialize, Deserialize)]
 pub struct UserId(u64);
@@ -64,7 +64,7 @@ impl Session {
 
     let key_pair = RS256KeyPair::from_pem(include_str!("../key.pem")).unwrap();
     let mut custom = BTreeMap::new();
-    custom.insert("cs".to_owned(), hex::encode(&*digest));
+    custom.insert("cs".to_owned(), hex::encode(*digest));
     if let Some(user_key) = &*self.user_key.lock().unwrap() {
       custom.insert("uk".to_owned(), hex::encode(user_key));
     }

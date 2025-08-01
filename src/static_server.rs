@@ -2,20 +2,23 @@ use std::convert::Infallible;
 use std::future::Future;
 use std::io;
 use std::net::SocketAddr;
+use std::path::Path;
 use std::pin::Pin;
+use std::sync::Arc;
 use std::task::{Context, Poll};
 
 use axum::body::Body;
-use axum::extract::{MatchedPath, Path, Request};
+use axum::extract::{MatchedPath, Request, State};
 use axum::http::response::Builder;
 use axum::http::StatusCode;
 use axum::response::{Html, IntoResponse, Response};
 use axum::routing::get;
-use axum::{middleware, Json, Router, ServiceExt};
+use axum::{extract, middleware, Json, Router, ServiceExt};
 use chrono::Utc;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
+use tokio::net::TcpListener;
 use tower::{Layer, Service};
 use tower_http::services::ServeDir;
 use tower_http::trace::TraceLayer;
@@ -24,32 +27,46 @@ use url::Url;
 
 use crate::client_ip::{add_client_ip, ClientIp};
 use crate::normalize_path::normalize_path;
-use crate::AppError;
+use crate::{AppError, AppState};
 
-const UPSTREAM_URL: &str = "https://smb.assasans.dev/konofd/";
+trait RouterExt {
+  fn serve_dir_with_fallback(self, path: &str, local_root: &Path, fallback_url: Option<Url>) -> Self;
+}
 
-pub async fn start() -> io::Result<()> {
+impl<S> RouterExt for Router<S>
+where
+  S: Clone + Send + Sync + 'static,
+{
+  fn serve_dir_with_fallback(self, path: &str, local_root: &Path, fallback_url: Option<Url>) -> Self {
+    let serve_dir = ServeDir::new(path);
+    if let Some(url) = fallback_url {
+      self.nest_service(path, serve_dir.fallback(ServeRemoteResource::new(url)))
+    } else {
+      self.nest_service(path, serve_dir)
+    }
+  }
+}
+
+pub async fn start(state: Arc<AppState>) -> io::Result<()> {
+  let settings = &state.settings.static_server;
   let app = Router::new()
     .route("/", get(get_root_friendly))
     .route("/versions/{version}", get(get_version))
     .route("/webview/EN/data/json/news.json", get(get_news))
-    .nest_service(
+    .serve_dir_with_fallback(
       "/bundles",
-      ServeDir::new("static/bundles").fallback(ServeRemoteResource::new(
-        UPSTREAM_URL.parse::<Url>().unwrap().join("bundles/").unwrap(),
-      )),
+      &settings.resources_root.join("bundles/"),
+      settings.upstream_url.as_ref().map(|url| url.join("bundles/").unwrap()),
     )
-    .nest_service(
+    .serve_dir_with_fallback(
       "/banners",
-      ServeDir::new("static/banners").fallback(ServeRemoteResource::new(
-        UPSTREAM_URL.parse::<Url>().unwrap().join("banners/").unwrap(),
-      )),
+      &settings.resources_root.join("banners/"),
+      settings.upstream_url.as_ref().map(|url| url.join("banners/").unwrap()),
     )
-    .nest_service(
+    .serve_dir_with_fallback(
       "/webview",
-      ServeDir::new("static/webview").fallback(ServeRemoteResource::new(
-        UPSTREAM_URL.parse::<Url>().unwrap().join("webview/").unwrap(),
-      )),
+      &settings.resources_root.join("webview/"),
+      settings.upstream_url.as_ref().map(|url| url.join("webview/").unwrap()),
     )
     .layer(
       TraceLayer::new_for_http()
@@ -76,12 +93,17 @@ pub async fn start() -> io::Result<()> {
         // logging of errors so disable that
         .on_failure(()),
     )
-    .layer(middleware::from_fn(add_client_ip));
+    .layer(middleware::from_fn(add_client_ip))
+    .with_state(state.clone());
   let middleware = tower::util::MapRequestLayer::new(normalize_path);
   let app = middleware.layer(app);
 
-  let listener = tokio::net::TcpListener::bind("0.0.0.0:2021").await.unwrap();
-  info!("static server started at {:?}", listener.local_addr().unwrap());
+  let listener = TcpListener::bind(settings.bind_address).await?;
+  info!(
+    "static server started at {:?} -> {}",
+    listener.local_addr()?,
+    settings.public_url
+  );
   axum::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>()).await
 }
 
@@ -198,16 +220,43 @@ async fn get_news() -> axum::response::Result<impl IntoResponse, AppError> {
   Ok(Json(news))
 }
 
-async fn get_version(Path(version): Path<String>) -> axum::response::Result<impl IntoResponse, AppError> {
+fn format_url(url: &Url, suffix: Option<&str>) -> Result<String, &'static str> {
+  if url.scheme() != "https" {
+    return Err("URL scheme must be https");
+  }
+
+  // Ensure trailing slash
+  let mut base = url.clone();
+  if !base.path().ends_with('/') {
+    base.set_path(&format!("{}/", base.path()));
+  }
+
+  let new_url = if let Some(suffix) = suffix {
+    base.join(suffix).unwrap()
+  } else {
+    base
+  };
+  let without_scheme = new_url.as_str().trim_start_matches("https://").to_string();
+
+  Ok(without_scheme)
+}
+
+async fn get_version(
+  State(state): State<Arc<AppState>>,
+  extract::Path(version): extract::Path<String>,
+) -> axum::response::Result<impl IntoResponse, AppError> {
   info!("get version info: {}", version);
 
+  let name = env!("CARGO_PKG_NAME");
+  let version = env!("CARGO_PKG_VERSION");
+
   Ok(Json(GetVersion {
-    app_version: "4.11.6".to_string(),
+    app_version: format!("4.11.5/{name}-{version}"),
     asset_version: "2025012110".to_string(),
-    api_url: "axel.assasans.dev/api/".to_string(),
-    asset_url: "axel.assasans.dev/static/bundles/4.11.6/".to_string(),
-    webview_url: "axel.assasans.dev/static/webview/".to_string(),
-    banner_url: "axel.assasans.dev/static/banners/".to_string(),
+    api_url: format_url(&state.settings.api_server.public_url, None).unwrap(),
+    asset_url: format_url(&state.settings.static_server.public_url, Some("bundles/4.11.6/")).unwrap(),
+    webview_url: format_url(&state.settings.static_server.public_url, Some("webview/")).unwrap(),
+    banner_url: format_url(&state.settings.static_server.public_url, Some("banners/")).unwrap(),
     inquiry_url: "inquiry.sesisoft.com/".to_string(),
     enable_review: "false".to_string(),
   }))
@@ -239,7 +288,6 @@ async fn get_root_friendly() -> axum::response::Result<impl IntoResponse, AppErr
         <h1>Welcome to the Axel static server!</h1>
         <p>This server provides initial configuration and static assets for the game.</p>
         <p>Available endpoints: <code>/versions/{{version}}</code></p>
-        <p>Upstream URL: <a href=\"{UPSTREAM_URL}\">{UPSTREAM_URL}</a></p>
         <hr />
         <i>{name}/{version}</i>
       </body>

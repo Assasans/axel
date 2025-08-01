@@ -1,0 +1,12 @@
+[static-server]
+bind-address = "0.0.0.0:2021"
+# Publicly available URL for that is routed to the static server.
+public-url = "https://axel.assasans.dev/static/"
+resources-root = "/mnt/smb/assasans/public/konofd"
+# Can be commented out if you don't want to have remote fallback.
+upstream-url = "https://smb.assasans.dev/konofd/"
+
+[api-server]
+bind-address = "0.0.0.0:2020"
+# Publicly available URL that is routed to the API server.
+public-url = "https://axel.assasans.dev/api/"

@@ -11,3 +11,9 @@ target
 *.pem
 !key.pem
 !pubkey.pem
+
+# Configuration
+config/local.*
+
+# Runtime files
+logs
