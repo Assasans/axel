@@ -2,6 +2,8 @@ use base64::prelude::BASE64_STANDARD_NO_PAD;
 use base64::Engine;
 use serde::{Deserialize, Deserializer, Serializer};
 
+// See [Wonder.Util.RequestHelper$$DecodeStringEscape].
+// I have no idea why they decided to encode user-generated strings in Base64...
 pub fn serialize<S>(value: &str, serializer: S) -> Result<S::Ok, S::Error>
 where
   S: Serializer,

@@ -3,7 +3,7 @@ use std::sync::Arc;
 use anyhow::Context;
 use base64::prelude::BASE64_STANDARD_NO_PAD;
 use base64::Engine;
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Utc};
 use jwt_simple::prelude::Serialize;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use tracing::info;
@@ -77,7 +77,7 @@ pub async fn login(
 
     let id: UserId = row.get(0);
     let username: Option<String> = row.get(1);
-    let created_at: NaiveDateTime = row.get(2);
+    let created_at: DateTime<Utc> = row.get(2);
     let tutorial_progress: i32 = row.get(3);
 
     #[rustfmt::skip]
@@ -104,7 +104,7 @@ pub async fn login(
 
     let id: UserId = row.get(0);
     let username: Option<String> = row.get(1);
-    let created_at: NaiveDateTime = row.get(2);
+    let created_at: DateTime<Utc> = row.get(2);
     let tutorial_progress: i32 = row.get(3);
 
     info!(?username, "user {} logged in", id);

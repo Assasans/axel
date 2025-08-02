@@ -26,9 +26,9 @@ use tower_http::trace::TraceLayer;
 use tracing::{debug, info, info_span, warn};
 
 use crate::api::{
-  account, battle, dungeon, gacha, home, honor_list, idlink_confirm_google, interaction, items, login, login_bonus,
-  maintenance_check, master_all, master_list, notice, party_info, profile, quest_fame, quest_hunting, quest_main,
-  story, story_reward, tutorial, ApiRequest,
+  account, battle, dungeon, friend, gacha, home, honor_list, idlink_confirm_google, interaction, items, login,
+  login_bonus, maintenance_check, master_all, master_list, notice, party_info, profile, quest_fame, quest_hunting,
+  quest_main, story, story_reward, tutorial, ApiRequest,
 };
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::client_ip::{add_client_ip, ClientIp};
@@ -327,6 +327,9 @@ async fn api_call(
       "battlestart" => battle::battle_start(request).await?,
       "battlewaveresult" => battle::battle_wave_result(request).await?,
       "result" => battle::result(request).await?,
+      "friendlist" => friend::friend_list(state, request, &mut session).await?,
+      "greeting_list" => friend::greeting_list(state, request, &mut session).await?,
+      "friend_recommendation_list" => friend::friend_recommendation_list(state, request, &mut session).await?,
       _ => todo!("api call '{}'", method),
     };
 

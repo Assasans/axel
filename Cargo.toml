@@ -37,3 +37,4 @@ tokio-postgres = { version = "0.7.13", features = ["with-chrono-0_4"] }
 rustls = { version = "0.23.31" }
 tokio-postgres-rustls = "0.13.0"
 postgres-types = { version = "0.2.9", features = ["derive"] }
+indoc = "2.0.6"

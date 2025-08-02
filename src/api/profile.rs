@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
 use anyhow::Context;
+use chrono::{DateTime, Utc};
 use jwt_simple::prelude::Serialize;
 use tracing::info;
 
@@ -15,6 +16,7 @@ pub struct Profile {
   pub name: String,
   #[serde(with = "crate::string_as_base64")]
   pub profile: String,
+  /// "Favorite character" in game
   pub icon: u32,
   pub honor_id: u32,
   pub display_play_data: Vec<DisplayPlayData>,
@@ -71,23 +73,27 @@ pub async fn profile(
 
   let username: Option<String> = row.get(0);
   let about_me: Option<String> = row.get(1);
-  let last_used: Option<i64> = row.get(2);
-  let last_used = last_used.unwrap_or_else(|| chrono::Utc::now().timestamp());
+  let last_used: Option<DateTime<Utc>> = row.get(2);
+  let last_used = last_used.unwrap_or_else(|| Utc::now());
 
   Ok((
     CallResponse::new_success(Box::new(Profile {
       // If for some reason username was not set during tutorial, use empty string
       name: username.unwrap_or_default(),
       profile: about_me.unwrap_or_default(),
-      icon: 0,
-      honor_id: 62010250,
+      icon: 1001100,
+      honor_id: 62010030,
       display_play_data: vec![
+        // "Player rank"
         DisplayPlayData::new(1, 2, 1),
+        // "Character gallery characters"
         DisplayPlayData::new(4, 14, 1),
+        // "Party power"
         DisplayPlayData::new(2, -1, 1),
+        // "Total crowns earned"
         DisplayPlayData::new(3, 3, 1),
-        // Latest login, clamped at 1 month at the client
-        DisplayPlayData::new(5, last_used, 1),
+        // "Latest login", clamped at 1 month at the client
+        DisplayPlayData::new(5, last_used.timestamp(), 1),
         DisplayPlayData::new(6, -2, 1),
         DisplayPlayData::new(7, 1, 1),
       ],

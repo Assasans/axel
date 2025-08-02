@@ -11,6 +11,7 @@ use crate::AppState;
 pub mod account;
 pub mod battle;
 pub mod dungeon;
+pub mod friend;
 pub mod gacha;
 pub mod home;
 pub mod honor_list;
