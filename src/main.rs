@@ -5,6 +5,7 @@ pub mod api_server;
 pub mod bool_as_int;
 pub mod call;
 pub mod client_ip;
+pub mod database;
 pub mod master;
 pub mod normalize_path;
 pub mod session;
@@ -28,6 +29,7 @@ use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::EnvFilter;
 
 use crate::api::master_all::get_masters;
+use crate::database::create_pool;
 use crate::session::{Session, UserId};
 use crate::settings::Settings;
 
@@ -40,9 +42,10 @@ struct Args {
 }
 
 pub struct AppState {
-  proxy: bool,
-  settings: Settings,
-  sessions: Mutex<HashMap<UserId, Arc<Session>>>,
+  pub proxy: bool,
+  pub settings: Settings,
+  pub sessions: Mutex<HashMap<UserId, Arc<Session>>>,
+  pub pool: deadpool_postgres::Pool,
 }
 
 #[tokio::main]
@@ -78,19 +81,31 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     panic!("Failed to load settings: {err}");
   });
 
+  let pool = create_pool(&settings.database).await.unwrap();
+  let client = pool.get().await?;
+  let statement = client
+    .prepare(/* language=postgresql */ "select count(*) from users")
+    .await?;
+  let result = client.query(&statement, &[]).await?;
+  info!(
+    "database connection established successfully, {} users found",
+    result[0].get::<_, i64>(0)
+  );
+
+  let state = AppState {
+    proxy: args.proxy,
+    settings,
+    sessions: Mutex::new(HashMap::new()),
+    pool,
+  };
+  let state = Arc::new(state);
+
   if args.proxy {
     info!("proxy mode is enabled");
   }
 
   // initialize lazies
   get_masters().await;
-
-  let state = AppState {
-    proxy: args.proxy,
-    settings,
-    sessions: Mutex::new(HashMap::new()),
-  };
-  let state = Arc::new(state);
 
   let (static_result, api_result) = join!(static_server::start(state.clone()), api_server::start(state.clone()));
   static_result.unwrap();
@@ -106,7 +121,7 @@ struct AppError(anyhow::Error);
 impl IntoResponse for AppError {
   fn into_response(self) -> Response {
     let error = self.0;
-    tracing::error!(%error, "api error");
+    tracing::error!(?error, "api error");
 
     (StatusCode::INTERNAL_SERVER_ERROR, format!("{}", error)).into_response()
   }

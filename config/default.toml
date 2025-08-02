@@ -10,3 +10,14 @@ upstream-url = "https://smb.assasans.dev/konofd/"
 bind-address = "0.0.0.0:2020"
 # Publicly available URL that is routed to the API server.
 public-url = "https://axel.assasans.dev/api/"
+
+[database.pool]
+host = "10.66.66.1"
+port = 5432
+user = "axel"
+dbname = "axel"
+
+# [database.tls]
+# ca-cert = "/home/assasans/dev/00-aqua/ca.crt"
+# client-cert = "config/axel.crt"
+# client-key = "config/axel.key"

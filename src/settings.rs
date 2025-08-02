@@ -11,6 +11,7 @@ use url::Url;
 pub struct Settings {
   pub static_server: StaticServerSettings,
   pub api_server: ApiServerSettings,
+  pub database: DatabaseSettings,
 }
 
 #[derive(Debug, Deserialize)]
@@ -27,6 +28,21 @@ pub struct StaticServerSettings {
 pub struct ApiServerSettings {
   pub bind_address: SocketAddr,
   pub public_url: Url,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub struct DatabaseSettings {
+  pub pool: deadpool_postgres::Config,
+  pub tls: Option<DatabaseTlsSettings>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub struct DatabaseTlsSettings {
+  pub ca_cert: PathBuf,
+  pub client_cert: PathBuf,
+  pub client_key: PathBuf,
 }
 
 impl Settings {

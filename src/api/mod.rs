@@ -8,6 +8,7 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 use crate::call::ApiCallParams;
 use crate::AppState;
 
+pub mod account;
 pub mod battle;
 pub mod dungeon;
 pub mod gacha;
@@ -29,6 +30,7 @@ pub mod quest_hunting;
 pub mod quest_main;
 pub mod story;
 pub mod story_reward;
+pub mod tutorial;
 
 #[derive(Debug, Clone, Copy, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
@@ -42,6 +44,7 @@ pub enum RemoteDataCommand {
 
 #[derive(Debug, Clone, Copy)]
 pub enum RemoteDataItemType {
+  /* IDA static analysis */
   Money,
   RealMoney,
   RealMoneyFree,
@@ -53,6 +56,9 @@ pub enum RemoteDataItemType {
   Member(i32),
   MemberCostume,
   Another(i32),
+
+  /* Dynamic analysis */
+  Background,
 }
 
 // See [Wonder.Util.UserParam$$Add]
@@ -65,9 +71,10 @@ impl From<&RemoteDataItemType> for i32 {
       RemoteDataItemType::Stamina => 9,
       RemoteDataItemType::Exp => 10,
       RemoteDataItemType::Level => 23,
+      RemoteDataItemType::Background => 24,
       RemoteDataItemType::Member(value) => {
         assert!(
-          !matches!(value, 1 | 2 | 3 | 9 | 10 | 14 | 23),
+          !matches!(value, 1 | 2 | 3 | 9 | 10 | 14 | 23 | 24),
           "member value should not match any other type"
         );
         *value

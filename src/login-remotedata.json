@@ -21,7 +21,7 @@
     "cmd": 4,
     "item_type": 2,
     "item_id": 0,
-    "item_num": 0,
+    "item_num": 100000,
     "uniqid": 0,
     "lv": 0,
     "tag": "-"
@@ -30,7 +30,7 @@
     "cmd": 4,
     "item_type": 3,
     "item_id": 0,
-    "item_num": 1230,
+    "item_num": 1000000,
     "uniqid": 0,
     "lv": 0,
     "tag": "-"

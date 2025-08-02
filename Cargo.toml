@@ -11,7 +11,6 @@ base64 = "0.22.1"
 cbc = { version = "0.1.2", features = ["std"] }
 clap = { version = "4.5.42", features = ["derive"] }
 const-decoder = "0.4.0"
-hex = "0.4.3"
 jwt-simple = { version = "0.12.12" }
 md5 = "0.8.0"
 reqwest = { version = "0.12.22", default-features = false, features = ["rustls-tls", "stream"] }
@@ -32,3 +31,9 @@ chrono = "0.4.41"
 futures = "0.3.31"
 serde_repr = "0.1.20"
 config = "0.15.13"
+const-hex = "1.14.1"
+deadpool-postgres = { version = "0.14.1", features = ["serde"] }
+tokio-postgres = { version = "0.7.13", features = ["with-chrono-0_4"] }
+rustls = { version = "0.23.31" }
+tokio-postgres-rustls = "0.13.0"
+postgres-types = { version = "0.2.9", features = ["derive"] }

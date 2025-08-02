@@ -12,8 +12,12 @@ target
 !key.pem
 !pubkey.pem
 
-# Configuration
+# Local configuration
 config/local.*
+migrations/*.local.sql
+
+# TLS certificates
+config/axel.*
 
 # Runtime files
 logs

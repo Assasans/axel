@@ -15,6 +15,8 @@ Loot pool is hardcoded. **Gacha stories work** as they don't need to interact wi
 All main quests are enabled.
 Battles work but no rewards are actually given and you can't change your party.
 
+Database support is being implemented, new account sequence works, you can change your name.
+
 <p>
   <img src="https://files.catbox.moe/xvvt4z.png" width="300px">
   <img src="https://files.catbox.moe/x6a55m.png" width="300px">
@@ -25,7 +27,7 @@ Battles work but no rewards are actually given and you can't change your party.
 
 See [CLIENT-SETUP.md](CLIENT-SETUP.md) for instructions on how to set up the client.
 
-See [SERVER-SETUP.md](SERVER-SETUP.md) for instructions on how to set up the server.
+See [SERVER-SETUP.md](SERVER-SETUP.md) for instructions on how to set up the server and the database.
 
 See [DUMPING.md](DUMPING.md) for instructions on how to inspect the game code yourself.
 

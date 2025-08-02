@@ -1,17 +1,28 @@
 <!-- TOC -->
 
+- [Configuration](#configuration)
 - [Building server](#building-server)
-- [Single-domain nginx configuration](#a-single-domain-nginx-configuration)
-- [Multi-domain nginx configuration](#b-multi-domain-nginx-configuration)
+  - [Protocol and encryption](#protocol-and-encryption)
+- [A. Single-domain nginx configuration](#a-single-domain-nginx-configuration)
+- [B. Multi-domain nginx configuration](#b-multi-domain-nginx-configuration)
 
 <!-- /TOC -->
-
 # Server setup
 
 Requirements:
 
+- Linux (for running database migration script, you may run them manually on any OS)
 - [Rust](https://rust-lang.org)
 - [nginx](https://nginx.org/en)
+- [PostgreSQL](https://postgresql.org/)
+
+See [DATABASE-SETUP.md](DATABASE-SETUP.md) for instructions on how to set up the PostgreSQL database.
+
+## Configuration
+
+Edit `config/default.toml` or create `config/local.toml` to edit your configuration.
+
+At the very least, you need to set `static-server.public-url` and `api-server.public-url` according to your nginx configuration.
 
 ## Building server
 
@@ -33,7 +44,8 @@ If you want to generate a new RSA key pair:
 
 ## A. Single-domain nginx configuration
 
-Server URL will be `https://axel.assasans.dev/static/`.
+* Static public URL (and URL for patching) will be `https://axel.assasans.dev/static/`.
+* API public URL will be `https://axel.assasans.dev/api/`.
 
 Example nginx configuration:
 
@@ -42,8 +54,8 @@ server {
   listen       443 ssl;
   server_name  axel.assasans.dev;
 
-  ssl_certificate /path/to/axel/sesisoft.com.crt;
-  ssl_certificate_key /path/to/axel/sesisoft.com.key;
+  ssl_certificate /path/to/axel/axel.assasans.dev.crt;
+  ssl_certificate_key /path/to/axel/axel.assasans.dev.key;
 
   proxy_set_header Host $host;
   proxy_set_header X-Real-IP $remote_addr;
@@ -62,7 +74,8 @@ server {
 
 ## B. Multi-domain nginx configuration
 
-Server URL will be `https://static.konosuba.local/`.
+* Static public URL (and URL for patching) will be `https://static.konosuba.local/`.
+* API public URL will be `https://api.konosuba.local/`.
 
 Example nginx configuration:
 

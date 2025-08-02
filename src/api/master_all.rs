@@ -48,7 +48,7 @@ impl MasterAllItem {
     Self {
       master_key,
       master: BASE64_STANDARD.encode(compressed),
-      checkkey: hex::encode(*digest),
+      checkkey: const_hex::encode(*digest),
       master_decompressed: master,
     }
   }

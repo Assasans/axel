@@ -1,7 +1,13 @@
+use std::sync::Arc;
+
+use anyhow::Context;
 use jwt_simple::prelude::Serialize;
+use tracing::info;
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::session::Session;
+use crate::AppState;
 
 #[derive(Debug, Serialize)]
 pub struct Profile {
@@ -19,13 +25,13 @@ impl CallCustom for Profile {}
 #[derive(Debug, Serialize)]
 pub struct DisplayPlayData {
   #[serde(rename = "type")]
-  pub kind: u32,
-  pub value: i32,
-  pub display_status: u32,
+  pub kind: i32,
+  pub value: i64,
+  pub display_status: i32,
 }
 
 impl DisplayPlayData {
-  pub fn new(kind: u32, value: i32, display_status: u32) -> Self {
+  pub fn new(kind: i32, value: i64, display_status: i32) -> Self {
     Self {
       kind,
       value,
@@ -34,11 +40,45 @@ impl DisplayPlayData {
   }
 }
 
-pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn profile(
+  state: Arc<AppState>,
+  request: ApiRequest,
+  session: &mut Option<Arc<Session>>,
+) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+  let session = session.as_ref().ok_or_else(|| anyhow::anyhow!("session is not set"))?;
+
+  let client = state.pool.get().await.context("failed to get database connection")?;
+  #[rustfmt::skip]
+  let statement = client
+    .prepare(/* language=postgresql */ r#"
+      select
+        users.username,
+        users.about_me,
+        (select max(last_used) from user_devices where user_devices.user_id = users.id) as most_recent_last_used
+      from users
+      where id = $1
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  let rows = client
+    .query(&statement, &[&session.user_id])
+    .await
+    .context("failed to execute query")?;
+  info!(?rows, "get profile query executed");
+  let row = rows
+    .first()
+    .ok_or_else(|| anyhow::anyhow!("no profile found for user"))?;
+
+  let username: Option<String> = row.get(0);
+  let about_me: Option<String> = row.get(1);
+  let last_used: Option<i64> = row.get(2);
+  let last_used = last_used.unwrap_or_else(|| chrono::Utc::now().timestamp());
+
   Ok((
     CallResponse::new_success(Box::new(Profile {
-      name: "Aqua".to_string(),
-      profile: "Wahhh! Kazuma, he! Kazuma, he wahhh!".to_string(),
+      // If for some reason username was not set during tutorial, use empty string
+      name: username.unwrap_or_default(),
+      profile: about_me.unwrap_or_default(),
       icon: 0,
       honor_id: 62010250,
       display_play_data: vec![
@@ -46,7 +86,8 @@ pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn Cal
         DisplayPlayData::new(4, 14, 1),
         DisplayPlayData::new(2, -1, 1),
         DisplayPlayData::new(3, 3, 1),
-        DisplayPlayData::new(5, 1722883930, 1),
+        // Latest login, clamped at 1 month at the client
+        DisplayPlayData::new(5, last_used, 1),
         DisplayPlayData::new(6, -2, 1),
         DisplayPlayData::new(7, 1, 1),
       ],

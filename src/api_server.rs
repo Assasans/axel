@@ -23,17 +23,17 @@ use md5::Digest;
 use tokio::net::TcpListener;
 use tower::Layer;
 use tower_http::trace::TraceLayer;
-use tracing::{debug, info, info_span};
+use tracing::{debug, info, info_span, warn};
 
-use crate::api::login::ensure_session_exists;
 use crate::api::{
-  battle, dungeon, gacha, home, honor_list, idlink_confirm_google, interaction, items, login, login_bonus,
+  account, battle, dungeon, gacha, home, honor_list, idlink_confirm_google, interaction, items, login, login_bonus,
   maintenance_check, master_all, master_list, notice, party_info, profile, quest_fame, quest_hunting, quest_main,
-  story, story_reward, ApiRequest,
+  story, story_reward, tutorial, ApiRequest,
 };
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::client_ip::{add_client_ip, ClientIp};
 use crate::normalize_path::normalize_path;
+use crate::session::Session;
 use crate::{AppError, AppState};
 
 pub static AES_KEY: &[u8] = &Decoder::Base64.decode::<16>(b"0x9AHqGo1sHGl/nIvD+MhA==");
@@ -131,14 +131,53 @@ async fn api_call(
   let meta: CallMeta = serde_json::from_slice(&data).unwrap();
   debug!("api call meta: {:?}", meta);
 
-  let mut session = params
-    .user_id
-    .map(|user_id| ensure_session_exists(user_id, &state.sessions));
+  let mut session = if let Some(user_key) = &meta.uk {
+    let user_key = const_hex::decode(user_key).expect(&format!("failed to parse user key: {:?}", user_key));
+    let user_key: [u8; 16] = user_key
+      .clone()
+      .try_into()
+      .expect(&format!("user key is not 16 bytes: {:?}", user_key));
+
+    let mut sessions = state.sessions.lock().unwrap();
+    let session = sessions
+      .values()
+      .find(|session| session.user_key.lock().unwrap().as_ref() == Some(&user_key))
+      .cloned();
+    let session = if let Some(session) = session {
+      debug!("found session for {:?} by user key", session.user_id);
+      session
+    } else {
+      let user_id = params
+        .user_id
+        .expect("user_id is not set in params, but (invalid) user key is present");
+      let session = Arc::new(Session::new(user_id, None));
+      session.rotate_user_key();
+      warn!("created fake session for {}", user_id);
+
+      sessions.insert(user_id, session.clone());
+      session
+    };
+
+    if let Some(user_id) = params.user_id {
+      if session.user_id != user_id {
+        warn!(
+          "user_id in params ({}) does not match user_id in session ({})",
+          user_id, session.user_id
+        );
+      }
+    } else {
+      warn!("user_id is not set in params, but user key is present in meta");
+    }
+
+    Some(session)
+  } else {
+    None
+  };
 
   let iv = meta
     .uk
     .as_ref()
-    .map(|uk| hex::decode(uk).expect(&format!("failed to parse user key: {:?}", uk)))
+    .map(|uk| const_hex::decode(uk).expect(&format!("failed to parse user key: {:?}", uk)))
     .as_deref()
     .unwrap_or(&AES_IV)
     .to_owned();
@@ -195,7 +234,7 @@ async fn api_call(
       let upstream_uk = upstream_meta
         .uk
         .as_ref()
-        .map(|uk| hex::decode(uk).expect(&format!("failed to parse user key: {:?}", uk)));
+        .map(|uk| const_hex::decode(uk).expect(&format!("failed to parse user key: {:?}", uk)));
       let upstream_iv = upstream_uk.as_deref().unwrap_or(&AES_IV).to_owned();
 
       let response = Aes128CbcDec::new(AES_KEY.into(), upstream_iv.as_slice().into())
@@ -249,10 +288,10 @@ async fn api_call(
     let (response, use_user_key): (CallResponse<dyn CallCustom>, _) = match &*method {
       "idlink_confirm_google" => idlink_confirm_google::route(request).await?,
       "masterlist" => master_list::route(request).await?,
-      "login" => login::route(request, &mut session).await?,
+      "login" => login::login(state, request, &mut session).await?,
       "capturesend" => (CallResponse::new_success(Box::new(())), true),
       "masterall" => master_all::route(request).await?,
-      "tutorial" => (CallResponse::new_success(Box::new(())), false),
+      "tutorial" => tutorial::tutorial(state, request, &mut session).await?,
       "notice" => notice::route(request).await?,
       "gachainfo" => gacha::gacha_info(request).await?,
       "gacha_tutorial" => gacha::gacha_tutorial(request).await?,
@@ -264,11 +303,11 @@ async fn api_call(
       "root_box_check" => (CallResponse::new_success(Box::new(())), false),
       "maintenancecheck" => maintenance_check::route(request).await?,
       "firebasetoken" => (CallResponse::new_success(Box::new(())), true),
-      "setname" => (CallResponse::new_success(Box::new(())), true),
+      "setname" => account::set_name(state, request, &mut session).await?,
       "storyreward" => story_reward::route(request).await?,
       "loginbonus" => login_bonus::route(request).await?,
       "home" => home::route(request).await?,
-      "profile" => profile::route(request).await?,
+      "profile" => profile::profile(state, request, &mut session).await?,
       "honor_list" => honor_list::route(request).await?,
       "interaction" => interaction::route(request).await?,
       "partyinfo" => party_info::route(request).await?,
@@ -292,7 +331,7 @@ async fn api_call(
     };
 
     let response = serde_json::to_string(&response).unwrap();
-    if matches!(&*method, "masterlist" | "masterall") {
+    if matches!(&*method, "masterlist" | "masterall" | "login" | "gachainfo") {
       info!("response: (...)");
     } else {
       info!("response: {}", response);
@@ -320,9 +359,9 @@ async fn api_call(
 
   let key_pair = RS256KeyPair::from_pem(include_str!("../key.pem")).unwrap();
   let mut custom = BTreeMap::new();
-  custom.insert("cs".to_owned(), hex::encode(&*hash));
+  custom.insert("cs".to_owned(), const_hex::encode(&*hash));
   if let Some(user_key) = user_key {
-    custom.insert("uk".to_owned(), hex::encode(&*user_key));
+    custom.insert("uk".to_owned(), const_hex::encode(&*user_key));
   }
 
   let claims = JWTClaims {
