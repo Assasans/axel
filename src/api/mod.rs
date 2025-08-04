@@ -195,17 +195,17 @@ impl RemoteData {
 
 #[derive(Debug, Serialize)]
 pub struct NotificationData {
-  pub cmd: u8,
+  pub cmd: i32,
   #[serde(rename = "type")]
-  pub kind: u32,
-  pub key: u32,
-  pub value: u32,
+  pub kind: i32,
+  pub key: i32,
+  pub value: i32,
   pub msgkey: String,
   pub tag: String,
 }
 
 impl NotificationData {
-  pub fn new(cmd: u8, kind: u32, key: u32, value: u32, msgkey: String, tag: String) -> Self {
+  pub fn new(cmd: i32, kind: i32, key: i32, value: i32, msgkey: String, tag: String) -> Self {
     Self {
       cmd,
       kind,

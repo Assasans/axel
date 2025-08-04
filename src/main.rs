@@ -8,16 +8,18 @@ pub mod client_ip;
 pub mod database;
 pub mod master;
 pub mod normalize_path;
+pub mod notification;
 pub mod session;
 pub mod settings;
 pub mod static_server;
 pub mod string_as_base64;
+pub mod request_logging;
 
 use std::collections::HashMap;
+use std::env;
 use std::error::Error;
 use std::io::stdout;
 use std::sync::{Arc, Mutex};
-use std::{env, str};
 
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
@@ -34,15 +36,10 @@ use crate::session::{Session, UserId};
 use crate::settings::Settings;
 
 #[derive(Parser, Debug)]
-struct Args {
-  /// Enable proxy mode - save all requests and responses to `proxied/` directory.
-  /// Disables API endpoints.
-  #[arg(long, default_value_t = false)]
-  proxy: bool,
-}
+pub struct Args {}
 
 pub struct AppState {
-  pub proxy: bool,
+  pub args: Args,
   pub settings: Settings,
   pub sessions: Mutex<HashMap<UserId, Arc<Session>>>,
   pub pool: deadpool_postgres::Pool,
@@ -93,16 +90,12 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
   );
 
   let state = AppState {
-    proxy: args.proxy,
+    args,
     settings,
     sessions: Mutex::new(HashMap::new()),
     pool,
   };
   let state = Arc::new(state);
-
-  if args.proxy {
-    info!("proxy mode is enabled");
-  }
 
   // initialize lazies
   get_masters().await;

@@ -27,6 +27,7 @@ use url::Url;
 
 use crate::client_ip::{add_client_ip, ClientIp};
 use crate::normalize_path::normalize_path;
+use crate::request_logging::log_requests;
 use crate::{AppError, AppState};
 
 trait RouterExt {
@@ -68,31 +69,7 @@ pub async fn start(state: Arc<AppState>) -> io::Result<()> {
       &settings.resources_root.join("webview/"),
       settings.upstream_url.as_ref().map(|url| url.join("webview/").unwrap()),
     )
-    .layer(
-      TraceLayer::new_for_http()
-        // Create our own span for the request and include the matched path. The matched
-        // path is useful for figuring out which handler the request was routed to.
-        .make_span_with(|request: &Request| {
-          let method = request.method();
-          let uri = request.uri();
-
-          // axum automatically adds this extension.
-          let matched_path = request
-            .extensions()
-            .get::<MatchedPath>()
-            .map(|matched_path| matched_path.as_str());
-          let client_ip = request
-            .extensions()
-            .get::<ClientIp>()
-            .map(|client_ip| client_ip.0)
-            .unwrap();
-
-          info_span!("request", %client_ip, %method, %uri, matched_path)
-        })
-        // By default, `TraceLayer` will log 5xx responses but we're doing our specific
-        // logging of errors so disable that
-        .on_failure(()),
-    )
+    .layer(log_requests())
     .layer(middleware::from_fn(add_client_ip))
     .with_state(state.clone());
   let middleware = tower::util::MapRequestLayer::new(normalize_path);

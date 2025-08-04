@@ -10,6 +10,7 @@ use tracing::info;
 
 use crate::api::{ApiRequest, NotificationData, RemoteData};
 use crate::call::{CallCustom, CallResponse};
+use crate::notification::FriendGreetingNotify;
 use crate::session::{Session, UserId};
 use crate::AppState;
 
@@ -137,6 +138,7 @@ pub async fn login(
   response.add_remote_data(remote_data);
 
   response.add_notifications(vec![
+    // Jobs
     NotificationData::new(1, 7, 6, 0, "".to_string(), "".to_string()),
     NotificationData::new(1, 8, 0, 0, "".to_string(), "".to_string()),
     NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
@@ -186,13 +188,18 @@ pub async fn login(
     NotificationData::new(1, 7, 15, 0, "".to_string(), "".to_string()),
     NotificationData::new(1, 7, 16, 0, "".to_string(), "".to_string()),
     NotificationData::new(1, 7, 18, 1722864558, "".to_string(), "".to_string()),
+    // Missions
     NotificationData::new(1, 7, 3, 2, "".to_string(), "".to_string()),
+    // Something related to Missions
     NotificationData::new(1, 7, 13, 7, "".to_string(), "".to_string()),
     NotificationData::new(1, 7, 11, 0, "".to_string(), "".to_string()),
     NotificationData::new(1, 7, 12, 0, "".to_string(), "".to_string()),
     NotificationData::new(1, 7, 24, 0, "".to_string(), "".to_string()),
     NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
+    FriendGreetingNotify::new("Statically reverse-engineered notification".to_string()).into(),
   ]);
 
   Ok((response, true))
 }
+
+pub const OP_BADGE_COUNT: i32 = 7;
