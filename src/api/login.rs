@@ -9,6 +9,7 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 use tracing::info;
 
 use crate::api::{ApiRequest, NotificationData, RemoteData};
+use crate::build_info::BUILD_INFO;
 use crate::call::{CallCustom, CallResponse};
 use crate::notification::FriendGreetingNotify;
 use crate::session::{Session, UserId};
@@ -196,7 +197,20 @@ pub async fn login(
     NotificationData::new(1, 7, 12, 0, "".to_string(), "".to_string()),
     NotificationData::new(1, 7, 24, 0, "".to_string(), "".to_string()),
     NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
-    FriendGreetingNotify::new("Statically reverse-engineered notification".to_string()).into(),
+    FriendGreetingNotify::new({
+      let hash = BUILD_INFO.git_hash.chars().take(8).collect();
+      let revision = if BUILD_INFO.git_dirty {
+        format!("{hash}-dirty")
+      } else {
+        hash
+      };
+
+      if BUILD_INFO.profile == "debug" {
+        format!("axel/{revision} (development build)")
+      } else {
+        format!("axel/{revision}")
+      }
+    }).into(),
   ]);
 
   Ok((response, true))

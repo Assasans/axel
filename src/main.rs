@@ -3,17 +3,18 @@
 pub mod api;
 pub mod api_server;
 pub mod bool_as_int;
+pub mod build_info;
 pub mod call;
 pub mod client_ip;
 pub mod database;
 pub mod master;
 pub mod normalize_path;
 pub mod notification;
+pub mod request_logging;
 pub mod session;
 pub mod settings;
 pub mod static_server;
 pub mod string_as_base64;
-pub mod request_logging;
 
 use std::collections::HashMap;
 use std::env;
