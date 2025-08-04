@@ -7,7 +7,7 @@ use aes::cipher::block_padding::Pkcs7;
 use aes::cipher::{BlockDecryptMut, BlockEncryptMut, KeyIvInit};
 use anyhow::anyhow;
 use axum::body::Bytes;
-use axum::extract::{MatchedPath, Path, Query, Request, State};
+use axum::extract::{Path, Query, State};
 use axum::http::HeaderMap;
 use axum::response::{Html, IntoResponse};
 use axum::routing::{get, post};
@@ -20,16 +20,15 @@ use jwt_simple::claims::JWTClaims;
 use md5::Digest;
 use tokio::net::TcpListener;
 use tower::Layer;
-use tower_http::trace::TraceLayer;
-use tracing::{debug, info, info_span, warn};
+use tracing::{debug, info, warn};
 
 use crate::api::{
   account, battle, dungeon, friend, gacha, home, honor_list, idlink_confirm_google, interaction, items, login,
   login_bonus, maintenance_check, master_all, master_list, notice, party_info, profile, quest_fame, quest_hunting,
-  quest_main, story, story_reward, tutorial, ApiRequest,
+  quest_main, story, tutorial, ApiRequest,
 };
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
-use crate::client_ip::{add_client_ip, ClientIp};
+use crate::client_ip::add_client_ip;
 use crate::normalize_path::normalize_path;
 use crate::request_logging::log_requests;
 use crate::session::Session;
@@ -204,7 +203,8 @@ async fn api_call(
     "maintenancecheck" => maintenance_check::route(request).await?,
     "firebasetoken" => (CallResponse::new_success(Box::new(())), true),
     "setname" => account::set_name(state, request, &mut session).await?,
-    "storyreward" => story_reward::route(request).await?,
+    "storyreward" => story::story_reward(request).await?,
+    "story_read" => story::story_read(request).await?,
     "loginbonus" => login_bonus::route(request).await?,
     "home" => home::route(request).await?,
     "profile" => profile::profile(state, request, &mut session).await?,

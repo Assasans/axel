@@ -1,9 +1,10 @@
-use crate::client_ip::ClientIp;
 use axum::extract::{MatchedPath, Request};
 use tower_http::trace::{
   DefaultOnBodyChunk, DefaultOnEos, DefaultOnRequest, DefaultOnResponse, HttpMakeClassifier, TraceLayer,
 };
 use tracing::{info_span, Span};
+
+use crate::client_ip::ClientIp;
 
 /// Creates a span for the request and includes the matched path.
 ///

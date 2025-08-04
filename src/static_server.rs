@@ -8,7 +8,7 @@ use std::sync::Arc;
 use std::task::{Context, Poll};
 
 use axum::body::Body;
-use axum::extract::{MatchedPath, Request, State};
+use axum::extract::{Request, State};
 use axum::http::response::Builder;
 use axum::http::StatusCode;
 use axum::response::{Html, IntoResponse, Response};
@@ -21,11 +21,10 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 use tokio::net::TcpListener;
 use tower::{Layer, Service};
 use tower_http::services::ServeDir;
-use tower_http::trace::TraceLayer;
-use tracing::{debug, info, info_span, warn};
+use tracing::{debug, info, warn};
 use url::Url;
 
-use crate::client_ip::{add_client_ip, ClientIp};
+use crate::client_ip::add_client_ip;
 use crate::normalize_path::normalize_path;
 use crate::request_logging::log_requests;
 use crate::{AppError, AppState};

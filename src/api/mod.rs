@@ -30,7 +30,6 @@ pub mod quest_fame;
 pub mod quest_hunting;
 pub mod quest_main;
 pub mod story;
-pub mod story_reward;
 pub mod tutorial;
 
 #[derive(Debug, Clone, Copy, Serialize_repr, Deserialize_repr)]
