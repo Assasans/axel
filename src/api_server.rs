@@ -228,8 +228,14 @@ async fn api_call(
     "battlewaveresult" => battle::battle_wave_result(request).await?,
     "result" => battle::result(request).await?,
     "friendlist" => friend::friend_list(state, request, &mut session).await?,
-    "greeting_list" => friend::greeting_list(state, request, &mut session).await?,
+    "friendinfo" => friend::friend_info(state, request, &mut session).await?,
+    "friendmute" => friend::friend_mute(state, request, &mut session).await?,
+    "friendremove" => friend::friend_remove(state, request, &mut session).await?,
+    "friendrequest" => friend::friend_request(state, request, &mut session).await?,
+    "friendsearch" => friend::friend_search(state, request, &mut session).await?,
     "friend_recommendation_list" => friend::friend_recommendation_list(state, request, &mut session).await?,
+    "greeting_list" => friend::greeting_list(state, request, &mut session).await?,
+    "greeting_send" => friend::greeting_send(state, request, &mut session).await?,
     _ => todo!("api call '{}'", method),
   };
 

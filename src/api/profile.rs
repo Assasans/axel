@@ -94,7 +94,9 @@ pub async fn profile(
         DisplayPlayData::new(3, 3, 1),
         // "Latest login", clamped at 1 month at the client
         DisplayPlayData::new(5, last_used.timestamp(), 1),
+        // "Arena ranking": -2 - calculating ranking, -1 - unranked, 0 - hide, 1+ - rank
         DisplayPlayData::new(6, -2, 1),
+        // "Affinity"
         DisplayPlayData::new(7, 1, 1),
       ],
     })),
