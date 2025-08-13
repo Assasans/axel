@@ -23,9 +23,9 @@ use tower::Layer;
 use tracing::{debug, info, trace, warn};
 
 use crate::api::{
-  account, assist, battle, character, dungeon, exchange, friend, gacha, home, honor_list, idlink_confirm_google,
-  interaction, items, login, login_bonus, maintenance_check, master_all, master_list, notice, party_info, profile,
-  quest_fame, quest_hunting, quest_main, story, transfer, tutorial, ApiRequest,
+  account, assist, battle, capture, character, dungeon, exchange, friend, gacha, home, honor_list,
+  idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check, master_all, master_list, notice,
+  party_info, profile, quest_fame, quest_hunting, quest_main, story, transfer, tutorial, ApiRequest,
 };
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::client_ip::add_client_ip;
@@ -201,7 +201,7 @@ async fn api_call(
     "idlink_confirm_google" => idlink_confirm_google::route(request).await?,
     "masterlist" => master_list::route(request).await?,
     "login" => login::login(state, request, &mut session).await?,
-    "capturesend" => (CallResponse::new_success(Box::new(())), true),
+    "capturesend" => capture::capture_send(request).await?,
     "masterall" => master_all::route(request).await?,
     "tutorial" => tutorial::tutorial(state, request, &mut session).await?,
     "notice" => notice::notice(request).await?,

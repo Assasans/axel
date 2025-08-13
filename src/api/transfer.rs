@@ -1,6 +1,7 @@
 use anyhow::Context;
 use jwt_simple::prelude::Serialize;
 use tracing::info;
+
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
 use crate::user::uuid::UserUuid;

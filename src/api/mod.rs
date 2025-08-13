@@ -11,6 +11,7 @@ use crate::AppState;
 pub mod account;
 pub mod assist;
 pub mod battle;
+pub mod capture;
 pub mod character;
 pub mod dungeon;
 pub mod exchange;
