@@ -20,7 +20,7 @@ pub struct Party {
   pub party_no: u32,
   pub assist: u32,
   pub sub_assists: Vec<u32>,
-  pub party_passive_skill: PartyPassiveSkill,
+  pub party_passive_skill: PartyPassiveSkillInfo,
 }
 
 impl Party {
@@ -29,7 +29,7 @@ impl Party {
     party_no: u32,
     assist: u32,
     sub_assists: Vec<u32>,
-    party_passive_skill: Option<PartyPassiveSkill>,
+    party_passive_skill: Option<PartyPassiveSkillInfo>,
   ) -> Self {
     Self {
       party_forms,
@@ -51,26 +51,28 @@ pub struct PartyForm {
   pub weapon: u32,
   pub acc: u32,
   pub strength: u32,
-  pub specialskill: Specialskill,
+  pub specialskill: SpecialSkillInfo,
   pub skill_pa_fame: u32,
   pub party_no: u32,
   pub name: String,
 }
 
+// See [Wonder_Api_SpecialSkillInfoResponseDto_Fields]
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Specialskill {
-  pub special_skill_id: u32,
+pub struct SpecialSkillInfo {
+  pub special_skill_id: i32,
   pub trial: bool,
 }
 
+// See [Wonder_Api_PartyPassiveSkillInfoResponseDto_Fields]
 #[derive(Default, Debug, Serialize, Deserialize)]
-pub struct PartyPassiveSkill {
-  pub skill_id: u32,
-  pub user_member_id: u32,
+pub struct PartyPassiveSkillInfo {
+  pub skill_id: i64,
+  pub user_member_id: i64,
 }
 
-impl PartyPassiveSkill {
-  pub fn new(skill_id: u32, user_member_id: u32) -> Self {
+impl PartyPassiveSkillInfo {
+  pub fn new(skill_id: i64, user_member_id: i64) -> Self {
     Self {
       skill_id,
       user_member_id,
@@ -78,6 +80,7 @@ impl PartyPassiveSkill {
   }
 }
 
+// TODO: DungeonPartyMember has correct types, should move fields to this struct
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Member {
   pub id: u32,

@@ -51,6 +51,7 @@ pub async fn start(state: Arc<AppState>) -> io::Result<()> {
   let settings = &state.settings.static_server;
   let app = Router::new()
     .route("/", get(get_root_friendly))
+    .route("/public.pem", get(get_public_key))
     .route("/versions/{version}", get(get_version))
     .route("/webview/EN/data/json/news.json", get(get_news))
     .serve_dir_with_fallback(
@@ -269,4 +270,8 @@ async fn get_root_friendly() -> axum::response::Result<impl IntoResponse, AppErr
       </body>
     </html>",
   )))
+}
+
+async fn get_public_key() -> axum::response::Result<impl IntoResponse, AppError> {
+  Ok(include_str!("../pubkey.pem"))
 }

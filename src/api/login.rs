@@ -12,7 +12,9 @@ use crate::api::{ApiRequest, NotificationData, RemoteData};
 use crate::build_info::BUILD_INFO;
 use crate::call::{CallCustom, CallResponse};
 use crate::notification::FriendGreetingNotify;
-use crate::session::{Session, UserId};
+use crate::user::id::UserId;
+use crate::user::session::Session;
+use crate::user::uuid::UserUuid;
 use crate::AppState;
 
 // See [Wonder_Api_LoginInfoResponseDto_Fields]
@@ -43,7 +45,9 @@ pub async fn login(
   request: ApiRequest,
   session: &mut Option<Arc<Session>>,
 ) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  let uuid = request.body.get("uuid").context("no device uuid passed")?;
+  let uuid = request.body.get("uuid").context("no 'uuid' passed")?;
+  let uuid = uuid.parse::<UserUuid>().unwrap();
+  info!("{:?}", uuid);
 
   let client = state.pool.get().await.context("failed to get database connection")?;
   #[rustfmt::skip]
@@ -57,7 +61,7 @@ pub async fn login(
     .await
     .context("failed to prepare statement")?;
   let rows = client
-    .query(&statement, &[&uuid])
+    .query(&statement, &[&uuid.to_string()])
     .await
     .context("failed to execute query")?;
   info!(?rows, "login query executed");
@@ -92,7 +96,7 @@ pub async fn login(
       .await
       .context("failed to prepare device insert statement")?;
     client
-      .execute(&statement, &[&id, &uuid])
+      .execute(&statement, &[&id, &uuid.to_string()])
       .await
       .context("failed to execute device insert query")?;
 
@@ -113,7 +117,7 @@ pub async fn login(
     (id, username, created_at, tutorial_progress)
   };
 
-  *session = Some(Arc::new(Session::new(id, Some(uuid.to_owned()))));
+  *session = Some(Arc::new(Session::new(id, Some(uuid.to_string()))));
   let session = session.as_ref().unwrap();
 
   session.rotate_user_key();

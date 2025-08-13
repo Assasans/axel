@@ -11,7 +11,7 @@ pub struct Notice {
 
 impl CallCustom for Notice {}
 
-pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn notice(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
   Ok((
     CallResponse::new_custom(
       1,

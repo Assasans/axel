@@ -9,8 +9,11 @@ use crate::call::ApiCallParams;
 use crate::AppState;
 
 pub mod account;
+pub mod assist;
 pub mod battle;
+pub mod character;
 pub mod dungeon;
+pub mod exchange;
 pub mod friend;
 pub mod gacha;
 pub mod home;

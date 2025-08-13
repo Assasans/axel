@@ -11,10 +11,10 @@ pub mod master;
 pub mod normalize_path;
 pub mod notification;
 pub mod request_logging;
-pub mod session;
 pub mod settings;
 pub mod static_server;
 pub mod string_as_base64;
+pub mod user;
 
 use std::collections::HashMap;
 use std::env;
@@ -33,8 +33,9 @@ use tracing_subscriber::EnvFilter;
 
 use crate::api::master_all::get_masters;
 use crate::database::create_pool;
-use crate::session::{Session, UserId};
 use crate::settings::Settings;
+use crate::user::id::UserId;
+use crate::user::session::Session;
 
 #[derive(Parser, Debug)]
 pub struct Args {}

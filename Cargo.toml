@@ -38,3 +38,4 @@ rustls = { version = "0.23.31" }
 tokio-postgres-rustls = "0.13.0"
 postgres-types = { version = "0.2.9", features = ["derive"] }
 indoc = "2.0.6"
+uuid = { version = "1.18.0", features = ["v4"] }

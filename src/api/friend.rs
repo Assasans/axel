@@ -1,7 +1,5 @@
-use crate::api::ApiRequest;
-use crate::call::{CallCustom, CallResponse};
-use crate::session::Session;
-use crate::AppState;
+use std::sync::Arc;
+
 use anyhow::Context;
 use base64::prelude::BASE64_STANDARD_NO_PAD;
 use base64::Engine;
@@ -9,7 +7,11 @@ use chrono::Utc;
 use indoc::indoc;
 use jwt_simple::prelude::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
-use std::sync::Arc;
+
+use crate::api::ApiRequest;
+use crate::call::{CallCustom, CallResponse};
+use crate::user::session::Session;
+use crate::AppState;
 
 #[derive(Serialize, Deserialize)]
 struct FriendList {

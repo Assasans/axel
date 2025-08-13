@@ -6,7 +6,7 @@ use jwt_simple::prelude::{Deserialize, Serialize};
 use serde_json::Value;
 
 use crate::api::{NotificationData, RemoteData};
-use crate::session::UserId;
+use crate::user::id::UserId;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CallMeta {
@@ -40,6 +40,25 @@ pub struct CallResponse<T: CallCustom + ?Sized> {
   #[serde(flatten)]
   pub custom: Box<T>,
 }
+
+// See [Wonder.UI.Title.TitleScene._OnTitleRequestError_d__97$$MoveNext]
+pub const STATUS_ERROR: i32 = -100;
+pub const STATUS_MAINTENANCE: i32 = -102;
+
+pub const STATUS_QUARTZ_NOT_ENOUGH: i32 = -110;
+
+pub const STATUS_LOGIN_TRANSFER_WRONG_KEY: i32 = -104;
+/// Logs the user out
+pub const STATUS_LOGIN_TRANSFER_SAME: i32 = -169;
+/// Account was transferred, no longer available on this device
+pub const STATUS_LOGIN_TRANSFER_DONE: i32 = -1013;
+/// Cannot transfer account,
+pub const STATUS_LOGIN_TRANSFER_LOCAL_ACCOUNT_PRESENT: i32 = -178;
+
+pub const STATUS_ACCOUNT_RESTRICTED: i32 = -903;
+
+pub const STATUS_NEW_DATA_AVAILABLE: i32 = -901;
+pub const STATUS_APP_UPDATE_REQUIRED: i32 = -900;
 
 impl<T: CallCustom + ?Sized> CallResponse<T> {
   pub fn new_success(custom: Box<T>) -> Self {

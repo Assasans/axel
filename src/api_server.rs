@@ -20,18 +20,18 @@ use jwt_simple::claims::JWTClaims;
 use md5::Digest;
 use tokio::net::TcpListener;
 use tower::Layer;
-use tracing::{debug, info, warn};
+use tracing::{debug, info, trace, warn};
 
 use crate::api::{
-  account, battle, dungeon, friend, gacha, home, honor_list, idlink_confirm_google, interaction, items, login,
-  login_bonus, maintenance_check, master_all, master_list, notice, party_info, profile, quest_fame, quest_hunting,
-  quest_main, story, tutorial, ApiRequest,
+  account, assist, battle, character, dungeon, exchange, friend, gacha, home, honor_list, idlink_confirm_google,
+  interaction, items, login, login_bonus, maintenance_check, master_all, master_list, notice, party_info, profile,
+  quest_fame, quest_hunting, quest_main, story, tutorial, ApiRequest,
 };
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::client_ip::add_client_ip;
 use crate::normalize_path::normalize_path;
 use crate::request_logging::log_requests;
-use crate::session::Session;
+use crate::user::session::Session;
 use crate::{AppError, AppState};
 
 pub static AES_KEY: &[u8] = &Decoder::Base64.decode::<16>(b"0x9AHqGo1sHGl/nIvD+MhA==");
@@ -65,18 +65,20 @@ fn encrypt(data: &[u8], user_key: Option<&[u8]>) -> (Vec<u8>, Digest) {
   let encrypted =
     Aes128CbcEnc::new(AES_KEY.into(), user_key.unwrap_or(&AES_IV).into()).encrypt_padded_vec_mut::<Pkcs7>(data);
   let hash = md5::compute(&encrypted);
-  debug!("hash: {:?}", hash);
+  trace!("hash: {:?}", hash);
 
   (encrypted, hash)
 }
 
-/// These are sent with every request and are completely useless except for `user_key`.
+/// These are sent with every request and are completely useless except for `user_key`, `uuid`, and `deviceid`.
 pub static HIDDEN_PARAMS: &[&str] = &[
+  "uuid",
   "countryname",
   "user_key",
   "ver",
   "client_masterversion",
   "deviceid",
+  "advertising_id", // Same as "deviceid"
   "npsn",
   "nexonsn",
   "devicename",
@@ -84,6 +86,18 @@ pub static HIDDEN_PARAMS: &[&str] = &[
   "adid",
   "ostype",
   "osname",
+  "version2",
+  "nptoken",
+  "os",
+  "version3",
+  "rulever",
+  "platform",
+  "language",
+  "version4",
+  "loginPlatform",
+  "is_skip_tutorial",
+  "userCountry",
+  "npaCode",
 ];
 
 async fn api_call(
@@ -96,7 +110,7 @@ async fn api_call(
   debug!("api call: {}", method);
 
   let jwt = headers.get(JWT_HEADER).ok_or_else(|| anyhow!("no jwt header"))?;
-  debug!("jwt header: {:?}", jwt);
+  trace!("jwt header: {:?}", jwt);
   let jwt = jwt.to_str().unwrap();
   let [_header, data, _signature] = &jwt.splitn(3, '.').collect::<Vec<_>>()[..] else {
     todo!()
@@ -191,7 +205,7 @@ async fn api_call(
     "capturesend" => (CallResponse::new_success(Box::new(())), true),
     "masterall" => master_all::route(request).await?,
     "tutorial" => tutorial::tutorial(state, request, &mut session).await?,
-    "notice" => notice::route(request).await?,
+    "notice" => notice::notice(request).await?,
     "gachainfo" => gacha::gacha_info(request).await?,
     "gacha_tutorial" => gacha::gacha_tutorial(request).await?,
     "gacha_tutorial_reward" => gacha::gacha_tutorial_reward(request).await?,
@@ -236,6 +250,12 @@ async fn api_call(
     "friend_recommendation_list" => friend::friend_recommendation_list(state, request, &mut session).await?,
     "greeting_list" => friend::greeting_list(state, request, &mut session).await?,
     "greeting_send" => friend::greeting_send(state, request, &mut session).await?,
+    "assist_make_notice" => assist::assist_make_notice(request).await?,
+    "assist_make_list" => assist::assist_make_list(request).await?,
+    "exchangelist" => exchange::exchange_list(request).await?,
+    "leavemenbers" => exchange::leave_members(request).await?,
+    "character_piece_board_info" => character::character_piece_board_info(request).await?,
+    "character_enhance_info" => character::character_enhance_info(request).await?,
     _ => todo!("api call '{}'", method),
   };
 
@@ -284,7 +304,7 @@ async fn api_call(
     custom,
   };
   let token = key_pair.sign(claims)?;
-  debug!("response jwt: {}", token);
+  trace!("response jwt: {}", token);
 
   Ok(([(JWT_HEADER, token)], encrypted))
 }
