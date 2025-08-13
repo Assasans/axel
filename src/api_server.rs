@@ -25,7 +25,7 @@ use tracing::{debug, info, trace, warn};
 use crate::api::{
   account, assist, battle, character, dungeon, exchange, friend, gacha, home, honor_list, idlink_confirm_google,
   interaction, items, login, login_bonus, maintenance_check, master_all, master_list, notice, party_info, profile,
-  quest_fame, quest_hunting, quest_main, story, tutorial, ApiRequest,
+  quest_fame, quest_hunting, quest_main, story, transfer, tutorial, ApiRequest,
 };
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::client_ip::add_client_ip;
@@ -72,7 +72,6 @@ fn encrypt(data: &[u8], user_key: Option<&[u8]>) -> (Vec<u8>, Digest) {
 
 /// These are sent with every request and are completely useless except for `user_key`, `uuid`, and `deviceid`.
 pub static HIDDEN_PARAMS: &[&str] = &[
-  "uuid",
   "countryname",
   "user_key",
   "ver",
@@ -256,6 +255,11 @@ async fn api_call(
     "leavemenbers" => exchange::leave_members(request).await?,
     "character_piece_board_info" => character::character_piece_board_info(request).await?,
     "character_enhance_info" => character::character_enhance_info(request).await?,
+    "idconfirm" => transfer::id_confirm(request).await?,
+    "prepare_set_migration" => transfer::prepare_set_migration(request).await?,
+    "newidcheck" => transfer::new_id_check(request).await?,
+    "newid" => transfer::new_id(request).await?,
+    "idlogin" => transfer::id_login(request).await?,
     _ => todo!("api call '{}'", method),
   };
 
