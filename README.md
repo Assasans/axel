@@ -12,8 +12,11 @@ The home and profile menus barely work.
 A lot of gacha banners (including collaborations ones) is visible, but still not all 947 of them.
 Loot pool is hardcoded. **Gacha stories work** as they don't need to interact with the server.
 
-All main quests are enabled.
-Battles work but no rewards are actually given and you can't change your party.
+All main quests are enabled. All stories are enabled.
+Battles work but no rewards are actually given, and you can't change your party.
+
+All costumes and backgrounds are unlocked. Note that these customizations are not stored
+on the server by client design, so they are not synced across accounts and devices.
 
 Database support is being implemented, new account sequence works, you can change your name.
 
@@ -21,6 +24,7 @@ Database support is being implemented, new account sequence works, you can chang
   <img src="https://files.catbox.moe/xvvt4z.png" width="300px">
   <img src="https://files.catbox.moe/x6a55m.png" width="300px">
   <img src="https://files.catbox.moe/ghnpk8.webp" width="300px">
+  <img src="https://files.catbox.moe/jxc5gp.png" width="300px">
 </p>
 
 ## Setup

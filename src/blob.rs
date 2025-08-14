@@ -1,6 +1,57 @@
-use crate::api::{CharacterParameter, MemberParameter, RemoteData, RemoteDataCommand, RemoteDataItemType, SpSkill};
+use serde_json::Value;
 
-pub fn get_login_remote_data() -> Vec<RemoteData> {
+use crate::api::master_all::get_masters;
+use crate::api::{CharacterParameter, MemberParameter, RemoteData, RemoteDataCommand, RemoteDataItemType};
+
+pub async fn get_login_remote_data() -> Vec<RemoteData> {
+  let masters = get_masters().await;
+  let characters: Vec<Value> = serde_json::from_str(&masters["character"].master_decompressed).unwrap();
+  let members: Vec<Value> = serde_json::from_str(&masters["member"].master_decompressed).unwrap();
+  let costumes: Vec<Value> = serde_json::from_str(&masters["costume"].master_decompressed).unwrap();
+  let backgrounds: Vec<Value> = serde_json::from_str(&masters["background"].master_decompressed).unwrap();
+
+  let characters = characters
+    .iter()
+    .enumerate()
+    .map(|(index, character)| {
+      AddCharacter::new(index as i32, CharacterParameter {
+        id: index as i64,
+        character_id: character.get("id").unwrap().as_str().unwrap().parse().unwrap(),
+        rank: 1,
+        rank_progress: 5,
+        sp_skill: vec![],
+        character_enhance_stage_id_list: vec![],
+        character_piece_board_stage_id_list: vec![],
+        is_trial: false,
+      })
+      .into_remote_data()
+    })
+    .collect::<Vec<_>>();
+
+  let costumes = costumes
+    .iter()
+    .enumerate()
+    .map(|(index, costume)| {
+      AddMemberCostume::new(
+        index as i32,
+        costume.get("id").unwrap().as_str().unwrap().parse().unwrap(),
+      )
+      .into_remote_data()
+    })
+    .collect::<Vec<_>>();
+
+  let backgrounds = backgrounds
+    .iter()
+    .enumerate()
+    .map(|(index, background)| {
+      AddMemberBackground::new(
+        index as i32,
+        background.get("id").unwrap().as_str().unwrap().parse().unwrap(),
+      )
+      .into_remote_data()
+    })
+    .collect::<Vec<_>>();
+
   #[cfg_attr(rustfmt, rustfmt::skip)]
   vec![
     ClearUserParams.into_remote_data(),
@@ -27,118 +78,119 @@ pub fn get_login_remote_data() -> Vec<RemoteData> {
     AddMember::new(MemberParameter { id: 16, lv: 1, exp: 0, member_id: 1192102, ac_skill_id_a: 0, ac_skill_lv_a: 1, ac_skill_val_a: 100, ac_skill_id_b: 0, ac_skill_lv_b: 1, ac_skill_val_b: 170, ac_skill_id_c: 0, ac_skill_lv_c: 1, ac_skill_val_c: 152, hp: 242, magicattack: 32, defense: 20, magicdefence: 23, agility: 66, dexterity: 72, luck: 72, limit_break: 0, character_id: 119, passiveskill: 0, specialattack: 0, resist_state: 0, resist_attr: 0, attack: 25, waiting_room: 0, main_strength: 410, main_strength_for_fame_quest: 410, sub_strength: 96, sub_strength_for_fame_quest: 96, sub_strength_bonus: 128, sub_strength_bonus_for_fame_quest: 128, fame_hp_rank: 0, fame_attack_rank: 0, fame_defense_rank: 0, fame_magicattack_rank: 0, fame_magicdefence_rank: 0, skill_pa_fame_list: vec![] }, "front").into_remote_data(),
     AddMember::new(MemberParameter { id: 9, lv: 1, exp: 0, member_id: 1282100, ac_skill_id_a: 0, ac_skill_lv_a: 1, ac_skill_val_a: 93, ac_skill_id_b: 0, ac_skill_lv_b: 1, ac_skill_val_b: 128, ac_skill_id_c: 0, ac_skill_lv_c: 1, ac_skill_val_c: 122, hp: 239, magicattack: 32, defense: 24, magicdefence: 24, agility: 71, dexterity: 74, luck: 72, limit_break: 0, character_id: 128, passiveskill: 0, specialattack: 0, resist_state: 0, resist_attr: 0, attack: 25, waiting_room: 0, main_strength: 416, main_strength_for_fame_quest: 416, sub_strength: 97, sub_strength_for_fame_quest: 97, sub_strength_bonus: 130, sub_strength_bonus_for_fame_quest: 130, fame_hp_rank: 0, fame_attack_rank: 0, fame_defense_rank: 0, fame_magicattack_rank: 0, fame_magicdefence_rank: 0, skill_pa_fame_list: vec![] }, "front").into_remote_data(),
     AddMember::new(MemberParameter { id: 1, lv: 0, exp: 0, member_id: 1192102, ac_skill_id_a: 0, ac_skill_lv_a: 0, ac_skill_val_a: 0, ac_skill_id_b: 0, ac_skill_lv_b: 0, ac_skill_val_b: 0, ac_skill_id_c: 0, ac_skill_lv_c: 0, ac_skill_val_c: 0, hp: 0, magicattack: 0, defense: 0, magicdefence: 0, agility: 0, dexterity: 0, luck: 0, limit_break: 0, character_id: 0, passiveskill: 0, specialattack: 0, resist_state: 0, resist_attr: 0, attack: 0, waiting_room: 0, main_strength: 0, main_strength_for_fame_quest: 0, sub_strength: 0, sub_strength_for_fame_quest: 0, sub_strength_bonus: 0, sub_strength_bonus_for_fame_quest: 0, fame_hp_rank: 0, fame_attack_rank: 0, fame_defense_rank: 0, fame_magicattack_rank: 0, fame_magicdefence_rank: 0, skill_pa_fame_list: vec![] }, "back").into_remote_data(),
+    AddMember::new(MemberParameter { id: 111, lv: 1, exp: 0, member_id: 1282100, ac_skill_id_a: 0, ac_skill_lv_a: 1, ac_skill_val_a: 93, ac_skill_id_b: 0, ac_skill_lv_b: 1, ac_skill_val_b: 128, ac_skill_id_c: 0, ac_skill_lv_c: 1, ac_skill_val_c: 122, hp: 239, magicattack: 32, defense: 24, magicdefence: 24, agility: 71, dexterity: 74, luck: 72, limit_break: 0, character_id: 128, passiveskill: 0, specialattack: 0, resist_state: 0, resist_attr: 0, attack: 25, waiting_room: 0, main_strength: 416, main_strength_for_fame_quest: 416, sub_strength: 97, sub_strength_for_fame_quest: 97, sub_strength_bonus: 130, sub_strength_bonus_for_fame_quest: 130, fame_hp_rank: 0, fame_attack_rank: 0, fame_defense_rank: 0, fame_magicattack_rank: 0, fame_magicdefence_rank: 0, skill_pa_fame_list: vec![] }, "front").into_remote_data(),
     AddItem::new(RemoteDataItemType::SkipTicket, 0, 1, 800).into_remote_data(),
     AddSingletonItem::new(RemoteDataItemType::Stamina, 419).into_remote_data(),
     AddSingletonItem::new(RemoteDataItemType::Exp, 10).into_remote_data(),
-    AddCharacter::new(8, CharacterParameter { id: 5335218194, character_id: 100, rank: 1, rank_progress: 4, sp_skill: vec![SpSkill { group_id: 10000, id: 100001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
-    AddCharacter::new(10, CharacterParameter { id: 5335220194, character_id: 101, rank: 1, rank_progress: 4, sp_skill: vec![SpSkill { group_id: 10100, id: 101001, lv: 1, is_trial: false }, SpSkill { group_id: 10102, id: 101021, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
-    AddCharacter::new(11, CharacterParameter { id: 5335221194, character_id: 102, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 10200, id: 102001, lv: 1, is_trial: false }, SpSkill { group_id: 10202, id: 102021, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
-    AddCharacter::new(2, CharacterParameter { id: 5335212194, character_id: 103, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 10300, id: 103001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
-    AddCharacter::new(1, CharacterParameter { id: 5335211194, character_id: 106, rank: 1, rank_progress: 4, sp_skill: vec![SpSkill { group_id: 10600, id: 106001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
-    AddCharacter::new(4, CharacterParameter { id: 5335214194, character_id: 108, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 10800, id: 108001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
-    AddCharacter::new(6, CharacterParameter { id: 5335216194, character_id: 109, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 10900, id: 109001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
-    AddCharacter::new(13, CharacterParameter { id: 5335293194, character_id: 110, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 11000, id: 110001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
-    AddCharacter::new(5, CharacterParameter { id: 5335215194, character_id: 112, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 11200, id: 112001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
-    AddCharacter::new(7, CharacterParameter { id: 5335217194, character_id: 113, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 11300, id: 113001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
-    AddCharacter::new(14, CharacterParameter { id: 5335294194, character_id: 114, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 11400, id: 114001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
-    AddCharacter::new(3, CharacterParameter { id: 5335213194, character_id: 115, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 11500, id: 115001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
-    AddCharacter::new(15, CharacterParameter { id: 5335295194, character_id: 116, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 11600, id: 116001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
-    AddCharacter::new(12, CharacterParameter { id: 5335292194, character_id: 119, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 11900, id: 119001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
-    AddCharacter::new(9, CharacterParameter { id: 5335219194, character_id: 128, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 12800, id: 128001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
-    AddMemberCostume::new(10, 1004100).into_remote_data(),
-    AddMemberCostume::new(93, 1004100).into_remote_data(),
-    AddMemberCostume::new(13, 1014100).into_remote_data(),
-    AddMemberCostume::new(92, 1014100).into_remote_data(),
-    AddMemberCostume::new(14, 1024100).into_remote_data(),
-    AddMemberCostume::new(91, 1024100).into_remote_data(),
-    AddMemberCostume::new(3, 1034100).into_remote_data(),
-    AddMemberCostume::new(90, 1034100).into_remote_data(),
-    AddMemberCostume::new(89, 1044100).into_remote_data(),
-    AddMemberCostume::new(88, 1054100).into_remote_data(),
-    AddMemberCostume::new(2, 1063113).into_remote_data(),
-    AddMemberCostume::new(1, 1064100).into_remote_data(),
-    AddMemberCostume::new(87, 1064100).into_remote_data(),
-    AddMemberCostume::new(12, 1064217).into_remote_data(),
-    AddMemberCostume::new(86, 1074100).into_remote_data(),
-    AddMemberCostume::new(6, 1083110).into_remote_data(),
-    AddMemberCostume::new(5, 1084100).into_remote_data(),
-    AddMemberCostume::new(15, 1084100).into_remote_data(),
-    AddMemberCostume::new(8, 1094100).into_remote_data(),
-    AddMemberCostume::new(85, 1094100).into_remote_data(),
-    AddMemberCostume::new(84, 1104100).into_remote_data(),
-    AddMemberCostume::new(83, 1114100).into_remote_data(),
-    AddMemberCostume::new(7, 1124100).into_remote_data(),
-    AddMemberCostume::new(82, 1124100).into_remote_data(),
-    AddMemberCostume::new(9, 1134100).into_remote_data(),
-    AddMemberCostume::new(81, 1134100).into_remote_data(),
-    AddMemberCostume::new(94, 1143127).into_remote_data(),
-    AddMemberCostume::new(80, 1144100).into_remote_data(),
-    AddMemberCostume::new(4, 1154100).into_remote_data(),
-    AddMemberCostume::new(79, 1154100).into_remote_data(),
-    AddMemberCostume::new(78, 1164100).into_remote_data(),
-    AddMemberCostume::new(77, 1174100).into_remote_data(),
-    AddMemberCostume::new(76, 1184100).into_remote_data(),
-    AddMemberCostume::new(75, 1194100).into_remote_data(),
-    AddMemberCostume::new(74, 1209100).into_remote_data(),
-    AddMemberCostume::new(73, 1219100).into_remote_data(),
-    AddMemberCostume::new(72, 1229100).into_remote_data(),
-    AddMemberCostume::new(71, 1239100).into_remote_data(),
-    AddMemberCostume::new(70, 1249100).into_remote_data(),
-    AddMemberCostume::new(69, 1259100).into_remote_data(),
-    AddMemberCostume::new(68, 1264100).into_remote_data(),
-    AddMemberCostume::new(67, 1279100).into_remote_data(),
-    AddMemberCostume::new(11, 1284100).into_remote_data(),
-    AddMemberCostume::new(66, 1284100).into_remote_data(),
-    AddMemberCostume::new(65, 1299100).into_remote_data(),
-    AddMemberCostume::new(64, 1309100).into_remote_data(),
-    AddMemberCostume::new(63, 1319100).into_remote_data(),
-    AddMemberCostume::new(62, 1329100).into_remote_data(),
-    AddMemberCostume::new(61, 1339100).into_remote_data(),
-    AddMemberCostume::new(60, 1349100).into_remote_data(),
-    AddMemberCostume::new(59, 1369100).into_remote_data(),
-    AddMemberCostume::new(58, 1429100).into_remote_data(),
-    AddMemberCostume::new(57, 1474132).into_remote_data(),
-    AddMemberCostume::new(56, 1504132).into_remote_data(),
-    AddMemberCostume::new(55, 1514100).into_remote_data(),
-    AddMemberCostume::new(54, 1539132).into_remote_data(),
-    AddMemberCostume::new(53, 1584147).into_remote_data(),
-    AddMemberCostume::new(52, 1599147).into_remote_data(),
-    AddMemberCostume::new(51, 1604147).into_remote_data(),
-    AddMemberCostume::new(50, 1619147).into_remote_data(),
-    AddMemberCostume::new(49, 1634161).into_remote_data(),
-    AddMemberCostume::new(48, 1644161).into_remote_data(),
-    AddMemberCostume::new(47, 1654161).into_remote_data(),
-    AddMemberCostume::new(46, 1694100).into_remote_data(),
-    AddMemberCostume::new(45, 1814100).into_remote_data(),
-    AddMemberCostume::new(44, 1834189).into_remote_data(),
-    AddMemberCostume::new(43, 1844189).into_remote_data(),
-    AddMemberCostume::new(42, 1854189).into_remote_data(),
-    AddMemberCostume::new(41, 1864189).into_remote_data(),
-    AddMemberCostume::new(40, 1924195).into_remote_data(),
-    AddMemberCostume::new(39, 1934195).into_remote_data(),
-    AddMemberCostume::new(38, 1944195).into_remote_data(),
-    AddMemberCostume::new(37, 1954203).into_remote_data(),
-    AddMemberCostume::new(36, 1964203).into_remote_data(),
-    AddMemberCostume::new(35, 1974203).into_remote_data(),
-    AddMemberCostume::new(34, 1984210).into_remote_data(),
-    AddMemberCostume::new(33, 1994210).into_remote_data(),
-    AddMemberCostume::new(32, 2004210).into_remote_data(),
-    AddMemberCostume::new(31, 2054220).into_remote_data(),
-    AddMemberCostume::new(30, 2064220).into_remote_data(),
-    AddMemberCostume::new(29, 2074220).into_remote_data(),
-    AddMemberCostume::new(28, 2084220).into_remote_data(),
-    AddMemberCostume::new(27, 2094100).into_remote_data(),
-    AddMemberCostume::new(26, 2114225).into_remote_data(),
-    AddMemberCostume::new(25, 2124225).into_remote_data(),
-    AddMemberCostume::new(24, 2134225).into_remote_data(),
-    AddMemberCostume::new(23, 2144225).into_remote_data(),
-    AddMemberCostume::new(22, 2174236).into_remote_data(),
-    AddMemberCostume::new(21, 2184236).into_remote_data(),
-    AddMemberCostume::new(20, 2194236).into_remote_data(),
-    AddMemberCostume::new(19, 2204236).into_remote_data(),
-    AddMemberCostume::new(18, 2234241).into_remote_data(),
-    AddMemberCostume::new(17, 2244241).into_remote_data(),
-    AddMemberCostume::new(16, 2254241).into_remote_data(),
+    // AddCharacter::new(8, CharacterParameter { id: 5335218194, character_id: 100, rank: 1, rank_progress: 4, sp_skill: vec![SpSkill { group_id: 10000, id: 100001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
+    // AddCharacter::new(10, CharacterParameter { id: 5335220194, character_id: 101, rank: 1, rank_progress: 4, sp_skill: vec![SpSkill { group_id: 10100, id: 101001, lv: 1, is_trial: false }, SpSkill { group_id: 10102, id: 101021, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
+    // AddCharacter::new(11, CharacterParameter { id: 5335221194, character_id: 102, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 10200, id: 102001, lv: 1, is_trial: false }, SpSkill { group_id: 10202, id: 102021, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
+    // AddCharacter::new(2, CharacterParameter { id: 5335212194, character_id: 103, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 10300, id: 103001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
+    // AddCharacter::new(1, CharacterParameter { id: 5335211194, character_id: 106, rank: 1, rank_progress: 4, sp_skill: vec![SpSkill { group_id: 10600, id: 106001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
+    // AddCharacter::new(4, CharacterParameter { id: 5335214194, character_id: 108, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 10800, id: 108001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
+    // AddCharacter::new(6, CharacterParameter { id: 5335216194, character_id: 109, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 10900, id: 109001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
+    // AddCharacter::new(13, CharacterParameter { id: 5335293194, character_id: 110, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 11000, id: 110001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
+    // AddCharacter::new(5, CharacterParameter { id: 5335215194, character_id: 112, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 11200, id: 112001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
+    // AddCharacter::new(7, CharacterParameter { id: 5335217194, character_id: 113, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 11300, id: 113001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
+    // AddCharacter::new(14, CharacterParameter { id: 5335294194, character_id: 114, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 11400, id: 114001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
+    // AddCharacter::new(3, CharacterParameter { id: 5335213194, character_id: 115, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 11500, id: 115001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
+    // AddCharacter::new(15, CharacterParameter { id: 5335295194, character_id: 116, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 11600, id: 116001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
+    // AddCharacter::new(12, CharacterParameter { id: 5335292194, character_id: 119, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 11900, id: 119001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
+    // AddCharacter::new(9, CharacterParameter { id: 5335219194, character_id: 128, rank: 1, rank_progress: 0, sp_skill: vec![SpSkill { group_id: 12800, id: 128001, lv: 1, is_trial: false }], character_enhance_stage_id_list: vec![0, 0, 0, 0], character_piece_board_stage_id_list: vec![], is_trial: false }).into_remote_data(),
+    // AddMemberCostume::new(10, 1004100).into_remote_data(),
+    // AddMemberCostume::new(93, 1004100).into_remote_data(),
+    // AddMemberCostume::new(13, 1014100).into_remote_data(),
+    // AddMemberCostume::new(92, 1014100).into_remote_data(),
+    // AddMemberCostume::new(14, 1024100).into_remote_data(),
+    // AddMemberCostume::new(91, 1024100).into_remote_data(),
+    // AddMemberCostume::new(3, 1034100).into_remote_data(),
+    // AddMemberCostume::new(90, 1034100).into_remote_data(),
+    // AddMemberCostume::new(89, 1044100).into_remote_data(),
+    // AddMemberCostume::new(88, 1054100).into_remote_data(),
+    // AddMemberCostume::new(2, 1063113).into_remote_data(),
+    // AddMemberCostume::new(1, 1064100).into_remote_data(),
+    // AddMemberCostume::new(87, 1064100).into_remote_data(),
+    // AddMemberCostume::new(12, 1064217).into_remote_data(),
+    // AddMemberCostume::new(86, 1074100).into_remote_data(),
+    // AddMemberCostume::new(6, 1083110).into_remote_data(),
+    // AddMemberCostume::new(5, 1084100).into_remote_data(),
+    // AddMemberCostume::new(15, 1084100).into_remote_data(),
+    // AddMemberCostume::new(8, 1094100).into_remote_data(),
+    // AddMemberCostume::new(85, 1094100).into_remote_data(),
+    // AddMemberCostume::new(84, 1104100).into_remote_data(),
+    // AddMemberCostume::new(83, 1114100).into_remote_data(),
+    // AddMemberCostume::new(7, 1124100).into_remote_data(),
+    // AddMemberCostume::new(82, 1124100).into_remote_data(),
+    // AddMemberCostume::new(9, 1134100).into_remote_data(),
+    // AddMemberCostume::new(81, 1134100).into_remote_data(),
+    // AddMemberCostume::new(94, 1143127).into_remote_data(),
+    // AddMemberCostume::new(80, 1144100).into_remote_data(),
+    // AddMemberCostume::new(4, 1154100).into_remote_data(),
+    // AddMemberCostume::new(79, 1154100).into_remote_data(),
+    // AddMemberCostume::new(78, 1164100).into_remote_data(),
+    // AddMemberCostume::new(77, 1174100).into_remote_data(),
+    // AddMemberCostume::new(76, 1184100).into_remote_data(),
+    // AddMemberCostume::new(75, 1194100).into_remote_data(),
+    // AddMemberCostume::new(74, 1209100).into_remote_data(),
+    // AddMemberCostume::new(73, 1219100).into_remote_data(),
+    // AddMemberCostume::new(72, 1229100).into_remote_data(),
+    // AddMemberCostume::new(71, 1239100).into_remote_data(),
+    // AddMemberCostume::new(70, 1249100).into_remote_data(),
+    // AddMemberCostume::new(69, 1259100).into_remote_data(),
+    // AddMemberCostume::new(68, 1264100).into_remote_data(),
+    // AddMemberCostume::new(67, 1279100).into_remote_data(),
+    // AddMemberCostume::new(11, 1284100).into_remote_data(),
+    // AddMemberCostume::new(66, 1284100).into_remote_data(),
+    // AddMemberCostume::new(65, 1299100).into_remote_data(),
+    // AddMemberCostume::new(64, 1309100).into_remote_data(),
+    // AddMemberCostume::new(63, 1319100).into_remote_data(),
+    // AddMemberCostume::new(62, 1329100).into_remote_data(),
+    // AddMemberCostume::new(61, 1339100).into_remote_data(),
+    // AddMemberCostume::new(60, 1349100).into_remote_data(),
+    // AddMemberCostume::new(59, 1369100).into_remote_data(),
+    // AddMemberCostume::new(58, 1429100).into_remote_data(),
+    // AddMemberCostume::new(57, 1474132).into_remote_data(),
+    // AddMemberCostume::new(56, 1504132).into_remote_data(),
+    // AddMemberCostume::new(55, 1514100).into_remote_data(),
+    // AddMemberCostume::new(54, 1539132).into_remote_data(),
+    // AddMemberCostume::new(53, 1584147).into_remote_data(),
+    // AddMemberCostume::new(52, 1599147).into_remote_data(),
+    // AddMemberCostume::new(51, 1604147).into_remote_data(),
+    // AddMemberCostume::new(50, 1619147).into_remote_data(),
+    // AddMemberCostume::new(49, 1634161).into_remote_data(),
+    // AddMemberCostume::new(48, 1644161).into_remote_data(),
+    // AddMemberCostume::new(47, 1654161).into_remote_data(),
+    // AddMemberCostume::new(46, 1694100).into_remote_data(),
+    // AddMemberCostume::new(45, 1814100).into_remote_data(),
+    // AddMemberCostume::new(44, 1834189).into_remote_data(),
+    // AddMemberCostume::new(43, 1844189).into_remote_data(),
+    // AddMemberCostume::new(42, 1854189).into_remote_data(),
+    // AddMemberCostume::new(41, 1864189).into_remote_data(),
+    // AddMemberCostume::new(40, 1924195).into_remote_data(),
+    // AddMemberCostume::new(39, 1934195).into_remote_data(),
+    // AddMemberCostume::new(38, 1944195).into_remote_data(),
+    // AddMemberCostume::new(37, 1954203).into_remote_data(),
+    // AddMemberCostume::new(36, 1964203).into_remote_data(),
+    // AddMemberCostume::new(35, 1974203).into_remote_data(),
+    // AddMemberCostume::new(34, 1984210).into_remote_data(),
+    // AddMemberCostume::new(33, 1994210).into_remote_data(),
+    // AddMemberCostume::new(32, 2004210).into_remote_data(),
+    // AddMemberCostume::new(31, 2054220).into_remote_data(),
+    // AddMemberCostume::new(30, 2064220).into_remote_data(),
+    // AddMemberCostume::new(29, 2074220).into_remote_data(),
+    // AddMemberCostume::new(28, 2084220).into_remote_data(),
+    // AddMemberCostume::new(27, 2094100).into_remote_data(),
+    // AddMemberCostume::new(26, 2114225).into_remote_data(),
+    // AddMemberCostume::new(25, 2124225).into_remote_data(),
+    // AddMemberCostume::new(24, 2134225).into_remote_data(),
+    // AddMemberCostume::new(23, 2144225).into_remote_data(),
+    // AddMemberCostume::new(22, 2174236).into_remote_data(),
+    // AddMemberCostume::new(21, 2184236).into_remote_data(),
+    // AddMemberCostume::new(20, 2194236).into_remote_data(),
+    // AddMemberCostume::new(19, 2204236).into_remote_data(),
+    // AddMemberCostume::new(18, 2234241).into_remote_data(),
+    // AddMemberCostume::new(17, 2244241).into_remote_data(),
+    // AddMemberCostume::new(16, 2254241).into_remote_data(),
     AddItem::new(RemoteDataItemType::MaterialWA, 2, 1100, 3).into_remote_data(),
     AddItem::new(RemoteDataItemType::MaterialWA, 1, 5001, 4).into_remote_data(),
     AddItem::new(RemoteDataItemType::MaterialLimit, 1, 151, 1).into_remote_data(),
@@ -147,12 +199,12 @@ pub fn get_login_remote_data() -> Vec<RemoteData> {
     AddItem::new(RemoteDataItemType::PowerPotion, 1, 3, 2).into_remote_data(),
     AddItem::new(RemoteDataItemType::Ticket, 0, 17, 2).into_remote_data(),
     AddSingletonItem::new(RemoteDataItemType::Level, 35).into_remote_data(),
-    AddMemberBackground::new(5, 1010).into_remote_data(),
-    AddMemberBackground::new(4, 1011).into_remote_data(),
-    AddMemberBackground::new(3, 1012).into_remote_data(),
-    AddMemberBackground::new(2, 1013).into_remote_data(),
-    AddMemberBackground::new(1, 1090).into_remote_data(),
-    AddMemberBackground::new(6, 1180).into_remote_data(),
+    // AddMemberBackground::new(5, 1010).into_remote_data(),
+    // AddMemberBackground::new(4, 1011).into_remote_data(),
+    // AddMemberBackground::new(3, 1012).into_remote_data(),
+    // AddMemberBackground::new(2, 1013).into_remote_data(),
+    // AddMemberBackground::new(1, 1090).into_remote_data(),
+    // AddMemberBackground::new(6, 1180).into_remote_data(),
     AddItem::new(RemoteDataItemType::BossTicket, 0, 230831, 3).into_remote_data(),
     AddItem::new(RemoteDataItemType::SlayerMedal, 0, 230731, 0).into_remote_data(),
     // TODO: { "cmd": 4, "item_type": 34, "item_id": 2, "item_num": 3, "uniqid": 0, "lv": 0, "tag": "-" }
@@ -172,6 +224,11 @@ pub fn get_login_remote_data() -> Vec<RemoteData> {
     AddItem::new(RemoteDataItemType::CharacterPiece, 0, 128, 1).into_remote_data(),
     // TODO: { "cmd": 4, "item_type": 40, "item_id": 0, "item_num": 1, "uniqid": 0, "lv": 0, "tag": "-" }
   ]
+    .into_iter()
+    .chain(characters)
+    .chain(costumes)
+    .chain(backgrounds)
+    .collect::<Vec<_>>()
 }
 
 pub trait IntoRemoteData {
@@ -337,6 +394,7 @@ impl IntoRemoteData for AddMember {
   }
 }
 
+/// Unlocks character stories, also needed for [AddMember].
 pub struct AddCharacter {
   pub unique_id: i32,
   pub character_parameter: CharacterParameter,

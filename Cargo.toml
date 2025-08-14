@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 aes = "0.8.4"
 anyhow = "1.0.98"
-axum = "0.8.4"
+axum = { version = "0.8.4", features = ["macros"] }
 base64 = "0.22.1"
 cbc = { version = "0.1.2", features = ["std"] }
 clap = { version = "4.5.42", features = ["derive"] }

@@ -21,7 +21,7 @@ pub struct ApiCallParams {
   pub user_id: Option<UserId>,
 }
 
-pub trait CallCustom: erased_serde::Serialize {}
+pub trait CallCustom: erased_serde::Serialize + Send {}
 
 impl CallCustom for () {}
 

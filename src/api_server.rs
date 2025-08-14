@@ -99,6 +99,7 @@ pub static HIDDEN_PARAMS: &[&str] = &[
   "npaCode",
 ];
 
+#[axum::debug_handler]
 async fn api_call(
   State(state): State<Arc<AppState>>,
   Path(method): Path<String>,
