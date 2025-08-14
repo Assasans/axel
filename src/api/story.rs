@@ -1,5 +1,6 @@
 use std::iter;
 
+use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use serde_repr::{Deserialize_repr, Serialize_repr};
@@ -62,7 +63,9 @@ pub struct StorySelection {
   pub selection: Vec<bool>,
 }
 
-pub async fn story_list(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn story_list(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+  let kind: i32 = request.body["type"].parse().context("failed to parse type as i32")?;
+
   let index = 0;
 
   let masters = get_masters().await;

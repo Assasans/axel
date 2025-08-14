@@ -192,6 +192,7 @@ dependencies = [
  "reqwest",
  "rustls",
  "serde",
+ "serde-this-or-that",
  "serde_json",
  "serde_repr",
  "serde_urlencoded",
@@ -2609,6 +2610,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5f0e2c6ed6606019b4e29e69dbaba95b11854410e5347d525002456dbbb786b6"
 dependencies = [
  "serde_derive",
+]
+
+[[package]]
+name = "serde-this-or-that"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f90e7ee61f57b2b1a195326bf7ee88651d3d5e688f34bd5971110851764200bf"
+dependencies = [
+ "serde",
 ]
 
 [[package]]

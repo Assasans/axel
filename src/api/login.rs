@@ -8,14 +8,14 @@ use jwt_simple::prelude::Serialize;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use tracing::info;
 
-use crate::api::{ApiRequest, NotificationData, RemoteData};
+use crate::api::{ApiRequest, NotificationData};
 use crate::build_info::BUILD_INFO;
 use crate::call::{CallCustom, CallResponse};
 use crate::notification::FriendGreetingNotify;
 use crate::user::id::UserId;
 use crate::user::session::Session;
 use crate::user::uuid::UserUuid;
-use crate::AppState;
+use crate::{blob, AppState};
 
 // See [Wonder_Api_LoginInfoResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -29,14 +29,15 @@ pub struct Login {
 
 impl CallCustom for Login {}
 
+// See [Wonder.Tutorial.TutorialManager._ExecuteTutorial_d__11$$MoveNext]
 #[derive(Debug, Clone, Copy, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum TutorialState {
-  Afterlife = 0,
+  Story = 0,
   Battle = 1,
   Gacha = 2,
   /// Client sets it only after username was already set, so it is never actually used.
-  SetUsername = 4,
+  SetName = 4,
   Completed = 99,
 }
 
@@ -137,11 +138,7 @@ pub async fn login(
     created_at: created_at.format("%Y-%m-%d %H:%M:%S").to_string(),
   }));
 
-  // Keep it as a blob for now, it is very large...
-  let remote_data = include_str!("../login-remotedata.json");
-  let remote_data: Vec<RemoteData> = serde_json::from_str(remote_data).unwrap();
-  response.add_remote_data(remote_data);
-
+  response.add_remote_data(blob::get_login_remote_data());
   response.add_notifications(vec![
     // Jobs
     NotificationData::new(1, 7, 6, 0, "".to_string(), "".to_string()),

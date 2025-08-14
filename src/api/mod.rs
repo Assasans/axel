@@ -37,17 +37,18 @@ pub mod story;
 pub mod transfer;
 pub mod tutorial;
 
-#[derive(Debug, Clone, Copy, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Clone, Copy, Ord, PartialOrd, Eq, PartialEq, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum RemoteDataCommand {
   UserParamNew = 1,
   UserParamDelete = 2,
+  /// Delete all user parameters
   UserParamClear = 3,
   UserParamAdd = 4,
   UserParamUpdate = 5,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Ord, PartialOrd, Eq, PartialEq)]
 pub enum RemoteDataItemType {
   /* IDA static analysis */
   Money,
@@ -58,51 +59,160 @@ pub enum RemoteDataItemType {
   Exp,
   /// Called "rank" in game
   Level,
-  Member(i32),
+  // See [Wonder.UI.Mypage.HomeMemberSettingCell._SetData_d__8$$MoveNext], requires characterparameter
+  Character,
+  // See [Wonder.UI.Mypage.HomeMemberSettingCell._SetData_d__8$$MoveNext], requires memberparameter
+  Member,
   MemberCostume,
-  Another(i32),
+  // See [Wonder.UI.Chara.MemberPlanningData$$.ctor_71291148], requires uniqid and is_trial
+  SpecialSkill,
+  // See [Wonder.UI.Chara.MemberPlanningData$$.ctor_71291148], requires uniqid and is_trial
+  Weapon,
+  // TODO: 6 - ?? - requires uniqid and is_trial
+  // See [Wonder.UI.Common.MemberPlanningEquipBoxCell$$SetTrial]
+  Unknown6,
+  GachaTicket,
 
   /* Dynamic analysis */
-  Background,
+  MemberBackground,
+  MaterialWA,
+  MaterialLimit,
+  SkillPotion,
+  PowerPotion,
+  // See [Wonder.UI.Chara.CharaPresentConfirmDialog._OnClickSendButton_d__29$$MoveNext], requires uniqid
+  MaterialLove,
+  ExchangeMedal,
+  SkipTicket,
+  Ticket,
+  BossTicket,
+  SlayerMedal,
+  StaminaItem,
+  DreamTicket,
+  #[deprecated(note = "seems to be unused")]
+  CampaignTicket,
+  AssistTicket,
+  AssistMaterial,
+  DungeonRedraw,
+  /// "Potential"
+  CharacterPiece,
+  EventTicket,
+  FamePotion,
+  FameScroll,
+  CollaborationMedal,
+
+  Another(i32),
 }
 
-// See [Wonder.Util.UserParam$$Add]
-impl From<&RemoteDataItemType> for i32 {
-  fn from(item_type: &RemoteDataItemType) -> Self {
+// See [Wonder.Util.UserParam$$Add] code and [Wonder.Util.UserParam$$Get] cross-references
+impl From<RemoteDataItemType> for i32 {
+  fn from(item_type: RemoteDataItemType) -> Self {
     match item_type {
       RemoteDataItemType::Money => 1,
       RemoteDataItemType::RealMoney => 2,
       RemoteDataItemType::RealMoneyFree => 3,
+      RemoteDataItemType::Member => 4,
+      RemoteDataItemType::Weapon => 5,
+      RemoteDataItemType::Unknown6 => 6,
+      RemoteDataItemType::SkipTicket => 8,
       RemoteDataItemType::Stamina => 9,
       RemoteDataItemType::Exp => 10,
-      RemoteDataItemType::Level => 23,
-      RemoteDataItemType::Background => 24,
-      RemoteDataItemType::Member(value) => {
-        assert!(
-          !matches!(value, 1 | 2 | 3 | 9 | 10 | 14 | 23 | 24),
-          "member value should not match any other type"
-        );
-        *value
-      }
+      RemoteDataItemType::Character => 11,
+      RemoteDataItemType::SpecialSkill => 12,
       RemoteDataItemType::MemberCostume => 14,
-      RemoteDataItemType::Another(value) => *value,
+      RemoteDataItemType::MaterialWA => 15,
+      RemoteDataItemType::MaterialLimit => 16,
+      RemoteDataItemType::SkillPotion => 17,
+      RemoteDataItemType::PowerPotion => 18,
+      RemoteDataItemType::MaterialLove => 19,
+      RemoteDataItemType::ExchangeMedal => 20,
+      RemoteDataItemType::Ticket => 21,
+      RemoteDataItemType::Level => 23,
+      RemoteDataItemType::MemberBackground => 24,
+      // TODO: 26 - ??
+      // See [Wonder.Util.UserParam$$UpdateVoiceItem]
+      RemoteDataItemType::BossTicket => 27,
+      RemoteDataItemType::SlayerMedal => 28,
+      RemoteDataItemType::StaminaItem => 29,
+      RemoteDataItemType::DreamTicket => 30,
+      RemoteDataItemType::CampaignTicket => 32,
+      RemoteDataItemType::GachaTicket => 33,
+      // TODO: 35 - assist detail id - requires uniqid
+      // See [Wonder.UI.Assist.AssistGachaResultWindow._ShowPoweUpEffect_d__29$$MoveNext] and [Wonder.Util.UserParam$$GetAssistByAssistId]
+      RemoteDataItemType::AssistTicket => 36,
+      RemoteDataItemType::AssistMaterial => 37,
+      RemoteDataItemType::DungeonRedraw => 38,
+      RemoteDataItemType::CharacterPiece => 39,
+      RemoteDataItemType::EventTicket => 42,
+      // TODO: 43 - skill pa fame unique id
+      // See [Wonder.UI.Chara.MemberPlanningUnitCell$$GetSkillPaFameDatas]
+      RemoteDataItemType::FamePotion => 44,
+      RemoteDataItemType::FameScroll => 45,
+      RemoteDataItemType::CollaborationMedal => 46,
+      RemoteDataItemType::Another(value) => value,
     }
   }
 }
 
+impl From<i32> for RemoteDataItemType {
+  fn from(value: i32) -> Self {
+    match value {
+      1 => RemoteDataItemType::Money,
+      2 => RemoteDataItemType::RealMoney,
+      3 => RemoteDataItemType::RealMoneyFree,
+      4 => RemoteDataItemType::Member,
+      5 => RemoteDataItemType::Weapon,
+      6 => RemoteDataItemType::Unknown6,
+      8 => RemoteDataItemType::SkipTicket,
+      9 => RemoteDataItemType::Stamina,
+      10 => RemoteDataItemType::Exp,
+      11 => RemoteDataItemType::Character,
+      12 => RemoteDataItemType::SpecialSkill,
+      14 => RemoteDataItemType::MemberCostume,
+      15 => RemoteDataItemType::MaterialWA,
+      16 => RemoteDataItemType::MaterialLimit,
+      17 => RemoteDataItemType::SkillPotion,
+      18 => RemoteDataItemType::PowerPotion,
+      19 => RemoteDataItemType::MaterialLove,
+      20 => RemoteDataItemType::ExchangeMedal,
+      21 => RemoteDataItemType::Ticket,
+      23 => RemoteDataItemType::Level,
+      24 => RemoteDataItemType::MemberBackground,
+      26 => RemoteDataItemType::Another(26), // TODO: 26 - ??
+      27 => RemoteDataItemType::BossTicket,
+      28 => RemoteDataItemType::SlayerMedal,
+      29 => RemoteDataItemType::StaminaItem,
+      30 => RemoteDataItemType::DreamTicket,
+      32 => RemoteDataItemType::CampaignTicket,
+      33 => RemoteDataItemType::GachaTicket,
+      35 => RemoteDataItemType::Another(35), // TODO: 35 - assist detail id - requires uniqid
+      36 => RemoteDataItemType::AssistTicket,
+      37 => RemoteDataItemType::AssistMaterial,
+      38 => RemoteDataItemType::DungeonRedraw,
+      39 => RemoteDataItemType::CharacterPiece,
+      42 => RemoteDataItemType::EventTicket,
+      43 => RemoteDataItemType::Another(43), // TODO: 43 - skill pa fame unique id
+      44 => RemoteDataItemType::FamePotion,
+      45 => RemoteDataItemType::FameScroll,
+      46 => RemoteDataItemType::CollaborationMedal,
+      _ => RemoteDataItemType::Another(value),
+    }
+  }
+}
+
+// See [Wonder_Data_MemberParameter_Fields]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MemberParameter {
   pub id: i32,
   pub lv: i32,
   pub exp: i32,
-  pub member_id: i32,
-  pub ac_skill_id_a: i32,
+  pub member_id: i64,
+  pub ac_skill_id_a: i64,
   pub ac_skill_lv_a: i32,
   pub ac_skill_val_a: i32,
-  pub ac_skill_id_b: i32,
+  pub ac_skill_id_b: i64,
   pub ac_skill_lv_b: i32,
   pub ac_skill_val_b: i32,
-  pub ac_skill_id_c: i32,
+  pub ac_skill_id_c: i64,
   pub ac_skill_lv_c: i32,
   pub ac_skill_val_c: i32,
   pub hp: i32,
@@ -113,11 +223,11 @@ pub struct MemberParameter {
   pub dexterity: i32,
   pub luck: i32,
   pub limit_break: i32,
-  pub character_id: i32,
-  pub passiveskill: i32,
-  pub specialattack: i32,
+  pub character_id: i64,
+  pub passiveskill: i64,
+  pub specialattack: i64,
   pub resist_state: i32,
-  pub resist_attr: i32,
+  pub resist_attr: i64,
   pub attack: i32,
   pub waiting_room: i32,
   pub main_strength: i32,
@@ -131,14 +241,30 @@ pub struct MemberParameter {
   pub fame_defense_rank: i32,
   pub fame_magicattack_rank: i32,
   pub fame_magicdefence_rank: i32,
-  // Unknown structure
-  pub skill_pa_fame_list: Vec<serde_json::Value>,
+  pub skill_pa_fame_list: Vec<SkillPaFame>,
 }
 
+// See [Wonder_Data_MemberParameter_SkillPaFame_Fields]
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SkillPaFame {
+  pub skill_pa_fame_id: i64,
+  pub user_skill_pa_fame_id: i32,
+  pub add_status_list: Vec<SkillPaFameAddStatus>,
+}
+
+// See [Wonder_Data_MemberParameter_SkillPaFame_AddStatus_Fields]
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SkillPaFameAddStatus {
+  #[serde(rename = "type")]
+  pub kind: i32,
+  pub value: i32,
+}
+
+// See [Wonder_Data_CharacterParameter_Fields]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CharacterParameter {
   pub id: i64,
-  pub character_id: i32,
+  pub character_id: i64,
   pub rank: i32,
   pub rank_progress: i32,
   pub sp_skill: Vec<SpSkill>,
@@ -147,12 +273,17 @@ pub struct CharacterParameter {
   pub is_trial: bool,
 }
 
+// See [Wonder_Data_CharacterParameter_SpSkill_Fields]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SpSkill {
-  pub group_id: String,
-  pub id: String,
-  pub lv: String,
-  pub member_id: String,
+  #[serde(deserialize_with = "crate::serde_compat::as_i32")]
+  pub group_id: i32,
+  #[serde(deserialize_with = "crate::serde_compat::as_i64")]
+  pub id: i64,
+  #[serde(deserialize_with = "crate::serde_compat::as_i32")]
+  pub lv: i32,
+  // Absent in the client code
+  // pub member_id: String,
   pub is_trial: bool,
 }
 
@@ -168,6 +299,7 @@ pub struct RemoteData {
   pub item_num: i32,
   pub uniqid: i32,
   pub lv: i32,
+  // "lock:1" see [Wonder.Util.UserParamItem$$get_isLock]
   pub tag: String,
   #[serde(rename = "memberparameter")]
   #[serde(skip_serializing_if = "Option::is_none")]

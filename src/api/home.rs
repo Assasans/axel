@@ -31,8 +31,8 @@ pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn Cal
     CallResponse::new_success(Box::new(Home {
       multi_battle_invitation: None,
       member_info: MemberInfo {
-        current_member_id: 1011100,
-        member_ids: vec![1011100, 0, 0, 0, 0],
+        current_member_id: 1064200,
+        member_ids: vec![1011100, 1024213, 1064200, 0, 0],
       },
       advertisement_data: AdvertisementData {
         id: 10006,
