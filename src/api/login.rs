@@ -6,7 +6,7 @@ use base64::Engine;
 use chrono::{DateTime, Utc};
 use jwt_simple::prelude::Serialize;
 use serde_repr::{Deserialize_repr, Serialize_repr};
-use tracing::info;
+use tracing::{debug, info};
 
 use crate::api::{ApiRequest, NotificationData};
 use crate::build_info::BUILD_INFO;
@@ -48,7 +48,7 @@ pub async fn login(
 ) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
   let uuid = request.body.get("uuid").context("no 'uuid' passed")?;
   let uuid = uuid.parse::<UserUuid>().unwrap();
-  info!("{:?}", uuid);
+  debug!("{:?}", uuid);
 
   let client = state.pool.get().await.context("failed to get database connection")?;
   #[rustfmt::skip]
@@ -65,7 +65,7 @@ pub async fn login(
     .query(&statement, &[&uuid.to_string()])
     .await
     .context("failed to execute query")?;
-  info!(?rows, "login query executed");
+  debug!(?rows, "login query executed");
 
   let (id, username, created_at, tutorial_progress) = if rows.is_empty() {
     #[rustfmt::skip]

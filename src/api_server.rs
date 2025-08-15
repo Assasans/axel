@@ -20,7 +20,7 @@ use jwt_simple::claims::JWTClaims;
 use md5::Digest;
 use tokio::net::TcpListener;
 use tower::Layer;
-use tracing::{debug, info, trace, warn};
+use tracing::{debug, info, info_span, trace, warn, Instrument, Span};
 
 use crate::api::{
   account, assist, battle, capture, character, dungeon, exchange, friend, gacha, home, honor_list,
@@ -30,7 +30,7 @@ use crate::api::{
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::client_ip::add_client_ip;
 use crate::normalize_path::normalize_path;
-use crate::request_logging::log_requests;
+use crate::request_logging::log_requests_info;
 use crate::user::session::Session;
 use crate::{AppError, AppState};
 
@@ -46,7 +46,7 @@ pub async fn start(state: Arc<AppState>) -> io::Result<()> {
   let app = Router::new()
     .route("/", get(get_root_friendly))
     .route("/api/{*method}", post(api_call))
-    .layer(log_requests())
+    .layer(log_requests_info())
     .layer(middleware::from_fn(add_client_ip))
     .with_state(state.clone());
   let middleware = tower::util::MapRequestLayer::new(normalize_path);
@@ -119,6 +119,7 @@ async fn api_call(
   let meta: CallMeta = serde_json::from_slice(&data).unwrap();
   debug!("api call meta: {:?}", meta);
 
+  let mut session_span: Option<Span> = None;
   let mut session = if let Some(user_key) = &meta.uk {
     let user_key = const_hex::decode(user_key).expect(&format!("failed to parse user key: {:?}", user_key));
     let user_key: [u8; 16] = user_key
@@ -157,172 +158,180 @@ async fn api_call(
       warn!("user_id is not set in params, but user key is present in meta");
     }
 
+    session_span = Some(info_span!("session", user_id = ?session.user_id));
     Some(session)
   } else {
     None
   };
 
-  let iv = meta
-    .uk
-    .as_ref()
-    .map(|uk| const_hex::decode(uk).expect(&format!("failed to parse user key: {:?}", uk)))
-    .as_deref()
-    .unwrap_or(&AES_IV)
-    .to_owned();
-  let encrypted_body = body.clone();
-  let body = Aes128CbcDec::new(AES_KEY.into(), iv.as_slice().into())
-    .decrypt_padded_vec_mut::<Pkcs7>(&body)
-    .expect("failed to decrypt body");
-  let body = str::from_utf8(&body).expect(&format!("failed to convert body to string: {:?}", body));
-  let body_raw = body;
-  debug!("api call body: {}", body);
+  let future = async {
+    let iv = meta
+      .uk
+      .as_ref()
+      .map(|uk| const_hex::decode(uk).expect(&format!("failed to parse user key: {:?}", uk)))
+      .as_deref()
+      .unwrap_or(&AES_IV)
+      .to_owned();
+    let encrypted_body = body.clone();
+    let body = Aes128CbcDec::new(AES_KEY.into(), iv.as_slice().into())
+      .decrypt_padded_vec_mut::<Pkcs7>(&body)
+      .expect("failed to decrypt body");
+    let body = str::from_utf8(&body).expect(&format!("failed to convert body to string: {:?}", body));
+    let body_raw = body;
+    debug!("api call body: {}", body);
 
-  let body: HashMap<String, String> = serde_urlencoded::from_str(body).unwrap();
-  debug!("api call body: {:?}", body);
+    let body: HashMap<String, String> = serde_urlencoded::from_str(body).unwrap();
+    debug!("api call body: {:?}", body);
 
-  let visible_params = body
-    .iter()
-    .filter(|(key, _)| !HIDDEN_PARAMS.contains(&key.as_str()))
-    .collect::<HashMap<_, _>>();
+    let visible_params = body
+      .iter()
+      .filter(|(key, _)| !HIDDEN_PARAMS.contains(&key.as_str()))
+      .collect::<HashMap<_, _>>();
 
-  if matches!(&*method, "masterall" | "capturesend") {
-    info!(?method, ?meta, ?params, body = "(...)", "api call");
+    if matches!(&*method, "masterall" | "capturesend") {
+      info!(?method, body = "(...)", "api call");
+    } else {
+      info!(?method, body = ?visible_params, "api call");
+    }
+
+    let request = ApiRequest {
+      params: params.clone(),
+      body: body.clone(),
+
+      state: state.clone(),
+    };
+
+    let (response, use_user_key): (CallResponse<dyn CallCustom>, _) = match &*method {
+      "idlink_confirm_google" => idlink_confirm_google::route(request).await?,
+      "masterlist" => master_list::route(request).await?,
+      "login" => login::login(state, request, &mut session).await?,
+      "capturesend" => capture::capture_send(request).await?,
+      "masterall" => master_all::route(request).await?,
+      "tutorial" => tutorial::tutorial(state, request, &mut session).await?,
+      "notice" => notice::notice(request).await?,
+      "gachainfo" => gacha::gacha_info(request).await?,
+      "gacha_tutorial" => gacha::gacha_tutorial(request).await?,
+      "gacha_tutorial_reward" => gacha::gacha_tutorial_reward(request).await?,
+      "gachachain" => gacha::gacha_chain(request).await?,
+      "gachanormal" => gacha::gacha_normal(request).await?,
+      "gacharate" => gacha::gacha_rate(request).await?,
+      "gachalog" => gacha::gacha_log(request).await?,
+      "root_box_check" => (CallResponse::new_success(Box::new(())), false),
+      "maintenancecheck" => maintenance_check::route(request).await?,
+      "firebasetoken" => (CallResponse::new_success(Box::new(())), true),
+      "setname" => account::set_name(state, request, &mut session).await?,
+      "storyreward" => story::story_reward(request).await?,
+      "story_read" => story::story_read(request).await?,
+      "loginbonus" => login_bonus::route(request).await?,
+      "home" => home::route(request).await?,
+      "profile" => profile::profile(state, request, &mut session).await?,
+      "honor_list" => honor_list::route(request).await?,
+      "interaction" => interaction::route(request).await?,
+      "partyinfo" => party_info::route(request).await?,
+      "storylist" => story::story_list(request).await?,
+      "quest_main_part_list" => quest_main::quest_main_part_list(request).await?,
+      "quest_main_stage_list" => quest_main::quest_main_stage_list(request).await?,
+      "quest_main_area_list" => quest_main::quest_main_area_list(request).await?,
+      "questhuntinglist" => quest_hunting::quest_hunting_list(request).await?,
+      "questhuntingstagelist" => quest_hunting::quest_hunting_stage_list(request).await?,
+      "fame_quest_rank_list" => quest_fame::fame_quest_rank_list(request).await?,
+      "fame_quest_area_list" => quest_fame::fame_quest_area_list(request).await?,
+      "fame_quest_stage_list" => quest_fame::fame_quest_stage_list(request).await?,
+      "dungeon_status" => dungeon::dungeon_status(request).await?,
+      "dungeon_area_top" => dungeon::dungeon_area_top(request).await?,
+      "weaponlist" => items::weapon_list(request).await?,
+      "accessorylist" => items::accessory_list(request).await?,
+      "battlestart" => battle::battle_start(request).await?,
+      "battlewaveresult" => battle::battle_wave_result(request).await?,
+      "result" => battle::battle_result(request).await?,
+      "friendlist" => friend::friend_list(state, request, &mut session).await?,
+      "friendinfo" => friend::friend_info(state, request, &mut session).await?,
+      "friendmute" => friend::friend_mute(state, request, &mut session).await?,
+      "friendremove" => friend::friend_remove(state, request, &mut session).await?,
+      "friendrequest" => friend::friend_request(state, request, &mut session).await?,
+      "friendsearch" => friend::friend_search(state, request, &mut session).await?,
+      "friend_recommendation_list" => friend::friend_recommendation_list(state, request, &mut session).await?,
+      "greeting_list" => friend::greeting_list(state, request, &mut session).await?,
+      "greeting_send" => friend::greeting_send(state, request, &mut session).await?,
+      "assist_make_notice" => assist::assist_make_notice(request).await?,
+      "assist_make_list" => assist::assist_make_list(request).await?,
+      "exchangelist" => exchange::exchange_list(request).await?,
+      "leavemenbers" => exchange::leave_members(request).await?,
+      "character_piece_board_info" => character::character_piece_board_info(request).await?,
+      "character_enhance_info" => character::character_enhance_info(request).await?,
+      "idconfirm" => transfer::id_confirm(request).await?,
+      "prepare_set_migration" => transfer::prepare_set_migration(request).await?,
+      "newidcheck" => transfer::new_id_check(request).await?,
+      "newid" => transfer::new_id(request).await?,
+      "idlogin" => transfer::id_login(request).await?,
+      "presentlist" => present::present_list(request).await?,
+      "presentloglist" => present::present_log_list(request).await?,
+      "presentget" => present::present_get(request).await?,
+      "mission" => mission::mission_list(request).await?,
+      "battlequestinfo" => mission::battle_quest_info(request).await?,
+      "battlemarathoninfo" => mission::battle_marathon_info(request).await?,
+      "marathon_info" => mission::marathon_info(request).await?,
+      "marathon_stage_list" => mission::marathon_stage_list(request).await?,
+      "marathon_quest_start" => mission::marathon_quest_start(request).await?,
+      "marathon_quest_result" => mission::marathon_quest_result(request).await?,
+      "marathon_boss_list" => mission::marathon_boss_list(request).await?,
+      _ => todo!("api call '{}'", method),
+    };
+
+    let response = serde_json::to_string(&response).unwrap();
+    if matches!(
+      &*method,
+      "masterlist" | "masterall" | "login" | "gachainfo" | "gacha_tutorial_reward"
+    ) {
+      debug!("response: (...)");
+    } else {
+      debug!("response: {}", response);
+    }
+
+    let user_key = if use_user_key {
+      Some(
+        session
+          .expect("no session for user endpoint")
+          .user_key
+          .lock()
+          .unwrap()
+          .expect("no user key")
+          .to_vec(),
+      )
+    } else {
+      None
+    };
+
+    let (encrypted, hash) = encrypt(response.as_bytes(), user_key.as_deref());
+
+    let key_pair = RS256KeyPair::from_pem(include_str!("../key.pem")).unwrap();
+    let mut custom = BTreeMap::new();
+    custom.insert("cs".to_owned(), const_hex::encode(&*hash));
+    if let Some(user_key) = user_key {
+      custom.insert("uk".to_owned(), const_hex::encode(&*user_key));
+    }
+
+    let claims = JWTClaims {
+      issued_at: None,
+      expires_at: None,
+      invalid_before: None,
+      issuer: None,
+      subject: None,
+      audiences: None,
+      jwt_id: None,
+      nonce: None,
+      custom,
+    };
+    let token = key_pair.sign(claims)?;
+    trace!("response jwt: {}", token);
+
+    Ok(([(JWT_HEADER, token)], encrypted))
+  };
+  if let Some(session_span) = session_span {
+    future.instrument(session_span).await
   } else {
-    info!(?method, ?meta, ?params, body = ?visible_params, "api call");
+    future.await
   }
-
-  let request = ApiRequest {
-    params: params.clone(),
-    body: body.clone(),
-
-    state: state.clone(),
-  };
-
-  let (response, use_user_key): (CallResponse<dyn CallCustom>, _) = match &*method {
-    "idlink_confirm_google" => idlink_confirm_google::route(request).await?,
-    "masterlist" => master_list::route(request).await?,
-    "login" => login::login(state, request, &mut session).await?,
-    "capturesend" => capture::capture_send(request).await?,
-    "masterall" => master_all::route(request).await?,
-    "tutorial" => tutorial::tutorial(state, request, &mut session).await?,
-    "notice" => notice::notice(request).await?,
-    "gachainfo" => gacha::gacha_info(request).await?,
-    "gacha_tutorial" => gacha::gacha_tutorial(request).await?,
-    "gacha_tutorial_reward" => gacha::gacha_tutorial_reward(request).await?,
-    "gachachain" => gacha::gacha_chain(request).await?,
-    "gachanormal" => gacha::gacha_normal(request).await?,
-    "gacharate" => gacha::gacha_rate(request).await?,
-    "gachalog" => gacha::gacha_log(request).await?,
-    "root_box_check" => (CallResponse::new_success(Box::new(())), false),
-    "maintenancecheck" => maintenance_check::route(request).await?,
-    "firebasetoken" => (CallResponse::new_success(Box::new(())), true),
-    "setname" => account::set_name(state, request, &mut session).await?,
-    "storyreward" => story::story_reward(request).await?,
-    "story_read" => story::story_read(request).await?,
-    "loginbonus" => login_bonus::route(request).await?,
-    "home" => home::route(request).await?,
-    "profile" => profile::profile(state, request, &mut session).await?,
-    "honor_list" => honor_list::route(request).await?,
-    "interaction" => interaction::route(request).await?,
-    "partyinfo" => party_info::route(request).await?,
-    "storylist" => story::story_list(request).await?,
-    "quest_main_part_list" => quest_main::quest_main_part_list(request).await?,
-    "quest_main_stage_list" => quest_main::quest_main_stage_list(request).await?,
-    "quest_main_area_list" => quest_main::quest_main_area_list(request).await?,
-    "questhuntinglist" => quest_hunting::quest_hunting_list(request).await?,
-    "questhuntingstagelist" => quest_hunting::quest_hunting_stage_list(request).await?,
-    "fame_quest_rank_list" => quest_fame::fame_quest_rank_list(request).await?,
-    "fame_quest_area_list" => quest_fame::fame_quest_area_list(request).await?,
-    "fame_quest_stage_list" => quest_fame::fame_quest_stage_list(request).await?,
-    "dungeon_status" => dungeon::dungeon_status(request).await?,
-    "dungeon_area_top" => dungeon::dungeon_area_top(request).await?,
-    "weaponlist" => items::weapon_list(request).await?,
-    "accessorylist" => items::accessory_list(request).await?,
-    "battlestart" => battle::battle_start(request).await?,
-    "battlewaveresult" => battle::battle_wave_result(request).await?,
-    "result" => battle::battle_result(request).await?,
-    "friendlist" => friend::friend_list(state, request, &mut session).await?,
-    "friendinfo" => friend::friend_info(state, request, &mut session).await?,
-    "friendmute" => friend::friend_mute(state, request, &mut session).await?,
-    "friendremove" => friend::friend_remove(state, request, &mut session).await?,
-    "friendrequest" => friend::friend_request(state, request, &mut session).await?,
-    "friendsearch" => friend::friend_search(state, request, &mut session).await?,
-    "friend_recommendation_list" => friend::friend_recommendation_list(state, request, &mut session).await?,
-    "greeting_list" => friend::greeting_list(state, request, &mut session).await?,
-    "greeting_send" => friend::greeting_send(state, request, &mut session).await?,
-    "assist_make_notice" => assist::assist_make_notice(request).await?,
-    "assist_make_list" => assist::assist_make_list(request).await?,
-    "exchangelist" => exchange::exchange_list(request).await?,
-    "leavemenbers" => exchange::leave_members(request).await?,
-    "character_piece_board_info" => character::character_piece_board_info(request).await?,
-    "character_enhance_info" => character::character_enhance_info(request).await?,
-    "idconfirm" => transfer::id_confirm(request).await?,
-    "prepare_set_migration" => transfer::prepare_set_migration(request).await?,
-    "newidcheck" => transfer::new_id_check(request).await?,
-    "newid" => transfer::new_id(request).await?,
-    "idlogin" => transfer::id_login(request).await?,
-    "presentlist" => present::present_list(request).await?,
-    "presentloglist" => present::present_log_list(request).await?,
-    "presentget" => present::present_get(request).await?,
-    "mission" => mission::mission_list(request).await?,
-    "battlequestinfo" => mission::battle_quest_info(request).await?,
-    "battlemarathoninfo" => mission::battle_marathon_info(request).await?,
-    "marathon_info" => mission::marathon_info(request).await?,
-    "marathon_stage_list" => mission::marathon_stage_list(request).await?,
-    "marathon_quest_start" => mission::marathon_quest_start(request).await?,
-    "marathon_quest_result" => mission::marathon_quest_result(request).await?,
-    "marathon_boss_list" => mission::marathon_boss_list(request).await?,
-    _ => todo!("api call '{}'", method),
-  };
-
-  let response = serde_json::to_string(&response).unwrap();
-  if matches!(
-    &*method,
-    "masterlist" | "masterall" | "login" | "gachainfo" | "gacha_tutorial_reward"
-  ) {
-    debug!("response: (...)");
-  } else {
-    debug!("response: {}", response);
-  }
-
-  let user_key = if use_user_key {
-    Some(
-      session
-        .expect("no session for user endpoint")
-        .user_key
-        .lock()
-        .unwrap()
-        .expect("no user key")
-        .to_vec(),
-    )
-  } else {
-    None
-  };
-
-  let (encrypted, hash) = encrypt(response.as_bytes(), user_key.as_deref());
-
-  let key_pair = RS256KeyPair::from_pem(include_str!("../key.pem")).unwrap();
-  let mut custom = BTreeMap::new();
-  custom.insert("cs".to_owned(), const_hex::encode(&*hash));
-  if let Some(user_key) = user_key {
-    custom.insert("uk".to_owned(), const_hex::encode(&*user_key));
-  }
-
-  let claims = JWTClaims {
-    issued_at: None,
-    expires_at: None,
-    invalid_before: None,
-    issuer: None,
-    subject: None,
-    audiences: None,
-    jwt_id: None,
-    nonce: None,
-    custom,
-  };
-  let token = key_pair.sign(claims)?;
-  trace!("response jwt: {}", token);
-
-  Ok(([(JWT_HEADER, token)], encrypted))
 }
 
 async fn get_root_friendly() -> axum::response::Result<impl IntoResponse, AppError> {

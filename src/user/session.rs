@@ -6,7 +6,7 @@ use cbc::cipher::{BlockEncryptMut, KeyIvInit};
 use jwt_simple::algorithms::{RS256KeyPair, RSAKeyPairLike};
 use jwt_simple::claims::JWTClaims;
 use rand::random;
-use tracing::{debug, info, trace};
+use tracing::trace;
 
 use crate::api_server::{Aes128CbcEnc, AES_IV, AES_KEY};
 use crate::user::id::UserId;
@@ -30,7 +30,7 @@ impl Session {
   pub fn rotate_user_key(&self) {
     let mut key = self.user_key.lock().unwrap();
     let key = key.insert(random());
-    info!("updated user key: {}", const_hex::encode(key));
+    trace!("rotated user key: {}", const_hex::encode(key));
   }
 
   pub fn encrypt(&self, data: &[u8]) -> Vec<u8> {
@@ -44,7 +44,7 @@ impl Session {
   pub fn encrypt_and_sign(&self, data: &[u8]) -> Result<(Vec<u8>, String), jwt_simple::Error> {
     let encrypted = self.encrypt(data);
     let digest = md5::compute(&encrypted);
-    debug!("digest: {:?}", digest);
+    trace!("digest: {:?}", digest);
 
     let key_pair = RS256KeyPair::from_pem(include_str!("../../key.pem")).unwrap();
     let mut custom = BTreeMap::new();

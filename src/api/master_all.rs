@@ -12,7 +12,7 @@ use serde_json::Value;
 use tokio::fs::File;
 use tokio::io::AsyncReadExt;
 use tokio::sync::OnceCell;
-use tracing::{debug, info, warn};
+use tracing::{debug, info, trace, warn};
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
@@ -92,12 +92,17 @@ async fn load_masters() -> HashMap<String, MasterAllItem> {
         let mut file = File::open(&path)
           .await
           .expect(&format!("failed to open master {:?}", path));
-        let mut data = String::new();
-        file.read_to_string(&mut data).await.unwrap();
+        let mut data = Vec::new();
+        file.read_to_end(&mut data).await.unwrap();
 
-        let mut value = serde_json::from_str::<Value>(&data).expect(&format!("failed to parse master {:?}", path));
+        let start = std::time::Instant::now();
+        let mut value =
+          serde_json::from_slice::<Value>(&mut data).expect(&format!("failed to parse master {:?}", path));
+        trace!("parsed master {} in {:?}", name, start.elapsed());
         patch_master(&name, &mut value).await;
+        let start = std::time::Instant::now();
         let serialized = serde_json::to_string(&value).unwrap();
+        trace!("serialized master {} in {:?}", name, start.elapsed());
 
         // Execute CPU-intensive operations in a blocking thread
         let master_key = name.clone();
@@ -146,7 +151,7 @@ async fn patch_master(name: &str, value: &mut Value) {
     // Used for "time remaining" and event ended errors
     "gacha" => {
       info!("patching gacha");
-      info!("end_at_str: {:?}", end_at_str);
+      trace!("end_at_str: {:?}", end_at_str);
       if let Some(array) = value.as_array_mut() {
         for item in array {
           if let Some(item) = item.as_object_mut() {
@@ -323,7 +328,7 @@ pub async fn get_masters() -> &'static HashMap<String, MasterAllItem> {
 
 pub async fn route(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
   let keys = request.body["master_keys"].split(",").collect::<Vec<_>>();
-  info!("loading masters: {:?}", keys);
+  debug!("loading masters: {:?}", keys);
   let masters = get_masters().await;
   let masters = keys
     .iter()

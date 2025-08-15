@@ -38,3 +38,27 @@ pub fn log_requests() -> TraceLayer<
     // logging inside [AppError::into_response] so disable that
     .on_failure(())
 }
+
+pub fn log_requests_info() -> TraceLayer<
+  HttpMakeClassifier,
+  impl Fn(&Request) -> Span + Clone,
+  DefaultOnRequest,
+  DefaultOnResponse,
+  DefaultOnBodyChunk,
+  DefaultOnEos,
+  (),
+> {
+  TraceLayer::new_for_http()
+    .make_span_with(|request: &Request| {
+      let ip = request
+        .extensions()
+        .get::<ClientIp>()
+        .map(|client_ip| client_ip.0)
+        .unwrap();
+
+      info_span!("request", %ip)
+    })
+    // By default, `TraceLayer` will log 5xx responses, but we're doing our specific
+    // logging inside [AppError::into_response] so disable that
+    .on_failure(())
+}
