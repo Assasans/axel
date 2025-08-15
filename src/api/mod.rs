@@ -29,6 +29,7 @@ pub mod master_all;
 pub mod master_list;
 pub mod notice;
 pub mod party_info;
+pub mod present;
 pub mod profile;
 pub mod quest_fame;
 pub mod quest_hunting;

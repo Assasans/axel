@@ -25,7 +25,7 @@ use tracing::{debug, info, trace, warn};
 use crate::api::{
   account, assist, battle, capture, character, dungeon, exchange, friend, gacha, home, honor_list,
   idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check, master_all, master_list, notice,
-  party_info, profile, quest_fame, quest_hunting, quest_main, story, transfer, tutorial, ApiRequest,
+  party_info, present, profile, quest_fame, quest_hunting, quest_main, story, transfer, tutorial, ApiRequest,
 };
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::client_ip::add_client_ip;
@@ -261,6 +261,9 @@ async fn api_call(
     "newidcheck" => transfer::new_id_check(request).await?,
     "newid" => transfer::new_id(request).await?,
     "idlogin" => transfer::id_login(request).await?,
+    "presentlist" => present::present_list(request).await?,
+    "presentloglist" => present::present_log_list(request).await?,
+    "presentget" => present::present_get(request).await?,
     _ => todo!("api call '{}'", method),
   };
 
