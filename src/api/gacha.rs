@@ -1,8 +1,9 @@
 use jwt_simple::prelude::Serialize;
+use rand::seq::IteratorRandom;
 use serde_json::{json, Value};
 
 use crate::api::master_all::get_masters;
-use crate::api::{ApiRequest, NotificationData, RemoteData};
+use crate::api::{ApiRequest, NotificationData, RemoteData, RemoteDataItemType};
 use crate::call::{CallCustom, CallResponse};
 use crate::master;
 
@@ -132,25 +133,34 @@ impl GachaGoodItem {
 
 #[derive(Default, Debug, Serialize)]
 pub struct GachaResult {
-  pub gacha_id: u32,
+  pub gacha_id: i32,
   pub goods: Vec<GachaGood>,
-  pub bonus_info: BonusInfo,
-  pub bonus_step: Option<()>,
+  pub bonus_info: Option<BonusInfo>,
+  pub bonus_step: Option<StepupBonusStep>,
 }
 
 impl CallCustom for GachaResult {}
 
+// See [Wonder_Api_GachaStepupBonusStepResponseDto_Fields]
+#[derive(Default, Debug, Serialize)]
+pub struct StepupBonusStep {
+  pub stepup_bonus_id: i32,
+  pub old_step: i32,
+  pub new_step: i32,
+}
+
+// See [Wonder_Api_GachanormalGoodsResponseDto_Fields]
 #[derive(Default, Debug, Serialize)]
 pub struct GachaGood {
-  pub itemtype: u8,
-  pub itemid: u32,
-  pub itemnum: u32,
+  pub itemtype: i32,
+  pub itemid: i64,
+  pub itemnum: i32,
   #[serde(with = "crate::bool_as_int")]
   pub isnew: bool,
 }
 
 impl GachaGood {
-  pub fn new(itemtype: u8, itemid: u32, itemnum: u32, isnew: bool) -> Self {
+  pub fn new(itemtype: i32, itemid: i64, itemnum: i32, isnew: bool) -> Self {
     Self {
       itemtype,
       itemid,
@@ -160,19 +170,21 @@ impl GachaGood {
   }
 }
 
+// See [Wonder_Api_GachaBonusInfoResponseDto_Fields]
 #[derive(Default, Debug, Serialize)]
 pub struct BonusInfo {
   pub items: Vec<BonusItem>,
-  pub rare: u32,
-  pub bonus_type: u32,
+  pub rare: i32,
+  pub bonus_type: i32,
   pub bonus_animation: String,
 }
 
+// See [Wonder_Api_GachaBonusItemResponseDto_Fields]
 #[derive(Default, Debug, Serialize)]
 pub struct BonusItem {
-  pub item_type: u32,
-  pub item_id: u32,
-  pub item_num: u32,
+  pub item_type: i32,
+  pub item_id: i64,
+  pub item_num: i32,
 }
 
 pub async fn gacha_info(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
@@ -1293,79 +1305,37 @@ pub async fn gacha_tutorial_reward(_request: ApiRequest) -> anyhow::Result<(Call
 }
 
 pub async fn gacha_chain(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  let gacha_id: u32 = request.body["gacha_id"].parse().unwrap();
-  let _money_type: u8 = request.body["money_type"].parse().unwrap();
+  let gacha_id: i32 = request.body["gacha_id"].parse().unwrap();
+  let _money_type: i32 = request.body["money_type"].parse().unwrap();
 
-  let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(GachaResult {
-    gacha_id,
-    goods: vec![
-      GachaGood::new(4, 1032102, 1, true),
-      GachaGood::new(4, 1012100, 1, true),
-      GachaGood::new(4, 1013100, 1, true),
-      GachaGood::new(4, 1012100, 1, true),
-      GachaGood::new(4, 1013116, 1, true),
-      GachaGood::new(4, 1012102, 1, true),
-      GachaGood::new(4, 1012102, 1, true),
-      GachaGood::new(4, 1012102, 1, true),
-      GachaGood::new(4, 1012100, 1, true),
-      GachaGood::new(4, 1012102, 1, true),
-      GachaGood::new(4, 1013116, 1, true),
-    ],
-    bonus_info: BonusInfo {
-      items: vec![BonusItem {
-        item_type: 49,
-        item_id: 4,
-        item_num: 1,
-      }],
-      rare: 0,
-      bonus_type: 1,
-      bonus_animation: "".to_owned(),
-    },
-    bonus_step: None,
-  }));
-  response.add_remote_data(vec![
-    RemoteData::new(1, 7, 2, 11, 0, 0, "".to_string()),
-    RemoteData::new(1, 7, 14, 1, 0, 0, "".to_string()),
-    RemoteData::new(1, 7, 14, 1, 0, 0, "".to_string()),
-    RemoteData::new(1, 7, 14, 1, 0, 0, "".to_string()),
-    RemoteData::new(1, 7, 3, 3, 0, 0, "".to_string()),
-    RemoteData::new(1, 7, 13, 7, 0, 0, "".to_string()),
-    RemoteData::new(1, 7, 34, 2, 0, 0, "show_button".to_string()),
-    RemoteData::new(1, 6, 1, 30030001, 0, 0, "".to_string()),
-    RemoteData::new(1, 10, 230731, 52307325, 0, 0, "".to_string()),
-    RemoteData::new(1, 10, 230831, 52308305, 0, 0, "".to_string()),
-  ]);
-
-  Ok((response, false))
+  gacha_normal(request).await
 }
 
 pub async fn gacha_normal(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  let gacha_id: u32 = request.body["gacha_id"].parse().unwrap();
-  let _money_type: u8 = request.body["money_type"].parse().unwrap();
+  let gacha_id: i32 = request.body["gacha_id"].parse().unwrap();
+  let _money_type: i32 = request.body["money_type"].parse().unwrap();
+
+  let masters = get_masters().await;
+  let members: Vec<Value> = serde_json::from_str(&masters["member"].master_decompressed).unwrap();
+  let goods = members
+    .into_iter()
+    .filter(|member| member["rare"].as_str().unwrap().parse::<i32>().unwrap() >= 2)
+    .choose_multiple(&mut rand::rng(), 10)
+    .into_iter()
+    .map(|member| {
+      GachaGood::new(
+        RemoteDataItemType::Member.into(),
+        member["id"].as_str().unwrap().parse::<i64>().unwrap(),
+        1,
+        true,
+      )
+    })
+    .collect::<Vec<_>>();
 
   let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(GachaResult {
     gacha_id,
-    goods: vec![
-      GachaGood::new(4, 1104100, 1, true),
-      GachaGood::new(4, 1023104, 1, true), // 3*
-      GachaGood::new(4, 1814100, 1, true),
-      GachaGood::new(4, 1024225, 1, true),
-      GachaGood::new(4, 1024118, 1, true),
-      GachaGood::new(4, 1044200, 1, true),
-      // GachaGood::new(4, 1193151, 1, true), // 3*
-      // GachaGood::new(4, 1512100, 1, true), // 2*
-      // GachaGood::new(4, 1081100, 1, true), // 1*
-    ],
-    bonus_info: BonusInfo {
-      items: vec![BonusItem {
-        item_type: 49,
-        item_id: 4,
-        item_num: 1,
-      }],
-      rare: 0,
-      bonus_type: 1,
-      bonus_animation: "".to_owned(),
-    },
+    goods,
+    bonus_info: None,
     bonus_step: None,
   }));
   response.add_remote_data(vec![

@@ -10,9 +10,9 @@ The first scene ("And so the Adventure Begins!") works.
 The home and profile menus barely work.
 
 A lot of gacha banners (including collaborations ones) is visible, but still not all 947 of them.
-Loot pool is hardcoded. **Gacha stories work** as they don't need to interact with the server.
+Loot pool is completely random, not saved to database.
 
-All main quests are enabled. All stories are enabled.
+All main quests are enabled. All stories (including collaboration ones) are enabled.
 Battles work but no rewards are actually given, and you can't change your party.
 
 All costumes and backgrounds are unlocked. Note that these customizations are not stored
