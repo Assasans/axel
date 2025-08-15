@@ -1,4 +1,5 @@
 use crate::api::NotificationData;
+use crate::notification::IntoNotificationData;
 
 // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll]
 /// Displays a popup notification near the Friend button when home screen is opened.
@@ -16,8 +17,8 @@ impl FriendGreetingNotify {
   }
 }
 
-impl From<FriendGreetingNotify> for NotificationData {
-  fn from(value: FriendGreetingNotify) -> Self {
-    NotificationData::new(1, 7, FriendGreetingNotify::KIND, 1, value.message, "".to_string())
+impl IntoNotificationData for FriendGreetingNotify {
+  fn into_notification_data(self) -> NotificationData {
+    NotificationData::new(1, 7, FriendGreetingNotify::KIND, 1, self.message, "".to_string())
   }
 }

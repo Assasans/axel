@@ -24,8 +24,8 @@ use tracing::{debug, info, trace, warn};
 
 use crate::api::{
   account, assist, battle, capture, character, dungeon, exchange, friend, gacha, home, honor_list,
-  idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check, master_all, master_list, notice,
-  party_info, present, profile, quest_fame, quest_hunting, quest_main, story, transfer, tutorial, ApiRequest,
+  idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check, master_all, master_list, mission,
+  notice, party_info, present, profile, quest_fame, quest_hunting, quest_main, story, transfer, tutorial, ApiRequest,
 };
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::client_ip::add_client_ip;
@@ -240,7 +240,7 @@ async fn api_call(
     "accessorylist" => items::accessory_list(request).await?,
     "battlestart" => battle::battle_start(request).await?,
     "battlewaveresult" => battle::battle_wave_result(request).await?,
-    "result" => battle::result(request).await?,
+    "result" => battle::battle_result(request).await?,
     "friendlist" => friend::friend_list(state, request, &mut session).await?,
     "friendinfo" => friend::friend_info(state, request, &mut session).await?,
     "friendmute" => friend::friend_mute(state, request, &mut session).await?,
@@ -264,6 +264,14 @@ async fn api_call(
     "presentlist" => present::present_list(request).await?,
     "presentloglist" => present::present_log_list(request).await?,
     "presentget" => present::present_get(request).await?,
+    "mission" => mission::mission_list(request).await?,
+    "battlequestinfo" => mission::battle_quest_info(request).await?,
+    "battlemarathoninfo" => mission::battle_marathon_info(request).await?,
+    "marathon_info" => mission::marathon_info(request).await?,
+    "marathon_stage_list" => mission::marathon_stage_list(request).await?,
+    "marathon_quest_start" => mission::marathon_quest_start(request).await?,
+    "marathon_quest_result" => mission::marathon_quest_result(request).await?,
+    "marathon_boss_list" => mission::marathon_boss_list(request).await?,
     _ => todo!("api call '{}'", method),
   };
 
@@ -272,9 +280,9 @@ async fn api_call(
     &*method,
     "masterlist" | "masterall" | "login" | "gachainfo" | "gacha_tutorial_reward"
   ) {
-    info!("response: (...)");
+    debug!("response: (...)");
   } else {
-    info!("response: {}", response);
+    debug!("response: {}", response);
   }
 
   let user_key = if use_user_key {

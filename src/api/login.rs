@@ -11,7 +11,7 @@ use tracing::info;
 use crate::api::{ApiRequest, NotificationData};
 use crate::build_info::BUILD_INFO;
 use crate::call::{CallCustom, CallResponse};
-use crate::notification::FriendGreetingNotify;
+use crate::notification::{FriendGreetingNotify, IntoNotificationData};
 use crate::user::id::UserId;
 use crate::user::session::Session;
 use crate::user::uuid::UserUuid;
@@ -211,7 +211,7 @@ pub async fn login(
       } else {
         format!("axel/{revision}")
       }
-    }).into(),
+    }).into_notification_data(),
   ]);
 
   Ok((response, true))

@@ -3,6 +3,7 @@ use serde_json::json;
 
 use crate::api::{ApiRequest, NotificationData};
 use crate::call::{CallCustom, CallResponse};
+use crate::notification::{IntoNotificationData, MissionDone};
 
 // quest_id=101011
 // party_no=1
@@ -274,7 +275,7 @@ pub async fn battle_wave_result(request: ApiRequest) -> anyhow::Result<(CallResp
 // clearquestmission=[12,13,15]
 // auto_progression_stop=1
 // memcheckcount=0
-pub async fn result(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn battle_result(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
   let quest_id: i32 = request.body["quest_id"].parse().unwrap();
   let party_no: i32 = request.body["party_no"].parse().unwrap();
   let win: i32 = request.body["win"].parse().unwrap();
@@ -392,7 +393,7 @@ pub async fn result(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn Cal
     NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
     NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
     NotificationData::new(1, 7, 20, 1, "".to_string(), "".to_string()),
-    NotificationData::new(1, 1, 0, 11210001, "".to_string(), "".to_string()),
+    MissionDone::new(11210001).into_notification_data(),
     NotificationData::new(1, 7, 3, 2, "".to_string(), "".to_string()),
     NotificationData::new(1, 7, 13, 7, "".to_string(), "".to_string()),
     NotificationData::new(1, 7, 34, 1, "show_button".to_string(), "".to_string()),

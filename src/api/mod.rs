@@ -27,6 +27,7 @@ pub mod login_bonus;
 pub mod maintenance_check;
 pub mod master_all;
 pub mod master_list;
+pub mod mission;
 pub mod notice;
 pub mod party_info;
 pub mod present;

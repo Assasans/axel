@@ -135,6 +135,10 @@ async fn load_masters() -> HashMap<String, MasterAllItem> {
 
 async fn patch_master(name: &str, value: &mut Value) {
   let now = chrono::Utc::now();
+
+  let start_at = now - chrono::Duration::days(1);
+  let start_at_str = start_at.format("%Y/%m/%d %H:%M").to_string();
+
   let end_at = now + chrono::Duration::days(30);
   let end_at_str = end_at.format("%Y/%m/%d %H:%M").to_string();
 
@@ -162,6 +166,47 @@ async fn patch_master(name: &str, value: &mut Value) {
           if let Some(item) = item.as_object_mut() {
             if let Some(end_at_value) = item.get_mut("end_at") {
               *end_at_value = Value::String(end_at_str.clone());
+            }
+          }
+        }
+      }
+    }
+    "mission_panel_group" => {
+      info!("patching mission_panel_group");
+      if let Some(array) = value.as_array_mut() {
+        for item in array {
+          if let Some(item) = item.as_object_mut() {
+            if let Some(end_at_value) = item.get_mut("end_at") {
+              *end_at_value = Value::String(end_at_str.clone());
+            }
+            if let Some(reward_end_at_value) = item.get_mut("reward_end_at") {
+              *reward_end_at_value = Value::String(end_at_str.clone());
+            }
+          }
+        }
+      }
+    }
+    "event_config" => {
+      info!("patching event_config");
+      if let Some(array) = value.as_array_mut() {
+        for item in array {
+          if let Some(item) = item.as_object_mut() {
+            if item.get("name").unwrap() != "AREA_TITLE_24013" {
+              continue;
+            }
+
+            if let Some(start_at_value) = item.get_mut("start_at") {
+              *start_at_value = Value::String(start_at_str.clone());
+            }
+            if let Some(reward_start_at_value) = item.get_mut("reward_start_at") {
+              *reward_start_at_value = Value::String(start_at_str.clone());
+            }
+
+            if let Some(end_at_value) = item.get_mut("end_at") {
+              *end_at_value = Value::String(end_at_str.clone());
+            }
+            if let Some(reward_end_at_value) = item.get_mut("reward_end_at") {
+              *reward_end_at_value = Value::String(end_at_str.clone());
             }
           }
         }
