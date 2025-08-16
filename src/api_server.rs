@@ -237,6 +237,8 @@ async fn api_call(
       "fame_quest_rank_list" => quest_fame::fame_quest_rank_list(request).await?,
       "fame_quest_area_list" => quest_fame::fame_quest_area_list(request).await?,
       "fame_quest_stage_list" => quest_fame::fame_quest_stage_list(request).await?,
+      "fame_quest_start" => quest_fame::fame_quest_start(request).await?,
+      "fame_quest_result" => quest_fame::fame_quest_result(request).await?,
       "dungeon_status" => dungeon::dungeon_status(request).await?,
       "dungeon_area_top" => dungeon::dungeon_area_top(request).await?,
       "weaponlist" => items::weapon_list(request).await?,

@@ -10,7 +10,7 @@
           "sub2": 0,
           "weapon": 0,
           "acc": 0,
-          "strength": 393,
+          "strength": 393000,
           "specialskill": {
             "special_skill_id": 100001,
             "trial": false

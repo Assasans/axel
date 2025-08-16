@@ -74,6 +74,7 @@ pub enum RemoteDataItemType {
   // See [Wonder.UI.Common.MemberPlanningEquipBoxCell$$SetTrial]
   Unknown6,
   GachaTicket,
+  FameRank,
 
   /* Dynamic analysis */
   MemberBackground,
@@ -144,6 +145,7 @@ impl From<RemoteDataItemType> for i32 {
       RemoteDataItemType::AssistMaterial => 37,
       RemoteDataItemType::DungeonRedraw => 38,
       RemoteDataItemType::CharacterPiece => 39,
+      RemoteDataItemType::FameRank => 40,
       RemoteDataItemType::EventTicket => 42,
       // TODO: 43 - skill pa fame unique id
       // See [Wonder.UI.Chara.MemberPlanningUnitCell$$GetSkillPaFameDatas]
@@ -191,6 +193,7 @@ impl From<i32> for RemoteDataItemType {
       37 => RemoteDataItemType::AssistMaterial,
       38 => RemoteDataItemType::DungeonRedraw,
       39 => RemoteDataItemType::CharacterPiece,
+      40 => RemoteDataItemType::FameRank,
       42 => RemoteDataItemType::EventTicket,
       43 => RemoteDataItemType::Another(43), // TODO: 43 - skill pa fame unique id
       44 => RemoteDataItemType::FamePotion,

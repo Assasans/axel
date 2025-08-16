@@ -108,6 +108,8 @@ pub struct Member {
   pub is_undead: u32,
 }
 
+/// Party power (force) is calculated in [Wonder.UI.Data.PartyData$$get_Force], with formula being:
+/// `party_forms.sum(strength) + (4 * party_assist.level)`
 pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
   let response = include_str!("../party-info.json");
   let response: Value = serde_json::from_str(response).unwrap();
