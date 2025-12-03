@@ -3,6 +3,7 @@ use serde::Serialize;
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Unsigned};
 
 // See [Wonder_Api_CharacterPieceBoardInfoResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -20,21 +21,18 @@ pub struct PieceBoardInfo {
   pub stage_id: i32,
 }
 
-pub async fn character_piece_board_info(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn character_piece_board_info(request: ApiRequest) -> impl IntoHandlerResponse {
   let character_id: i32 = request.body["character_id"]
     .parse()
     .context("failed to parse character_id as i32")?;
 
-  Ok((
-    CallResponse::new_success(Box::new(CharacterPieceBoardInfo {
-      board_info: vec![PieceBoardInfo {
-        board_id: 100001,
-        stage_id: 1,
-      }],
-      reward_ids: vec![],
-    })),
-    false,
-  ))
+  Ok(Unsigned(CallResponse::new_success(Box::new(CharacterPieceBoardInfo {
+    board_info: vec![PieceBoardInfo {
+      board_id: 100001,
+      stage_id: 1,
+    }],
+    reward_ids: vec![],
+  }))))
 }
 
 // See [Wonder_Api_CharacterEnhanceInfoResponseDto_Fields]
@@ -97,14 +95,13 @@ pub struct CharacterEnhanceMaterial {
 }
 
 // TODO: BROKEN - hard lockup
-pub async fn character_enhance_info(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn character_enhance_info(request: ApiRequest) -> impl IntoHandlerResponse {
   let character_id: i32 = request.body["character_id"]
     .parse()
     .context("failed to parse character_id as i32")?;
 
-  Ok((
-    CallResponse::new_success(Box::new(CharacterEnhanceInfo {
-      progress: vec![/*CharacterEnhanceInfoProgress {
+  Ok(Unsigned(CallResponse::new_success(Box::new(CharacterEnhanceInfo {
+    progress: vec![/*CharacterEnhanceInfoProgress {
         root_id: 1,
         root_stage_id: 5,
         stage_id: 1810105,
@@ -127,8 +124,6 @@ pub async fn character_enhance_info(request: ApiRequest) -> anyhow::Result<(Call
         material_items: vec![],
         money: 900,
       }*/],
-      trial_timestamp: chrono::Utc::now().timestamp(),
-    })),
-    false,
-  ))
+    trial_timestamp: chrono::Utc::now().timestamp(),
+  }))))
 }

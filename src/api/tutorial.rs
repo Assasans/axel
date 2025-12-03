@@ -5,16 +5,11 @@ use tracing::info;
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::user::session::Session;
 use crate::AppState;
 
-pub async fn tutorial(
-  state: Arc<AppState>,
-  request: ApiRequest,
-  session: &mut Option<Arc<Session>>,
-) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  let session = session.as_ref().ok_or_else(|| anyhow::anyhow!("session is not set"))?;
-
+pub async fn tutorial(state: Arc<AppState>, request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let kind = &request.body["type"];
   let progress: i32 = request.body["progress"].parse().unwrap();
 
@@ -34,5 +29,5 @@ pub async fn tutorial(
     .context("failed to execute query")?;
   info!(?session.user_id, ?kind, ?progress, "tutorial progress updated");
 
-  Ok((CallResponse::new_success(Box::new(())), false))
+  Ok(Unsigned(CallResponse::new_success(Box::new(()))))
 }

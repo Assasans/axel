@@ -1,4 +1,5 @@
 use std::iter;
+use std::sync::Arc;
 
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
@@ -8,6 +9,8 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 use crate::api::master_all::get_masters;
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Signed, Unsigned};
+use crate::user::session::Session;
 
 // See [Wonder_Api_StorylistResponseDto_Fields]
 #[derive(Debug, Serialize, Deserialize)]
@@ -63,7 +66,7 @@ pub struct StorySelection {
   pub selection: Vec<bool>,
 }
 
-pub async fn story_list(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn story_list(request: ApiRequest) -> impl IntoHandlerResponse {
   let kind: i32 = request.body["type"].parse().context("failed to parse type as i32")?;
 
   let index = 0;
@@ -369,13 +372,10 @@ pub async fn story_list(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn
   //   },
   // ];
 
-  Ok((
-    CallResponse::new_success(Box::new(StoryList {
-      story_list: stories,
-      gettable_sp_story_member_id_list: vec![],
-    })),
-    false,
-  ))
+  Ok(Unsigned(CallResponse::new_success(Box::new(StoryList {
+    story_list: stories,
+    gettable_sp_story_member_id_list: vec![],
+  }))))
 }
 
 #[derive(Debug, Serialize)]
@@ -385,21 +385,21 @@ pub struct StoryReward {
 
 impl CallCustom for StoryReward {}
 
-pub async fn story_reward(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  Ok((
+pub async fn story_reward(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+  Signed(
     CallResponse::new_success(Box::new(StoryReward { reward: vec![] })),
-    true,
-  ))
+    session,
+  )
 }
 
 // user_story_id=32
 // selections=[]
 // is_skip=1
-pub async fn story_read(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn story_read(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let user_story_id: i32 = request.body["user_story_id"].parse().unwrap();
   let selections = &request.body["selections"];
   // Probably always set to 1 when StoryStatus::Done
   let is_skip: i32 = request.body["is_skip"].parse().unwrap();
 
-  Ok((CallResponse::new_success(Box::new(())), true))
+  Signed(CallResponse::new_success(Box::new(())), session)
 }

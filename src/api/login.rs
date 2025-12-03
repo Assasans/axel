@@ -11,6 +11,7 @@ use tracing::{debug, info};
 use crate::api::{ApiRequest, NotificationData};
 use crate::build_info::BUILD_INFO;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Signed};
 use crate::notification::{FriendGreetingNotify, IntoNotificationData};
 use crate::user::id::UserId;
 use crate::user::session::Session;
@@ -41,11 +42,7 @@ pub enum TutorialState {
   Completed = 99,
 }
 
-pub async fn login(
-  state: Arc<AppState>,
-  request: ApiRequest,
-  session: &mut Option<Arc<Session>>,
-) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn login(state: Arc<AppState>, request: ApiRequest) -> impl IntoHandlerResponse {
   let uuid = request.body.get("uuid").context("no 'uuid' passed")?;
   let uuid = uuid.parse::<UserUuid>().unwrap();
   debug!("{:?}", uuid);
@@ -118,8 +115,7 @@ pub async fn login(
     (id, username, created_at, tutorial_progress)
   };
 
-  *session = Some(Arc::new(Session::new(id, Some(uuid.to_string()))));
-  let session = session.as_ref().unwrap();
+  let session = Arc::new(Session::new(id, Some(uuid.to_string())));
 
   session.rotate_user_key();
   request
@@ -214,7 +210,7 @@ pub async fn login(
     }).into_notification_data(),
   ]);
 
-  Ok((response, true))
+  Ok(Signed(response, session))
 }
 
 pub const OP_BADGE_COUNT: i32 = 7;

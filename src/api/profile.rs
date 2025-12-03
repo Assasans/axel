@@ -7,6 +7,7 @@ use tracing::info;
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Signed, Unsigned};
 use crate::user::session::Session;
 use crate::AppState;
 
@@ -42,13 +43,7 @@ impl DisplayPlayData {
   }
 }
 
-pub async fn profile(
-  state: Arc<AppState>,
-  request: ApiRequest,
-  session: &mut Option<Arc<Session>>,
-) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  let session = session.as_ref().ok_or_else(|| anyhow::anyhow!("session is not set"))?;
-
+pub async fn profile(state: Arc<AppState>, request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let client = state.pool.get().await.context("failed to get database connection")?;
   #[rustfmt::skip]
   let statement = client
@@ -76,7 +71,7 @@ pub async fn profile(
   let last_used: Option<DateTime<Utc>> = row.get(2);
   let last_used = last_used.unwrap_or_else(|| Utc::now());
 
-  Ok((
+  Ok(Signed(
     CallResponse::new_success(Box::new(Profile {
       // If for some reason username was not set during tutorial, use empty string
       name: username.unwrap_or_default(),
@@ -100,6 +95,6 @@ pub async fn profile(
         DisplayPlayData::new(7, 1, 1),
       ],
     })),
-    true,
+    session,
   ))
 }

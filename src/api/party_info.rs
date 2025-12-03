@@ -1,8 +1,12 @@
+use std::sync::Arc;
+
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Signed};
+use crate::user::session::Session;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PartyInfo {
@@ -110,11 +114,11 @@ pub struct Member {
 
 /// Party power (force) is calculated in [Wonder.UI.Data.PartyData$$get_Force], with formula being:
 /// `party_forms.sum(strength) + (4 * party_assist.level)`
-pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn party_info(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let response = include_str!("../party-info.json");
   let response: Value = serde_json::from_str(response).unwrap();
-  return Ok((CallResponse::new_success(Box::new(response)), true));
-  Ok((
+  return Ok(Signed(CallResponse::new_success(Box::new(response)), session));
+  Ok(Signed(
     CallResponse::new_success(Box::new(json!({
       "party": [
         {
@@ -187,6 +191,6 @@ pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn Cal
         }
       ]
     }))),
-    true,
+    session,
   ))
 }

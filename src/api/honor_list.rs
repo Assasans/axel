@@ -1,7 +1,11 @@
+use std::sync::Arc;
+
 use jwt_simple::prelude::Serialize;
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Signed};
+use crate::user::session::Session;
 
 #[derive(Debug, Serialize)]
 pub struct HonorList {
@@ -27,14 +31,14 @@ impl HonorItem {
   }
 }
 
-pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  Ok((
+pub async fn honor_list(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+  Ok(Signed(
     CallResponse::new_success(Box::new(HonorList {
       honor_list: vec![
         HonorItem::new(60000000, false, false),
         HonorItem::new(62010250, true, false),
       ],
     })),
-    true,
+    session,
   ))
 }

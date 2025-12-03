@@ -4,6 +4,7 @@ use tracing::info;
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::user::uuid::UserUuid;
 
 #[derive(Debug, Serialize)]
@@ -15,18 +16,15 @@ pub struct IdConfirm {
 
 impl CallCustom for IdConfirm {}
 
-pub async fn id_confirm(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn id_confirm(request: ApiRequest) -> impl IntoHandlerResponse {
   let take_over_id = &request.body["take_over_id"];
   let password = &request.body["password"];
 
-  Ok((
-    CallResponse::new_success(Box::new(IdConfirm {
-      name: "Mock User".to_string(),
-      lv: 333,
-      user_no: "-1".to_string(),
-    })),
-    false,
-  ))
+  Unsigned(CallResponse::new_success(Box::new(IdConfirm {
+    name: "Mock User".to_string(),
+    lv: 333,
+    user_no: "-1".to_string(),
+  })))
 }
 
 #[derive(Debug, Serialize)]
@@ -36,13 +34,10 @@ pub struct PrepareSetMigration {
 
 impl CallCustom for PrepareSetMigration {}
 
-pub async fn prepare_set_migration(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  Ok((
-    CallResponse::new_success(Box::new(PrepareSetMigration {
-      user_key: "ffffffffffffffffffffffffffffffee".to_string(),
-    })),
-    false,
-  ))
+pub async fn prepare_set_migration(request: ApiRequest) -> impl IntoHandlerResponse {
+  Unsigned(CallResponse::new_success(Box::new(PrepareSetMigration {
+    user_key: "ffffffffffffffffffffffffffffffee".to_string(),
+  })))
 }
 
 #[derive(Debug, Serialize)]
@@ -52,8 +47,8 @@ pub struct NewIdCheck {
 
 impl CallCustom for NewIdCheck {}
 
-pub async fn new_id_check(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  Ok((CallResponse::new_success(Box::new(NewIdCheck { check: 0 })), false))
+pub async fn new_id_check(request: ApiRequest) -> impl IntoHandlerResponse {
+  Unsigned(CallResponse::new_success(Box::new(NewIdCheck { check: 0 })))
 }
 
 #[derive(Debug, Serialize)]
@@ -63,15 +58,12 @@ pub struct NewId {
 
 impl CallCustom for NewId {}
 
-pub async fn new_id(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn new_id(request: ApiRequest) -> impl IntoHandlerResponse {
   let newpassword = &request.body["newpassword"];
 
-  Ok((
-    CallResponse::new_success(Box::new(NewId {
-      take_over_id: "MTF00LTR".to_owned(),
-    })),
-    false,
-  ))
+  Unsigned(CallResponse::new_success(Box::new(NewId {
+    take_over_id: "MTF00LTR".to_owned(),
+  })))
 }
 
 #[derive(Debug, Serialize)]
@@ -84,7 +76,7 @@ pub struct IdLogin {
 
 impl CallCustom for IdLogin {}
 
-pub async fn id_login(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn id_login(request: ApiRequest) -> impl IntoHandlerResponse {
   let take_over_id = &request.body["take_over_id"];
   let password = &request.body["password"];
 
@@ -94,14 +86,11 @@ pub async fn id_login(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn C
 
   // TODO: This should reassociate UUID with new account from take_over_id
 
-  Ok((
-    CallResponse::new_success(Box::new(IdLogin {
-      user_key: "ffffffffffffffffffffffffffffffee".to_string(),
-      // From "system" master
-      rule_ver: "3".to_string(),
-      capture: "".to_string(),
-      user_no: "-1".to_string(),
-    })),
-    false,
-  ))
+  Ok(Unsigned(CallResponse::new_success(Box::new(IdLogin {
+    user_key: "ffffffffffffffffffffffffffffffee".to_string(),
+    // From "system" master
+    rule_ver: "3".to_string(),
+    capture: "".to_string(),
+    user_no: "-1".to_string(),
+  }))))
 }

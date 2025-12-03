@@ -16,6 +16,7 @@ use tracing::{debug, info, trace, warn};
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Unsigned};
 
 #[derive(Debug, Serialize)]
 pub struct MasterAll {
@@ -326,7 +327,7 @@ pub async fn get_masters() -> &'static HashMap<String, MasterAllItem> {
   MASTERS.get_or_init(load_masters).await
 }
 
-pub async fn route(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn master_all(request: ApiRequest) -> impl IntoHandlerResponse {
   let keys = request.body["master_keys"].split(",").collect::<Vec<_>>();
   debug!("loading masters: {:?}", keys);
   let masters = get_masters().await;
@@ -335,14 +336,11 @@ pub async fn route(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn Call
     .map(|key| masters.get(*key).expect(&format!("master {:?} not found", key)))
     .cloned()
     .collect::<Vec<_>>();
-  Ok((
-    CallResponse::new_success(Box::new(MasterAll {
-      masterversion: "202408050001".to_owned(),
-      masterarray: masters,
-      compressed: true,
-    })),
-    false,
-  ))
+  Unsigned(CallResponse::new_success(Box::new(MasterAll {
+    masterversion: "202408050001".to_owned(),
+    masterarray: masters,
+    compressed: true,
+  })))
 }
 
 #[derive(Serialize, Deserialize)]

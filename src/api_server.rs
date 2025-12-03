@@ -1,4 +1,5 @@
 use std::collections::{BTreeMap, HashMap};
+use std::convert::Infallible;
 use std::net::SocketAddr;
 use std::sync::Arc;
 use std::{io, str};
@@ -29,6 +30,7 @@ use crate::api::{
 };
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::client_ip::add_client_ip;
+use crate::handler::{HandlerContext, IntoHandlerResponse, Signed, Unsigned};
 use crate::normalize_path::normalize_path;
 use crate::request_logging::log_requests_info;
 use crate::user::session::Session;
@@ -108,6 +110,84 @@ async fn api_call(
   body: Bytes,
 ) -> axum::response::Result<impl IntoResponse, AppError> {
   debug!("api call: {}", method);
+
+  let router = crate::router::Router::new()
+    .handle("idlink_confirm_google", idlink_confirm_google::idlink_confirm_google)
+    .handle("masterlist", master_list::master_list)
+    .handle("login", login::login)
+    .handle("capturesend", capture::capture_send)
+    .handle("masterall", master_all::master_all)
+    .handle("tutorial", tutorial::tutorial)
+    .handle("notice", notice::notice)
+    .handle("gachainfo", gacha::gacha_info)
+    .handle("gacha_tutorial", gacha::gacha_tutorial)
+    .handle("gacha_tutorial_reward", gacha::gacha_tutorial_reward)
+    .handle("gachachain", gacha::gacha_chain)
+    .handle("gachanormal", gacha::gacha_normal)
+    .handle("gacharate", gacha::gacha_rate)
+    .handle("gachalog", gacha::gacha_log)
+    .handle("root_box_check", root_check_box)
+    .handle("maintenancecheck", maintenance_check::maintenance_check)
+    .handle("firebasetoken", firebase_token)
+    .handle("setname", account::set_name)
+    .handle("storyreward", story::story_reward)
+    .handle("story_read", story::story_read)
+    .handle("loginbonus", login_bonus::login_bonus)
+    .handle("home", home::home)
+    .handle("profile", profile::profile)
+    .handle("honor_list", honor_list::honor_list)
+    .handle("interaction", interaction::interaction)
+    .handle("partyinfo", party_info::party_info)
+    .handle("storylist", story::story_list)
+    .handle("quest_main_part_list", quest_main::quest_main_part_list)
+    .handle("quest_main_stage_list", quest_main::quest_main_stage_list)
+    .handle("quest_main_area_list", quest_main::quest_main_area_list)
+    .handle("questhuntinglist", quest_hunting::quest_hunting_list)
+    .handle("questhuntingstagelist", quest_hunting::quest_hunting_stage_list)
+    .handle("fame_quest_rank_list", quest_fame::fame_quest_rank_list)
+    .handle("fame_quest_area_list", quest_fame::fame_quest_area_list)
+    .handle("fame_quest_stage_list", quest_fame::fame_quest_stage_list)
+    .handle("fame_quest_start", quest_fame::fame_quest_start)
+    .handle("fame_quest_result", quest_fame::fame_quest_result)
+    .handle("dungeon_status", dungeon::dungeon_status)
+    .handle("dungeon_area_top", dungeon::dungeon_area_top)
+    .handle("weaponlist", items::weapon_list)
+    .handle("accessorylist", items::accessory_list)
+    .handle("battlestart", battle::battle_start)
+    .handle("battleretire", battle::battle_retire)
+    .handle("battlewaveresult", battle::battle_wave_result)
+    .handle("result", battle::battle_result)
+    .handle("friendlist", friend::friend_list)
+    .handle("friendinfo", friend::friend_info)
+    .handle("friendmute", friend::friend_mute)
+    .handle("friendremove", friend::friend_remove)
+    .handle("friendrequest", friend::friend_request)
+    .handle("friendsearch", friend::friend_search)
+    .handle("friend_recommendation_list", friend::friend_recommendation_list)
+    .handle("greeting_list", friend::greeting_list)
+    .handle("greeting_send", friend::greeting_send)
+    .handle("assist_make_notice", assist::assist_make_notice)
+    .handle("assist_make_list", assist::assist_make_list)
+    .handle("exchangelist", exchange::exchange_list)
+    .handle("leavemenbers", exchange::leave_members)
+    .handle("character_piece_board_info", character::character_piece_board_info)
+    .handle("character_enhance_info", character::character_enhance_info)
+    .handle("idconfirm", transfer::id_confirm)
+    .handle("prepare_set_migration", transfer::prepare_set_migration)
+    .handle("newidcheck", transfer::new_id_check)
+    .handle("newid", transfer::new_id)
+    .handle("idlogin", transfer::id_login)
+    .handle("presentlist", present::present_list)
+    .handle("presentloglist", present::present_log_list)
+    .handle("presentget", present::present_get)
+    .handle("mission", mission::mission_list)
+    .handle("battlequestinfo", mission::battle_quest_info)
+    .handle("battlemarathoninfo", mission::battle_marathon_info)
+    .handle("marathon_info", mission::marathon_info)
+    .handle("marathon_stage_list", mission::marathon_stage_list)
+    .handle("marathon_quest_start", mission::marathon_quest_start)
+    .handle("marathon_quest_result", mission::marathon_quest_result)
+    .handle("marathon_boss_list", mission::marathon_boss_list);
 
   let jwt = headers.get(JWT_HEADER).ok_or_else(|| anyhow!("no jwt header"))?;
   trace!("jwt header: {:?}", jwt);
@@ -201,110 +281,32 @@ async fn api_call(
       state: state.clone(),
     };
 
-    let (response, use_user_key): (CallResponse<dyn CallCustom>, _) = match &*method {
-      "idlink_confirm_google" => idlink_confirm_google::route(request).await?,
-      "masterlist" => master_list::route(request).await?,
-      "login" => login::login(state, request, &mut session).await?,
-      "capturesend" => capture::capture_send(request).await?,
-      "masterall" => master_all::route(request).await?,
-      "tutorial" => tutorial::tutorial(state, request, &mut session).await?,
-      "notice" => notice::notice(request).await?,
-      "gachainfo" => gacha::gacha_info(request).await?,
-      "gacha_tutorial" => gacha::gacha_tutorial(request).await?,
-      "gacha_tutorial_reward" => gacha::gacha_tutorial_reward(request).await?,
-      "gachachain" => gacha::gacha_chain(request).await?,
-      "gachanormal" => gacha::gacha_normal(request).await?,
-      "gacharate" => gacha::gacha_rate(request).await?,
-      "gachalog" => gacha::gacha_log(request).await?,
-      "root_box_check" => (CallResponse::new_success(Box::new(())), false),
-      "maintenancecheck" => maintenance_check::route(request).await?,
-      "firebasetoken" => (CallResponse::new_success(Box::new(())), true),
-      "setname" => account::set_name(state, request, &mut session).await?,
-      "storyreward" => story::story_reward(request).await?,
-      "story_read" => story::story_read(request).await?,
-      "loginbonus" => login_bonus::route(request).await?,
-      "home" => home::route(request).await?,
-      "profile" => profile::profile(state, request, &mut session).await?,
-      "honor_list" => honor_list::route(request).await?,
-      "interaction" => interaction::route(request).await?,
-      "partyinfo" => party_info::route(request).await?,
-      "storylist" => story::story_list(request).await?,
-      "quest_main_part_list" => quest_main::quest_main_part_list(request).await?,
-      "quest_main_stage_list" => quest_main::quest_main_stage_list(request).await?,
-      "quest_main_area_list" => quest_main::quest_main_area_list(request).await?,
-      "questhuntinglist" => quest_hunting::quest_hunting_list(request).await?,
-      "questhuntingstagelist" => quest_hunting::quest_hunting_stage_list(request).await?,
-      "fame_quest_rank_list" => quest_fame::fame_quest_rank_list(request).await?,
-      "fame_quest_area_list" => quest_fame::fame_quest_area_list(request).await?,
-      "fame_quest_stage_list" => quest_fame::fame_quest_stage_list(request).await?,
-      "fame_quest_start" => quest_fame::fame_quest_start(request).await?,
-      "fame_quest_result" => quest_fame::fame_quest_result(request).await?,
-      "dungeon_status" => dungeon::dungeon_status(request).await?,
-      "dungeon_area_top" => dungeon::dungeon_area_top(request).await?,
-      "weaponlist" => items::weapon_list(request).await?,
-      "accessorylist" => items::accessory_list(request).await?,
-      "battlestart" => battle::battle_start(request).await?,
-      "battlewaveresult" => battle::battle_wave_result(request).await?,
-      "result" => battle::battle_result(request).await?,
-      "friendlist" => friend::friend_list(state, request, &mut session).await?,
-      "friendinfo" => friend::friend_info(state, request, &mut session).await?,
-      "friendmute" => friend::friend_mute(state, request, &mut session).await?,
-      "friendremove" => friend::friend_remove(state, request, &mut session).await?,
-      "friendrequest" => friend::friend_request(state, request, &mut session).await?,
-      "friendsearch" => friend::friend_search(state, request, &mut session).await?,
-      "friend_recommendation_list" => friend::friend_recommendation_list(state, request, &mut session).await?,
-      "greeting_list" => friend::greeting_list(state, request, &mut session).await?,
-      "greeting_send" => friend::greeting_send(state, request, &mut session).await?,
-      "assist_make_notice" => assist::assist_make_notice(request).await?,
-      "assist_make_list" => assist::assist_make_list(request).await?,
-      "exchangelist" => exchange::exchange_list(request).await?,
-      "leavemenbers" => exchange::leave_members(request).await?,
-      "character_piece_board_info" => character::character_piece_board_info(request).await?,
-      "character_enhance_info" => character::character_enhance_info(request).await?,
-      "idconfirm" => transfer::id_confirm(request).await?,
-      "prepare_set_migration" => transfer::prepare_set_migration(request).await?,
-      "newidcheck" => transfer::new_id_check(request).await?,
-      "newid" => transfer::new_id(request).await?,
-      "idlogin" => transfer::id_login(request).await?,
-      "presentlist" => present::present_list(request).await?,
-      "presentloglist" => present::present_log_list(request).await?,
-      "presentget" => present::present_get(request).await?,
-      "mission" => mission::mission_list(request).await?,
-      "battlequestinfo" => mission::battle_quest_info(request).await?,
-      "battlemarathoninfo" => mission::battle_marathon_info(request).await?,
-      "marathon_info" => mission::marathon_info(request).await?,
-      "marathon_stage_list" => mission::marathon_stage_list(request).await?,
-      "marathon_quest_start" => mission::marathon_quest_start(request).await?,
-      "marathon_quest_result" => mission::marathon_quest_result(request).await?,
-      "marathon_boss_list" => mission::marathon_boss_list(request).await?,
-      _ => todo!("api call '{}'", method),
-    };
+    let response = router
+      .dispatch(&method, HandlerContext {
+        state: state.clone(),
+        request: Some(request.clone()),
+        session: session.as_ref().cloned(),
+      })
+      .await;
+    let response = response.into_handler_response();
 
-    let response = serde_json::to_string(&response).unwrap();
+    let response_data = serde_json::to_string(&response.response).unwrap();
     if matches!(
       &*method,
       "masterlist" | "masterall" | "login" | "gachainfo" | "gacha_tutorial_reward"
     ) {
       debug!("response: (...)");
     } else {
-      debug!("response: {}", response);
+      debug!("response: {}", response_data);
     }
 
-    let user_key = if use_user_key {
-      Some(
-        session
-          .expect("no session for user endpoint")
-          .user_key
-          .lock()
-          .unwrap()
-          .expect("no user key")
-          .to_vec(),
-      )
+    let user_key = if let Some(session) = response.signing_session {
+      Some(session.user_key.lock().unwrap().expect("no user key").to_vec())
     } else {
       None
     };
 
-    let (encrypted, hash) = encrypt(response.as_bytes(), user_key.as_deref());
+    let (encrypted, hash) = encrypt(response_data.as_bytes(), user_key.as_deref());
 
     let key_pair = RS256KeyPair::from_pem(include_str!("../key.pem")).unwrap();
     let mut custom = BTreeMap::new();
@@ -334,6 +336,14 @@ async fn api_call(
   } else {
     future.await
   }
+}
+
+async fn root_check_box(_request: ApiRequest) -> impl IntoHandlerResponse {
+  Unsigned(CallResponse::new_success(Box::new(())))
+}
+
+async fn firebase_token(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+  Signed(CallResponse::new_success(Box::new(())), session)
 }
 
 async fn get_root_friendly() -> axum::response::Result<impl IntoResponse, AppError> {

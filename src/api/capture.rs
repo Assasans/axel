@@ -1,4 +1,5 @@
 use std::io::{Cursor, Read};
+use std::sync::Arc;
 
 use base64::prelude::{BASE64_STANDARD, BASE64_STANDARD_NO_PAD};
 use base64::Engine;
@@ -7,6 +8,8 @@ use tracing::debug;
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Signed};
+use crate::user::session::Session;
 
 #[derive(Debug, Deserialize)]
 pub struct CaptureRequest {
@@ -25,7 +28,7 @@ pub struct CaptureDeserialized {
 
 // Well... capture = base64(json(base64(gzip(json(json(TutorialData) + json(UserLocalSettings))))))
 // It seems to be a telemetry endpoint without API side effects.
-pub async fn capture_send(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn capture_send(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let capture = &request.body["capture"];
   let capture = BASE64_STANDARD_NO_PAD
     .decode(capture)
@@ -46,5 +49,5 @@ pub async fn capture_send(request: ApiRequest) -> anyhow::Result<(CallResponse<d
   debug!("tutorial data: {}", deserialized_data.tutoria_data_json);
   debug!("user local settings: {}", deserialized_data.user_local_settings_json);
 
-  Ok((CallResponse::new_success(Box::new(())), true))
+  Signed(CallResponse::new_success(Box::new(())), session)
 }

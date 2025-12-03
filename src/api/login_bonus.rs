@@ -1,7 +1,11 @@
+use std::sync::Arc;
+
 use jwt_simple::prelude::Serialize;
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Signed};
+use crate::user::session::Session;
 
 #[derive(Debug, Serialize)]
 pub struct LoginBonus {
@@ -60,8 +64,8 @@ pub struct RouletteLoginBonus {
   pub sns_share_results: Vec<()>,
 }
 
-pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  Ok((
+pub async fn login_bonus(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+  Ok(Signed(
     CallResponse::new_success(Box::new(LoginBonus {
       goods: vec![
         // LoginBonusGood::new(20001, 1, 3, 1, 1000),
@@ -89,6 +93,6 @@ pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn Cal
         sns_share_results: vec![],
       },
     })),
-    true,
+    session,
   ))
 }

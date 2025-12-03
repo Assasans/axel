@@ -358,6 +358,7 @@ impl NotificationData {
   }
 }
 
+#[derive(Clone)]
 pub struct ApiRequest {
   pub params: ApiCallParams,
   pub body: HashMap<String, String>,

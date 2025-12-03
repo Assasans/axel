@@ -3,12 +3,13 @@ use serde_json::json;
 
 use crate::api::{ApiRequest, NotificationData};
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::notification::{IntoNotificationData, MissionDone};
 
 // quest_id=101011
 // party_no=1
 // auto_progression_info={"is_start":false,"stop_setting":0,"incomplete_setting":0}
-pub async fn battle_start(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn battle_start(_request: ApiRequest) -> impl IntoHandlerResponse {
   let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(json!({
     "chest": "10101111,10101120,10101131",
     "party": {
@@ -176,7 +177,7 @@ pub async fn battle_start(_request: ApiRequest) -> anyhow::Result<(CallResponse<
     ]
   })));
   response.add_notifications(vec![NotificationData::new(1, 7, 6, 0, "".to_string(), "".to_string())]);
-  Ok((response, false))
+  Ok(Unsigned(response))
 }
 
 #[derive(Debug, Deserialize)]
@@ -256,7 +257,7 @@ pub struct ResumePassiveInfo {
 // livemembers=[{"id":11,"hp":245,"form_no":1},{"id":12,"hp":252,"form_no":2},{"id":10,"hp":208,"form_no":3}]
 // battletime=12
 // resume_info={"resumeMembers":[{"memberId":1001100,"spLevel":0.4000000059604645,"skill1Time":0,"skill2Time":0,"stateInfoArray":[],"CurrentAgiLevel":10023.0,"CurrentAgiLevelSecondary":10008.0,"PassiveInfoArray":[]},{"memberId":1011100,"spLevel":0.5,"skill1Time":0,"skill2Time":0,"stateInfoArray":[],"CurrentAgiLevel":10032.0,"CurrentAgiLevelSecondary":5742.0,"PassiveInfoArray":[]},{"memberId":1064217,"spLevel":0.6000000238418579,"skill1Time":18,"skill2Time":0,"stateInfoArray":[],"CurrentAgiLevel":10005.0,"CurrentAgiLevelSecondary":34.5,"PassiveInfoArray":[]}],"assistRemainCount":0,"assistCoolTime":0,"reportInfo":{"PendingBonusIds":[],"SuccessBonusIds":[]}}
-pub async fn battle_wave_result(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn battle_wave_result(request: ApiRequest) -> impl IntoHandlerResponse {
   let wave: i32 = request.body["wave"].parse().unwrap();
   let live_members: Vec<LiveMember> = serde_json::from_str(&request.body["livemembers"]).unwrap();
   let battle_time: i64 = request.body["battletime"].parse().unwrap();
@@ -265,7 +266,7 @@ pub async fn battle_wave_result(request: ApiRequest) -> anyhow::Result<(CallResp
   let response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(json!({
     "chest": 10101120
   })));
-  Ok((response, false))
+  Ok(Unsigned(response))
 }
 
 // quest_id=101011
@@ -275,7 +276,7 @@ pub async fn battle_wave_result(request: ApiRequest) -> anyhow::Result<(CallResp
 // clearquestmission=[12,13,15]
 // auto_progression_stop=1
 // memcheckcount=0
-pub async fn battle_result(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn battle_result(request: ApiRequest) -> impl IntoHandlerResponse {
   let quest_id: i32 = request.body["quest_id"].parse().unwrap();
   let party_no: i32 = request.body["party_no"].parse().unwrap();
   let win: i32 = request.body["win"].parse().unwrap();
@@ -402,5 +403,11 @@ pub async fn battle_result(request: ApiRequest) -> anyhow::Result<(CallResponse<
     NotificationData::new(1, 10, 230831, 52308305, "".to_string(), "".to_string()),
   ]);
 
-  Ok((response, false))
+  Ok(Unsigned(response))
+}
+
+// See [Wonder_Api_BattleretireResponseDto_Fields]
+pub async fn battle_retire(request: ApiRequest) -> impl IntoHandlerResponse {
+  let response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(json!({})));
+  Ok(Unsigned(response))
 }

@@ -5,6 +5,7 @@ use jwt_simple::prelude::Serialize;
 use crate::api::master_all::get_masters;
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Unsigned};
 
 #[derive(Debug, Serialize)]
 pub struct MasterList {
@@ -31,24 +32,21 @@ impl MasterListItem {
   }
 }
 
-pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  Ok((
-    CallResponse::new_success(Box::new(MasterList {
-      masterversion: "202408050001".to_owned(),
-      masterarray: get_masters()
-        .await
-        .iter()
-        .map(|(_, master)| {
-          MasterListItem::new(
-            master.master_key.clone(),
-            master.master.len() as u32,
-            master.checkkey.clone(),
-          )
-        })
-        .collect(),
-    })),
-    false,
-  ))
+pub async fn master_list(_request: ApiRequest) -> impl IntoHandlerResponse {
+  Unsigned(CallResponse::new_success(Box::new(MasterList {
+    masterversion: "202408050001".to_owned(),
+    masterarray: get_masters()
+      .await
+      .iter()
+      .map(|(_, master)| {
+        MasterListItem::new(
+          master.master_key.clone(),
+          master.master.len() as u32,
+          master.checkkey.clone(),
+        )
+      })
+      .collect(),
+  })))
 }
 
 #[rustfmt::skip]

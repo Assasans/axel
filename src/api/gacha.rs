@@ -5,6 +5,7 @@ use serde_json::{json, Value};
 use crate::api::master_all::get_masters;
 use crate::api::{ApiRequest, NotificationData, RemoteData, RemoteDataItemType};
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{HandlerResponse, IntoHandlerResponse, Unsigned};
 use crate::master;
 
 #[derive(Default, Debug, Serialize)]
@@ -187,7 +188,7 @@ pub struct BonusItem {
   pub item_num: i32,
 }
 
-pub async fn gacha_info(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn gacha_info(_request: ApiRequest) -> impl IntoHandlerResponse {
   let gacha_items = vec![
     GachaItem {
       gachaid: 100001,
@@ -1263,55 +1264,49 @@ pub async fn gacha_info(_request: ApiRequest) -> anyhow::Result<(CallResponse<dy
     // NotificationData { cmd: 1, kind: 27, key: 410535, value: 0, msgkey: String::new(), tag: String::new(), },
     // NotificationData { cmd: 1, kind: 27, key: 410554, value: 0, msgkey: String::new(), tag: String::new(), },
   ]);
-  Ok((response, false))
+  Unsigned(response)
 }
 
-pub async fn gacha_tutorial(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn gacha_tutorial(request: ApiRequest) -> impl IntoHandlerResponse {
   if request.body["type"] == "1" {
-    Ok((
-      CallResponse::new_success(Box::new(GachaTutorial {
-        gacha_id: 100002,
-        goods: vec![
-          // Commented out for testing purposes because animations are slow
-          GachaGoodItem::new(4, 1032102, 1, true),
-          // GachaGoodItem::new(4, 1692100, 1, true),
-          // GachaGoodItem::new(4, 1182100, 1, true),
-          // GachaGoodItem::new(4, 1092100, 1, true),
-          // GachaGoodItem::new(4, 1024126, 1, true),
-          // GachaGoodItem::new(4, 1092100, 1, true),
-          // GachaGoodItem::new(4, 1002100, 1, true),
-          // GachaGoodItem::new(4, 1052102, 1, true),
-          // GachaGoodItem::new(4, 1083100, 1, true),
-          // GachaGoodItem::new(4, 1174130, 1, true),
-        ],
-      })),
-      false,
-    ))
+    Unsigned(CallResponse::new_success(Box::new(GachaTutorial {
+      gacha_id: 100002,
+      goods: vec![
+        // Commented out for testing purposes because animations are slow
+        GachaGoodItem::new(4, 1032102, 1, true),
+        // GachaGoodItem::new(4, 1692100, 1, true),
+        // GachaGoodItem::new(4, 1182100, 1, true),
+        // GachaGoodItem::new(4, 1092100, 1, true),
+        // GachaGoodItem::new(4, 1024126, 1, true),
+        // GachaGoodItem::new(4, 1092100, 1, true),
+        // GachaGoodItem::new(4, 1002100, 1, true),
+        // GachaGoodItem::new(4, 1052102, 1, true),
+        // GachaGoodItem::new(4, 1083100, 1, true),
+        // GachaGoodItem::new(4, 1174130, 1, true),
+      ],
+    })))
   } else {
-    Ok((
-      CallResponse::new_success(Box::new(GachaTutorial {
-        gacha_id: 100002,
-        goods: vec![],
-      })),
-      false,
-    ))
+    Unsigned(CallResponse::new_success(Box::new(GachaTutorial {
+      gacha_id: 100002,
+      goods: vec![],
+    })))
   }
 }
 
-pub async fn gacha_tutorial_reward(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn gacha_tutorial_reward(_request: ApiRequest) -> impl IntoHandlerResponse {
   let response = include_str!("../gacha-tutorial-reward.json");
   let response: Value = serde_json::from_str(response).unwrap();
-  Ok((CallResponse::new_success(Box::new(response)), false))
+  Unsigned(CallResponse::new_success(Box::new(response)))
 }
 
-pub async fn gacha_chain(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn gacha_chain(request: ApiRequest) -> impl IntoHandlerResponse {
   let gacha_id: i32 = request.body["gacha_id"].parse().unwrap();
   let _money_type: i32 = request.body["money_type"].parse().unwrap();
 
   gacha_normal(request).await
 }
 
-pub async fn gacha_normal(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn gacha_normal(request: ApiRequest) -> impl IntoHandlerResponse {
   let gacha_id: i32 = request.body["gacha_id"].parse().unwrap();
   let _money_type: i32 = request.body["money_type"].parse().unwrap();
 
@@ -1351,11 +1346,11 @@ pub async fn gacha_normal(request: ApiRequest) -> anyhow::Result<(CallResponse<d
     RemoteData::new(1, 10, 230831, 52308305, 0, 0, "".to_string()),
   ]);
 
-  Ok((response, false))
+  Unsigned(response)
 }
 
 // IDA static analysis, not real data
-pub async fn gacha_rate(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn gacha_rate(request: ApiRequest) -> impl IntoHandlerResponse {
   let gacha_id: u32 = request.body["gacha_id"].parse().unwrap();
 
   let response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(GachaRate {
@@ -1405,7 +1400,7 @@ pub async fn gacha_rate(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn
     ],
   }));
 
-  Ok((response, false))
+  Unsigned(response)
 }
 
 #[derive(Default, Debug, Serialize)]
@@ -1439,11 +1434,8 @@ pub struct GachaRateBonusItem {
 
 impl CallCustom for GachaRate {}
 
-pub async fn gacha_log(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  Ok((
-    CallResponse::new_success(Box::new(json!({
-      "goods":[{"itemtype":4,"itemid":1063113,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1034100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1152102,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1083110,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1122100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1093100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1132100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1002102,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1282100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1064217,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1192102,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1102102,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1143127,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1162100,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1192102,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1012100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1013100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1013116,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1013116,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535}],"status":0,"time":1723059245,"remotedata":[],"notificationdata":[]
-    }))),
-    false,
-  ))
+pub async fn gacha_log(_request: ApiRequest) -> impl IntoHandlerResponse {
+  Unsigned(CallResponse::new_success(Box::new(json!({
+    "goods":[{"itemtype":4,"itemid":1063113,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1034100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1152102,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1083110,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1122100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1093100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1132100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1002102,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1282100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1064217,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1192102,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1102102,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1143127,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1162100,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1192102,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1012100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1013100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1013116,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1013116,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535}],"status":0,"time":1723059245,"remotedata":[],"notificationdata":[]
+  }))))
 }

@@ -10,6 +10,7 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Signed, Unsigned};
 use crate::user::session::Session;
 use crate::AppState;
 
@@ -43,13 +44,7 @@ struct FriendData {
 // page=0
 // sort_type=1
 // list_number=2
-pub async fn friend_list(
-  state: Arc<AppState>,
-  request: ApiRequest,
-  session: &mut Option<Arc<Session>>,
-) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  let session = session.as_ref().ok_or_else(|| anyhow::anyhow!("session is not set"))?;
-
+pub async fn friend_list(state: Arc<AppState>, request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let page: i32 = request.body["page"].parse().context("failed to parse page as i32")?;
   // 0 - latest login descending, 1 - latest login ascending
   let sort_type: i32 = request.body["sort_type"]
@@ -60,7 +55,7 @@ pub async fn friend_list(
     .parse()
     .context("failed to parse list_number as i32")?;
 
-  Ok((
+  Ok(Signed(
     CallResponse::new_success(Box::new(FriendList {
       friend_data: vec![FriendData {
         user_no: "-1".to_owned(),
@@ -82,7 +77,7 @@ pub async fn friend_list(
       friend_count: 1,
       greeting_sent_count: 0,
     })),
-    true,
+    session,
   ))
 }
 
@@ -111,11 +106,9 @@ struct GreetingData {
 pub async fn greeting_list(
   state: Arc<AppState>,
   request: ApiRequest,
-  session: &mut Option<Arc<Session>>,
-) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  let session = session.as_ref().ok_or_else(|| anyhow::anyhow!("session is not set"))?;
-
-  Ok((
+  session: Arc<Session>,
+) -> impl IntoHandlerResponse {
+  Ok(Signed(
     CallResponse::new_success(Box::new(GreetingList {
       sent_count: 0,
       received_count: 1,
@@ -135,7 +128,7 @@ pub async fn greeting_list(
       }],
       greeting_count: 1,
     })),
-    true,
+    session,
   ))
 }
 
@@ -165,14 +158,12 @@ struct FriendRecommendation {
 pub async fn friend_recommendation_list(
   state: Arc<AppState>,
   request: ApiRequest,
-  session: &mut Option<Arc<Session>>,
-) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  let session = session.as_ref().ok_or_else(|| anyhow::anyhow!("session is not set"))?;
-
+  session: Arc<Session>,
+) -> impl IntoHandlerResponse {
   // 1 - recommended first friends, 2 - similarly ranked players
   let kind: i32 = request.body["type"].parse().context("failed to parse type as i32")?;
 
-  Ok((
+  Ok(Signed(
     CallResponse::new_success(Box::new(FriendRecommendationList {
       friend_first_count: 0,
       friend_first_rank_total: 0,
@@ -187,7 +178,7 @@ pub async fn friend_recommendation_list(
       }],
       mission_completed: false,
     })),
-    true,
+    session,
   ))
 }
 
@@ -218,10 +209,8 @@ struct GreetingSendData {
 pub async fn greeting_send(
   state: Arc<AppState>,
   request: ApiRequest,
-  session: &mut Option<Arc<Session>>,
-) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  let session = session.as_ref().ok_or_else(|| anyhow::anyhow!("session is not set"))?;
-
+  session: Arc<Session>,
+) -> impl IntoHandlerResponse {
   let user_ids = serde_json::from_str::<Vec<String>>(&request.body["user_no"])
     .context("failed to parse user_no as Vec<String>")?
     .into_iter()
@@ -234,7 +223,7 @@ pub async fn greeting_send(
     .decode(message)
     .context("failed to decode message from base64")?;
 
-  Ok((
+  Ok(Signed(
     CallResponse::new_success(Box::new(GreetingSend {
       item_count: 0,
       send_data: vec![GreetingSendData {
@@ -245,7 +234,7 @@ pub async fn greeting_send(
         first: true,
       }],
     })),
-    true,
+    session,
   ))
 }
 
@@ -305,18 +294,12 @@ impl FriendDisplayPlayData {
   }
 }
 
-pub async fn friend_info(
-  state: Arc<AppState>,
-  request: ApiRequest,
-  session: &mut Option<Arc<Session>>,
-) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  let session = session.as_ref().ok_or_else(|| anyhow::anyhow!("session is not set"))?;
-
+pub async fn friend_info(state: Arc<AppState>, request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let friend_user_no: i64 = request.body["friend_user_no"]
     .parse()
     .context("failed to parse friend_user_no")?;
 
-  Ok((
+  Ok(Signed(
     CallResponse::new_success(Box::new(FriendInfo {
       user_no: "-1".to_string(),
       user_icon: 1083110,
@@ -349,51 +332,41 @@ pub async fn friend_info(
       greeting_status: 0,
       greeting_sent_count: 50,
     })),
-    true,
+    session,
   ))
 }
 
 // Braindead API design, it just toggles mute state instead of having "is_muted" parameter.
-pub async fn friend_mute(
-  state: Arc<AppState>,
-  request: ApiRequest,
-  session: &mut Option<Arc<Session>>,
-) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  let session = session.as_ref().ok_or_else(|| anyhow::anyhow!("session is not set"))?;
-
+pub async fn friend_mute(state: Arc<AppState>, request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let friend_user_no: i64 = request.body["friend_user_no"]
     .parse()
     .context("failed to parse friend_user_no")?;
 
-  Ok((CallResponse::new_success(Box::new(())), true))
+  Ok(Signed(CallResponse::new_success(Box::new(())), session))
 }
 
 pub async fn friend_remove(
   state: Arc<AppState>,
   request: ApiRequest,
-  session: &mut Option<Arc<Session>>,
-) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  let session = session.as_ref().ok_or_else(|| anyhow::anyhow!("session is not set"))?;
-
+  session: Arc<Session>,
+) -> impl IntoHandlerResponse {
   let friend_user_no: i64 = request.body["friend_user_no"]
     .parse()
     .context("failed to parse friend_user_no")?;
 
-  Ok((CallResponse::new_success(Box::new(())), true))
+  Ok(Signed(CallResponse::new_success(Box::new(())), session))
 }
 
 pub async fn friend_request(
   state: Arc<AppState>,
   request: ApiRequest,
-  session: &mut Option<Arc<Session>>,
-) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  let session = session.as_ref().ok_or_else(|| anyhow::anyhow!("session is not set"))?;
-
+  session: Arc<Session>,
+) -> impl IntoHandlerResponse {
   let friend_user_no: i64 = request.body["friend_user_no"]
     .parse()
     .context("failed to parse friend_user_no")?;
 
-  Ok((CallResponse::new_success(Box::new(())), true))
+  Ok(Signed(CallResponse::new_success(Box::new(())), session))
 }
 
 // See [Wonder_Api_FriendsearchResponseDto_Fields]
@@ -424,15 +397,13 @@ impl CallCustom for FriendSearch {}
 pub async fn friend_search(
   state: Arc<AppState>,
   request: ApiRequest,
-  session: &mut Option<Arc<Session>>,
-) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  let session = session.as_ref().ok_or_else(|| anyhow::anyhow!("session is not set"))?;
-
+  session: Arc<Session>,
+) -> impl IntoHandlerResponse {
   let friend_user_no: i64 = request.body["friend_user_no"]
     .parse()
     .context("failed to parse friend_user_no")?;
 
-  Ok((
+  Ok(Signed(
     CallResponse::new_success(Box::new(FriendSearch {
       user_no: "-1".to_string(),
       user_icon: 1083110,
@@ -465,6 +436,6 @@ pub async fn friend_search(
       greeting_status: 0,
       greeting_sent_count: 50,
     })),
-    true,
+    session,
   ))
 }

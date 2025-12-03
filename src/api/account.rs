@@ -7,16 +7,11 @@ use tracing::info;
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Signed};
 use crate::user::session::Session;
 use crate::AppState;
 
-pub async fn set_name(
-  state: Arc<AppState>,
-  request: ApiRequest,
-  session: &mut Option<Arc<Session>>,
-) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  let session = session.as_ref().ok_or_else(|| anyhow::anyhow!("session is not set"))?;
-
+pub async fn set_name(state: Arc<AppState>, request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let username = &request.body["name"];
   let username = BASE64_STANDARD_NO_PAD
     .decode(username)
@@ -39,5 +34,5 @@ pub async fn set_name(
     .context("failed to execute query")?;
   info!(?session.user_id, ?username, "username updated");
 
-  Ok((CallResponse::new_success(Box::new(())), true))
+  Ok(Signed(CallResponse::new_success(Box::new(())), session))
 }

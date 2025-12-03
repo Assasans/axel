@@ -5,8 +5,9 @@ use serde_json::{json, Value};
 use crate::api::master_all::get_masters;
 use crate::api::{ApiRequest, NotificationData};
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Unsigned};
 
-pub async fn quest_main_part_list(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn quest_main_part_list(_request: ApiRequest) -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let parts: Vec<Value> = serde_json::from_str(&masters["main_quest_part"].master_decompressed).unwrap();
   let parts = parts
@@ -19,15 +20,12 @@ pub async fn quest_main_part_list(_request: ApiRequest) -> anyhow::Result<(CallR
     })
     .collect::<Vec<Value>>();
 
-  Ok((
-    CallResponse::new_success(Box::new(json!({
-      "quests": parts
-    }))),
-    false,
-  ))
+  Ok(Unsigned(CallResponse::new_success(Box::new(json!({
+    "quests": parts
+  })))))
 }
 
-pub async fn quest_main_area_list(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn quest_main_area_list(_request: ApiRequest) -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let areas: Vec<Value> = serde_json::from_str(&masters["mainquest_area"].master_decompressed).unwrap();
   let areas = areas
@@ -47,10 +45,10 @@ pub async fn quest_main_area_list(_request: ApiRequest) -> anyhow::Result<(CallR
   })));
   response.add_notifications(vec![NotificationData::new(1, 7, 20, 1, "".to_owned(), "".to_owned())]);
 
-  Ok((response, false))
+  Ok(Unsigned(response))
 }
 
-pub async fn quest_main_stage_list(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn quest_main_stage_list(request: ApiRequest) -> impl IntoHandlerResponse {
   let area_id: i32 = request.body["area_id"].parse().unwrap();
 
   let masters = get_masters().await;
@@ -74,10 +72,7 @@ pub async fn quest_main_stage_list(request: ApiRequest) -> anyhow::Result<(CallR
     })
     .collect::<Vec<Value>>();
 
-  Ok((
-    CallResponse::new_success(Box::new(json!({
-      "quests": stages,
-    }))),
-    false,
-  ))
+  Ok(Unsigned(CallResponse::new_success(Box::new(json!({
+    "quests": stages,
+  })))))
 }

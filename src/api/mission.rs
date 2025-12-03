@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use serde::Serialize;
 use serde_json::Value;
 use serde_repr::{Deserialize_repr, Serialize_repr};
@@ -5,6 +7,8 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 use crate::api::master_all::get_masters;
 use crate::api::{battle, ApiRequest};
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Signed};
+use crate::user::session::Session;
 
 #[derive(Debug, Serialize)]
 pub struct MissionList {
@@ -36,7 +40,7 @@ pub enum MissionKind {
   Normal = 4,
 }
 
-pub async fn mission_list(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn mission_list(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let kind = &request.body["type"];
 
   let masters = get_masters().await;
@@ -71,7 +75,10 @@ pub async fn mission_list(request: ApiRequest) -> anyhow::Result<(CallResponse<d
     })
     .collect();
 
-  Ok((CallResponse::new_success(Box::new(MissionList { missions })), true))
+  Ok(Signed(
+    CallResponse::new_success(Box::new(MissionList { missions })),
+    session,
+  ))
 }
 
 #[derive(Debug, Serialize)]
@@ -91,10 +98,10 @@ pub struct Boss {
 
 impl CallCustom for BattleQuestInfo {}
 
-pub async fn battle_quest_info(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn battle_quest_info(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let event_id = request.body["event_id"].parse::<i32>().unwrap();
 
-  Ok((
+  Ok(Signed(
     CallResponse::new_success(Box::new(BattleQuestInfo {
       ticket: 0,
       opflag: 0,
@@ -105,7 +112,7 @@ pub async fn battle_quest_info(request: ApiRequest) -> anyhow::Result<(CallRespo
         kill: 0,
       },
     })),
-    true,
+    session,
   ))
 }
 
@@ -135,10 +142,10 @@ pub struct BossCountRewards {
 
 impl CallCustom for BattleMarathonInfo {}
 
-pub async fn battle_marathon_info(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn battle_marathon_info(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let event_id = request.body["event_id"].parse::<i32>().unwrap();
 
-  Ok((
+  Ok(Signed(
     CallResponse::new_success(Box::new(BattleMarathonInfo {
       opflag: 0,
       boss: Boss {
@@ -154,7 +161,7 @@ pub async fn battle_marathon_info(request: ApiRequest) -> anyhow::Result<(CallRe
         in_ranking_period: false,
       },
     })),
-    true,
+    session,
   ))
 }
 
@@ -202,11 +209,11 @@ pub struct EmergencyBossInfo {
 
 impl CallCustom for MarathonInfo {}
 
-pub async fn marathon_info(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn marathon_info(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let event_id = request.body["event_id"].parse::<i32>().unwrap();
   let display_multi_battle_invitation = request.body["display_multi_battle_invitation"].parse::<i32>().unwrap();
 
-  Ok((
+  Ok(Signed(
     CallResponse::new_success(Box::new(MarathonInfo {
       opflag: 0,
       boss: 1,
@@ -235,7 +242,7 @@ pub async fn marathon_info(request: ApiRequest) -> anyhow::Result<(CallResponse<
         ranking: 0,
       },
     })),
-    true,
+    session,
   ))
 }
 
@@ -259,7 +266,7 @@ pub struct MarathonStageQuest {
 
 impl CallCustom for MarathonStageList {}
 
-pub async fn marathon_stage_list(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn marathon_stage_list(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let event_id = request.body["event_id"].parse::<i32>().unwrap();
 
   let masters = get_masters().await;
@@ -277,32 +284,35 @@ pub async fn marathon_stage_list(request: ApiRequest) -> anyhow::Result<(CallRes
     })
     .collect::<Vec<_>>();
 
-  Ok((CallResponse::new_success(Box::new(MarathonStageList { quests })), true))
+  Ok(Signed(
+    CallResponse::new_success(Box::new(MarathonStageList { quests })),
+    session,
+  ))
 }
 
 // quest_id=514012
 // party_no=1
 // auto_progression_info={"is_start":false,"stop_setting":0,"incomplete_setting":0}
 // event_id=24013
-pub async fn marathon_quest_start(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn marathon_quest_start(request: ApiRequest) -> impl IntoHandlerResponse {
   let quest_id = request.body["quest_id"].parse::<i32>().unwrap();
   let party_no = request.body["party_no"].parse::<i32>().unwrap();
   let auto_progression_info: Value = serde_json::from_str(&request.body["auto_progression_info"])?;
   let event_id: Value = serde_json::from_str(&request.body["event_id"])?;
 
-  battle::battle_start(request).await
+  Ok(battle::battle_start(request).await)
 }
 
 // quest_id=514012
 // party_no=1
 // auto_progression_info={"is_start":false,"stop_setting":0,"incomplete_setting":0}
 // event_id=24013
-pub async fn marathon_quest_result(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn marathon_quest_result(request: ApiRequest) -> impl IntoHandlerResponse {
   let quest_id = request.body["quest_id"].parse::<i32>().unwrap();
   let party_no = request.body["party_no"].parse::<i32>().unwrap();
   let event_id: Value = serde_json::from_str(&request.body["event_id"])?;
 
-  battle::battle_result(request).await
+  Ok(battle::battle_result(request).await)
 }
 
 // See [Wonder_Api_MarathonBossListResponseDto_Fields]
@@ -330,7 +340,7 @@ pub struct MarathonBoss {
 
 impl CallCustom for MarathonBossList {}
 
-pub async fn marathon_boss_list(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn marathon_boss_list(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let event_id: i32 = request.body["event_id"].parse::<i32>().unwrap();
   let is_multi: i32 = request.body["is_multi"].parse::<i32>().unwrap();
 
@@ -353,5 +363,8 @@ pub async fn marathon_boss_list(request: ApiRequest) -> anyhow::Result<(CallResp
     })
     .collect::<Vec<_>>();
 
-  Ok((CallResponse::new_success(Box::new(MarathonBossList { bosses })), true))
+  Ok(Signed(
+    CallResponse::new_success(Box::new(MarathonBossList { bosses })),
+    session,
+  ))
 }

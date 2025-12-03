@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use anyhow::Context;
 use serde::Serialize;
 use serde_json::Value;
@@ -5,6 +7,8 @@ use serde_json::Value;
 use crate::api::master_all::get_masters;
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Signed};
+use crate::user::session::Session;
 
 // See [Wonder_Api_ExchangelistResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -23,7 +27,7 @@ pub struct ExchangeItem {
   pub exchange_num: i32,
 }
 
-pub async fn exchange_list(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn exchange_list(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let exchange_master_id: i32 = request.body["exchange_master_id"]
     .parse()
     .context("failed to parse exchange_master_id as i32")?;
@@ -53,21 +57,21 @@ pub async fn exchange_list(request: ApiRequest) -> anyhow::Result<(CallResponse<
     })
     .collect::<Vec<_>>();
 
-  Ok((
+  Ok(Signed(
     CallResponse::new_success(Box::new(ExchangeList {
       exchange_master_id,
       items,
     })),
-    true,
+    session,
   ))
 }
 
 // ids=1
-pub async fn leave_members(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn leave_members(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let ids = request.body["ids"]
     .split(',')
     .filter_map(|id| id.parse::<i32>().ok())
     .collect::<Vec<_>>();
 
-  Ok((CallResponse::new_success(Box::new(())), true))
+  Ok(Signed(CallResponse::new_success(Box::new(())), session))
 }

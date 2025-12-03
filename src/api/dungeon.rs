@@ -3,6 +3,7 @@ use serde::Serialize;
 use crate::api::party_info::{PartyPassiveSkillInfo, SpecialSkillInfo};
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Unsigned};
 
 // See [Wonder_Api_DungeonStatusResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -13,11 +14,11 @@ pub struct DungeonStatusResponse {
 
 impl CallCustom for DungeonStatusResponse {}
 
-pub async fn dungeon_status(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  Ok((
-    CallResponse::new_success(Box::new(DungeonStatusResponse { area_id: 11, status: 0 })),
-    false,
-  ))
+pub async fn dungeon_status(_request: ApiRequest) -> impl IntoHandlerResponse {
+  Ok(Unsigned(CallResponse::new_success(Box::new(DungeonStatusResponse {
+    area_id: 11,
+    status: 0,
+  }))))
 }
 
 // See [Wonder_Api_DungeonAreaTopResponseDto_Fields]
@@ -156,40 +157,37 @@ pub struct DungeonStagePartyForm {
   pub current_sp: i32,
 }
 
-pub async fn dungeon_area_top(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn dungeon_area_top(request: ApiRequest) -> impl IntoHandlerResponse {
   let area_id: i32 = request.body["area_id"].parse().unwrap();
 
-  Ok((
-    CallResponse::new_success(Box::new(DungeonAreaTopResponse {
-      is_practice: false,
-      stage_state: DungeonStageState {
-        stage_id: 1101,
-        is_challenge: false,
-        enemies: vec![],
+  Ok(Unsigned(CallResponse::new_success(Box::new(DungeonAreaTopResponse {
+    is_practice: false,
+    stage_state: DungeonStageState {
+      stage_id: 1101,
+      is_challenge: false,
+      enemies: vec![],
+    },
+    party_set: DungeonPartySet {
+      stage_party_set: DungeonStagePartySet {
+        party: vec![],
+        reserved_party: vec![],
+        assist: 0,
+        sub_assists: vec![],
+        assist_remain_count: 0,
+        party_passive_skill: Default::default(),
       },
-      party_set: DungeonPartySet {
-        stage_party_set: DungeonStagePartySet {
-          party: vec![],
-          reserved_party: vec![],
-          assist: 0,
-          sub_assists: vec![],
-          assist_remain_count: 0,
-          party_passive_skill: Default::default(),
-        },
-        team_members: vec![],
-        team_weapons: vec![],
-        team_accessories: vec![],
-      },
-      clear_info: DungeonAreaClearInfo {
-        clear_rank: 0,
-        reward_items: vec![],
-      },
-      unchoosed_benefit_id_list: vec![],
-      benefit_re_lottery_count: 0,
-      is_allow_trial: false,
-    })),
-    false,
-  ))
+      team_members: vec![],
+      team_weapons: vec![],
+      team_accessories: vec![],
+    },
+    clear_info: DungeonAreaClearInfo {
+      clear_rank: 0,
+      reward_items: vec![],
+    },
+    unchoosed_benefit_id_list: vec![],
+    benefit_re_lottery_count: 0,
+    is_allow_trial: false,
+  }))))
 }
 
 // TODO: dungeon_area_retire no body no reply

@@ -2,6 +2,7 @@ use jwt_simple::prelude::Serialize;
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Unsigned};
 
 #[derive(Debug, Serialize)]
 pub struct MaintenanceCheck {
@@ -12,12 +13,9 @@ pub struct MaintenanceCheck {
 
 impl CallCustom for MaintenanceCheck {}
 
-pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  Ok((
-    CallResponse::new_success(Box::new(MaintenanceCheck {
-      typestatus: 0,
-      system_id: None,
-    })),
-    false,
-  ))
+pub async fn maintenance_check(_request: ApiRequest) -> impl IntoHandlerResponse {
+  Unsigned(CallResponse::new_success(Box::new(MaintenanceCheck {
+    typestatus: 0,
+    system_id: None,
+  })))
 }

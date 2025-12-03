@@ -1,7 +1,11 @@
+use std::sync::Arc;
+
 use jwt_simple::prelude::Serialize;
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Signed};
+use crate::user::session::Session;
 
 #[derive(Debug, Serialize)]
 pub struct Home {
@@ -26,8 +30,8 @@ pub struct AdvertisementData {
   pub status: u32,
 }
 
-pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  Ok((
+pub async fn home(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+  Ok(Signed(
     CallResponse::new_success(Box::new(Home {
       multi_battle_invitation: None,
       member_info: MemberInfo {
@@ -41,6 +45,6 @@ pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn Cal
       },
       display_plan_map: false,
     })),
-    true,
+    session,
   ))
 }

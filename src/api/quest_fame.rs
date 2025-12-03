@@ -7,6 +7,7 @@ use tracing::debug;
 use crate::api::master_all::get_masters;
 use crate::api::{battle, ApiRequest};
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Unsigned};
 
 // See [Wonder_Api_FameQuestRankListResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -17,20 +18,19 @@ pub struct QuestFameRankListResponse {
 
 impl CallCustom for QuestFameRankListResponse {}
 
-pub async fn fame_quest_rank_list(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn fame_quest_rank_list(_request: ApiRequest) -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let ranks: Vec<Value> = serde_json::from_str(&masters["fame_quest_rank"].master_decompressed).unwrap();
 
-  Ok((
-    CallResponse::new_success(Box::new(QuestFameRankListResponse {
+  Ok(Unsigned(CallResponse::new_success(Box::new(
+    QuestFameRankListResponse {
       quest_rank_id_list: ranks
         .iter()
         .map(|rank| rank.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap())
         .collect::<Vec<_>>(),
       has_emergency_quest: false,
-    })),
-    false,
-  ))
+    },
+  ))))
 }
 
 // See [Wonder_Api_FameQuestAreaListResponseDto_Fields]
@@ -48,14 +48,14 @@ pub struct FameQuestAreaInfo {
   pub area_id: i32,
 }
 
-pub async fn fame_quest_area_list(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn fame_quest_area_list(request: ApiRequest) -> impl IntoHandlerResponse {
   let quest_rank_id: i32 = request.body["quest_rank_id"].parse().unwrap();
 
   let masters = get_masters().await;
   let areas: Vec<Value> = serde_json::from_str(&masters["fame_quest_area"].master_decompressed).unwrap();
 
-  Ok((
-    CallResponse::new_success(Box::new(QuestFameAreaListResponse {
+  Ok(Unsigned(CallResponse::new_success(Box::new(
+    QuestFameAreaListResponse {
       area_info_list: areas
         .iter()
         .filter(|area| {
@@ -73,9 +73,8 @@ pub async fn fame_quest_area_list(request: ApiRequest) -> anyhow::Result<(CallRe
         })
         .collect::<Vec<_>>(),
       has_emergency_quest: false,
-    })),
-    false,
-  ))
+    },
+  ))))
 }
 
 // See [Wonder_Api_FameQuestStageListResponseDto_Fields]
@@ -112,7 +111,7 @@ pub struct FameQuestReleaseConditionInfo {
   pub event_story: i32,
 }
 
-pub async fn fame_quest_stage_list(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn fame_quest_stage_list(request: ApiRequest) -> impl IntoHandlerResponse {
   let area_id: i32 = request.body["area_id"].parse().unwrap();
   let mode: i32 = request.body["mode"].parse().unwrap();
 
@@ -133,8 +132,8 @@ pub async fn fame_quest_stage_list(request: ApiRequest) -> anyhow::Result<(CallR
     .unwrap();
   debug!("current rank: {}", current_rank);
 
-  Ok((
-    CallResponse::new_success(Box::new(QuestFameStageListResponse {
+  Ok(Unsigned(CallResponse::new_success(Box::new(
+    QuestFameStageListResponse {
       quest_list: stages
         .iter()
         .filter(|stage| {
@@ -174,9 +173,8 @@ pub async fn fame_quest_stage_list(request: ApiRequest) -> anyhow::Result<(CallR
       remaining_count: 1,
       transition_fame_quest_id: 0,
       can_skip: false,
-    })),
-    false,
-  ))
+    },
+  ))))
 }
 
 // See [Wonder_Api_FameQuestStartResponseDto_Fields]
@@ -190,7 +188,7 @@ pub struct FameQuestStart {
 // party_no=1
 // stage_id=710011
 // cost_ratio=1
-pub async fn fame_quest_start(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn fame_quest_start(request: ApiRequest) -> impl IntoHandlerResponse {
   let use_supplement_num: i32 = request.body["use_supplement_num"].parse().unwrap();
   let party_no: i32 = request.body["party_no"].parse().unwrap();
   let stage_id: i32 = request.body["stage_id"].parse().unwrap();
@@ -204,7 +202,7 @@ pub async fn fame_quest_start(request: ApiRequest) -> anyhow::Result<(CallRespon
 // win=0
 // clear_mission_list=[0,0,0]
 // stage_id=710011
-pub async fn fame_quest_result(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn fame_quest_result(request: ApiRequest) -> impl IntoHandlerResponse {
   let party_no: i32 = request.body["party_no"].parse().unwrap();
   let win: i32 = request.body["win"].parse().unwrap();
   let clear_mission_list: Vec<i32> = serde_json::from_str(&request.body["clear_mission_list"]).unwrap();
@@ -303,5 +301,5 @@ pub async fn fame_quest_result(request: ApiRequest) -> anyhow::Result<(CallRespo
     "lottery_potion_list": [],
   })));
 
-  Ok((response, false))
+  Ok(Unsigned(response))
 }

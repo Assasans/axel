@@ -1,7 +1,11 @@
+use std::sync::Arc;
+
 use jwt_simple::prelude::Serialize;
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Signed};
+use crate::user::session::Session;
 
 #[derive(Debug, Serialize)]
 pub struct Interaction {
@@ -46,8 +50,8 @@ impl Character {
   }
 }
 
-pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
-  Ok((
+pub async fn interaction(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+  Ok(Signed(
     CallResponse::new_success(Box::new(Interaction {
       characters: vec![
         Character::new(100, 1, 4, "".to_owned(), 1000101, 0, [0, 0, 0, 0], "".to_owned()),
@@ -63,6 +67,6 @@ pub async fn route(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn Cal
         Character::new(128, 1, 0, "".to_owned(), 1280101, 0, [0, 0, 0, 0], "".to_owned()),
       ],
     })),
-    true,
+    session,
   ))
 }

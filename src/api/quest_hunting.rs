@@ -6,6 +6,7 @@ use serde_json::Value;
 use crate::api::master_all::get_masters;
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::handler::{IntoHandlerResponse, Unsigned};
 
 // See [Wonder_Api_QuesthuntinglistResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -33,12 +34,12 @@ pub struct HuntingFreeQuest {
   pub status: i32,
 }
 
-pub async fn quest_hunting_list(_request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn quest_hunting_list(_request: ApiRequest) -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let areas: Vec<Value> = serde_json::from_str(&masters["huntingquest_area"].master_decompressed).unwrap();
 
-  Ok((
-    CallResponse::new_success(Box::new(QuestHuntingListResponse {
+  Ok(Unsigned(CallResponse::new_success(Box::new(
+    QuestHuntingListResponse {
       limitquests: vec![],
       freequests: areas
         .iter()
@@ -51,9 +52,8 @@ pub async fn quest_hunting_list(_request: ApiRequest) -> anyhow::Result<(CallRes
         .collect::<Vec<_>>(),
       enablepackage: false,
       status: 0,
-    })),
-    false,
-  ))
+    },
+  ))))
 }
 
 // See [Wonder_Api_QuesthuntingstagelistResponseDto_Fields]
@@ -76,14 +76,14 @@ pub struct HuntingStageQuest {
   pub task3: i32,
 }
 
-pub async fn quest_hunting_stage_list(request: ApiRequest) -> anyhow::Result<(CallResponse<dyn CallCustom>, bool)> {
+pub async fn quest_hunting_stage_list(request: ApiRequest) -> impl IntoHandlerResponse {
   let area_id: i32 = request.body["area_id"].parse().unwrap();
 
   let masters = get_masters().await;
   let stages: Vec<Value> = serde_json::from_str(&masters["huntingquest_stage"].master_decompressed).unwrap();
 
-  Ok((
-    CallResponse::new_success(Box::new(QuestHuntingStageListResponse {
+  Ok(Unsigned(CallResponse::new_success(Box::new(
+    QuestHuntingStageListResponse {
       quests: stages
         .iter()
         .filter(|stage| stage.get("area_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == area_id)
@@ -97,7 +97,6 @@ pub async fn quest_hunting_stage_list(request: ApiRequest) -> anyhow::Result<(Ca
         })
         .collect::<Vec<_>>(),
       status: 0,
-    })),
-    false,
-  ))
+    },
+  ))))
 }
