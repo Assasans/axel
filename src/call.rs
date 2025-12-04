@@ -4,6 +4,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use erased_serde::serialize_trait_object;
 use jwt_simple::prelude::{Deserialize, Serialize};
 use serde_json::Value;
+use tracing::warn;
 
 use crate::api::{NotificationData, RemoteData};
 use crate::user::id::UserId;

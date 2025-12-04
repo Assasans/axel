@@ -18,6 +18,9 @@ impl Router {
   where
     F: IntoHandler<Args>,
   {
+    if self.handlers.contains_key(name) {
+      todo!("duplicate handler name: {}", name);
+    }
     self.handlers.insert(name.to_string(), handler.into_handler());
     self
   }

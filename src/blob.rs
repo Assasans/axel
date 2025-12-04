@@ -223,6 +223,9 @@ pub async fn get_login_remote_data() -> Vec<RemoteData> {
     AddItem::new(RemoteDataItemType::CharacterPiece, 0, 119, 2).into_remote_data(),
     AddItem::new(RemoteDataItemType::CharacterPiece, 0, 128, 1).into_remote_data(),
     AddSingletonItem::new(RemoteDataItemType::FameRank, 1).into_remote_data(),
+    AddItem::new(RemoteDataItemType::ExchangeMedal, 0, 1001, 100100).into_remote_data(),
+    AddItem::new(RemoteDataItemType::ExchangeMedal, 0, 1011, 101100).into_remote_data(),
+    AddItem::new(RemoteDataItemType::ExchangeMedal, 0, 1012, 101200).into_remote_data(),
   ]
     .into_iter()
     .chain(characters)

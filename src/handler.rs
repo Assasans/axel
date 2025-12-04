@@ -2,6 +2,8 @@ use std::future::Future;
 use std::pin::Pin;
 use std::sync::Arc;
 
+use tracing::warn;
+
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
 use crate::user::session::Session;
@@ -45,9 +47,23 @@ pub trait IntoHandlerResponse {
   fn into_handler_response(self: Box<Self>) -> HandlerResponse;
 }
 
-pub struct Unsigned(pub CallResponse<dyn CallCustom>);
+pub struct Unsigned<T: CallCustom + ?Sized>(pub CallResponse<T>);
 
-impl IntoHandlerResponse for Unsigned {
+impl<T: CallCustom + 'static> IntoHandlerResponse for Unsigned<T> {
+  fn into_handler_response(self: Box<Self>) -> HandlerResponse {
+    // Convert CallResponse<T> into CallResponse<dyn CallCustom>
+    let response = CallResponse {
+      status: self.0.status,
+      time: self.0.time,
+      remote: self.0.remote,
+      notifications: self.0.notifications,
+      custom: self.0.custom as Box<dyn CallCustom>,
+    };
+    HandlerResponse::unsigned(response)
+  }
+}
+
+impl IntoHandlerResponse for Unsigned<dyn CallCustom> {
   fn into_handler_response(self: Box<Self>) -> HandlerResponse {
     HandlerResponse::unsigned(self.0)
   }

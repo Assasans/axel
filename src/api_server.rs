@@ -26,7 +26,8 @@ use tracing::{debug, info, info_span, trace, warn, Instrument, Span};
 use crate::api::{
   account, assist, battle, capture, character, dungeon, exchange, friend, gacha, home, honor_list,
   idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check, master_all, master_list, mission,
-  notice, party_info, present, profile, quest_fame, quest_hunting, quest_main, story, transfer, tutorial, ApiRequest,
+  notice, party_info, present, profile, quest_fame, quest_hunting, quest_main, smith_craft, smith_sell, smith_upgrade,
+  story, transfer, tutorial, ApiRequest,
 };
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::client_ip::add_client_ip;
@@ -187,7 +188,13 @@ async fn api_call(
     .handle("marathon_stage_list", mission::marathon_stage_list)
     .handle("marathon_quest_start", mission::marathon_quest_start)
     .handle("marathon_quest_result", mission::marathon_quest_result)
-    .handle("marathon_boss_list", mission::marathon_boss_list);
+    .handle("marathon_boss_list", mission::marathon_boss_list)
+    .handle("sale_list", smith_sell::sale_list)
+    .handle("sale", smith_sell::sale)
+    .handle("blacksmithlist", smith_craft::blacksmith_list)
+    .handle("blacksmith", smith_craft::blacksmith)
+    .handle("itempoweruplist", smith_upgrade::item_power_up_list)
+    .handle("blacksmithquestlist", smith_upgrade::blacksmith_quest_list);
 
   let jwt = headers.get(JWT_HEADER).ok_or_else(|| anyhow!("no jwt header"))?;
   trace!("jwt header: {:?}", jwt);
