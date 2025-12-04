@@ -1,3 +1,4 @@
+use jwt_simple::prelude::Deserialize;
 use serde::Serialize;
 
 use crate::api::party_info::{PartyPassiveSkillInfo, SpecialSkillInfo};
@@ -69,16 +70,15 @@ pub struct DungeonStageEnemyState {
 #[derive(Debug, Serialize)]
 pub struct DungeonPartySet {
   pub stage_party_set: DungeonStagePartySet,
-  pub team_members: Vec<DungeonPartyMember>,
-  pub team_weapons: Vec<DungeonPartyWeapon>,
-  pub team_accessories: Vec<DungeonPartyAccessory>,
+  pub team_members: Vec<PartyMember>,
+  pub team_weapons: Vec<PartyWeapon>,
+  pub team_accessories: Vec<PartyAccessory>,
 }
 
-// See [Wonder_Api_DungeonPartyMembersResponseDto_Fields]
-// extends [Wonder_Api_PartyinfoMembersResponseDto_Fields]
-#[derive(Debug, Serialize)]
-pub struct DungeonPartyMember {
-  /* Wonder_Api_PartyinfoMembersResponseDto_Fields */
+// See [Wonder_Api_PartyinfoMembersResponseDto_Fields]
+// Extended by [Wonder_Api_DungeonPartyMembersResponseDto_Fields]
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PartyMember {
   pub id: i32,
   pub lv: i32,
   pub exp: i32,
@@ -104,21 +104,20 @@ pub struct DungeonPartyMember {
   pub is_undead: i32,
 }
 
-// See [Wonder_Api_DungeonPartyWeaponsResponseDto_Fields]
-// extends [Wonder_Api_PartyinfoWeaponsResponseDto_Fields]
+// See [Wonder_Api_PartyinfoWeaponsResponseDto_Fields]
+// Extended by [Wonder_Api_DungeonPartyWeaponsResponseDto_Fields]
 #[derive(Debug, Serialize)]
-pub struct DungeonPartyWeapon {
-  /* Wonder_Api_PartyinfoWeaponsResponseDto_Fields */
+pub struct PartyWeapon {
   pub id: i64,
   pub weapon_id: i64,
   pub trial: bool,
 }
 
+// See [Wonder_Api_PartyinfoAccessoriesResponseDto_Fields]
 // See [Wonder_Api_DungeonPartyAccessoriesResponseDto_Fields]
-// extends [Wonder_Api_PartyinfoAccessoriesResponseDto_Fields]
+// See [Wonder_Api_PartychangelistAccessoriesResponseDto_Fields]
 #[derive(Debug, Serialize)]
-pub struct DungeonPartyAccessory {
-  /* Wonder_Api_PartyinfoAccessoriesResponseDto_Fields */
+pub struct PartyAccessory {
   pub id: i64,
   pub accessory_id: i64,
 }

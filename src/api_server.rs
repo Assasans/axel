@@ -26,8 +26,8 @@ use tracing::{debug, info, info_span, trace, warn, Instrument, Span};
 use crate::api::{
   account, assist, battle, capture, character, dungeon, exchange, friend, gacha, home, honor_list,
   idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check, master_all, master_list, mission,
-  notice, party_info, present, profile, quest_fame, quest_hunting, quest_main, smith_craft, smith_sell, smith_upgrade,
-  story, transfer, tutorial, ApiRequest,
+  notice, party, party_info, present, profile, quest_fame, quest_hunting, quest_main, smith_craft, smith_sell,
+  smith_upgrade, story, transfer, tutorial, ApiRequest,
 };
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::client_ip::add_client_ip;
@@ -194,7 +194,16 @@ async fn api_call(
     .handle("blacksmithlist", smith_craft::blacksmith_list)
     .handle("blacksmith", smith_craft::blacksmith)
     .handle("itempoweruplist", smith_upgrade::item_power_up_list)
-    .handle("blacksmithquestlist", smith_upgrade::blacksmith_quest_list);
+    .handle("blacksmithquestlist", smith_upgrade::blacksmith_quest_list)
+    .handle("partymembers", party::party_members)
+    .handle("gradeup", party::grade_up)
+    .handle("update_party_form", party::update_party_form)
+    .handle("partyoffer", party::party_offer)
+    .handle("partyreset", party::party_reset)
+    .handle("partychangelist", party::party_change_list)
+    .handle("partynameset", party::party_name_set)
+    .handle("partychange", party::party_change)
+    .handle("party_strength", party::party_strength);
 
   let jwt = headers.get(JWT_HEADER).ok_or_else(|| anyhow!("no jwt header"))?;
   trace!("jwt header: {:?}", jwt);

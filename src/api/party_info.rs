@@ -3,6 +3,7 @@ use std::sync::Arc;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
+use crate::api::dungeon::PartyMember;
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
 use crate::handler::{IntoHandlerResponse, Signed};
@@ -11,13 +12,14 @@ use crate::user::session::Session;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PartyInfo {
   pub party: Vec<Party>,
-  pub members: Vec<Member>,
+  pub members: Vec<PartyMember>,
   pub weapons: Vec<()>,
   pub accessories: Vec<()>,
 }
 
 impl CallCustom for PartyInfo {}
 
+// See [Wonder_Api_PartyinfoPartyResponseDto_Fields]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Party {
   pub party_forms: Vec<PartyForm>,
@@ -84,36 +86,14 @@ impl PartyPassiveSkillInfo {
   }
 }
 
-// TODO: DungeonPartyMember has correct types, should move fields to this struct
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Member {
-  pub id: u32,
-  pub lv: u32,
-  pub exp: u32,
-  pub member_id: u32,
-  pub ac_skill_lv_a: u32,
-  pub ac_skill_val_a: u32,
-  pub ac_skill_lv_b: u32,
-  pub ac_skill_val_b: u32,
-  pub ac_skill_lv_c: u32,
-  pub ac_skill_val_c: u32,
-  pub hp: u32,
-  pub attack: u32,
-  pub magicattack: u32,
-  pub defense: u32,
-  pub magicdefence: u32,
-  pub agility: u32,
-  pub dexterity: u32,
-  pub luck: u32,
-  pub limit_break: u32,
-  pub character_id: u32,
-  pub waiting_room: u32,
-  pub ex_flg: u32,
-  pub is_undead: u32,
+impl Party {
+  /// See [Wonder.UI.Data.PartyData$$get_Force]
+  pub fn power(&self, assist_level: u32) -> u32 {
+    let party_forms_strength: u32 = self.party_forms.iter().map(|form| form.strength).sum();
+    party_forms_strength + (4 * assist_level)
+  }
 }
 
-/// Party power (force) is calculated in [Wonder.UI.Data.PartyData$$get_Force], with formula being:
-/// `party_forms.sum(strength) + (4 * party_assist.level)`
 pub async fn party_info(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let response = include_str!("../party-info.json");
   let response: Value = serde_json::from_str(response).unwrap();
