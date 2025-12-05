@@ -33,18 +33,16 @@ pub async fn surprise_mini_event_select(_request: ApiRequest) -> impl IntoHandle
 
   warn!("encountered stub: surprise_mini_event_select");
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(
-    SurpriseMiniEventSelectResponse {
-      select_list: surprise_events
-        .iter()
-        .map(|event| SurpriseEvent {
-          user_stock_id: 42,
-          surprise_event_id: event["id"].as_str().unwrap().parse().unwrap(),
-          expired_date: 0,
-        })
-        .collect(),
-    },
-  ))))
+  Ok(Unsigned(SurpriseMiniEventSelectResponse {
+    select_list: surprise_events
+      .iter()
+      .map(|event| SurpriseEvent {
+        user_stock_id: 42,
+        surprise_event_id: event["id"].as_str().unwrap().parse().unwrap(),
+        expired_date: 0,
+      })
+      .collect(),
+  }))
 }
 
 // See [Wonder_Api_SurpriseMiniEventTopResponseDto_Fields]
@@ -63,10 +61,10 @@ pub async fn surprise_mini_event_top(request: ApiRequest) -> impl IntoHandlerRes
 
   warn!(?surprise_event_id, "encountered stub: surprise_mini_event_top");
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(SurpriseMiniEventTop {
+  Ok(Unsigned(SurpriseMiniEventTop {
     best_score: 2112,
     expired_date: 0,
-  }))))
+  }))
 }
 
 // See [Wonder_Api_SurpriseQuestStartResponseDto_Fields]
@@ -300,7 +298,7 @@ pub struct SurpriseQuestResultReward {
 pub async fn surprise_quest_result(_request: ApiRequest) -> impl IntoHandlerResponse {
   warn!("encountered stub: surprise_quest_result");
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(SurpriseQuestResult {
+  Ok(Unsigned(SurpriseQuestResult {
     reward: vec![SurpriseQuestResultReward {
       item_type: RemoteDataItemType::RealMoney.into(),
       item_id: 1,
@@ -312,7 +310,7 @@ pub async fn surprise_quest_result(_request: ApiRequest) -> impl IntoHandlerResp
     }],
     previous_best_score: 2112,
     best_score: 4242,
-  }))))
+  }))
 }
 
 // See [Wonder_Api_SurpriseShortEventResponseDto_Fields]
@@ -343,7 +341,7 @@ pub async fn surprise_short_event(request: ApiRequest) -> impl IntoHandlerRespon
 
   warn!(?surprise_event_id, "encountered stub: surprise_short_event");
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(SurpriseShortEvent {
+  Ok(Unsigned(SurpriseShortEvent {
     surprise_short_id: surprise_event["surprise_short_id"].as_str().unwrap().parse().unwrap(),
     result: SurpriseShortEventResult {
       result_pattern_id: 8,
@@ -357,7 +355,7 @@ pub async fn surprise_short_event(request: ApiRequest) -> impl IntoHandlerRespon
       //   .parse()
       //   .unwrap(),
     },
-  }))))
+  }))
 }
 
 // See [Wonder_Api_SurpriseShortEventResultResponseDto_Fields]
@@ -386,12 +384,12 @@ pub async fn surprise_story_start(_request: ApiRequest) -> impl IntoHandlerRespo
 
   warn!("encountered stub: surprise_story_start");
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(SurpriseStoryStart {
+  Ok(Unsigned(SurpriseStoryStart {
     result_id_list: surprise_stories
       .iter()
       .map(|story| story["id"].as_str().unwrap().parse().unwrap())
       .collect(),
-  }))))
+  }))
 }
 
 // surprise_story_id=1001
@@ -402,7 +400,7 @@ pub async fn surprise_story_select(_request: ApiRequest) -> impl IntoHandlerResp
   warn!("encountered stub: surprise_story_select");
 
   // See [Wonder_Api_SurpriseStorySelectResponseDto_Fields]
-  Ok(Unsigned(CallResponse::new_success_empty()))
+  Ok(Unsigned(()))
 }
 
 // See [Wonder_Api_SurpriseStoryResultResponseDto_Fields]
@@ -427,11 +425,11 @@ pub struct SurpriseStoryReward {
 pub async fn surprise_story_result(_request: ApiRequest) -> impl IntoHandlerResponse {
   warn!("encountered stub: surprise_story_result");
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(SurpriseStoryResult {
+  Ok(Unsigned(SurpriseStoryResult {
     reward: vec![SurpriseStoryReward {
       item_type: RemoteDataItemType::RealMoney.into(),
       item_id: 1,
       num: 520_000,
     }],
-  }))))
+  }))
 }

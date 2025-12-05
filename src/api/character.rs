@@ -100,7 +100,7 @@ pub async fn character_enhance_info(request: ApiRequest) -> impl IntoHandlerResp
     .parse()
     .context("failed to parse character_id as i32")?;
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(CharacterEnhanceInfo {
+  Ok(Unsigned(CharacterEnhanceInfo {
     progress: vec![/*CharacterEnhanceInfoProgress {
         root_id: 1,
         root_stage_id: 5,
@@ -125,5 +125,5 @@ pub async fn character_enhance_info(request: ApiRequest) -> impl IntoHandlerResp
         money: 900,
       }*/],
     trial_timestamp: chrono::Utc::now().timestamp(),
-  }))))
+  }))
 }

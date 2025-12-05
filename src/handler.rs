@@ -47,33 +47,31 @@ pub trait IntoHandlerResponse {
   fn into_handler_response(self: Box<Self>) -> HandlerResponse;
 }
 
-pub struct Unsigned<T: CallCustom + ?Sized>(pub CallResponse<T>);
+pub trait IntoCallResponse {
+  fn into_call_response(self: Box<Self>) -> CallResponse<dyn CallCustom>;
+}
 
-impl<T: CallCustom + 'static> IntoHandlerResponse for Unsigned<T> {
+pub struct Unsigned<T: IntoCallResponse>(pub T);
+
+impl<T: IntoCallResponse> IntoHandlerResponse for Unsigned<T> {
   fn into_handler_response(self: Box<Self>) -> HandlerResponse {
-    // Convert CallResponse<T> into CallResponse<dyn CallCustom>
-    let response = CallResponse {
-      status: self.0.status,
-      time: self.0.time,
-      remote: self.0.remote,
-      notifications: self.0.notifications,
-      custom: self.0.custom as Box<dyn CallCustom>,
-    };
+    let response = Box::new(self.0).into_call_response();
     HandlerResponse::unsigned(response)
   }
 }
 
-impl IntoHandlerResponse for Unsigned<dyn CallCustom> {
-  fn into_handler_response(self: Box<Self>) -> HandlerResponse {
-    HandlerResponse::unsigned(self.0)
-  }
-}
+// impl IntoHandlerResponse for Unsigned<CallResponse<dyn CallCustom>> {
+//   fn into_handler_response(self: Box<Self>) -> HandlerResponse {
+//     HandlerResponse::unsigned(self.0)
+//   }
+// }
 
-pub struct Signed(pub CallResponse<dyn CallCustom>, pub Arc<Session>);
+pub struct Signed<T: IntoCallResponse>(pub T, pub Arc<Session>);
 
-impl IntoHandlerResponse for Signed {
+impl<T: IntoCallResponse> IntoHandlerResponse for Signed<T> {
   fn into_handler_response(self: Box<Self>) -> HandlerResponse {
-    HandlerResponse::signed(self.0, self.1)
+    let response = Box::new(self.0).into_call_response();
+    HandlerResponse::signed(response, self.1.clone())
   }
 }
 
@@ -83,5 +81,29 @@ impl<T: IntoHandlerResponse + 'static> IntoHandlerResponse for anyhow::Result<T>
       Ok(val) => Box::new(val).into_handler_response(),
       Err(e) => todo!(),
     }
+  }
+}
+
+impl<T: CallCustom + 'static> IntoCallResponse for CallResponse<T> {
+  fn into_call_response(self: Box<Self>) -> CallResponse<dyn CallCustom> {
+    CallResponse {
+      status: self.status,
+      time: self.time,
+      remote: self.remote,
+      notifications: self.notifications,
+      custom: self.custom as Box<dyn CallCustom>,
+    }
+  }
+}
+
+impl IntoCallResponse for CallResponse<dyn CallCustom> {
+  fn into_call_response(self: Box<Self>) -> CallResponse<dyn CallCustom> {
+    *self
+  }
+}
+
+impl<T: CallCustom + 'static> IntoCallResponse for T {
+  fn into_call_response(self: Box<Self>) -> CallResponse<dyn CallCustom> {
+    CallResponse::new_success(self)
   }
 }

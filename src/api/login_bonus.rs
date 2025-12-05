@@ -66,7 +66,7 @@ pub struct RouletteLoginBonus {
 
 pub async fn login_bonus(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   Ok(Signed(
-    CallResponse::new_success(Box::new(LoginBonus {
+    LoginBonus {
       goods: vec![
         // LoginBonusGood::new(20001, 1, 3, 1, 1000),
         // LoginBonusGood::new(40266, 1, 21, 17, 1),
@@ -92,7 +92,7 @@ pub async fn login_bonus(_request: ApiRequest, session: Arc<Session>) -> impl In
         days: vec![],
         sns_share_results: vec![],
       },
-    })),
+    },
     session,
   ))
 }

@@ -48,12 +48,12 @@ pub async fn sale_list(request: ApiRequest) -> impl IntoHandlerResponse {
     })
     .collect();
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(SaleList { items }))))
+  Ok(Unsigned(SaleList { items }))
 }
 
 // type=material
 // items=[{"item_type":15,"target_item_id":0,"use_num":1},{"item_type":15,"target_item_id":0,"use_num":1}]
 pub async fn sale(_request: ApiRequest) -> impl IntoHandlerResponse {
   // See [Wonder_Api_SaleResponseDto_Fields]
-  Ok(Unsigned(CallResponse::new_success_empty()))
+  Ok(Unsigned(()))
 }

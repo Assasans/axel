@@ -28,18 +28,16 @@ pub async fn advertisement_reward_status(_request: ApiRequest) -> impl IntoHandl
   let masters = get_masters().await;
   let ad_rewards: Vec<Value> = serde_json::from_str(&masters["ad_reward"].master_decompressed).unwrap();
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(
-    AdvertisementRewardStatus {
-      advertisement_data_list: ad_rewards
-        .iter()
-        .map(|ad_reward| AdvertisementData {
-          id: ad_reward["id"].as_str().unwrap().parse().unwrap(),
-          reward_type: ad_reward["reward_type"].as_str().unwrap().parse().unwrap(),
-          status: 0,
-        })
-        .collect(),
-    },
-  ))))
+  Ok(Unsigned(AdvertisementRewardStatus {
+    advertisement_data_list: ad_rewards
+      .iter()
+      .map(|ad_reward| AdvertisementData {
+        id: ad_reward["id"].as_str().unwrap().parse().unwrap(),
+        reward_type: ad_reward["reward_type"].as_str().unwrap().parse().unwrap(),
+        status: 0,
+      })
+      .collect(),
+  }))
 }
 
 // See [Wonder_Api_ShopitemlistResponseDto_Fields]
@@ -65,7 +63,7 @@ pub async fn shop_item_list(request: ApiRequest) -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let shop_items: Vec<Value> = serde_json::from_str(&masters["shop_item"].master_decompressed).unwrap();
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(ShopItemList {
+  Ok(Unsigned(ShopItemList {
     items: shop_items
       .iter()
       .filter(|item| item["shop_id"].as_str().unwrap().parse::<i32>().unwrap() == shop_master_id)
@@ -75,7 +73,7 @@ pub async fn shop_item_list(request: ApiRequest) -> impl IntoHandlerResponse {
         buycount: 0,
       })
       .collect(),
-  }))))
+  }))
 }
 
 // See [Wonder_Api_BuyResponseDto_Fields]
@@ -96,12 +94,12 @@ impl CallCustom for BuyResponse {}
 // shop_item_master_id=11000
 pub async fn buy(_request: ApiRequest) -> impl IntoHandlerResponse {
   warn!("encountered stub: ad_reward::buy");
-  Ok(Unsigned(CallResponse::new_success(Box::new(BuyResponse {
+  Ok(Unsigned(BuyResponse {
     buymoney: 0,
     buyrealmoney: 0,
     buyrealmoneyfree: 0,
     money: 0,
     realmoney: 0,
     realmoneyfree: 0,
-  }))))
+  }))
 }

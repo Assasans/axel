@@ -336,11 +336,11 @@ pub async fn master_all(request: ApiRequest) -> impl IntoHandlerResponse {
     .map(|key| masters.get(*key).expect(&format!("master {:?} not found", key)))
     .cloned()
     .collect::<Vec<_>>();
-  Unsigned(CallResponse::new_success(Box::new(MasterAll {
+  Unsigned(MasterAll {
     masterversion: "202408050001".to_owned(),
     masterarray: masters,
     compressed: true,
-  })))
+  })
 }
 
 #[derive(Serialize, Deserialize)]

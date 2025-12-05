@@ -75,10 +75,7 @@ pub async fn mission_list(request: ApiRequest, session: Arc<Session>) -> impl In
     })
     .collect();
 
-  Ok(Signed(
-    CallResponse::new_success(Box::new(MissionList { missions })),
-    session,
-  ))
+  Ok(Signed(MissionList { missions }, session))
 }
 
 #[derive(Debug, Serialize)]
@@ -102,7 +99,7 @@ pub async fn battle_quest_info(request: ApiRequest, session: Arc<Session>) -> im
   let event_id = request.body["event_id"].parse::<i32>().unwrap();
 
   Ok(Signed(
-    CallResponse::new_success(Box::new(BattleQuestInfo {
+    BattleQuestInfo {
       ticket: 0,
       opflag: 0,
       symbol: 0,
@@ -111,7 +108,7 @@ pub async fn battle_quest_info(request: ApiRequest, session: Arc<Session>) -> im
         status: 0,
         kill: 0,
       },
-    })),
+    },
     session,
   ))
 }
@@ -146,7 +143,7 @@ pub async fn battle_marathon_info(request: ApiRequest, session: Arc<Session>) ->
   let event_id = request.body["event_id"].parse::<i32>().unwrap();
 
   Ok(Signed(
-    CallResponse::new_success(Box::new(BattleMarathonInfo {
+    BattleMarathonInfo {
       opflag: 0,
       boss: Boss {
         quest_id: 0,
@@ -160,7 +157,7 @@ pub async fn battle_marathon_info(request: ApiRequest, session: Arc<Session>) ->
         ranking: 0,
         in_ranking_period: false,
       },
-    })),
+    },
     session,
   ))
 }
@@ -214,7 +211,7 @@ pub async fn marathon_info(request: ApiRequest, session: Arc<Session>) -> impl I
   let display_multi_battle_invitation = request.body["display_multi_battle_invitation"].parse::<i32>().unwrap();
 
   Ok(Signed(
-    CallResponse::new_success(Box::new(MarathonInfo {
+    MarathonInfo {
       opflag: 0,
       boss: 1,
       open_scorechallenge: true,
@@ -241,7 +238,7 @@ pub async fn marathon_info(request: ApiRequest, session: Arc<Session>) -> impl I
         my_defeat_count: 0,
         ranking: 0,
       },
-    })),
+    },
     session,
   ))
 }
@@ -284,10 +281,7 @@ pub async fn marathon_stage_list(request: ApiRequest, session: Arc<Session>) -> 
     })
     .collect::<Vec<_>>();
 
-  Ok(Signed(
-    CallResponse::new_success(Box::new(MarathonStageList { quests })),
-    session,
-  ))
+  Ok(Signed(MarathonStageList { quests }, session))
 }
 
 // quest_id=514012
@@ -363,8 +357,5 @@ pub async fn marathon_boss_list(request: ApiRequest, session: Arc<Session>) -> i
     })
     .collect::<Vec<_>>();
 
-  Ok(Signed(
-    CallResponse::new_success(Box::new(MarathonBossList { bosses })),
-    session,
-  ))
+  Ok(Signed(MarathonBossList { bosses }, session))
 }

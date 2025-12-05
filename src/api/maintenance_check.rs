@@ -14,8 +14,8 @@ pub struct MaintenanceCheck {
 impl CallCustom for MaintenanceCheck {}
 
 pub async fn maintenance_check(_request: ApiRequest) -> impl IntoHandlerResponse {
-  Unsigned(CallResponse::new_success(Box::new(MaintenanceCheck {
+  Unsigned(MaintenanceCheck {
     typestatus: 0,
     system_id: None,
-  })))
+  })
 }

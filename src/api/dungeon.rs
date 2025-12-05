@@ -159,7 +159,7 @@ pub struct DungeonStagePartyForm {
 pub async fn dungeon_area_top(request: ApiRequest) -> impl IntoHandlerResponse {
   let area_id: i32 = request.body["area_id"].parse().unwrap();
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(DungeonAreaTopResponse {
+  Ok(Unsigned(DungeonAreaTopResponse {
     is_practice: false,
     stage_state: DungeonStageState {
       stage_id: 1101,
@@ -186,7 +186,7 @@ pub async fn dungeon_area_top(request: ApiRequest) -> impl IntoHandlerResponse {
     unchoosed_benefit_id_list: vec![],
     benefit_re_lottery_count: 0,
     is_allow_trial: false,
-  }))))
+  }))
 }
 
 // TODO: dungeon_area_retire no body no reply

@@ -35,6 +35,21 @@ See [SERVER-SETUP.md](SERVER-SETUP.md) for instructions on how to set up the ser
 
 See [DUMPING.md](DUMPING.md) for instructions on how to inspect the game code yourself.
 
+## Broken features
+
+- In-game purchases (e.g. clicking add quartz button), hardlock, probably issue related to stub APK
+- \[Home\] → \[Shop\], no server requests at all, hardlock, probably issue related to stub APK (\[Menu\] → \[Shop\] works)
+- \[Home\] → \[Jobs\], selecting character does nothing
+- \[Others\] → \[Room Invitation\], unimplemented
+- \[Quest\] → \[Event\] → \[Draw\], unimplemented
+- \[Quest\] → \[Free Quest\], all items are locked
+- \[Quest\] → \[Battle Arena\], unimplemented
+- \[Quest\] → \[Dungeon\], unimplemented
+- \[Team\] → \[Character Upgrade\] → \[Trial of the Ancients\], hardlock
+- \[Menu\] → \[Support\], does nothing, probably related to stub APK
+
+Most working features are stubbed and do not save any progress.
+
 ## License
 
 Licensed under either of

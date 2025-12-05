@@ -34,12 +34,12 @@ pub async fn set_name(state: Arc<AppState>, request: ApiRequest, session: Arc<Se
     .context("failed to execute query")?;
   info!(?session.user_id, ?username, "username updated");
 
-  Ok(Signed(CallResponse::new_success(Box::new(())), session))
+  Ok(Signed((), session))
 }
 
 pub async fn delete_account(session: Arc<Session>) -> impl IntoHandlerResponse {
   warn!("encountered stub: delete_account");
 
   // See [Wonder_Api_DeleteAccountResponseDto_Fields]
-  Ok(Signed(CallResponse::new_success(Box::new(())), session))
+  Ok(Signed((), session))
 }

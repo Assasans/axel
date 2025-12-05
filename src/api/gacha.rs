@@ -1269,7 +1269,7 @@ pub async fn gacha_info(_request: ApiRequest) -> impl IntoHandlerResponse {
 
 pub async fn gacha_tutorial(request: ApiRequest) -> impl IntoHandlerResponse {
   if request.body["type"] == "1" {
-    Unsigned(CallResponse::new_success(Box::new(GachaTutorial {
+    Unsigned(GachaTutorial {
       gacha_id: 100002,
       goods: vec![
         // Commented out for testing purposes because animations are slow
@@ -1284,12 +1284,12 @@ pub async fn gacha_tutorial(request: ApiRequest) -> impl IntoHandlerResponse {
         // GachaGoodItem::new(4, 1083100, 1, true),
         // GachaGoodItem::new(4, 1174130, 1, true),
       ],
-    })))
+    })
   } else {
-    Unsigned(CallResponse::new_success(Box::new(GachaTutorial {
+    Unsigned(GachaTutorial {
       gacha_id: 100002,
       goods: vec![],
-    })))
+    })
   }
 }
 
@@ -1435,7 +1435,7 @@ pub struct GachaRateBonusItem {
 impl CallCustom for GachaRate {}
 
 pub async fn gacha_log(_request: ApiRequest) -> impl IntoHandlerResponse {
-  Unsigned(CallResponse::new_success(Box::new(json!({
+  Unsigned(json!({
     "goods":[{"itemtype":4,"itemid":1063113,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1034100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1152102,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1083110,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1122100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1093100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1132100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1002102,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1282100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1064217,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1192102,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1102102,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1143127,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1162100,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1192102,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1012100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1013100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1013116,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1013116,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535}],"status":0,"time":1723059245,"remotedata":[],"notificationdata":[]
-  }))))
+  }))
 }

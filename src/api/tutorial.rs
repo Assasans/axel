@@ -29,5 +29,5 @@ pub async fn tutorial(state: Arc<AppState>, request: ApiRequest, session: Arc<Se
     .context("failed to execute query")?;
   info!(?session.user_id, ?kind, ?progress, "tutorial progress updated");
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(()))))
+  Ok(Unsigned(()))
 }

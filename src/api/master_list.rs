@@ -33,7 +33,7 @@ impl MasterListItem {
 }
 
 pub async fn master_list(_request: ApiRequest) -> impl IntoHandlerResponse {
-  Unsigned(CallResponse::new_success(Box::new(MasterList {
+  Unsigned(MasterList {
     masterversion: "202408050001".to_owned(),
     masterarray: get_masters()
       .await
@@ -46,7 +46,7 @@ pub async fn master_list(_request: ApiRequest) -> impl IntoHandlerResponse {
         )
       })
       .collect(),
-  })))
+  })
 }
 
 #[rustfmt::skip]

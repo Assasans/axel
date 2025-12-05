@@ -372,10 +372,10 @@ pub async fn story_list(request: ApiRequest) -> impl IntoHandlerResponse {
   //   },
   // ];
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(StoryList {
+  Ok(Unsigned(StoryList {
     story_list: stories,
     gettable_sp_story_member_id_list: vec![],
-  }))))
+  }))
 }
 
 #[derive(Debug, Serialize)]
@@ -386,10 +386,7 @@ pub struct StoryReward {
 impl CallCustom for StoryReward {}
 
 pub async fn story_reward(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  Signed(
-    CallResponse::new_success(Box::new(StoryReward { reward: vec![] })),
-    session,
-  )
+  Signed(StoryReward { reward: vec![] }, session)
 }
 
 // user_story_id=32
@@ -401,5 +398,5 @@ pub async fn story_read(request: ApiRequest, session: Arc<Session>) -> impl Into
   // Probably always set to 1 when StoryStatus::Done
   let is_skip: i32 = request.body["is_skip"].parse().unwrap();
 
-  Signed(CallResponse::new_success(Box::new(())), session)
+  Signed((), session)
 }

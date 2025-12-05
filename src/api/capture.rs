@@ -49,5 +49,5 @@ pub async fn capture_send(request: ApiRequest, session: Arc<Session>) -> impl In
   debug!("tutorial data: {}", deserialized_data.tutoria_data_json);
   debug!("user local settings: {}", deserialized_data.user_local_settings_json);
 
-  Signed(CallResponse::new_success(Box::new(())), session)
+  Signed((), session)
 }

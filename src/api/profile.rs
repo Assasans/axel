@@ -72,7 +72,7 @@ pub async fn profile(state: Arc<AppState>, request: ApiRequest, session: Arc<Ses
   let last_used = last_used.unwrap_or_else(|| Utc::now());
 
   Ok(Signed(
-    CallResponse::new_success(Box::new(Profile {
+    Profile {
       // If for some reason username was not set during tutorial, use empty string
       name: username.unwrap_or_default(),
       profile: about_me.unwrap_or_default(),
@@ -94,7 +94,7 @@ pub async fn profile(state: Arc<AppState>, request: ApiRequest, session: Arc<Ses
         // "Affinity"
         DisplayPlayData::new(7, 1, 1),
       ],
-    })),
+    },
     session,
   ))
 }

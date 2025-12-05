@@ -32,7 +32,7 @@ pub struct AdvertisementData {
 
 pub async fn home(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   Ok(Signed(
-    CallResponse::new_success(Box::new(Home {
+    Home {
       multi_battle_invitation: None,
       member_info: MemberInfo {
         current_member_id: 1064200,
@@ -44,7 +44,7 @@ pub async fn home(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandl
         status: 0,
       },
       display_plan_map: false,
-    })),
+    },
     session,
   ))
 }

@@ -32,7 +32,7 @@ pub async fn expedition_top(request: ApiRequest) -> impl IntoHandlerResponse {
   let expeditions: Vec<Value> = serde_json::from_str(&masters["expedition"].master_decompressed).unwrap();
 
   // See [Wonder_Api_ExpeditionTopResponseDto_Fields]
-  Ok(Unsigned(CallResponse::new_success(Box::new(ExpeditionTop {
+  Ok(Unsigned(ExpeditionTop {
     expeditions: expeditions
       .iter()
       .map(|expedition| ExpeditionInfo {
@@ -42,5 +42,5 @@ pub async fn expedition_top(request: ApiRequest) -> impl IntoHandlerResponse {
       })
       .collect(),
     bonus_pack: 0,
-  }))))
+  }))
 }

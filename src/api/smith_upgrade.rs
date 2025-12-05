@@ -33,7 +33,7 @@ pub async fn item_power_up_list(_request: ApiRequest) -> impl IntoHandlerRespons
   let masters = get_masters().await;
   let items: Vec<Value> = serde_json::from_str(&masters["item"].master_decompressed).unwrap();
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(PowerUpList {
+  Ok(Unsigned(PowerUpList {
     items: items
       .iter()
       .map(|item| ItempoweruplistItemsResponseDto {
@@ -47,7 +47,7 @@ pub async fn item_power_up_list(_request: ApiRequest) -> impl IntoHandlerRespons
       .collect(),
     equipped_weapon_list: vec![],
     equipped_accessory_list: vec![],
-  }))))
+  }))
 }
 
 // See [Wonder_Api_BlacksmithquestlistResponseDto_Fields]
@@ -99,7 +99,7 @@ pub struct FameQuestMaterialInfoResponseDto {
 }
 
 pub async fn blacksmith_quest_list(_request: ApiRequest) -> impl IntoHandlerResponse {
-  Ok(Unsigned(CallResponse::new_success(Box::new(BlacksmithQuestList {
+  Ok(Unsigned(BlacksmithQuestList {
     quests: vec![],
     huntingquests: vec![],
     eventquests: vec![],
@@ -115,5 +115,5 @@ pub async fn blacksmith_quest_list(_request: ApiRequest) -> impl IntoHandlerResp
       challenging_area_id: 0,
     },
     fame_quest: vec![],
-  }))))
+  }))
 }

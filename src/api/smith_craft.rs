@@ -50,7 +50,7 @@ pub async fn blacksmith_list(_request: ApiRequest) -> impl IntoHandlerResponse {
 
   // let blacksmith_items
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(BlacksmithList {
+  Ok(Unsigned(BlacksmithList {
     items: items
       .iter()
       .map(|item| BlacksmithlistItemsResponseDto {
@@ -62,7 +62,7 @@ pub async fn blacksmith_list(_request: ApiRequest) -> impl IntoHandlerResponse {
       .collect(),
     equipped_weapon_list: vec![],
     equipped_accessory_list: vec![],
-  }))))
+  }))
 }
 
 // See [Wonder_Api_BlacksmithResponseDto_Fields]
@@ -96,7 +96,7 @@ pub struct BlacksmithReturnedItemsResponseDto {
 // material_equipments=[]
 // item_type=6
 pub async fn blacksmith(_request: ApiRequest) -> impl IntoHandlerResponse {
-  Ok(Unsigned(CallResponse::new_success(Box::new(BlacksmithResponseDto {
+  Ok(Unsigned(BlacksmithResponseDto {
     items: vec![BlacksmithItemsResponseDto {
       unique_id: 1,
       item_type: 6,
@@ -104,5 +104,5 @@ pub async fn blacksmith(_request: ApiRequest) -> impl IntoHandlerResponse {
       item_num: 1,
     }],
     returned_items: vec![],
-  }))))
+  }))
 }

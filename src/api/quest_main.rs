@@ -20,9 +20,9 @@ pub async fn quest_main_part_list(_request: ApiRequest) -> impl IntoHandlerRespo
     })
     .collect::<Vec<Value>>();
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(json!({
+  Ok(Unsigned(json!({
     "quests": parts
-  })))))
+  })))
 }
 
 pub async fn quest_main_area_list(_request: ApiRequest) -> impl IntoHandlerResponse {
@@ -72,7 +72,7 @@ pub async fn quest_main_stage_list(request: ApiRequest) -> impl IntoHandlerRespo
     })
     .collect::<Vec<Value>>();
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(json!({
+  Ok(Unsigned(json!({
     "quests": stages,
-  })))))
+  })))
 }

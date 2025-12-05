@@ -22,15 +22,13 @@ pub async fn fame_quest_rank_list(_request: ApiRequest) -> impl IntoHandlerRespo
   let masters = get_masters().await;
   let ranks: Vec<Value> = serde_json::from_str(&masters["fame_quest_rank"].master_decompressed).unwrap();
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(
-    QuestFameRankListResponse {
-      quest_rank_id_list: ranks
-        .iter()
-        .map(|rank| rank.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap())
-        .collect::<Vec<_>>(),
-      has_emergency_quest: false,
-    },
-  ))))
+  Ok(Unsigned(QuestFameRankListResponse {
+    quest_rank_id_list: ranks
+      .iter()
+      .map(|rank| rank.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap())
+      .collect::<Vec<_>>(),
+    has_emergency_quest: false,
+  }))
 }
 
 // See [Wonder_Api_FameQuestAreaListResponseDto_Fields]
@@ -54,27 +52,25 @@ pub async fn fame_quest_area_list(request: ApiRequest) -> impl IntoHandlerRespon
   let masters = get_masters().await;
   let areas: Vec<Value> = serde_json::from_str(&masters["fame_quest_area"].master_decompressed).unwrap();
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(
-    QuestFameAreaListResponse {
-      area_info_list: areas
-        .iter()
-        .filter(|area| {
-          area
-            .get("quest_rank_id")
-            .unwrap()
-            .as_str()
-            .unwrap()
-            .parse::<i32>()
-            .unwrap()
-            == quest_rank_id
-        })
-        .map(|rank| FameQuestAreaInfo {
-          area_id: rank.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),
-        })
-        .collect::<Vec<_>>(),
-      has_emergency_quest: false,
-    },
-  ))))
+  Ok(Unsigned(QuestFameAreaListResponse {
+    area_info_list: areas
+      .iter()
+      .filter(|area| {
+        area
+          .get("quest_rank_id")
+          .unwrap()
+          .as_str()
+          .unwrap()
+          .parse::<i32>()
+          .unwrap()
+          == quest_rank_id
+      })
+      .map(|rank| FameQuestAreaInfo {
+        area_id: rank.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),
+      })
+      .collect::<Vec<_>>(),
+    has_emergency_quest: false,
+  }))
 }
 
 // See [Wonder_Api_FameQuestStageListResponseDto_Fields]
@@ -132,49 +128,47 @@ pub async fn fame_quest_stage_list(request: ApiRequest) -> impl IntoHandlerRespo
     .unwrap();
   debug!("current rank: {}", current_rank);
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(
-    QuestFameStageListResponse {
-      quest_list: stages
-        .iter()
-        .filter(|stage| {
-          stage.get("area_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == area_id
-            && stage.get("mode").unwrap().as_str().unwrap().parse::<i32>().unwrap() == mode
-        })
-        .map(|stage| FameQuestStageInfo {
-          stage_id: stage.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),
-          task1: 0,
-          task2: 0,
-          task3: 0,
-          expired_at: 0,
-          release_condition: FameQuestReleaseConditionInfo {
-            key_quest: 2,
-            story: 2,
-            event_story: 2,
-          },
-          bonus_skill_pa_fame_rate: 0,
-        })
-        .collect::<Vec<_>>(),
-      // All areas for the given rank, thanks https://www.youtube.com/watch?v=Muk190J7LFo
-      unlock_area_id_list: areas
-        .iter()
-        .filter(|area| {
-          let area_rank = area
-            .get("quest_rank_id")
-            .unwrap()
-            .as_str()
-            .unwrap()
-            .parse::<i32>()
-            .unwrap();
-          area_rank == current_rank
-        })
-        .map(|area| area.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap())
-        .collect::<Vec<_>>(),
-      has_emergency_quest: false,
-      remaining_count: 1,
-      transition_fame_quest_id: 0,
-      can_skip: false,
-    },
-  ))))
+  Ok(Unsigned(QuestFameStageListResponse {
+    quest_list: stages
+      .iter()
+      .filter(|stage| {
+        stage.get("area_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == area_id
+          && stage.get("mode").unwrap().as_str().unwrap().parse::<i32>().unwrap() == mode
+      })
+      .map(|stage| FameQuestStageInfo {
+        stage_id: stage.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),
+        task1: 0,
+        task2: 0,
+        task3: 0,
+        expired_at: 0,
+        release_condition: FameQuestReleaseConditionInfo {
+          key_quest: 2,
+          story: 2,
+          event_story: 2,
+        },
+        bonus_skill_pa_fame_rate: 0,
+      })
+      .collect::<Vec<_>>(),
+    // All areas for the given rank, thanks https://www.youtube.com/watch?v=Muk190J7LFo
+    unlock_area_id_list: areas
+      .iter()
+      .filter(|area| {
+        let area_rank = area
+          .get("quest_rank_id")
+          .unwrap()
+          .as_str()
+          .unwrap()
+          .parse::<i32>()
+          .unwrap();
+        area_rank == current_rank
+      })
+      .map(|area| area.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap())
+      .collect::<Vec<_>>(),
+    has_emergency_quest: false,
+    remaining_count: 1,
+    transition_fame_quest_id: 0,
+    can_skip: false,
+  }))
 }
 
 // See [Wonder_Api_FameQuestStartResponseDto_Fields]

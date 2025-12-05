@@ -59,10 +59,10 @@ pub async fn exchange_list(request: ApiRequest, session: Arc<Session>) -> impl I
     .collect::<Vec<_>>();
 
   Ok(Signed(
-    CallResponse::new_success(Box::new(ExchangeList {
+    ExchangeList {
       exchange_master_id,
       items,
-    })),
+    },
     session,
   ))
 }
@@ -74,7 +74,7 @@ pub async fn leave_members(request: ApiRequest, session: Arc<Session>) -> impl I
     .filter_map(|id| id.parse::<i32>().ok())
     .collect::<Vec<_>>();
 
-  Ok(Signed(CallResponse::new_success(Box::new(())), session))
+  Ok(Signed((), session))
 }
 
 // exchange_reward_master_id=10001
@@ -83,5 +83,5 @@ pub async fn exchange(_request: ApiRequest, session: Arc<Session>) -> impl IntoH
   warn!("encountered stub: exchange");
 
   // See [Wonder_Api_ExchangeResponseDto_Fields]
-  Ok(Signed(CallResponse::new_success(Box::new(())), session))
+  Ok(Signed((), session))
 }

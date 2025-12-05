@@ -30,10 +30,10 @@ pub struct PartymembersMembersResponseDto {
 }
 
 pub async fn party_members(_request: ApiRequest) -> impl IntoHandlerResponse {
-  Ok(Unsigned(CallResponse::new_success(Box::new(PartymembersResponseDto {
+  Ok(Unsigned(PartymembersResponseDto {
     // No idea what to put here, it still displays member list
     members: vec![],
-  }))))
+  }))
 }
 
 // num3=2
@@ -43,7 +43,7 @@ pub async fn party_members(_request: ApiRequest) -> impl IntoHandlerResponse {
 pub async fn grade_up(_request: ApiRequest) -> impl IntoHandlerResponse {
   // See [Wonder_Api_GradeupResponseDto_Fields]
   // TODO: This probably should send remote data to update member: level in UI rolls back after animation
-  Ok(Unsigned(CallResponse::new_success_empty()))
+  Ok(Unsigned(()))
 }
 
 // See [Wonder_Api_UpdatePartyFormResponseDto_Fields]
@@ -165,14 +165,12 @@ pub struct ChangePartyAssist {
 
 // update_type=assist
 pub async fn party_change_list(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  Ok(Unsigned(CallResponse::new_success(Box::new(
-    PartychangelistResponseDto {
-      members: vec![],
-      weapons: vec![],
-      accessories: vec![],
-      assists: vec![],
-    },
-  ))))
+  Ok(Unsigned(PartychangelistResponseDto {
+    members: vec![],
+    weapons: vec![],
+    accessories: vec![],
+    assists: vec![],
+  }))
 }
 
 // name=R09WTk8
@@ -188,7 +186,7 @@ pub async fn party_name_set(_request: ApiRequest) -> impl IntoHandlerResponse {
   warn!(?party_no, ?name, "encountered stub: party_name_set");
 
   // See [Wonder_Api_PartynamesetResponseDto_Fields]
-  Ok(Unsigned(CallResponse::new_success_empty()))
+  Ok(Unsigned(()))
 }
 
 // form_no=0
@@ -224,7 +222,5 @@ pub async fn party_strength(request: ApiRequest) -> impl IntoHandlerResponse {
 
   warn!(?party_no, "encountered stub: party_strength");
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(
-    PartyStrengthResponseDto { strength: 1000 },
-  ))))
+  Ok(Unsigned(PartyStrengthResponseDto { strength: 1000 }))
 }

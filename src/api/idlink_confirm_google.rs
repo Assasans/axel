@@ -13,7 +13,5 @@ pub struct IdLinkConfirmGoogle {
 impl CallCustom for IdLinkConfirmGoogle {}
 
 pub async fn idlink_confirm_google(_request: ApiRequest) -> impl IntoHandlerResponse {
-  Unsigned(CallResponse::new_success(Box::new(IdLinkConfirmGoogle {
-    islink: false,
-  })))
+  Unsigned(IdLinkConfirmGoogle { islink: false })
 }

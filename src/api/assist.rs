@@ -7,7 +7,7 @@ use crate::handler::{IntoHandlerResponse, Unsigned};
 // See [Wonder_Api_AssistMakeNoticeResponseDto_Fields] - no fields
 pub async fn assist_make_notice(_request: ApiRequest) -> impl IntoHandlerResponse {
   // TODO: This should probably return remote data or notification data, but I have no dumps for it
-  Ok(Unsigned(CallResponse::new_success(Box::new(()))))
+  Ok(Unsigned(()))
 }
 
 // See [Wonder_Api_AssistMakeNoticeResponseDto_Fields]
@@ -19,7 +19,7 @@ pub struct AssistMakeList {
 impl CallCustom for AssistMakeList {}
 
 pub async fn assist_make_list(_request: ApiRequest) -> impl IntoHandlerResponse {
-  Ok(Unsigned(CallResponse::new_success(Box::new(AssistMakeList {
+  Ok(Unsigned(AssistMakeList {
     assist_detail_id_list: vec![],
-  }))))
+  }))
 }

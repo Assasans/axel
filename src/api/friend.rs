@@ -56,7 +56,7 @@ pub async fn friend_list(state: Arc<AppState>, request: ApiRequest, session: Arc
     .context("failed to parse list_number as i32")?;
 
   Ok(Signed(
-    CallResponse::new_success(Box::new(FriendList {
+    FriendList {
       friend_data: vec![FriendData {
         user_no: "-1".to_owned(),
         user_icon: 1083110,
@@ -76,7 +76,7 @@ pub async fn friend_list(state: Arc<AppState>, request: ApiRequest, session: Arc
       }],
       friend_count: 1,
       greeting_sent_count: 0,
-    })),
+    },
     session,
   ))
 }
@@ -109,7 +109,7 @@ pub async fn greeting_list(
   session: Arc<Session>,
 ) -> impl IntoHandlerResponse {
   Ok(Signed(
-    CallResponse::new_success(Box::new(GreetingList {
+    GreetingList {
       sent_count: 0,
       received_count: 1,
       greeting_data: vec![GreetingData {
@@ -127,7 +127,7 @@ pub async fn greeting_list(
         first: true,
       }],
       greeting_count: 1,
-    })),
+    },
     session,
   ))
 }
@@ -164,7 +164,7 @@ pub async fn friend_recommendation_list(
   let kind: i32 = request.body["type"].parse().context("failed to parse type as i32")?;
 
   Ok(Signed(
-    CallResponse::new_success(Box::new(FriendRecommendationList {
+    FriendRecommendationList {
       friend_first_count: 0,
       friend_first_rank_total: 0,
       friend_count: 1,
@@ -177,7 +177,7 @@ pub async fn friend_recommendation_list(
         first: true,
       }],
       mission_completed: false,
-    })),
+    },
     session,
   ))
 }
@@ -224,7 +224,7 @@ pub async fn greeting_send(
     .context("failed to decode message from base64")?;
 
   Ok(Signed(
-    CallResponse::new_success(Box::new(GreetingSend {
+    GreetingSend {
       item_count: 0,
       send_data: vec![GreetingSendData {
         user_no: "-1".to_owned(),
@@ -233,7 +233,7 @@ pub async fn greeting_send(
         profile_comment: "Nah.".to_owned(),
         first: true,
       }],
-    })),
+    },
     session,
   ))
 }
@@ -300,7 +300,7 @@ pub async fn friend_info(state: Arc<AppState>, request: ApiRequest, session: Arc
     .context("failed to parse friend_user_no")?;
 
   Ok(Signed(
-    CallResponse::new_success(Box::new(FriendInfo {
+    FriendInfo {
       user_no: "-1".to_string(),
       user_icon: 1083110,
       user_name: "Megumin".to_owned(),
@@ -331,7 +331,7 @@ pub async fn friend_info(state: Arc<AppState>, request: ApiRequest, session: Arc
       mute: false,
       greeting_status: 0,
       greeting_sent_count: 50,
-    })),
+    },
     session,
   ))
 }
@@ -342,7 +342,7 @@ pub async fn friend_mute(state: Arc<AppState>, request: ApiRequest, session: Arc
     .parse()
     .context("failed to parse friend_user_no")?;
 
-  Ok(Signed(CallResponse::new_success(Box::new(())), session))
+  Ok(Signed((), session))
 }
 
 pub async fn friend_remove(
@@ -354,7 +354,7 @@ pub async fn friend_remove(
     .parse()
     .context("failed to parse friend_user_no")?;
 
-  Ok(Signed(CallResponse::new_success(Box::new(())), session))
+  Ok(Signed((), session))
 }
 
 pub async fn friend_request(
@@ -366,7 +366,7 @@ pub async fn friend_request(
     .parse()
     .context("failed to parse friend_user_no")?;
 
-  Ok(Signed(CallResponse::new_success(Box::new(())), session))
+  Ok(Signed((), session))
 }
 
 // See [Wonder_Api_FriendsearchResponseDto_Fields]
@@ -404,7 +404,7 @@ pub async fn friend_search(
     .context("failed to parse friend_user_no")?;
 
   Ok(Signed(
-    CallResponse::new_success(Box::new(FriendSearch {
+    FriendSearch {
       user_no: "-1".to_string(),
       user_icon: 1083110,
       user_name: "Megumin".to_owned(),
@@ -435,7 +435,7 @@ pub async fn friend_search(
       mute: false,
       greeting_status: 0,
       greeting_sent_count: 50,
-    })),
+    },
     session,
   ))
 }

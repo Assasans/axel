@@ -52,7 +52,7 @@ impl Character {
 
 pub async fn interaction(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   Ok(Signed(
-    CallResponse::new_success(Box::new(Interaction {
+    Interaction {
       characters: vec![
         Character::new(100, 1, 4, "".to_owned(), 1000101, 0, [0, 0, 0, 0], "".to_owned()),
         Character::new(101, 1, 4, "".to_owned(), 1010101, 0, [0, 0, 0, 0], "".to_owned()),
@@ -66,7 +66,7 @@ pub async fn interaction(_request: ApiRequest, session: Arc<Session>) -> impl In
         Character::new(115, 1, 0, "".to_owned(), 1150101, 0, [0, 0, 0, 0], "".to_owned()),
         Character::new(128, 1, 0, "".to_owned(), 1280101, 0, [0, 0, 0, 0], "".to_owned()),
       ],
-    })),
+    },
     session,
   ))
 }

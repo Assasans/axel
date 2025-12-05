@@ -97,9 +97,9 @@ impl Party {
 pub async fn party_info(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let response = include_str!("../party-info.json");
   let response: Value = serde_json::from_str(response).unwrap();
-  return Ok(Signed(CallResponse::new_success(Box::new(response)), session));
+  return Ok(Signed(response, session));
   Ok(Signed(
-    CallResponse::new_success(Box::new(json!({
+    json!({
       "party": [
         {
           "party_forms": [
@@ -170,7 +170,7 @@ pub async fn party_info(_request: ApiRequest, session: Arc<Session>) -> impl Int
           "accessory_id": 36014
         }
       ]
-    }))),
+    }),
     session,
   ))
 }

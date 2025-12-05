@@ -38,22 +38,20 @@ pub async fn quest_hunting_list(_request: ApiRequest) -> impl IntoHandlerRespons
   let masters = get_masters().await;
   let areas: Vec<Value> = serde_json::from_str(&masters["huntingquest_area"].master_decompressed).unwrap();
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(
-    QuestHuntingListResponse {
-      limitquests: vec![],
-      freequests: areas
-        .iter()
-        .filter(|area| area.get("type").unwrap().as_str().unwrap() == "FREE")
-        .map(|area| {
-          let area_id = area.get("area_id").unwrap().as_str().unwrap().parse::<i32>().unwrap();
+  Ok(Unsigned(QuestHuntingListResponse {
+    limitquests: vec![],
+    freequests: areas
+      .iter()
+      .filter(|area| area.get("type").unwrap().as_str().unwrap() == "FREE")
+      .map(|area| {
+        let area_id = area.get("area_id").unwrap().as_str().unwrap().parse::<i32>().unwrap();
 
-          HuntingFreeQuest { area_id, status: 0 }
-        })
-        .collect::<Vec<_>>(),
-      enablepackage: false,
-      status: 0,
-    },
-  ))))
+        HuntingFreeQuest { area_id, status: 0 }
+      })
+      .collect::<Vec<_>>(),
+    enablepackage: false,
+    status: 0,
+  }))
 }
 
 // See [Wonder_Api_QuesthuntingstagelistResponseDto_Fields]
@@ -82,21 +80,19 @@ pub async fn quest_hunting_stage_list(request: ApiRequest) -> impl IntoHandlerRe
   let masters = get_masters().await;
   let stages: Vec<Value> = serde_json::from_str(&masters["huntingquest_stage"].master_decompressed).unwrap();
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(
-    QuestHuntingStageListResponse {
-      quests: stages
-        .iter()
-        .filter(|stage| stage.get("area_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == area_id)
-        .map(|stage| HuntingStageQuest {
-          stage_id: stage.get("stage_id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),
-          status: 0,
-          newstage: 0,
-          task1: 0,
-          task2: 0,
-          task3: 0,
-        })
-        .collect::<Vec<_>>(),
-      status: 0,
-    },
-  ))))
+  Ok(Unsigned(QuestHuntingStageListResponse {
+    quests: stages
+      .iter()
+      .filter(|stage| stage.get("area_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == area_id)
+      .map(|stage| HuntingStageQuest {
+        stage_id: stage.get("stage_id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),
+        status: 0,
+        newstage: 0,
+        task1: 0,
+        task2: 0,
+        task3: 0,
+      })
+      .collect::<Vec<_>>(),
+    status: 0,
+  }))
 }

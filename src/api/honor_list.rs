@@ -33,12 +33,12 @@ impl HonorItem {
 
 pub async fn honor_list(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   Ok(Signed(
-    CallResponse::new_success(Box::new(HonorList {
+    HonorList {
       honor_list: vec![
         HonorItem::new(60000000, false, false),
         HonorItem::new(62010250, true, false),
       ],
-    })),
+    },
     session,
   ))
 }

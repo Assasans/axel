@@ -20,11 +20,11 @@ pub async fn id_confirm(request: ApiRequest) -> impl IntoHandlerResponse {
   let take_over_id = &request.body["take_over_id"];
   let password = &request.body["password"];
 
-  Unsigned(CallResponse::new_success(Box::new(IdConfirm {
+  Unsigned(IdConfirm {
     name: "Mock User".to_string(),
     lv: 333,
     user_no: "-1".to_string(),
-  })))
+  })
 }
 
 #[derive(Debug, Serialize)]
@@ -35,9 +35,9 @@ pub struct PrepareSetMigration {
 impl CallCustom for PrepareSetMigration {}
 
 pub async fn prepare_set_migration(request: ApiRequest) -> impl IntoHandlerResponse {
-  Unsigned(CallResponse::new_success(Box::new(PrepareSetMigration {
+  Unsigned(PrepareSetMigration {
     user_key: "ffffffffffffffffffffffffffffffee".to_string(),
-  })))
+  })
 }
 
 #[derive(Debug, Serialize)]
@@ -48,7 +48,7 @@ pub struct NewIdCheck {
 impl CallCustom for NewIdCheck {}
 
 pub async fn new_id_check(request: ApiRequest) -> impl IntoHandlerResponse {
-  Unsigned(CallResponse::new_success(Box::new(NewIdCheck { check: 0 })))
+  Unsigned(NewIdCheck { check: 0 })
 }
 
 #[derive(Debug, Serialize)]
@@ -61,9 +61,9 @@ impl CallCustom for NewId {}
 pub async fn new_id(request: ApiRequest) -> impl IntoHandlerResponse {
   let newpassword = &request.body["newpassword"];
 
-  Unsigned(CallResponse::new_success(Box::new(NewId {
+  Unsigned(NewId {
     take_over_id: "MTF00LTR".to_owned(),
-  })))
+  })
 }
 
 #[derive(Debug, Serialize)]
@@ -86,11 +86,11 @@ pub async fn id_login(request: ApiRequest) -> impl IntoHandlerResponse {
 
   // TODO: This should reassociate UUID with new account from take_over_id
 
-  Ok(Unsigned(CallResponse::new_success(Box::new(IdLogin {
+  Ok(Unsigned(IdLogin {
     user_key: "ffffffffffffffffffffffffffffffee".to_string(),
     // From "system" master
     rule_ver: "3".to_string(),
     capture: "".to_string(),
     user_no: "-1".to_string(),
-  }))))
+  }))
 }
