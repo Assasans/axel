@@ -9,12 +9,14 @@ use crate::call::ApiCallParams;
 use crate::AppState;
 
 pub mod account;
+pub mod ad_reward;
 pub mod assist;
 pub mod battle;
 pub mod capture;
 pub mod character;
 pub mod dungeon;
 pub mod exchange;
+pub mod expedition;
 pub mod friend;
 pub mod gacha;
 pub mod home;
@@ -40,6 +42,7 @@ pub mod smith_craft;
 pub mod smith_sell;
 pub mod smith_upgrade;
 pub mod story;
+pub mod surprise;
 pub mod transfer;
 pub mod tutorial;
 

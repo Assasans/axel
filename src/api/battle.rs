@@ -1,10 +1,46 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 
 use crate::api::{ApiRequest, NotificationData};
 use crate::call::{CallCustom, CallResponse};
 use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::notification::{IntoNotificationData, MissionDone};
+
+// See [Wonder_Api_BattlestartMembersResponseDto_Fields]
+// See [Wonder_Api_SurpriseQuestStartMembersResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct BattleMember {
+  pub id: i32,
+  pub lv: i32,
+  pub exp: i32,
+  pub member_id: i64,
+  pub ac_skill_id_a: i64,
+  pub ac_skill_lv_a: i32,
+  pub ac_skill_val_a: i32,
+  pub ac_skill_id_b: i64,
+  pub ac_skill_lv_b: i32,
+  pub ac_skill_val_b: i32,
+  pub ac_skill_id_c: i64,
+  pub ac_skill_lv_c: i32,
+  pub ac_skill_val_c: i32,
+  pub hp: i32,
+  pub magicattack: i32,
+  pub defense: i32,
+  pub magicdefence: i32,
+  pub agility: i32,
+  pub dexterity: i32,
+  pub luck: i32,
+  pub limit_break: i32,
+  pub character_id: i64,
+  pub passiveskill: i64,
+  pub specialattack: i64,
+  pub resist_state: i32,
+  pub resist_attr: i64,
+  pub attack: i32,
+  pub ex_flg: i32,
+  pub is_undead: i32,
+  pub special_skill_lv: i32,
+}
 
 // quest_id=101011
 // party_no=1

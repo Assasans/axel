@@ -26,7 +26,11 @@ At the very least, you need to set `static-server.public-url` and `api-server.pu
 
 ## Building server
 
-`RUST_LOG=info cargo run`
+```sh
+cargo run --release
+# or
+cargo build --release # Output binary is at ./target/release/axel
+```
 
 The game uses HTTPS protocol for all requests, so we need to generate our TLS certificate.
 Axel itself does not handle HTTPS, you need to use a reverse proxy server like nginx.

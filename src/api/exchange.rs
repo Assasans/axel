@@ -3,6 +3,7 @@ use std::sync::Arc;
 use anyhow::Context;
 use serde::Serialize;
 use serde_json::Value;
+use tracing::warn;
 
 use crate::api::master_all::get_masters;
 use crate::api::ApiRequest;
@@ -73,5 +74,14 @@ pub async fn leave_members(request: ApiRequest, session: Arc<Session>) -> impl I
     .filter_map(|id| id.parse::<i32>().ok())
     .collect::<Vec<_>>();
 
+  Ok(Signed(CallResponse::new_success(Box::new(())), session))
+}
+
+// exchange_reward_master_id=10001
+// num=1
+pub async fn exchange(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+  warn!("encountered stub: exchange");
+
+  // See [Wonder_Api_ExchangeResponseDto_Fields]
   Ok(Signed(CallResponse::new_success(Box::new(())), session))
 }

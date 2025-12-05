@@ -3,7 +3,7 @@ use std::sync::Arc;
 use anyhow::Context;
 use base64::prelude::BASE64_STANDARD_NO_PAD;
 use base64::Engine;
-use tracing::info;
+use tracing::{info, warn};
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
@@ -34,5 +34,12 @@ pub async fn set_name(state: Arc<AppState>, request: ApiRequest, session: Arc<Se
     .context("failed to execute query")?;
   info!(?session.user_id, ?username, "username updated");
 
+  Ok(Signed(CallResponse::new_success(Box::new(())), session))
+}
+
+pub async fn delete_account(session: Arc<Session>) -> impl IntoHandlerResponse {
+  warn!("encountered stub: delete_account");
+
+  // See [Wonder_Api_DeleteAccountResponseDto_Fields]
   Ok(Signed(CallResponse::new_success(Box::new(())), session))
 }

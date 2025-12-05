@@ -24,10 +24,10 @@ use tower::Layer;
 use tracing::{debug, info, info_span, trace, warn, Instrument, Span};
 
 use crate::api::{
-  account, assist, battle, capture, character, dungeon, exchange, friend, gacha, home, honor_list,
-  idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check, master_all, master_list, mission,
-  notice, party, party_info, present, profile, quest_fame, quest_hunting, quest_main, smith_craft, smith_sell,
-  smith_upgrade, story, transfer, tutorial, ApiRequest,
+  account, ad_reward, assist, battle, capture, character, dungeon, exchange, expedition, friend, gacha, home,
+  honor_list, idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check, master_all,
+  master_list, mission, notice, party, party_info, present, profile, quest_fame, quest_hunting, quest_main,
+  smith_craft, smith_sell, smith_upgrade, story, surprise, transfer, tutorial, ApiRequest,
 };
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::client_ip::add_client_ip;
@@ -131,6 +131,7 @@ async fn api_call(
     .handle("maintenancecheck", maintenance_check::maintenance_check)
     .handle("firebasetoken", firebase_token)
     .handle("setname", account::set_name)
+    .handle("delete_account", account::delete_account)
     .handle("storyreward", story::story_reward)
     .handle("story_read", story::story_read)
     .handle("loginbonus", login_bonus::login_bonus)
@@ -171,6 +172,7 @@ async fn api_call(
     .handle("assist_make_list", assist::assist_make_list)
     .handle("exchangelist", exchange::exchange_list)
     .handle("leavemenbers", exchange::leave_members)
+    .handle("exchange", exchange::exchange)
     .handle("character_piece_board_info", character::character_piece_board_info)
     .handle("character_enhance_info", character::character_enhance_info)
     .handle("idconfirm", transfer::id_confirm)
@@ -203,7 +205,19 @@ async fn api_call(
     .handle("partychangelist", party::party_change_list)
     .handle("partynameset", party::party_name_set)
     .handle("partychange", party::party_change)
-    .handle("party_strength", party::party_strength);
+    .handle("party_strength", party::party_strength)
+    .handle("expeditiontop", expedition::expedition_top)
+    .handle("advertisement_reward_status", ad_reward::advertisement_reward_status)
+    .handle("shopitemlist", ad_reward::shop_item_list)
+    .handle("buy", ad_reward::buy)
+    .handle("surprise_mini_event_select", surprise::surprise_mini_event_select)
+    .handle("surprise_mini_event_top", surprise::surprise_mini_event_top)
+    .handle("surprise_quest_start", surprise::surprise_quest_start)
+    .handle("surprise_quest_result", surprise::surprise_quest_result)
+    .handle("surprise_short_event", surprise::surprise_short_event)
+    .handle("surprise_story_start", surprise::surprise_story_start)
+    .handle("surprise_story_select", surprise::surprise_story_select)
+    .handle("surprise_story_result", surprise::surprise_story_result);
 
   let jwt = headers.get(JWT_HEADER).ok_or_else(|| anyhow!("no jwt header"))?;
   trace!("jwt header: {:?}", jwt);
