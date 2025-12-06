@@ -2,7 +2,7 @@ use std::future::Future;
 use std::pin::Pin;
 use std::sync::Arc;
 
-use tracing::warn;
+use tracing::{error, warn};
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
@@ -79,7 +79,10 @@ impl<T: IntoHandlerResponse + 'static> IntoHandlerResponse for anyhow::Result<T>
   fn into_handler_response(self: Box<Self>) -> HandlerResponse {
     match *self {
       Ok(val) => Box::new(val).into_handler_response(),
-      Err(e) => todo!(),
+      Err(error) => {
+        error!("handler error: {:?}", error);
+        todo!()
+      }
     }
   }
 }

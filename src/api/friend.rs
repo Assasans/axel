@@ -3,10 +3,11 @@ use std::sync::Arc;
 use anyhow::Context;
 use base64::prelude::BASE64_STANDARD_NO_PAD;
 use base64::Engine;
-use chrono::Utc;
+use chrono::{DateTime, Utc};
 use indoc::indoc;
 use jwt_simple::prelude::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
+use tracing::{debug, info};
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
@@ -17,6 +18,7 @@ use crate::AppState;
 #[derive(Serialize, Deserialize)]
 struct FriendList {
   pub friend_data: Vec<FriendData>,
+  /// >= 100 disables Add Friend button
   pub friend_count: i64,
   pub greeting_sent_count: i64,
 }
@@ -32,6 +34,7 @@ struct FriendData {
   pub user_name: String,
   pub user_rank: i32,
   pub last_access_time: i64,
+  /// First friend 🔰 (Shoshinsha mark)
   pub first: bool,
   pub mute: bool,
   /// 0 - none, 1 - has greeted, 2 - has messaged
@@ -51,30 +54,88 @@ pub async fn friend_list(state: Arc<AppState>, request: ApiRequest, session: Arc
     .parse()
     .context("failed to parse sort_type as i32")?;
   // 1 - sent requests, 2 - pending approval, 3 - friends
-  let list_number: i32 = request.body["list_number"]
+  let kind: i32 = request.body["list_number"]
     .parse()
     .context("failed to parse list_number as i32")?;
 
+  let friends = match kind {
+    1 => {
+      // Sent requests
+      vec![]
+    }
+    2 => {
+      // Pending approval
+      vec![]
+    }
+    3 => {
+      // Friends
+      let client = state.pool.get().await.context("failed to get database connection")?;
+      #[rustfmt::skip]
+      let statement = client
+        .prepare(/* language=postgresql */ r#"
+          select
+            users.id,
+            users.username,
+            users.about_me,
+            users.favorite_member,
+            users.honor,
+            (select max(last_used) from user_devices where user_devices.user_id = users.id) as most_recent_last_used
+          from users
+          -- [username is not null] should always be true due to [tutorial_progress = 99], but just in case
+          where id != $1 and tutorial_progress = 99 and username is not null
+          -- Limit to 99 because >=100 values disable friend adding on the client
+          limit 99
+        "#)
+        .await
+        .context("failed to prepare statement")?;
+      let rows = client
+        .query(&statement, &[&session.user_id])
+        .await
+        .context("failed to execute query")?;
+      info!(?rows, "get friend list query executed");
+      rows
+        .iter()
+        .map(|row| {
+          let id: i64 = row.get(0);
+          let username: String = row.get(1);
+          let about_me: Option<String> = row.get(2);
+          let favorite_member: i64 = row.get(3);
+          let honor: i64 = row.get(4);
+          let last_used: Option<DateTime<Utc>> = row.get(5);
+          let last_used = last_used.unwrap_or(DateTime::<Utc>::MIN_UTC);
+
+          debug!(
+            ?username,
+            ?about_me,
+            ?favorite_member,
+            ?honor,
+            ?last_used,
+            "fetched user profile data"
+          );
+          FriendData {
+            user_no: id.to_string(),
+            user_icon: favorite_member,
+            user_name: username,
+            user_rank: 1,
+            last_access_time: last_used.timestamp(),
+            first: true,
+            mute: false,
+            greeting_status: 0,
+            profile_comment: about_me.unwrap_or_default(),
+            honor_id: honor,
+          }
+        })
+        .collect::<Vec<_>>()
+    }
+    _ => {
+      return Err(anyhow::anyhow!("invalid list_number {}, expected 1, 2, or 3", kind));
+    }
+  };
+
   Ok(Signed(
     FriendList {
-      friend_data: vec![FriendData {
-        user_no: "-1".to_owned(),
-        user_icon: 1083110,
-        user_name: "Megumin".to_owned(),
-        user_rank: 9,
-        last_access_time: (Utc::now() - chrono::Duration::days(1)).timestamp(),
-        first: true,
-        mute: false,
-        greeting_status: 0,
-        profile_comment: indoc! {"
-          I'm gonna type a whole bunch of random stuff right now so it's gonna make it seem like
-          I have lots to talk about regarding this topic. I'll uncover the spoiler tags for certain
-          words such as Aqua and people will be confused as to why she was mentioned.
-        "}
-        .to_owned(),
-        honor_id: 62010250,
-      }],
-      friend_count: 1,
+      friend_count: friends.len() as i64,
+      friend_data: friends,
       greeting_sent_count: 0,
     },
     session,
@@ -299,13 +360,45 @@ pub async fn friend_info(state: Arc<AppState>, request: ApiRequest, session: Arc
     .parse()
     .context("failed to parse friend_user_no")?;
 
+  let client = state.pool.get().await.context("failed to get database connection")?;
+  #[rustfmt::skip]
+  let statement = client
+    .prepare(/* language=postgresql */ r#"
+      select
+        users.id,
+        users.username,
+        users.about_me,
+        users.favorite_member,
+        users.honor,
+        (select max(last_used) from user_devices where user_devices.user_id = users.id) as most_recent_last_used
+      from users
+      where id = $1
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  let rows = client
+    .query(&statement, &[&friend_user_no])
+    .await
+    .context("failed to execute query")?;
+  info!(?rows, "get friend info query executed");
+  let row = rows
+    .first()
+    .ok_or_else(|| anyhow::anyhow!("no profile found for user {:?}", friend_user_no))?;
+  let id: i64 = row.get(0);
+  let username: String = row.get(1);
+  let about_me: Option<String> = row.get(2);
+  let favorite_member: i64 = row.get(3);
+  let honor: i64 = row.get(4);
+  let last_used: Option<DateTime<Utc>> = row.get(5);
+  let last_used = last_used.unwrap_or(DateTime::<Utc>::MIN_UTC);
+
   Ok(Signed(
     FriendInfo {
-      user_no: "-1".to_string(),
-      user_icon: 1083110,
-      user_name: "Megumin".to_owned(),
-      profile_comment: "█████ a whole bunch of ████ so it will seem like I ████ ██████.".to_owned(),
-      honor_id: 62010250,
+      user_no: id.to_string(),
+      user_icon: favorite_member,
+      user_name: username,
+      profile_comment: about_me.unwrap_or_default(),
+      honor_id: honor,
       display_play_data: vec![
         // "Player rank"
         FriendDisplayPlayData::new(1, 2),
@@ -316,7 +409,7 @@ pub async fn friend_info(state: Arc<AppState>, request: ApiRequest, session: Arc
         // "Total crowns earned"
         FriendDisplayPlayData::new(3, 3),
         // "Latest login", clamped at 1 month at the client
-        FriendDisplayPlayData::new(5, Utc::now().timestamp()),
+        FriendDisplayPlayData::new(5, last_used.timestamp()),
         // "Arena ranking": -2 - calculating ranking, -1 - unranked, 0 - hide, 1+ - rank
         FriendDisplayPlayData::new(6, 42),
         // "Affinity"
