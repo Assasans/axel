@@ -20,7 +20,7 @@ pub mod expedition;
 pub mod friend;
 pub mod gacha;
 pub mod home;
-pub mod honor_list;
+pub mod honor;
 pub mod idlink_confirm_google;
 pub mod interaction;
 pub mod items;
@@ -211,6 +211,12 @@ impl From<i32> for RemoteDataItemType {
   }
 }
 
+/// ## Members vs Characters
+/// *Members* are playable character units you build your team with (Front, Back, Sub),
+/// while *Characters* are the actual people from the anime (Kazuma, Aqua, Megumin, etc.)
+/// that these units represent. A single Character can have multiple Member versions
+/// (e.g., "Yunyun (Beginnger)" and "Yunyun (Wakey Wakey)"), each with unique stats
+/// that determine how effective they are in battle as a Front, Back, or Sub member.
 // See [Wonder_Data_MemberParameter_Fields]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MemberParameter {

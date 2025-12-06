@@ -24,10 +24,10 @@ use tower::Layer;
 use tracing::{debug, info, info_span, trace, warn, Instrument, Span};
 
 use crate::api::{
-  account, ad_reward, assist, battle, capture, character, dungeon, exchange, expedition, friend, gacha, home,
-  honor_list, idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check, master_all,
-  master_list, mission, notice, party, party_info, present, profile, quest_fame, quest_hunting, quest_main,
-  smith_craft, smith_sell, smith_upgrade, story, surprise, transfer, tutorial, ApiRequest,
+  account, ad_reward, assist, battle, capture, character, dungeon, exchange, expedition, friend, gacha, home, honor,
+  idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check, master_all, master_list, mission,
+  notice, party, party_info, present, profile, quest_fame, quest_hunting, quest_main, smith_craft, smith_sell,
+  smith_upgrade, story, surprise, transfer, tutorial, ApiRequest,
 };
 use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
 use crate::client_ip::add_client_ip;
@@ -137,7 +137,9 @@ async fn api_call(
     .handle("loginbonus", login_bonus::login_bonus)
     .handle("home", home::home)
     .handle("profile", profile::profile)
-    .handle("honor_list", honor_list::honor_list)
+    .handle("honor_list", honor::honor_list)
+    .handle("honor_set", honor::honor_set)
+    .handle("seticon", honor::set_icon)
     .handle("interaction", interaction::interaction)
     .handle("partyinfo", party_info::party_info)
     .handle("storylist", story::story_list)

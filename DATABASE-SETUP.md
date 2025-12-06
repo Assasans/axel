@@ -127,7 +127,10 @@ client-key = "config/axel.key"
 You need to initialize the database before you can run the server.
 Migrations create the necessary tables and initial data.
 
-Edit the command to match your database connection settings.
+Axel uses custom shell script for running database migrations.
+Remember to run migration script each time you update Axel in case there are database changes.
+
+Edit the command below to match your database connection settings.
 
 ```sh
 ./migrations/migrate.sh "host=10.66.66.1 \

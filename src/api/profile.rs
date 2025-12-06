@@ -51,6 +51,8 @@ pub async fn profile(state: Arc<AppState>, request: ApiRequest, session: Arc<Ses
       select
         users.username,
         users.about_me,
+        users.favorite_member,
+        users.honor,
         (select max(last_used) from user_devices where user_devices.user_id = users.id) as most_recent_last_used
       from users
       where id = $1
@@ -68,7 +70,9 @@ pub async fn profile(state: Arc<AppState>, request: ApiRequest, session: Arc<Ses
 
   let username: Option<String> = row.get(0);
   let about_me: Option<String> = row.get(1);
-  let last_used: Option<DateTime<Utc>> = row.get(2);
+  let favorite_member: i64 = row.get(2);
+  let honor: i64 = row.get(3);
+  let last_used: Option<DateTime<Utc>> = row.get(4);
   let last_used = last_used.unwrap_or_else(|| Utc::now());
 
   Ok(Signed(
@@ -76,8 +80,8 @@ pub async fn profile(state: Arc<AppState>, request: ApiRequest, session: Arc<Ses
       // If for some reason username was not set during tutorial, use empty string
       name: username.unwrap_or_default(),
       profile: about_me.unwrap_or_default(),
-      icon: 1001100,
-      honor_id: 62010030,
+      icon: favorite_member as u32,
+      honor_id: honor as u32,
       display_play_data: vec![
         // "Player rank"
         DisplayPlayData::new(1, 2, 1),
