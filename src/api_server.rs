@@ -137,6 +137,7 @@ async fn api_call(
     .handle("loginbonus", login_bonus::login_bonus)
     .handle("home", home::home)
     .handle("profile", profile::profile)
+    .handle("setprofile", profile::set_profile)
     .handle("honor_list", honor::honor_list)
     .handle("honor_set", honor::honor_set)
     .handle("seticon", honor::set_icon)

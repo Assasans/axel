@@ -1,6 +1,8 @@
 use std::sync::Arc;
 
 use anyhow::Context;
+use base64::Engine;
+use base64::prelude::BASE64_STANDARD_NO_PAD;
 use chrono::{DateTime, Utc};
 use jwt_simple::prelude::Serialize;
 use tracing::info;
@@ -101,4 +103,35 @@ pub async fn profile(state: Arc<AppState>, request: ApiRequest, session: Arc<Ses
     },
     session,
   ))
+}
+
+// profile=V2FoaGghwqBLYXp1bWEswqBoZSHCoEthenVtYSzCoGhlwqB3YWhoaCE
+/// Set "about me"
+pub async fn set_profile(state: Arc<AppState>, request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+  let about_me = &request.body["profile"];
+  let about_me = BASE64_STANDARD_NO_PAD
+    .decode(about_me)
+    .context("failed to decode username from base64")?;
+  let about_me = String::from_utf8(about_me).context("about_me is not valid UTF-8")?;
+  // For some reason client sends 0x20 SPACE as 0xA0 NBSP
+  let about_me = about_me.replace('\u{a0}', " ");
+
+  let client = state.pool.get().await.context("failed to get database connection")?;
+  #[rustfmt::skip]
+  let statement = client
+    .prepare(/* language=postgresql */ r#"
+      update users
+      set about_me = $2
+      where users.id = $1
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  client
+    .execute(&statement, &[&session.user_id, &about_me])
+    .await
+    .context("failed to execute query")?;
+  info!(?session.user_id, ?about_me, "about me updated");
+
+  // See [Wonder_Api_SetprofileResponseDto_Fields]
+  Ok(Unsigned(()))
 }
