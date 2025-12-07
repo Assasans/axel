@@ -14,6 +14,7 @@ pub mod impl_handler;
 pub mod master;
 pub mod normalize_path;
 pub mod notification;
+pub mod params_deserializer;
 pub mod request_logging;
 pub mod router;
 pub mod serde_compat;

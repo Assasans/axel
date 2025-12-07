@@ -1,6 +1,8 @@
 use std::future::Future;
 use std::marker::PhantomData;
 
+use tracing::error;
+
 use crate::extractor::FromContext;
 use crate::handler::{BoxFuture, Handler, HandlerContext, IntoHandlerResponse};
 
@@ -52,7 +54,10 @@ macro_rules! impl_handler {
           let $ty = match $ty::from_context(&mut ctx) {
             Ok(val) => val,
             // return Box::pin(async move { Err(e) })
-            Err(e) => todo!(),
+            Err(error) => {
+              error!("failed to extract parameter: {:?}", error);
+              todo!()
+            },
           };
         )*
 

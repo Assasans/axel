@@ -1,14 +1,16 @@
 use std::sync::Arc;
 
 use anyhow::Context;
-use base64::Engine;
 use base64::prelude::BASE64_STANDARD_NO_PAD;
+use base64::Engine;
 use chrono::{DateTime, Utc};
 use jwt_simple::prelude::Serialize;
+use serde::Deserialize;
 use tracing::info;
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Signed, Unsigned};
 use crate::user::session::Session;
 use crate::AppState;
@@ -105,16 +107,22 @@ pub async fn profile(state: Arc<AppState>, request: ApiRequest, session: Arc<Ses
   ))
 }
 
+#[derive(Debug, Deserialize)]
+pub struct SetProfileRequest {
+  #[serde(with = "crate::string_as_base64")]
+  pub profile: String,
+}
+
 // profile=V2FoaGghwqBLYXp1bWEswqBoZSHCoEthenVtYSzCoGhlwqB3YWhoaCE
 /// Set "about me"
-pub async fn set_profile(state: Arc<AppState>, request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  let about_me = &request.body["profile"];
-  let about_me = BASE64_STANDARD_NO_PAD
-    .decode(about_me)
-    .context("failed to decode username from base64")?;
-  let about_me = String::from_utf8(about_me).context("about_me is not valid UTF-8")?;
+pub async fn set_profile(
+  state: Arc<AppState>,
+  Params(params): Params<SetProfileRequest>,
+  request: ApiRequest,
+  session: Arc<Session>,
+) -> impl IntoHandlerResponse {
   // For some reason client sends 0x20 SPACE as 0xA0 NBSP
-  let about_me = about_me.replace('\u{a0}', " ");
+  let about_me = params.profile.replace('\u{a0}', " ");
 
   let client = state.pool.get().await.context("failed to get database connection")?;
   #[rustfmt::skip]
