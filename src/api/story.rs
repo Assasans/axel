@@ -383,13 +383,28 @@ pub async fn story_list(Params(params): Params<StoryListRequest>) -> impl IntoHa
   }))
 }
 
+// See [Wonder_Api_StoryrewardResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct StoryReward {
-  pub reward: Vec<()>,
+  pub reward: Vec<StoryRewardItem>,
 }
 
 impl CallCustom for StoryReward {}
 
+// See [Wonder_Api_StoryrewardRewardResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct StoryRewardItem {
+  pub item_type: i32,
+  pub item_id: i64,
+  pub num: i32,
+}
+
+// type=3
+// route=direct
+// is_skip=0
+// user_story_id=255
+// selections=[]
+// story_id=300102
 pub async fn story_reward(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   Signed(StoryReward { reward: vec![] }, session)
 }

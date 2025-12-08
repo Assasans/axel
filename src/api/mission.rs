@@ -1,12 +1,14 @@
 use std::sync::Arc;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use serde_repr::{Deserialize_repr, Serialize_repr};
+use tracing::warn;
 
 use crate::api::master_all::get_masters;
 use crate::api::{battle, ApiRequest};
 use crate::call::CallCustom;
+use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Signed};
 use crate::user::session::Session;
 
@@ -40,8 +42,18 @@ pub enum MissionKind {
   Normal = 4,
 }
 
-pub async fn mission_list(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  let kind = &request.body["type"];
+#[derive(Debug, Deserialize)]
+pub struct MissionListRequest {
+  /// "all"
+  #[serde(rename = "type")]
+  pub kind: String,
+}
+
+pub async fn mission_list(
+  session: Arc<Session>,
+  Params(params): Params<MissionListRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: mission_list");
 
   let masters = get_masters().await;
   let missions: Vec<Value> = serde_json::from_str(&masters["mission"].master_decompressed).unwrap();
@@ -95,8 +107,16 @@ pub struct Boss {
 
 impl CallCustom for BattleQuestInfo {}
 
-pub async fn battle_quest_info(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  let event_id = request.body["event_id"].parse::<i32>().unwrap();
+#[derive(Debug, Deserialize)]
+pub struct BattleQuestInfoRequest {
+  pub event_id: i32,
+}
+
+pub async fn battle_quest_info(
+  session: Arc<Session>,
+  Params(params): Params<BattleQuestInfoRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: battle_quest_info");
 
   Ok(Signed(
     BattleQuestInfo {
@@ -139,8 +159,16 @@ pub struct BossCountRewards {
 
 impl CallCustom for BattleMarathonInfo {}
 
-pub async fn battle_marathon_info(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  let event_id = request.body["event_id"].parse::<i32>().unwrap();
+#[derive(Debug, Deserialize)]
+pub struct BattleMarathonInfoRequest {
+  pub event_id: i32,
+}
+
+pub async fn battle_marathon_info(
+  session: Arc<Session>,
+  Params(params): Params<BattleMarathonInfoRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: battle_marathon_info");
 
   Ok(Signed(
     BattleMarathonInfo {
@@ -206,10 +234,18 @@ pub struct EmergencyBossInfo {
 
 impl CallCustom for MarathonInfo {}
 
-pub async fn marathon_info(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  let event_id = request.body["event_id"].parse::<i32>().unwrap();
-  let display_multi_battle_invitation = request.body["display_multi_battle_invitation"].parse::<i32>().unwrap();
+#[derive(Debug, Deserialize)]
+pub struct MarathonInfoRequest {
+  pub event_id: i32,
+  #[serde(with = "crate::bool_as_int")]
+  pub display_multi_battle_invitation: bool,
+}
 
+pub async fn marathon_info(
+  session: Arc<Session>,
+  Params(params): Params<MarathonInfoRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: marathon_info");
   Ok(Signed(
     MarathonInfo {
       opflag: 0,
@@ -263,14 +299,22 @@ pub struct MarathonStageQuest {
 
 impl CallCustom for MarathonStageList {}
 
-pub async fn marathon_stage_list(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  let event_id = request.body["event_id"].parse::<i32>().unwrap();
+#[derive(Debug, Deserialize)]
+pub struct MarathonStageListRequest {
+  pub event_id: i32,
+}
+
+pub async fn marathon_stage_list(
+  session: Arc<Session>,
+  Params(params): Params<MarathonStageListRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: marathon_stage_list");
 
   let masters = get_masters().await;
   let quests: Vec<Value> = serde_json::from_str(&masters["event_marathon_quest_stage"].master_decompressed).unwrap();
   let quests = quests
     .into_iter()
-    .filter(|quest| quest.get("event_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == event_id)
+    .filter(|quest| quest.get("event_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == params.event_id)
     .map(|quest| MarathonStageQuest {
       quest_id: quest.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),
       status: 3,
@@ -334,16 +378,25 @@ pub struct MarathonBoss {
 
 impl CallCustom for MarathonBossList {}
 
-pub async fn marathon_boss_list(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  let event_id: i32 = request.body["event_id"].parse::<i32>().unwrap();
-  let is_multi: i32 = request.body["is_multi"].parse::<i32>().unwrap();
+#[derive(Debug, Deserialize)]
+pub struct MarathonBossListRequest {
+  pub event_id: i32,
+  #[serde(with = "crate::bool_as_int")]
+  pub is_multi: bool,
+}
+
+pub async fn marathon_boss_list(
+  session: Arc<Session>,
+  Params(params): Params<MarathonBossListRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: marathon_boss_list");
 
   let masters = get_masters().await;
   let bosses: Vec<Value> =
     serde_json::from_str(&masters["event_marathon_quest_stage_boss_single"].master_decompressed).unwrap();
   let bosses = bosses
     .into_iter()
-    .filter(|boss| boss.get("event_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == event_id)
+    .filter(|boss| boss.get("event_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == params.event_id)
     .map(|boss| MarathonBoss {
       quest_id: boss.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),
       hp1: 10,

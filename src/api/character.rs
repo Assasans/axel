@@ -1,8 +1,8 @@
-use anyhow::Context;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
+use tracing::warn;
 
-use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 
 // See [Wonder_Api_CharacterPieceBoardInfoResponseDto_Fields]
@@ -21,10 +21,15 @@ pub struct PieceBoardInfo {
   pub stage_id: i32,
 }
 
-pub async fn character_piece_board_info(request: ApiRequest) -> impl IntoHandlerResponse {
-  let character_id: i32 = request.body["character_id"]
-    .parse()
-    .context("failed to parse character_id as i32")?;
+#[derive(Debug, Deserialize)]
+pub struct CharacterPieceBoardInfoRequest {
+  pub character_id: i32,
+}
+
+pub async fn character_piece_board_info(
+  Params(params): Params<CharacterPieceBoardInfoRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: character_piece_board_info");
 
   Ok(Unsigned(CallResponse::new_success(Box::new(CharacterPieceBoardInfo {
     board_info: vec![PieceBoardInfo {
@@ -94,11 +99,14 @@ pub struct CharacterEnhanceMaterial {
   pub item_num: i32,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct CharacterEnhanceInfoRequest {
+  pub character_id: i32,
+}
+
 // TODO: BROKEN - hard lockup
-pub async fn character_enhance_info(request: ApiRequest) -> impl IntoHandlerResponse {
-  let character_id: i32 = request.body["character_id"]
-    .parse()
-    .context("failed to parse character_id as i32")?;
+pub async fn character_enhance_info(Params(params): Params<CharacterEnhanceInfoRequest>) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: character_enhance_info");
 
   Ok(Unsigned(CharacterEnhanceInfo {
     progress: vec![/*CharacterEnhanceInfoProgress {

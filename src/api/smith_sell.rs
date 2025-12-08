@@ -1,9 +1,12 @@
 use jwt_simple::prelude::Serialize;
+use serde::Deserialize;
 use serde_json::Value;
+use tracing::warn;
 
 use crate::api::master_all::get_masters;
 use crate::api::ApiRequest;
 use crate::call::CallCustom;
+use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 
 // See [Wonder_Api_SaleListResponseDto_Fields]
@@ -26,13 +29,19 @@ pub struct SaleItem {
   pub trial: bool,
 }
 
-pub async fn sale_list(request: ApiRequest) -> impl IntoHandlerResponse {
-  // "equip" for Equipment, "material" for Crafting Materials
-  let kind = &request.body["type"];
+#[derive(Debug, Deserialize)]
+pub struct SaleListRequest {
+  /// "equip" for Equipment, "material" for Crafting Materials
+  #[serde(rename = "type")]
+  pub kind: String,
+}
 
+pub async fn sale_list(Params(params): Params<SaleListRequest>) -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let items: Vec<Value> = serde_json::from_str(&masters["item"].master_decompressed).unwrap();
   let equip_weapons: Vec<Value> = serde_json::from_str(&masters["equip_weapon"].master_decompressed).unwrap();
+
+  warn!(?params, "encountered stub: sale_list");
 
   // TODO: Client does not display anything when Equipment is selected
   let items = items

@@ -5,7 +5,6 @@ use serde_json::Value;
 use tracing::warn;
 
 use crate::api::master_all::get_masters;
-use crate::api::ApiRequest;
 use crate::call::CallCustom;
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Signed};
@@ -86,10 +85,16 @@ pub async fn leave_members(
   Ok(Signed((), session))
 }
 
+#[derive(Debug, Deserialize)]
+pub struct ExchangeRequest {
+  pub exchange_reward_master_id: i32,
+  pub num: i32,
+}
+
 // exchange_reward_master_id=10001
 // num=1
-pub async fn exchange(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  warn!("encountered stub: exchange");
+pub async fn exchange(session: Arc<Session>, Params(params): Params<ExchangeRequest>) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: exchange");
 
   // See [Wonder_Api_ExchangeResponseDto_Fields]
   Ok(Signed((), session))

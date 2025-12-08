@@ -1,14 +1,15 @@
 // Called "Branch" in-game
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use tracing::warn;
 
 use crate::api::battle::BattleMember;
 use crate::api::master_all::get_masters;
 use crate::api::party_info::PartyPassiveSkillInfo;
-use crate::api::{ApiRequest, NotificationData, RemoteDataItemType};
+use crate::api::{NotificationData, RemoteDataItemType};
 use crate::call::{CallCustom, CallResponse};
+use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 
 // See [Wonder_Api_SurpriseMiniEventSelectResponseDto_Fields]
@@ -27,7 +28,7 @@ pub struct SurpriseEvent {
   pub expired_date: i64,
 }
 
-pub async fn surprise_mini_event_select(_request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn surprise_mini_event_select() -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let surprise_events: Vec<Value> = serde_json::from_str(&masters["surprise_event"].master_decompressed).unwrap();
 
@@ -54,12 +55,16 @@ pub struct SurpriseMiniEventTop {
 
 impl CallCustom for SurpriseMiniEventTop {}
 
+#[derive(Debug, Deserialize)]
+pub struct SurpriseMiniEventTopRequest {
+  pub surprise_event_id: i32,
+  pub user_stock_id: i32,
+}
+
 // user_stock_id=42
 // surprise_event_id=10001
-pub async fn surprise_mini_event_top(request: ApiRequest) -> impl IntoHandlerResponse {
-  let surprise_event_id: i32 = request.body["surprise_event_id"].parse().unwrap();
-
-  warn!(?surprise_event_id, "encountered stub: surprise_mini_event_top");
+pub async fn surprise_mini_event_top(Params(params): Params<SurpriseMiniEventTopRequest>) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: surprise_mini_event_top");
 
   Ok(Unsigned(SurpriseMiniEventTop {
     best_score: 2112,
@@ -99,14 +104,22 @@ pub struct BasicBattlePartyForm {
   pub skill_pa_fame: i64,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct SurpriseQuestStartRequest {
+  pub surprise_quest_id: i32,
+  pub party_no: i32,
+  pub user_stock_id: i32,
+  pub surprise_event_id: i32,
+}
+
 // surprise_quest_id=10001
 // party_no=1
 // user_stock_id=42
 // surprise_event_id=10001
-pub async fn surprise_quest_start(_request: ApiRequest) -> impl IntoHandlerResponse {
-  warn!("encountered stub: surprise_quest_start");
+pub async fn surprise_quest_start(Params(params): Params<SurpriseQuestStartRequest>) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: surprise_quest_start");
 
-  let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(json!({
+  let mut response = CallResponse::new_success(Box::new(json!({
     "party": {
       "party_forms": [
         {
@@ -295,7 +308,7 @@ pub struct SurpriseQuestResultReward {
 }
 
 /// Cabbage fights
-pub async fn surprise_quest_result(_request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn surprise_quest_result() -> impl IntoHandlerResponse {
   warn!("encountered stub: surprise_quest_result");
 
   Ok(Unsigned(SurpriseQuestResult {
@@ -322,12 +335,16 @@ pub struct SurpriseShortEvent {
 
 impl CallCustom for SurpriseShortEvent {}
 
+#[derive(Debug, Deserialize)]
+pub struct SurpriseShortEventRequest {
+  pub surprise_event_id: i32,
+  pub user_stock_id: i32,
+}
+
 // surprise_event_id=20002
 // user_stock_id=42
 /// Explosions
-pub async fn surprise_short_event(request: ApiRequest) -> impl IntoHandlerResponse {
-  let surprise_event_id: i32 = request.body["surprise_event_id"].parse().unwrap();
-
+pub async fn surprise_short_event(Params(params): Params<SurpriseShortEventRequest>) -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let surprise_events: Vec<Value> = serde_json::from_str(&masters["surprise_short"].master_decompressed).unwrap();
   // TODO: Seems like there is no [event ID -> pool of result IDs] mapping, thus we would need to make our own
@@ -336,10 +353,10 @@ pub async fn surprise_short_event(request: ApiRequest) -> impl IntoHandlerRespon
 
   let surprise_event = surprise_events
     .iter()
-    .find(|event| event["surprise_event_id"].as_str().unwrap().parse::<i32>().unwrap() == surprise_event_id)
+    .find(|event| event["surprise_event_id"].as_str().unwrap().parse::<i32>().unwrap() == params.surprise_event_id)
     .unwrap();
 
-  warn!(?surprise_event_id, "encountered stub: surprise_short_event");
+  warn!(?params, "encountered stub: surprise_short_event");
 
   Ok(Unsigned(SurpriseShortEvent {
     surprise_short_id: surprise_event["surprise_short_id"].as_str().unwrap().parse().unwrap(),
@@ -372,17 +389,24 @@ pub struct SurpriseStoryStart {
 
 impl CallCustom for SurpriseStoryStart {}
 
+#[derive(Debug, Deserialize)]
+pub struct SurpriseStoryStartRequest {
+  pub surprise_event_id: i32,
+  pub user_stock_id: i32,
+  pub surprise_story_id: i32,
+}
+
 // surprise_event_id=40001
 // user_stock_id=42
 // surprise_story_id=1001
 /// Vanir box gambling
 /// TODO: Is it broken? No selection appears in-game besides Vanir Box case.
-pub async fn surprise_story_start(_request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn surprise_story_start(Params(params): Params<SurpriseStoryStartRequest>) -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let surprise_stories: Vec<Value> =
     serde_json::from_str(&masters["surprise_story_result"].master_decompressed).unwrap();
 
-  warn!("encountered stub: surprise_story_start");
+  warn!(?params, "encountered stub: surprise_story_start");
 
   Ok(Unsigned(SurpriseStoryStart {
     result_id_list: surprise_stories
@@ -392,12 +416,20 @@ pub async fn surprise_story_start(_request: ApiRequest) -> impl IntoHandlerRespo
   }))
 }
 
+#[derive(Debug, Deserialize)]
+pub struct SurpriseStorySelectRequest {
+  pub surprise_story_id: i32,
+  pub surprise_event_id: i32,
+  pub user_stock_id: i32,
+  pub result_id: i32,
+}
+
 // surprise_story_id=1001
 // surprise_event_id=40001
 // user_stock_id=42
 // result_id=2
-pub async fn surprise_story_select(_request: ApiRequest) -> impl IntoHandlerResponse {
-  warn!("encountered stub: surprise_story_select");
+pub async fn surprise_story_select(Params(params): Params<SurpriseStorySelectRequest>) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: surprise_story_select");
 
   // See [Wonder_Api_SurpriseStorySelectResponseDto_Fields]
   Ok(Unsigned(()))
@@ -419,11 +451,18 @@ pub struct SurpriseStoryReward {
   pub num: i32,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct SurpriseStoryResultRequest {
+  pub surprise_story_id: i32,
+  pub surprise_event_id: i32,
+  pub user_stock_id: i32,
+}
+
 // surprise_story_id=1001
 // surprise_event_id=40001
 // user_stock_id=42
-pub async fn surprise_story_result(_request: ApiRequest) -> impl IntoHandlerResponse {
-  warn!("encountered stub: surprise_story_result");
+pub async fn surprise_story_result(Params(params): Params<SurpriseStoryResultRequest>) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: surprise_story_result");
 
   Ok(Unsigned(SurpriseStoryResult {
     reward: vec![SurpriseStoryReward {

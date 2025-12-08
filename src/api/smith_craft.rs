@@ -34,7 +34,7 @@ pub struct BlacksmithEquippedItemResponseDto {
   pub is_challenging_dungeon: bool,
 }
 
-pub async fn blacksmith_list(_request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn blacksmith_list() -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let equip_weapons: Vec<Value> = serde_json::from_str(&masters["equip_weapon"].master_decompressed).unwrap();
   let equip_accessories: Vec<Value> = serde_json::from_str(&masters["equip_accessory"].master_decompressed).unwrap();

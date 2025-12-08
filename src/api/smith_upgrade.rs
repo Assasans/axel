@@ -4,7 +4,6 @@ use serde_json::Value;
 use crate::api::master_all::get_masters;
 use crate::api::quest_fame::FameQuestReleaseConditionInfo;
 use crate::api::smith_craft::BlacksmithEquippedItemResponseDto;
-use crate::api::ApiRequest;
 use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 
@@ -29,7 +28,7 @@ pub struct ItempoweruplistItemsResponseDto {
   pub trial: bool,
 }
 
-pub async fn item_power_up_list(_request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn item_power_up_list() -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let items: Vec<Value> = serde_json::from_str(&masters["item"].master_decompressed).unwrap();
 
@@ -98,7 +97,7 @@ pub struct FameQuestMaterialInfoResponseDto {
   pub remaining_count: i32,
 }
 
-pub async fn blacksmith_quest_list(_request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn blacksmith_quest_list() -> impl IntoHandlerResponse {
   Ok(Unsigned(BlacksmithQuestList {
     quests: vec![],
     huntingquests: vec![],

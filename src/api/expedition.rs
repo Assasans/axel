@@ -2,7 +2,6 @@ use serde::Serialize;
 use serde_json::Value;
 
 use crate::api::master_all::get_masters;
-use crate::api::ApiRequest;
 use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 
@@ -27,7 +26,7 @@ pub struct ExpeditionInfo {
 }
 
 // TODO: Can't click to add character for some reason
-pub async fn expedition_top(request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn expedition_top() -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let expeditions: Vec<Value> = serde_json::from_str(&masters["expedition"].master_decompressed).unwrap();
 
