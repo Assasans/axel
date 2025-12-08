@@ -45,7 +45,6 @@ See [DUMPING.md](DUMPING.md) for instructions on how to inspect the game code yo
 - \[Quest\] → \[Free Quest\], all items are locked
 - \[Quest\] → \[Battle Arena\], unimplemented
 - \[Quest\] → \[Dungeon\], unimplemented
-- \[Team\] → \[Character Upgrade\] → \[Trial of the Ancients\], hardlock
 - \[Menu\] → \[Support\], does nothing, probably related to stub APK
 
 Most working features are stubbed and do not save any progress.

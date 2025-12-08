@@ -20,7 +20,7 @@ pub async fn get_login_remote_data() -> Vec<RemoteData> {
         rank: 1,
         rank_progress: 5,
         sp_skill: vec![],
-        character_enhance_stage_id_list: vec![],
+        character_enhance_stage_id_list: vec![0, 0, 0, 0],
         character_piece_board_stage_id_list: vec![],
         is_trial: false,
       })

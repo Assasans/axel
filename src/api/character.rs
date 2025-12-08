@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use tracing::warn;
 
+use crate::api::master_all::get_masters;
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
@@ -104,24 +106,33 @@ pub struct CharacterEnhanceInfoRequest {
   pub character_id: i32,
 }
 
-// TODO: BROKEN - hard lockup
+// Thanks to https://youtu.be/o5UUz2kHhto for unbricking this endpoint
 pub async fn character_enhance_info(Params(params): Params<CharacterEnhanceInfoRequest>) -> impl IntoHandlerResponse {
   warn!(?params, "encountered stub: character_enhance_info");
 
+  let masters = get_masters().await;
+  let trials: Vec<Value> = serde_json::from_str(&masters["character_enhance"].master_decompressed).unwrap();
+  let trials = trials
+    .iter()
+    .filter(|trial| trial["character_id"].as_str().unwrap().parse::<i32>().unwrap() == params.character_id)
+    .collect::<Vec<_>>();
+
   Ok(Unsigned(CharacterEnhanceInfo {
-    progress: vec![/*CharacterEnhanceInfoProgress {
-        root_id: 1,
-        root_stage_id: 5,
-        stage_id: 1810105,
+    progress: trials
+      .iter()
+      .map(|trial| CharacterEnhanceInfoProgress {
+        root_id: trial["root_id"].as_str().unwrap().parse().unwrap(),
+        root_stage_id: trial["root_stage_id"].as_str().unwrap().parse().unwrap(),
+        stage_id: trial["stage_id"].as_str().unwrap().parse().unwrap(),
         parameter: EnhanceParameter {
-          hp: 1,
-          attack: 2,
-          magicattack: 3,
-          defense: 4,
-          magicdefence: 5,
-          agility: 6,
-          dexterity: 7,
-          luck: 8,
+          hp: 100,
+          attack: 50,
+          magicattack: 50,
+          defense: 30,
+          magicdefence: 30,
+          agility: 20,
+          dexterity: 20,
+          luck: 10,
         },
         unique_weapon_id: 0,
         specialskill: vec![],
@@ -130,8 +141,9 @@ pub async fn character_enhance_info(Params(params): Params<CharacterEnhanceInfoR
           unique_stone_lv: 0,
         },
         material_items: vec![],
-        money: 900,
-      }*/],
+        money: 1000,
+      })
+      .collect(),
     trial_timestamp: chrono::Utc::now().timestamp(),
   }))
 }
