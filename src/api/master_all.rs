@@ -14,8 +14,8 @@ use tokio::io::AsyncReadExt;
 use tokio::sync::OnceCell;
 use tracing::{debug, info, trace, warn};
 
-use crate::api::ApiRequest;
 use crate::call::CallCustom;
+use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 
 #[derive(Debug, Serialize)]
@@ -327,13 +327,19 @@ pub async fn get_masters() -> &'static HashMap<String, MasterAllItem> {
   MASTERS.get_or_init(load_masters).await
 }
 
-pub async fn master_all(request: ApiRequest) -> impl IntoHandlerResponse {
-  let keys = request.body["master_keys"].split(",").collect::<Vec<_>>();
-  debug!("loading masters: {:?}", keys);
+#[derive(Debug, Deserialize)]
+pub struct MasterAllRequest {
+  #[serde(deserialize_with = "crate::serde_compat::comma_separated_string")]
+  pub master_keys: Vec<String>,
+}
+
+pub async fn master_all(Params(params): Params<MasterAllRequest>) -> impl IntoHandlerResponse {
+  debug!(params = ?params.master_keys, "loading masters");
   let masters = get_masters().await;
-  let masters = keys
+  let masters = params
+    .master_keys
     .iter()
-    .map(|key| masters.get(*key).expect(&format!("master {:?} not found", key)))
+    .map(|key| masters.get(key).expect(&format!("master {:?} not found", key)))
     .cloned()
     .collect::<Vec<_>>();
   Unsigned(MasterAll {

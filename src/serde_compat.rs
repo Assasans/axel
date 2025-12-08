@@ -181,3 +181,27 @@ where
 
   deserializer.deserialize_str(CommaSeparatedVisitor)
 }
+
+pub fn comma_separated_string<'de, D>(deserializer: D) -> Result<Vec<String>, D::Error>
+where
+  D: Deserializer<'de>,
+{
+  struct CommaSeparatedVisitor;
+
+  impl<'de> de::Visitor<'de> for CommaSeparatedVisitor {
+    type Value = Vec<String>;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+      formatter.write_str("a comma-separated string")
+    }
+
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+    where
+      E: de::Error,
+    {
+      Ok(v.split(',').map(|s| s.trim().to_string()).collect())
+    }
+  }
+
+  deserializer.deserialize_str(CommaSeparatedVisitor)
+}

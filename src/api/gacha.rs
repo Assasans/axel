@@ -1,10 +1,13 @@
 use jwt_simple::prelude::Serialize;
 use rand::seq::IteratorRandom;
+use serde::Deserialize;
 use serde_json::{json, Value};
+use tracing::warn;
 
 use crate::api::master_all::get_masters;
-use crate::api::{ApiRequest, NotificationData, RemoteData, RemoteDataItemType};
+use crate::api::{NotificationData, RemoteData, RemoteDataItemType};
 use crate::call::{CallCustom, CallResponse};
+use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::master;
 
@@ -188,7 +191,7 @@ pub struct BonusItem {
   pub item_num: i32,
 }
 
-pub async fn gacha_info(_request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn gacha_info() -> impl IntoHandlerResponse {
   let gacha_items = vec![
     GachaItem {
       gachaid: 100001,
@@ -1267,8 +1270,14 @@ pub async fn gacha_info(_request: ApiRequest) -> impl IntoHandlerResponse {
   Unsigned(response)
 }
 
-pub async fn gacha_tutorial(request: ApiRequest) -> impl IntoHandlerResponse {
-  if request.body["type"] == "1" {
+#[derive(Debug, Deserialize)]
+pub struct GachaTutorialRequest {
+  #[serde(rename = "type")]
+  pub kind: i32,
+}
+
+pub async fn gacha_tutorial(Params(params): Params<GachaTutorialRequest>) -> impl IntoHandlerResponse {
+  if params.kind == 1 {
     Unsigned(GachaTutorial {
       gacha_id: 100002,
       goods: vec![
@@ -1293,22 +1302,36 @@ pub async fn gacha_tutorial(request: ApiRequest) -> impl IntoHandlerResponse {
   }
 }
 
-pub async fn gacha_tutorial_reward(_request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn gacha_tutorial_reward() -> impl IntoHandlerResponse {
   let response = include_str!("../gacha-tutorial-reward.json");
   let response: Value = serde_json::from_str(response).unwrap();
   Unsigned(CallResponse::new_success(Box::new(response)))
 }
 
-pub async fn gacha_chain(request: ApiRequest) -> impl IntoHandlerResponse {
-  let gacha_id: i32 = request.body["gacha_id"].parse().unwrap();
-  let _money_type: i32 = request.body["money_type"].parse().unwrap();
-
-  gacha_normal(request).await
+#[derive(Debug, Deserialize)]
+pub struct GachaChainRequest {
+  pub gacha_id: i32,
+  pub money_type: i32,
 }
 
-pub async fn gacha_normal(request: ApiRequest) -> impl IntoHandlerResponse {
-  let gacha_id: i32 = request.body["gacha_id"].parse().unwrap();
-  let _money_type: i32 = request.body["money_type"].parse().unwrap();
+pub async fn gacha_chain(Params(params): Params<GachaChainRequest>) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: gacha_chain");
+
+  gacha_normal(Params(GachaNormalRequest {
+    gacha_id: params.gacha_id,
+    money_type: params.money_type,
+  }))
+  .await
+}
+
+#[derive(Debug, Deserialize)]
+pub struct GachaNormalRequest {
+  pub gacha_id: i32,
+  pub money_type: i32,
+}
+
+pub async fn gacha_normal(Params(params): Params<GachaNormalRequest>) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: gacha_normal");
 
   let masters = get_masters().await;
   let members: Vec<Value> = serde_json::from_str(&masters["member"].master_decompressed).unwrap();
@@ -1328,7 +1351,7 @@ pub async fn gacha_normal(request: ApiRequest) -> impl IntoHandlerResponse {
     .collect::<Vec<_>>();
 
   let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(GachaResult {
-    gacha_id,
+    gacha_id: params.gacha_id,
     goods,
     bonus_info: None,
     bonus_step: None,
@@ -1349,12 +1372,17 @@ pub async fn gacha_normal(request: ApiRequest) -> impl IntoHandlerResponse {
   Unsigned(response)
 }
 
+#[derive(Debug, Deserialize)]
+pub struct GachaRateRequest {
+  pub gacha_id: i32,
+}
+
 // IDA static analysis, not real data
-pub async fn gacha_rate(request: ApiRequest) -> impl IntoHandlerResponse {
-  let gacha_id: u32 = request.body["gacha_id"].parse().unwrap();
+pub async fn gacha_rate(Params(params): Params<GachaRateRequest>) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: gacha_rate");
 
   let response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(GachaRate {
-    gacha_id,
+    gacha_id: params.gacha_id,
     rate: vec![GachaRateRate {
       rare: 3,
       itemid: 1023104,
@@ -1371,23 +1399,9 @@ pub async fn gacha_rate(request: ApiRequest) -> impl IntoHandlerResponse {
       detailview: 0,
       detailpriority: 0,
     }],
-    rarerate: vec![GachaRateRate {
-      rare: 4,
-      itemid: 1024225,
-      rate: 30,
-      pickup: 1,
-      detailview: 0,
-      detailpriority: 0,
-    }],
-    limitrarerate: vec![GachaRateRate {
-      rare: 4,
-      itemid: 1024118,
-      rate: 40,
-      pickup: 1,
-      detailview: 0,
-      detailpriority: 0,
-    }],
-    bonus_per_draw_count: 10,
+    rarerate: vec![GachaRateRare { rare: 4, rate: 30 }],
+    limitrarerate: vec![GachaRateRare { rare: 4, rate: 40 }],
+    bonus_per_draw_count: 42,
     bonusrate: vec![
       GachaRateBonusItem {
         pack_id: 241039504,
@@ -1403,17 +1417,25 @@ pub async fn gacha_rate(request: ApiRequest) -> impl IntoHandlerResponse {
   Unsigned(response)
 }
 
+// See [Wonder_Api_GacharateResponseDto_Fields]
 #[derive(Default, Debug, Serialize)]
 pub struct GachaRate {
-  pub gacha_id: u32,
+  pub gacha_id: i32,
+  /// "10x recruit (1st-9th use) and 1x recruit appearance rates"
   pub rate: Vec<GachaRateRate>,
+  /// "10x recruit (10th use) appearance rates"
   pub limitrate: Vec<GachaRateRate>,
-  pub rarerate: Vec<GachaRateRate>,
-  pub limitrarerate: Vec<GachaRateRate>,
+  /// "10x recruit (1st-9th use) and 1x recruit"
+  pub rarerate: Vec<GachaRateRare>,
+  /// "10x recruit (10th use)"
+  pub limitrarerate: Vec<GachaRateRare>,
   pub bonus_per_draw_count: i32,
+  /// "10x recruit (draw [bonus_per_draw_count]) set item appearance rates"
   pub bonusrate: Vec<GachaRateBonusItem>,
 }
 
+// See [Wonder_Api_GacharateRateResponseDto_Fields]
+// See [Wonder_Api_GacharateLimitrateResponseDto_Fields]
 #[derive(Default, Debug, Serialize)]
 pub struct GachaRateRate {
   pub rare: i32,
@@ -1426,15 +1448,26 @@ pub struct GachaRateRate {
   pub detailpriority: i32,
 }
 
+// See [Wonder_Api_GacharateRarerateResponseDto_Fields]
+// See [Wonder_Api_GacharateLimitrarerateResponseDto_Fields]
+#[derive(Default, Debug, Serialize)]
+pub struct GachaRateRare {
+  pub rare: i32,
+  /// Three decimal places, e.g. 10.500 = 10.500%
+  pub rate: i32,
+}
+
+// See [Wonder_Api_GacharateBonusrateResponseDto_Fields]
 #[derive(Default, Debug, Serialize)]
 pub struct GachaRateBonusItem {
   pub pack_id: i64,
+  /// Three decimal places, e.g. 10.500 = 10.500%
   pub rate: i32,
 }
 
 impl CallCustom for GachaRate {}
 
-pub async fn gacha_log(_request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn gacha_log() -> impl IntoHandlerResponse {
   Unsigned(json!({
     "goods":[{"itemtype":4,"itemid":1063113,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1034100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1152102,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1083110,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1122100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1093100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1132100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1002102,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1282100,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1064217,"itemnum":1,"time":"2024-08-05 15:03:20","gachaid":100002},{"itemtype":4,"itemid":1192102,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1102102,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1143127,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1162100,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1192102,"itemnum":1,"time":"2024-08-05 20:17:42","gachaid":200021},{"itemtype":4,"itemid":1012100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1013100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1013116,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012100,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1012102,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535},{"itemtype":4,"itemid":1013116,"itemnum":1,"time":"2024-08-07 19:31:30","gachaid":410535}],"status":0,"time":1723059245,"remotedata":[],"notificationdata":[]
   }))

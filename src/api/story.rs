@@ -1,7 +1,6 @@
 use std::iter;
 use std::sync::Arc;
 
-use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use serde_repr::{Deserialize_repr, Serialize_repr};
@@ -9,6 +8,7 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 use crate::api::master_all::get_masters;
 use crate::api::ApiRequest;
 use crate::call::CallCustom;
+use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Signed, Unsigned};
 use crate::user::session::Session;
 
@@ -66,9 +66,14 @@ pub struct StorySelection {
   pub selection: Vec<bool>,
 }
 
-pub async fn story_list(request: ApiRequest) -> impl IntoHandlerResponse {
-  let kind: i32 = request.body["type"].parse().context("failed to parse type as i32")?;
+#[derive(Debug, Deserialize)]
+pub struct StoryListRequest {
+  /// Seems to be always 0
+  #[serde(rename = "type")]
+  pub kind: i32,
+}
 
+pub async fn story_list(Params(params): Params<StoryListRequest>) -> impl IntoHandlerResponse {
   let index = 0;
 
   let masters = get_masters().await;

@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
 use crate::api::dungeon::PartyMember;
-use crate::api::ApiRequest;
 use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Signed};
 use crate::user::session::Session;
@@ -94,7 +93,7 @@ impl Party {
   }
 }
 
-pub async fn party_info(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+pub async fn party_info(session: Arc<Session>) -> impl IntoHandlerResponse {
   let response = include_str!("../party-info.json");
   let response: Value = serde_json::from_str(response).unwrap();
   return Ok(Signed(response, session));

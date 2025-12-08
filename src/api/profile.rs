@@ -8,7 +8,6 @@ use serde_json::Value;
 use tracing::{info, warn};
 
 use crate::api::master_all::get_masters;
-use crate::api::ApiRequest;
 use crate::call::CallCustom;
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Signed, Unsigned};
@@ -206,7 +205,7 @@ impl HonorItem {
   }
 }
 
-pub async fn honor_list(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+pub async fn honor_list(session: Arc<Session>) -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let honors: Vec<Value> = serde_json::from_str(&masters["honor"].master_decompressed).unwrap();
 
@@ -235,7 +234,6 @@ pub struct HonorSetRequest {
 pub async fn honor_set(
   state: Arc<AppState>,
   Params(params): Params<HonorSetRequest>,
-  request: ApiRequest,
   session: Arc<Session>,
 ) -> impl IntoHandlerResponse {
   let client = state.pool.get().await.context("failed to get database connection")?;
@@ -267,7 +265,6 @@ pub struct SetIconRequest {
 pub async fn set_icon(
   state: Arc<AppState>,
   Params(params): Params<SetIconRequest>,
-  request: ApiRequest,
   session: Arc<Session>,
 ) -> impl IntoHandlerResponse {
   let client = state.pool.get().await.context("failed to get database connection")?;

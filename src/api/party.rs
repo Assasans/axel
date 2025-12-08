@@ -92,7 +92,7 @@ pub async fn update_party_form(request: ApiRequest, session: Arc<Session>) -> im
   warn!(?party_no, "encountered stub: update_party_form");
 
   // Response is identical to party_info
-  Ok(party_info(request, session).await)
+  Ok(party_info(session).await)
 }
 
 // trial=1
@@ -114,7 +114,7 @@ pub async fn party_offer(request: ApiRequest, session: Arc<Session>) -> impl Int
   warn!(?party_no, "encountered stub: party_offer");
 
   // Response is identical to party_info
-  Ok(party_info(request, session).await)
+  Ok(party_info(session).await)
 }
 
 // party_no=1
@@ -127,7 +127,7 @@ pub async fn party_reset(request: ApiRequest, session: Arc<Session>) -> impl Int
   warn!(?party_no, "encountered stub: party_reset");
 
   // Response is identical to party_info
-  Ok(party_info(request, session).await)
+  Ok(party_info(session).await)
 }
 
 // See [Wonder_Api_PartychangelistResponseDto_Fields]
@@ -202,7 +202,7 @@ pub async fn party_change(request: ApiRequest, session: Arc<Session>) -> impl In
   warn!(?party_no, "encountered stub: party_change");
 
   // Response is identical to party_info
-  Ok(party_info(request, session).await)
+  Ok(party_info(session).await)
 }
 
 // See [Wonder_Api_PartyStrengthResponseDto_Fields]

@@ -1,11 +1,11 @@
 //! Hierarchy is Area (Relic Quest) -> Stage (Eris - Beginner)
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use crate::api::master_all::get_masters;
-use crate::api::ApiRequest;
 use crate::call::CallCustom;
+use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 
 // See [Wonder_Api_QuesthuntinglistResponseDto_Fields]
@@ -34,7 +34,7 @@ pub struct HuntingFreeQuest {
   pub status: i32,
 }
 
-pub async fn quest_hunting_list(_request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn quest_hunting_list() -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let areas: Vec<Value> = serde_json::from_str(&masters["huntingquest_area"].master_decompressed).unwrap();
 
@@ -74,16 +74,21 @@ pub struct HuntingStageQuest {
   pub task3: i32,
 }
 
-pub async fn quest_hunting_stage_list(request: ApiRequest) -> impl IntoHandlerResponse {
-  let area_id: i32 = request.body["area_id"].parse().unwrap();
+#[derive(Debug, Deserialize)]
+pub struct QuestHuntingStageListRequest {
+  pub area_id: i32,
+}
 
+pub async fn quest_hunting_stage_list(
+  Params(params): Params<QuestHuntingStageListRequest>,
+) -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let stages: Vec<Value> = serde_json::from_str(&masters["huntingquest_stage"].master_decompressed).unwrap();
 
   Ok(Unsigned(QuestHuntingStageListResponse {
     quests: stages
       .iter()
-      .filter(|stage| stage.get("area_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == area_id)
+      .filter(|stage| stage.get("area_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == params.area_id)
       .map(|stage| HuntingStageQuest {
         stage_id: stage.get("stage_id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),
         status: 0,

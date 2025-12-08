@@ -1,9 +1,10 @@
 use jwt_simple::prelude::Deserialize;
 use serde::Serialize;
+use tracing::warn;
 
 use crate::api::party_info::{PartyPassiveSkillInfo, SpecialSkillInfo};
-use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};
+use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 
 // See [Wonder_Api_DungeonStatusResponseDto_Fields]
@@ -15,7 +16,7 @@ pub struct DungeonStatusResponse {
 
 impl CallCustom for DungeonStatusResponse {}
 
-pub async fn dungeon_status(_request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn dungeon_status() -> impl IntoHandlerResponse {
   Ok(Unsigned(CallResponse::new_success(Box::new(DungeonStatusResponse {
     area_id: 11,
     status: 0,
@@ -156,8 +157,13 @@ pub struct DungeonStagePartyForm {
   pub current_sp: i32,
 }
 
-pub async fn dungeon_area_top(request: ApiRequest) -> impl IntoHandlerResponse {
-  let area_id: i32 = request.body["area_id"].parse().unwrap();
+#[derive(Debug, Deserialize)]
+pub struct DungeonAreaTopRequest {
+  pub area_id: i32,
+}
+
+pub async fn dungeon_area_top(Params(params): Params<DungeonAreaTopRequest>) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: dungeon_area_top");
 
   Ok(Unsigned(DungeonAreaTopResponse {
     is_practice: false,

@@ -28,7 +28,7 @@ use crate::api::{
   notice, party, party_info, present, profile, quest_fame, quest_hunting, quest_main, smith_craft, smith_sell,
   smith_upgrade, story, surprise, transfer, tutorial, ApiRequest,
 };
-use crate::call::{ApiCallParams, CallMeta, CallResponse};
+use crate::call::{ApiCallParams, CallMeta};
 use crate::client_ip::add_client_ip;
 use crate::handler::{HandlerContext, IntoHandlerResponse, Signed, Unsigned};
 use crate::normalize_path::normalize_path;
@@ -370,12 +370,12 @@ async fn api_call(
   }
 }
 
-async fn root_check_box(_request: ApiRequest) -> impl IntoHandlerResponse {
-  Unsigned(CallResponse::new_success(Box::new(())))
+async fn root_check_box() -> impl IntoHandlerResponse {
+  Unsigned(())
 }
 
-async fn firebase_token(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  Signed(CallResponse::new_success(Box::new(())), session)
+async fn firebase_token(session: Arc<Session>) -> impl IntoHandlerResponse {
+  Signed((), session)
 }
 
 async fn get_root_friendly() -> axum::response::Result<impl IntoResponse, AppError> {

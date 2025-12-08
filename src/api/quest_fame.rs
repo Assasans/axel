@@ -1,12 +1,13 @@
 //! Hierarchy is Rank (I) -> Area (Near the Axel Village) -> Stage (Dire Bunny Raid)
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use tracing::debug;
 
 use crate::api::master_all::get_masters;
 use crate::api::{battle, ApiRequest};
 use crate::call::{CallCustom, CallResponse};
+use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 
 // See [Wonder_Api_FameQuestRankListResponseDto_Fields]
@@ -18,7 +19,7 @@ pub struct QuestFameRankListResponse {
 
 impl CallCustom for QuestFameRankListResponse {}
 
-pub async fn fame_quest_rank_list(_request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn fame_quest_rank_list() -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let ranks: Vec<Value> = serde_json::from_str(&masters["fame_quest_rank"].master_decompressed).unwrap();
 
@@ -46,9 +47,12 @@ pub struct FameQuestAreaInfo {
   pub area_id: i32,
 }
 
-pub async fn fame_quest_area_list(request: ApiRequest) -> impl IntoHandlerResponse {
-  let quest_rank_id: i32 = request.body["quest_rank_id"].parse().unwrap();
+#[derive(Debug, Deserialize)]
+pub struct FameQuestAreaListRequest {
+  pub quest_rank_id: i32,
+}
 
+pub async fn fame_quest_area_list(Params(params): Params<FameQuestAreaListRequest>) -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let areas: Vec<Value> = serde_json::from_str(&masters["fame_quest_area"].master_decompressed).unwrap();
 
@@ -63,7 +67,7 @@ pub async fn fame_quest_area_list(request: ApiRequest) -> impl IntoHandlerRespon
           .unwrap()
           .parse::<i32>()
           .unwrap()
-          == quest_rank_id
+          == params.quest_rank_id
       })
       .map(|rank| FameQuestAreaInfo {
         area_id: rank.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),
@@ -107,17 +111,20 @@ pub struct FameQuestReleaseConditionInfo {
   pub event_story: i32,
 }
 
-pub async fn fame_quest_stage_list(request: ApiRequest) -> impl IntoHandlerResponse {
-  let area_id: i32 = request.body["area_id"].parse().unwrap();
-  let mode: i32 = request.body["mode"].parse().unwrap();
+#[derive(Debug, Deserialize)]
+pub struct FameQuestStageListRequest {
+  pub area_id: i32,
+  pub mode: i32,
+}
 
+pub async fn fame_quest_stage_list(Params(params): Params<FameQuestStageListRequest>) -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let areas: Vec<Value> = serde_json::from_str(&masters["fame_quest_area"].master_decompressed).unwrap();
   let stages: Vec<Value> = serde_json::from_str(&masters["fame_quest_stage"].master_decompressed).unwrap();
 
   let area = areas
     .iter()
-    .find(|area| area.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == area_id)
+    .find(|area| area.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == params.area_id)
     .unwrap();
   let current_rank = area
     .get("quest_rank_id")
@@ -132,8 +139,8 @@ pub async fn fame_quest_stage_list(request: ApiRequest) -> impl IntoHandlerRespo
     quest_list: stages
       .iter()
       .filter(|stage| {
-        stage.get("area_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == area_id
-          && stage.get("mode").unwrap().as_str().unwrap().parse::<i32>().unwrap() == mode
+        stage.get("area_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == params.area_id
+          && stage.get("mode").unwrap().as_str().unwrap().parse::<i32>().unwrap() == params.mode
       })
       .map(|stage| FameQuestStageInfo {
         stage_id: stage.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),

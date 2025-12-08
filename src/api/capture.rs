@@ -6,7 +6,7 @@ use base64::Engine;
 use serde::Deserialize;
 use tracing::debug;
 
-use crate::api::ApiRequest;
+use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Signed};
 use crate::user::session::Session;
 
@@ -25,12 +25,19 @@ pub struct CaptureDeserialized {
   pub user_local_settings_json: String,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct CaptureSendRequest {
+  pub capture: String,
+}
+
 // Well... capture = base64(json(base64(gzip(json(json(TutorialData) + json(UserLocalSettings))))))
 // It seems to be a telemetry endpoint without API side effects.
-pub async fn capture_send(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  let capture = &request.body["capture"];
+pub async fn capture_send(
+  session: Arc<Session>,
+  Params(params): Params<CaptureSendRequest>,
+) -> impl IntoHandlerResponse {
   let capture = BASE64_STANDARD_NO_PAD
-    .decode(capture)
+    .decode(params.capture)
     .expect("failed to decode capture from base64");
   let capture = serde_json::from_slice::<CaptureRequest>(&capture).expect("failed to deserialize capture");
 
