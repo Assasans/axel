@@ -327,6 +327,10 @@ pub async fn get_masters() -> &'static HashMap<String, MasterAllItem> {
   MASTERS.get_or_init(load_masters).await
 }
 
+pub fn get_masters_definitely_initialized() -> &'static HashMap<String, MasterAllItem> {
+  MASTERS.get().expect("masters not loaded yet")
+}
+
 #[derive(Debug, Deserialize)]
 pub struct MasterAllRequest {
   #[serde(deserialize_with = "crate::serde_compat::comma_separated_string")]

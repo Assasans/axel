@@ -11,6 +11,7 @@ pub mod database;
 pub mod extractor;
 pub mod handler;
 pub mod impl_handler;
+pub mod intimacy_rank;
 pub mod master;
 pub mod normalize_path;
 pub mod notification;
