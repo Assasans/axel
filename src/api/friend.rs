@@ -1,26 +1,25 @@
 use std::sync::Arc;
 
 use anyhow::Context;
-use base64::prelude::BASE64_STANDARD_NO_PAD;
-use base64::Engine;
 use chrono::{DateTime, Utc};
 use indoc::indoc;
 use jwt_simple::prelude::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
-use tracing::{debug, info};
+use tracing::{debug, info, warn};
 
-use crate::api::ApiRequest;
-use crate::call::{CallCustom, CallResponse};
-use crate::handler::{IntoHandlerResponse, Signed, Unsigned};
+use crate::call::CallCustom;
+use crate::extractor::Params;
+use crate::handler::{IntoHandlerResponse, Signed};
 use crate::user::session::Session;
 use crate::AppState;
 
+// See [Wonder_Api_FriendlistResponseDto_Fields]
 #[derive(Serialize, Deserialize)]
 struct FriendList {
   pub friend_data: Vec<FriendData>,
   /// >= 100 disables Add Friend button
-  pub friend_count: i64,
-  pub greeting_sent_count: i64,
+  pub friend_count: i32,
+  pub greeting_sent_count: i32,
 }
 
 impl CallCustom for FriendList {}
@@ -44,31 +43,45 @@ struct FriendData {
   pub honor_id: i64,
 }
 
+#[derive(Debug, Clone, Copy, Deserialize_repr)]
+#[repr(i32)]
+pub enum FriendListSortType {
+  LatestLoginDescending = 0,
+  LatestLoginAscending = 1,
+}
+
+#[derive(Debug, Clone, Copy, Deserialize_repr)]
+#[repr(i32)]
+pub enum FriendListKind {
+  SentRequests = 1,
+  PendingApproval = 2,
+  Friends = 3,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct FriendListRequest {
+  pub page: i32,
+  pub sort_type: FriendListSortType,
+  #[serde(rename = "list_number")]
+  pub kind: FriendListKind,
+}
+
 // page=0
 // sort_type=1
 // list_number=2
-pub async fn friend_list(state: Arc<AppState>, request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  let page: i32 = request.body["page"].parse().context("failed to parse page as i32")?;
-  // 0 - latest login descending, 1 - latest login ascending
-  let sort_type: i32 = request.body["sort_type"]
-    .parse()
-    .context("failed to parse sort_type as i32")?;
-  // 1 - sent requests, 2 - pending approval, 3 - friends
-  let kind: i32 = request.body["list_number"]
-    .parse()
-    .context("failed to parse list_number as i32")?;
-
-  let friends = match kind {
-    1 => {
-      // Sent requests
+pub async fn friend_list(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<FriendListRequest>,
+) -> impl IntoHandlerResponse {
+  let friends = match params.kind {
+    FriendListKind::SentRequests => {
       vec![]
     }
-    2 => {
-      // Pending approval
+    FriendListKind::PendingApproval => {
       vec![]
     }
-    3 => {
-      // Friends
+    FriendListKind::Friends => {
       let client = state.pool.get().await.context("failed to get database connection")?;
       #[rustfmt::skip]
       let statement = client
@@ -127,14 +140,11 @@ pub async fn friend_list(state: Arc<AppState>, request: ApiRequest, session: Arc
         })
         .collect::<Vec<_>>()
     }
-    _ => {
-      return Err(anyhow::anyhow!("invalid list_number {}, expected 1, 2, or 3", kind));
-    }
   };
 
   Ok(Signed(
     FriendList {
-      friend_count: friends.len() as i64,
+      friend_count: friends.len() as i32,
       friend_data: friends,
       greeting_sent_count: 0,
     },
@@ -164,11 +174,7 @@ struct GreetingData {
   pub first: bool,
 }
 
-pub async fn greeting_list(
-  state: Arc<AppState>,
-  request: ApiRequest,
-  session: Arc<Session>,
-) -> impl IntoHandlerResponse {
+pub async fn greeting_list(state: Arc<AppState>, session: Arc<Session>) -> impl IntoHandlerResponse {
   Ok(Signed(
     GreetingList {
       sent_count: 0,
@@ -216,14 +222,24 @@ struct FriendRecommendation {
   pub first: bool,
 }
 
+#[derive(Debug, Clone, Copy, Deserialize_repr)]
+#[repr(i32)]
+pub enum FriendRecommendationKind {
+  RecommendedFirstFriends = 1,
+  SimilarlyRankedPlayers = 2,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct FriendRecommendationRequest {
+  #[serde(rename = "type")]
+  pub kind: FriendRecommendationKind,
+}
+
 pub async fn friend_recommendation_list(
   state: Arc<AppState>,
-  request: ApiRequest,
   session: Arc<Session>,
+  Params(params): Params<FriendRecommendationRequest>,
 ) -> impl IntoHandlerResponse {
-  // 1 - recommended first friends, 2 - similarly ranked players
-  let kind: i32 = request.body["type"].parse().context("failed to parse type as i32")?;
-
   Ok(Signed(
     FriendRecommendationList {
       friend_first_count: 0,
@@ -265,25 +281,21 @@ struct GreetingSendData {
   pub first: bool,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct GreetingSendRequest {
+  #[serde(rename = "user_no", deserialize_with = "crate::serde_compat::vec_as_i64")]
+  pub user_ids: Vec<i64>,
+  #[serde(with = "crate::string_as_base64")]
+  pub message: String,
+}
+
 // user_no=["-1"]
 // message=a2lsbMKgeW91cnNlbGY
 pub async fn greeting_send(
   state: Arc<AppState>,
-  request: ApiRequest,
   session: Arc<Session>,
+  Params(params): Params<GreetingSendRequest>,
 ) -> impl IntoHandlerResponse {
-  let user_ids = serde_json::from_str::<Vec<String>>(&request.body["user_no"])
-    .context("failed to parse user_no as Vec<String>")?
-    .into_iter()
-    .map(|id| id.parse::<i64>())
-    .collect::<Result<Vec<_>, _>>()
-    .context("failed to parse user_no as Vec<i64>")?;
-
-  let message = &request.body["message"];
-  let message = BASE64_STANDARD_NO_PAD
-    .decode(message)
-    .context("failed to decode message from base64")?;
-
   Ok(Signed(
     GreetingSend {
       item_count: 0,
@@ -355,11 +367,16 @@ impl FriendDisplayPlayData {
   }
 }
 
-pub async fn friend_info(state: Arc<AppState>, request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  let friend_user_no: i64 = request.body["friend_user_no"]
-    .parse()
-    .context("failed to parse friend_user_no")?;
+#[derive(Debug, Deserialize)]
+pub struct FriendInfoRequest {
+  pub friend_user_no: i64,
+}
 
+pub async fn friend_info(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<FriendInfoRequest>,
+) -> impl IntoHandlerResponse {
   let client = state.pool.get().await.context("failed to get database connection")?;
   #[rustfmt::skip]
   let statement = client
@@ -377,13 +394,13 @@ pub async fn friend_info(state: Arc<AppState>, request: ApiRequest, session: Arc
     .await
     .context("failed to prepare statement")?;
   let rows = client
-    .query(&statement, &[&friend_user_no])
+    .query(&statement, &[&params.friend_user_no])
     .await
     .context("failed to execute query")?;
   info!(?rows, "get friend info query executed");
   let row = rows
     .first()
-    .ok_or_else(|| anyhow::anyhow!("no profile found for user {:?}", friend_user_no))?;
+    .ok_or_else(|| anyhow::anyhow!("no profile found for user {:?}", params.friend_user_no))?;
   let id: i64 = row.get(0);
   let username: String = row.get(1);
   let about_me: Option<String> = row.get(2);
@@ -429,36 +446,52 @@ pub async fn friend_info(state: Arc<AppState>, request: ApiRequest, session: Arc
   ))
 }
 
-// Braindead API design, it just toggles mute state instead of having "is_muted" parameter.
-pub async fn friend_mute(state: Arc<AppState>, request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  let friend_user_no: i64 = request.body["friend_user_no"]
-    .parse()
-    .context("failed to parse friend_user_no")?;
+#[derive(Debug, Deserialize)]
+pub struct FriendMuteRequest {
+  pub friend_user_no: i64,
+}
 
+// Braindead API design, it just toggles mute state instead of having "is_muted" parameter.
+pub async fn friend_mute(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<FriendMuteRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params.friend_user_no, "encountered stub: friend_mute");
+
+  // See [Wonder_Api_FriendmuteResponseDto_Fields]
   Ok(Signed((), session))
+}
+
+#[derive(Debug, Deserialize)]
+pub struct FriendRemoveRequest {
+  pub friend_user_no: i64,
 }
 
 pub async fn friend_remove(
   state: Arc<AppState>,
-  request: ApiRequest,
   session: Arc<Session>,
+  Params(params): Params<FriendRemoveRequest>,
 ) -> impl IntoHandlerResponse {
-  let friend_user_no: i64 = request.body["friend_user_no"]
-    .parse()
-    .context("failed to parse friend_user_no")?;
+  warn!(?params.friend_user_no, "encountered stub: friend_remove");
 
+  // See [Wonder_Api_FriendremoveResponseDto_Fields]
   Ok(Signed((), session))
+}
+
+#[derive(Debug, Deserialize)]
+pub struct FriendRequestRequest {
+  pub friend_user_no: i64,
 }
 
 pub async fn friend_request(
   state: Arc<AppState>,
-  request: ApiRequest,
   session: Arc<Session>,
+  Params(params): Params<FriendRequestRequest>,
 ) -> impl IntoHandlerResponse {
-  let friend_user_no: i64 = request.body["friend_user_no"]
-    .parse()
-    .context("failed to parse friend_user_no")?;
+  warn!(?params.friend_user_no, "encountered stub: friend_request");
 
+  // See [Wonder_Api_FriendrequestResponseDto_Fields]
   Ok(Signed((), session))
 }
 
@@ -487,14 +520,17 @@ struct FriendSearch {
 
 impl CallCustom for FriendSearch {}
 
+#[derive(Debug, Deserialize)]
+pub struct FriendSearchRequest {
+  pub friend_user_no: i64,
+}
+
 pub async fn friend_search(
   state: Arc<AppState>,
-  request: ApiRequest,
   session: Arc<Session>,
+  Params(request): Params<FriendSearchRequest>,
 ) -> impl IntoHandlerResponse {
-  let friend_user_no: i64 = request.body["friend_user_no"]
-    .parse()
-    .context("failed to parse friend_user_no")?;
+  warn!(?request.friend_user_no, "encountered stub: friend_search");
 
   Ok(Signed(
     FriendSearch {

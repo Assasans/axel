@@ -2,39 +2,40 @@ use std::sync::Arc;
 
 use jwt_simple::prelude::Serialize;
 
-use crate::api::ApiRequest;
-use crate::call::{CallCustom, CallResponse};
+use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Signed};
 use crate::user::session::Session;
 
+// See [Wonder_Api_InteractionResponseDto_Fields]
 #[derive(Debug, Serialize)]
-pub struct Interaction {
+pub struct InteractionResponse {
   pub characters: Vec<Character>,
 }
 
-impl CallCustom for Interaction {}
+impl CallCustom for InteractionResponse {}
 
+// See [Wonder_Api_InteractionCharactersResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct Character {
-  pub character_id: u32,
-  pub rank: u32,
-  pub rank_progress: u32,
+  pub character_id: i64,
+  pub rank: i32,
+  pub rank_progress: i32,
   pub voice: String,
-  pub character_enhance_stage_id: u32,
-  pub character_enhance_badge: u32,
-  pub character_enhance_released_count: [u32; 4],
+  pub character_enhance_stage_id: i32,
+  pub character_enhance_badge: i32,
+  pub character_enhance_released_count: [i32; 4],
   pub bg: String,
 }
 
 impl Character {
   pub fn new(
-    character_id: u32,
-    rank: u32,
-    rank_progress: u32,
+    character_id: i64,
+    rank: i32,
+    rank_progress: i32,
     voice: String,
-    character_enhance_stage_id: u32,
-    character_enhance_badge: u32,
-    character_enhance_released_count: [u32; 4],
+    character_enhance_stage_id: i32,
+    character_enhance_badge: i32,
+    character_enhance_released_count: [i32; 4],
     bg: String,
   ) -> Self {
     Self {
@@ -50,9 +51,9 @@ impl Character {
   }
 }
 
-pub async fn interaction(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+pub async fn interaction(session: Arc<Session>) -> impl IntoHandlerResponse {
   Ok(Signed(
-    Interaction {
+    InteractionResponse {
       characters: vec![
         Character::new(100, 1, 4, "".to_owned(), 1000101, 0, [0, 0, 0, 0], "".to_owned()),
         Character::new(101, 1, 4, "".to_owned(), 1010101, 0, [0, 0, 0, 0], "".to_owned()),

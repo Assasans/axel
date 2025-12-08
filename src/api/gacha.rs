@@ -5,7 +5,7 @@ use serde_json::{json, Value};
 use crate::api::master_all::get_masters;
 use crate::api::{ApiRequest, NotificationData, RemoteData, RemoteDataItemType};
 use crate::call::{CallCustom, CallResponse};
-use crate::handler::{HandlerResponse, IntoHandlerResponse, Unsigned};
+use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::master;
 
 #[derive(Default, Debug, Serialize)]

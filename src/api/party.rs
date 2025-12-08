@@ -9,7 +9,7 @@ use tracing::warn;
 use crate::api::dungeon::{PartyAccessory, PartyMember, PartyWeapon};
 use crate::api::party_info::{party_info, Party};
 use crate::api::ApiRequest;
-use crate::call::{CallCustom, CallResponse};
+use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::user::session::Session;
 

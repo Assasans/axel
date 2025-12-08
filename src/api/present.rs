@@ -1,10 +1,12 @@
 use std::sync::Arc;
 
 use chrono::Utc;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
+use tracing::warn;
 
-use crate::api::{ApiRequest, NotificationData, RemoteDataItemType};
+use crate::api::{NotificationData, RemoteDataItemType};
 use crate::call::{CallCustom, CallResponse};
+use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Signed};
 use crate::user::session::Session;
 
@@ -30,11 +32,19 @@ pub struct Present {
   pub msg: String,
 }
 
-pub async fn present_list(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  let start: i32 = request.body["start"].parse().unwrap();
-  let end: i32 = request.body["end"].parse().unwrap();
+#[derive(Debug, Deserialize)]
+pub struct PresentListRequest {
+  pub start: i32,
+  pub end: i32,
+}
 
-  let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(PresentList {
+pub async fn present_list(
+  session: Arc<Session>,
+  Params(params): Params<PresentListRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params.start, ?params.end, "encountered stub: present_list");
+
+  let mut response = CallResponse::new_success(Box::new(PresentList {
     presents: vec![Present {
       id: 28231780,
       present_id: 48,
@@ -73,11 +83,19 @@ pub struct PresentLog {
   pub msg: String,
 }
 
-pub async fn present_log_list(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  let start: i32 = request.body["start"].parse().unwrap();
-  let end: i32 = request.body["end"].parse().unwrap();
+#[derive(Debug, Deserialize)]
+pub struct PresentLogListRequest {
+  pub start: i32,
+  pub end: i32,
+}
 
-  let response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(PresentLogList {
+pub async fn present_log_list(
+  session: Arc<Session>,
+  Params(params): Params<PresentLogListRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params.start, ?params.end, "encountered stub: present_log_list");
+
+  let response = CallResponse::new_success(Box::new(PresentLogList {
     presents: vec![PresentLog {
       id: 28231780,
       present_id: 48,
@@ -128,13 +146,16 @@ pub struct PresentGetUnreceived {
   pub item_num: i32,
 }
 
-pub async fn present_get(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  let ids = request.body["ids"]
-    .split(',')
-    .filter_map(|id| id.parse::<i32>().ok())
-    .collect::<Vec<_>>();
+#[derive(Debug, Deserialize)]
+pub struct PresentGetRequest {
+  #[serde(deserialize_with = "crate::serde_compat::comma_separated_i32")]
+  pub ids: Vec<i32>,
+}
 
-  let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(PresentGet {
+pub async fn present_get(session: Arc<Session>, Params(params): Params<PresentGetRequest>) -> impl IntoHandlerResponse {
+  warn!(?params.ids, "encountered stub: present_get");
+
+  let mut response = CallResponse::new_success(Box::new(PresentGet {
     presents: vec![PresentGetReceived {
       id: 28231780,
       present_id: 48,

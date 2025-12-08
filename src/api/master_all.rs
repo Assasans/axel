@@ -15,7 +15,7 @@ use tokio::sync::OnceCell;
 use tracing::{debug, info, trace, warn};
 
 use crate::api::ApiRequest;
-use crate::call::{CallCustom, CallResponse};
+use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 
 #[derive(Debug, Serialize)]
@@ -341,13 +341,4 @@ pub async fn master_all(request: ApiRequest) -> impl IntoHandlerResponse {
     masterarray: masters,
     compressed: true,
   })
-}
-
-#[derive(Serialize, Deserialize)]
-struct Root {
-  pub id: String,
-  pub priority: String,
-  pub start_at: String,
-  pub end_at: String,
-  pub gacha_id: String,
 }

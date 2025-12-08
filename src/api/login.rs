@@ -5,12 +5,14 @@ use base64::prelude::BASE64_STANDARD_NO_PAD;
 use base64::Engine;
 use chrono::{DateTime, Utc};
 use jwt_simple::prelude::Serialize;
+use serde::Deserialize;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use tracing::{debug, info};
 
-use crate::api::{ApiRequest, NotificationData};
+use crate::api::NotificationData;
 use crate::build_info::BUILD_INFO;
 use crate::call::{CallCustom, CallResponse};
+use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Signed};
 use crate::notification::{FriendGreetingNotify, IntoNotificationData};
 use crate::user::id::UserId;
@@ -42,9 +44,13 @@ pub enum TutorialState {
   Completed = 99,
 }
 
-pub async fn login(state: Arc<AppState>, request: ApiRequest) -> impl IntoHandlerResponse {
-  let uuid = request.body.get("uuid").context("no 'uuid' passed")?;
-  let uuid = uuid.parse::<UserUuid>().unwrap();
+#[derive(Debug, Deserialize)]
+pub struct LoginRequestRequest {
+  pub uuid: String,
+}
+
+pub async fn login(state: Arc<AppState>, Params(params): Params<LoginRequestRequest>) -> impl IntoHandlerResponse {
+  let uuid = params.uuid.parse::<UserUuid>().unwrap();
   debug!("{:?}", uuid);
 
   let client = state.pool.get().await.context("failed to get database connection")?;
@@ -118,14 +124,9 @@ pub async fn login(state: Arc<AppState>, request: ApiRequest) -> impl IntoHandle
   let session = Arc::new(Session::new(id, Some(uuid.to_string())));
 
   session.rotate_user_key();
-  request
-    .state
-    .sessions
-    .lock()
-    .unwrap()
-    .insert(session.user_id, session.clone());
+  state.sessions.lock().unwrap().insert(session.user_id, session.clone());
 
-  let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(Login {
+  let mut response = CallResponse::new_success(Box::new(Login {
     user_no: session.user_id.to_string(),
     user_key: const_hex::encode(session.user_key.lock().unwrap().expect("no user key")),
     // "---" matches the behavior of the original server

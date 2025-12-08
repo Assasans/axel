@@ -311,7 +311,9 @@ impl<'de> de::Deserializer<'de> for StrDeserializer<'de> {
   where
     V: Visitor<'de>,
   {
-    Err(de::Error::custom("sequences are not supported"))
+    serde_json::Deserializer::from_str(self.0)
+      .deserialize_seq(_visitor)
+      .map_err(de::Error::custom)
   }
 
   fn deserialize_tuple<V>(self, _len: usize, _visitor: V) -> Result<V::Value, Self::Error>

@@ -2,11 +2,11 @@ use std::sync::Arc;
 
 use jwt_simple::prelude::Serialize;
 
-use crate::api::ApiRequest;
-use crate::call::{CallCustom, CallResponse};
+use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Signed};
 use crate::user::session::Session;
 
+// See [Wonder_Api_LoginbonusResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct LoginBonus {
   pub goods: Vec<LoginBonusGood>,
@@ -19,17 +19,18 @@ pub struct LoginBonus {
 
 impl CallCustom for LoginBonus {}
 
+// See [Wonder_Api_LoginbonusGoodsResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct LoginBonusGood {
-  pub login_bonus_master_id: u32,
-  pub day_count: u32,
-  pub itemtype: u32,
-  pub itemid: u32,
-  pub itemnum: u32,
+  pub login_bonus_master_id: i32,
+  pub day_count: i32,
+  pub itemtype: i32,
+  pub itemid: i32,
+  pub itemnum: i32,
 }
 
 impl LoginBonusGood {
-  pub fn new(login_bonus_master_id: u32, day_count: u32, itemtype: u32, itemid: u32, itemnum: u32) -> Self {
+  pub fn new(login_bonus_master_id: i32, day_count: i32, itemtype: i32, itemid: i32, itemnum: i32) -> Self {
     Self {
       login_bonus_master_id,
       day_count,
@@ -40,31 +41,55 @@ impl LoginBonusGood {
   }
 }
 
+// See [Wonder_Api_LoginbonusOmikujiResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct Omikuji {
-  pub omikuji_id: u32,
-  pub fortune_id: u32,
+  pub omikuji_id: i32,
+  pub fortune_id: i32,
 }
 
+// See [Wonder_Api_RandomLoginbonusResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct RandomLoginBonus {
-  pub random_loginbonus_id: u32,
-  pub lot_id: u32,
-  pub story_id: u32,
-  pub user_story_id: u32,
-  pub days: Vec<()>,
+  pub random_loginbonus_id: i32,
+  pub lot_id: i32,
+  pub story_id: i32,
+  pub user_story_id: i32,
+  pub days: Vec<RandomLoginBonusDay>,
 }
 
+// See [Wonder_Api_RandomLoginbonusDaysResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct RandomLoginBonusDay {
+  pub day: i32,
+  pub pattern_id: i32,
+}
+
+// See [Wonder_Api_RouletteLoginbonusResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct RouletteLoginBonus {
-  pub roulette_loginbonus_id: u32,
-  pub result_pattern_id: u32,
-  pub roulette_view_id: u32,
-  pub days: Vec<()>,
-  pub sns_share_results: Vec<()>,
+  pub roulette_loginbonus_id: i32,
+  pub result_pattern_id: i32,
+  pub roulette_view_id: i32,
+  pub days: Vec<RouletteLoginBonusDay>,
+  pub sns_share_results: Vec<RouletteLoginBonusSnsShareResult>,
 }
 
-pub async fn login_bonus(_request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+// See [Wonder_Api_RouletteLoginbonusDaysResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct RouletteLoginBonusDay {
+  pub day: i32,
+  pub result_pattern_id: i32,
+}
+
+// See [Wonder_Api_RouletteLoginbonusSnsShareResultResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct RouletteLoginBonusSnsShareResult {
+  pub day: i32,
+  pub result_pattern_id: i32,
+}
+
+pub async fn login_bonus(session: Arc<Session>) -> impl IntoHandlerResponse {
   Ok(Signed(
     LoginBonus {
       goods: vec![

@@ -8,7 +8,6 @@ use serde_repr::{Deserialize_repr, Serialize_repr};
 use crate::call::ApiCallParams;
 use crate::AppState;
 
-pub mod account;
 pub mod ad_reward;
 pub mod assist;
 pub mod battle;
@@ -20,7 +19,6 @@ pub mod expedition;
 pub mod friend;
 pub mod gacha;
 pub mod home;
-pub mod honor;
 pub mod idlink_confirm_google;
 pub mod interaction;
 pub mod items;
@@ -115,6 +113,7 @@ pub enum RemoteDataItemType {
 
 // See [Wonder.Util.UserParam$$Add] code and [Wonder.Util.UserParam$$Get] cross-references
 impl From<RemoteDataItemType> for i32 {
+  #[allow(deprecated)]
   fn from(item_type: RemoteDataItemType) -> Self {
     match item_type {
       RemoteDataItemType::Money => 1,
@@ -165,6 +164,7 @@ impl From<RemoteDataItemType> for i32 {
 }
 
 impl From<i32> for RemoteDataItemType {
+  #[allow(deprecated)]
   fn from(value: i32) -> Self {
     match value {
       1 => RemoteDataItemType::Money,

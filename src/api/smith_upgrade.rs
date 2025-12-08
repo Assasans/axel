@@ -5,7 +5,7 @@ use crate::api::master_all::get_masters;
 use crate::api::quest_fame::FameQuestReleaseConditionInfo;
 use crate::api::smith_craft::BlacksmithEquippedItemResponseDto;
 use crate::api::ApiRequest;
-use crate::call::{CallCustom, CallResponse};
+use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 
 // See [Wonder_Api_ItempoweruplistResponseDto_Fields]

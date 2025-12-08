@@ -3,7 +3,7 @@ use serde_json::Value;
 
 use crate::api::master_all::get_masters;
 use crate::api::ApiRequest;
-use crate::call::{CallCustom, CallResponse};
+use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 
 // See [Wonder_Api_BlacksmithlistResponseDto_Fields]

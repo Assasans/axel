@@ -7,7 +7,6 @@ use serde::Deserialize;
 use tracing::debug;
 
 use crate::api::ApiRequest;
-use crate::call::{CallCustom, CallResponse};
 use crate::handler::{IntoHandlerResponse, Signed};
 use crate::user::session::Session;
 

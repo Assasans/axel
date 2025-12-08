@@ -3,8 +3,7 @@ use std::sync::LazyLock;
 use jwt_simple::prelude::Serialize;
 
 use crate::api::master_all::get_masters;
-use crate::api::ApiRequest;
-use crate::call::{CallCustom, CallResponse};
+use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 
 #[derive(Debug, Serialize)]
@@ -32,7 +31,7 @@ impl MasterListItem {
   }
 }
 
-pub async fn master_list(_request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn master_list() -> impl IntoHandlerResponse {
   Unsigned(MasterList {
     masterversion: "202408050001".to_owned(),
     masterarray: get_masters()

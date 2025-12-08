@@ -1,10 +1,13 @@
-use anyhow::Context;
-use jwt_simple::prelude::Serialize;
-use tracing::info;
+use std::sync::Arc;
 
-use crate::api::ApiRequest;
-use crate::call::{CallCustom, CallResponse};
-use crate::handler::{IntoHandlerResponse, Unsigned};
+use jwt_simple::prelude::Serialize;
+use serde::Deserialize;
+use tracing::warn;
+
+use crate::call::CallCustom;
+use crate::extractor::Params;
+use crate::handler::{IntoHandlerResponse, Signed, Unsigned};
+use crate::user::session::Session;
 use crate::user::uuid::UserUuid;
 
 #[derive(Debug, Serialize)]
@@ -16,9 +19,14 @@ pub struct IdConfirm {
 
 impl CallCustom for IdConfirm {}
 
-pub async fn id_confirm(request: ApiRequest) -> impl IntoHandlerResponse {
-  let take_over_id = &request.body["take_over_id"];
-  let password = &request.body["password"];
+#[derive(Debug, Deserialize)]
+pub struct IdConfirmRequest {
+  pub take_over_id: String,
+  pub password: String,
+}
+
+pub async fn id_confirm(Params(params): Params<IdConfirmRequest>) -> impl IntoHandlerResponse {
+  warn!(?params.take_over_id, ?params.password, "encountered stub: id_confirm");
 
   Unsigned(IdConfirm {
     name: "Mock User".to_string(),
@@ -34,12 +42,18 @@ pub struct PrepareSetMigration {
 
 impl CallCustom for PrepareSetMigration {}
 
-pub async fn prepare_set_migration(request: ApiRequest) -> impl IntoHandlerResponse {
-  Unsigned(PrepareSetMigration {
-    user_key: "ffffffffffffffffffffffffffffffee".to_string(),
-  })
+pub async fn prepare_set_migration(session: Arc<Session>) -> impl IntoHandlerResponse {
+  warn!("encountered stub: prepare_set_migration");
+
+  Signed(
+    PrepareSetMigration {
+      user_key: "ffffffffffffffffffffffffffffffee".to_string(),
+    },
+    session,
+  )
 }
 
+// See [Wonder_Api_NewidcheckResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct NewIdCheck {
   pub check: i32,
@@ -47,10 +61,11 @@ pub struct NewIdCheck {
 
 impl CallCustom for NewIdCheck {}
 
-pub async fn new_id_check(request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn new_id_check() -> impl IntoHandlerResponse {
   Unsigned(NewIdCheck { check: 0 })
 }
 
+// See [Wonder_Api_NewidResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct NewId {
   pub take_over_id: String,
@@ -58,14 +73,20 @@ pub struct NewId {
 
 impl CallCustom for NewId {}
 
-pub async fn new_id(request: ApiRequest) -> impl IntoHandlerResponse {
-  let newpassword = &request.body["newpassword"];
+#[derive(Debug, Deserialize)]
+pub struct NewIdRequest {
+  pub newpassword: String,
+}
+
+pub async fn new_id(Params(request): Params<NewIdRequest>) -> impl IntoHandlerResponse {
+  warn!(?request.newpassword, "encountered stub: new_id");
 
   Unsigned(NewId {
     take_over_id: "MTF00LTR".to_owned(),
   })
 }
 
+// See [Wonder_Api_IdloginResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct IdLogin {
   pub user_key: String,
@@ -76,13 +97,16 @@ pub struct IdLogin {
 
 impl CallCustom for IdLogin {}
 
-pub async fn id_login(request: ApiRequest) -> impl IntoHandlerResponse {
-  let take_over_id = &request.body["take_over_id"];
-  let password = &request.body["password"];
+#[derive(Debug, Deserialize)]
+pub struct IdLoginRequest {
+  pub take_over_id: String,
+  pub password: String,
+  pub uuid: String,
+}
 
-  let uuid = request.body.get("uuid").context("no 'uuid' passed")?;
-  let uuid = uuid.parse::<UserUuid>().unwrap();
-  info!("{:?}", uuid);
+pub async fn id_login(Params(params): Params<IdLoginRequest>) -> impl IntoHandlerResponse {
+  let uuid = params.uuid.parse::<UserUuid>().unwrap();
+  warn!(?params.take_over_id, ?params.password, ?uuid, "encountered stub: id_login");
 
   // TODO: This should reassociate UUID with new account from take_over_id
 

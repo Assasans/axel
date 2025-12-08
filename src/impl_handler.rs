@@ -49,6 +49,7 @@ macro_rules! impl_handler {
       Fut: Future<Output = Box<dyn IntoHandlerResponse>> + Send + 'static,
       $($ty: FromContext + Send + 'static,)*
     {
+      #[allow(unused_mut)]
       fn call(&self, mut ctx: HandlerContext) -> BoxFuture<Box<dyn IntoHandlerResponse>> {
         $(
           let $ty = match $ty::from_context(&mut ctx) {

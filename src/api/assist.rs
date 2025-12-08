@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::api::ApiRequest;
-use crate::call::{CallCustom, CallResponse};
+use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 
 // See [Wonder_Api_AssistMakeNoticeResponseDto_Fields] - no fields

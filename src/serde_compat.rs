@@ -5,7 +5,7 @@
 use std::fmt;
 
 use serde::de::Unexpected;
-use serde::{de, Deserializer};
+use serde::{de, Deserialize, Deserializer};
 
 struct DeserializeI64WithVisitor;
 
@@ -139,4 +139,45 @@ where
   D: Deserializer<'de>,
 {
   deserializer.deserialize_any(DeserializeI32WithVisitor)
+}
+
+pub fn vec_as_i64<'de, D>(deserializer: D) -> Result<Vec<i64>, D::Error>
+where
+  D: Deserializer<'de>,
+{
+  #[derive(Deserialize)]
+  struct Wrapper(#[serde(deserialize_with = "crate::serde_compat::as_i64")] i64);
+
+  let values = Vec::<Wrapper>::deserialize(deserializer)?;
+  Ok(values.into_iter().map(|Wrapper(value)| value).collect())
+}
+
+pub fn comma_separated_i32<'de, D>(deserializer: D) -> Result<Vec<i32>, D::Error>
+where
+  D: Deserializer<'de>,
+{
+  struct CommaSeparatedVisitor;
+
+  impl<'de> de::Visitor<'de> for CommaSeparatedVisitor {
+    type Value = Vec<i32>;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+      formatter.write_str("a comma-separated string of integers")
+    }
+
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+    where
+      E: de::Error,
+    {
+      v.split(',')
+        .map(|s| {
+          s.trim()
+            .parse::<i32>()
+            .map_err(|_| E::custom(format!("invalid integer: {}", s)))
+        })
+        .collect()
+    }
+  }
+
+  deserializer.deserialize_str(CommaSeparatedVisitor)
 }

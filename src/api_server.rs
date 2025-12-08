@@ -1,5 +1,4 @@
 use std::collections::{BTreeMap, HashMap};
-use std::convert::Infallible;
 use std::net::SocketAddr;
 use std::sync::Arc;
 use std::{io, str};
@@ -24,12 +23,12 @@ use tower::Layer;
 use tracing::{debug, info, info_span, trace, warn, Instrument, Span};
 
 use crate::api::{
-  account, ad_reward, assist, battle, capture, character, dungeon, exchange, expedition, friend, gacha, home, honor,
+  ad_reward, assist, battle, capture, character, dungeon, exchange, expedition, friend, gacha, home,
   idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check, master_all, master_list, mission,
   notice, party, party_info, present, profile, quest_fame, quest_hunting, quest_main, smith_craft, smith_sell,
   smith_upgrade, story, surprise, transfer, tutorial, ApiRequest,
 };
-use crate::call::{ApiCallParams, CallCustom, CallMeta, CallResponse};
+use crate::call::{ApiCallParams, CallMeta, CallResponse};
 use crate::client_ip::add_client_ip;
 use crate::handler::{HandlerContext, IntoHandlerResponse, Signed, Unsigned};
 use crate::normalize_path::normalize_path;
@@ -130,17 +129,17 @@ async fn api_call(
     .handle("root_box_check", root_check_box)
     .handle("maintenancecheck", maintenance_check::maintenance_check)
     .handle("firebasetoken", firebase_token)
-    .handle("setname", account::set_name)
-    .handle("delete_account", account::delete_account)
+    .handle("setname", profile::set_name)
+    .handle("delete_account", profile::delete_account)
     .handle("storyreward", story::story_reward)
     .handle("story_read", story::story_read)
     .handle("loginbonus", login_bonus::login_bonus)
     .handle("home", home::home)
     .handle("profile", profile::profile)
     .handle("setprofile", profile::set_profile)
-    .handle("honor_list", honor::honor_list)
-    .handle("honor_set", honor::honor_set)
-    .handle("seticon", honor::set_icon)
+    .handle("honor_list", profile::honor_list)
+    .handle("honor_set", profile::honor_set)
+    .handle("seticon", profile::set_icon)
     .handle("interaction", interaction::interaction)
     .handle("partyinfo", party_info::party_info)
     .handle("storylist", story::story_list)
@@ -233,7 +232,7 @@ async fn api_call(
   debug!("api call meta: {:?}", meta);
 
   let mut session_span: Option<Span> = None;
-  let mut session = if let Some(user_key) = &meta.uk {
+  let session = if let Some(user_key) = &meta.uk {
     let user_key = const_hex::decode(user_key).expect(&format!("failed to parse user key: {:?}", user_key));
     let user_key: [u8; 16] = user_key
       .clone()

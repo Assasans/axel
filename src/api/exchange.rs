@@ -7,7 +7,7 @@ use tracing::warn;
 
 use crate::api::master_all::get_masters;
 use crate::api::ApiRequest;
-use crate::call::{CallCustom, CallResponse};
+use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Signed};
 use crate::user::session::Session;
 

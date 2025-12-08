@@ -5,7 +5,7 @@ use serde_json::{json, Value};
 
 use crate::api::dungeon::PartyMember;
 use crate::api::ApiRequest;
-use crate::call::{CallCustom, CallResponse};
+use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Signed};
 use crate::user::session::Session;
 

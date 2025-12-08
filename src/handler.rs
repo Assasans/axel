@@ -2,7 +2,7 @@ use std::future::Future;
 use std::pin::Pin;
 use std::sync::Arc;
 
-use tracing::{error, warn};
+use tracing::error;
 
 use crate::api::ApiRequest;
 use crate::call::{CallCustom, CallResponse};

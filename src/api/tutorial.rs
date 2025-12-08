@@ -1,18 +1,26 @@
 use std::sync::Arc;
 
 use anyhow::Context;
+use serde::Deserialize;
 use tracing::info;
 
-use crate::api::ApiRequest;
-use crate::call::{CallCustom, CallResponse};
+use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::user::session::Session;
 use crate::AppState;
 
-pub async fn tutorial(state: Arc<AppState>, request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
-  let kind = &request.body["type"];
-  let progress: i32 = request.body["progress"].parse().unwrap();
+#[derive(Debug, Deserialize)]
+pub struct TutorialRequest {
+  #[serde(rename = "type")]
+  pub kind: String,
+  pub progress: i32,
+}
 
+pub async fn tutorial(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<TutorialRequest>,
+) -> impl IntoHandlerResponse {
   let client = state.pool.get().await.context("failed to get database connection")?;
   #[rustfmt::skip]
   let statement = client
@@ -24,10 +32,10 @@ pub async fn tutorial(state: Arc<AppState>, request: ApiRequest, session: Arc<Se
     .await
     .context("failed to prepare statement")?;
   client
-    .execute(&statement, &[&session.user_id, &progress])
+    .execute(&statement, &[&session.user_id, &params.progress])
     .await
     .context("failed to execute query")?;
-  info!(?session.user_id, ?kind, ?progress, "tutorial progress updated");
+  info!(?session.user_id, ?params.kind, ?params.progress, "tutorial progress updated");
 
   Ok(Unsigned(()))
 }
