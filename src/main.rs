@@ -11,7 +11,6 @@ pub mod database;
 pub mod extractor;
 pub mod handler;
 pub mod impl_handler;
-pub mod intimacy_rank;
 pub mod master;
 pub mod member;
 pub mod normalize_path;
@@ -24,6 +23,7 @@ pub mod settings;
 pub mod static_server;
 pub mod string_as_base64;
 pub mod user;
+pub mod level;
 
 use std::collections::HashMap;
 use std::env;

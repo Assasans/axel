@@ -1,6 +1,7 @@
-use crate::api::MemberParameterWire;
 use crate::api::dungeon::PartyMember;
 use crate::api::master_all::get_master_manager;
+use crate::api::{MemberFameStats, MemberParameterWire, MemberStats, SkillPaFame};
+use crate::level::get_member_level_calculator;
 
 /// Member information from master data. Can be used to create new [Member] instances.
 #[derive(Debug, Clone)]
@@ -118,79 +119,159 @@ impl MemberPrototype {
   }
 
   /// Creates a new [Member] instance from this prototype.
-  /// TODO: TEMPORARY
-  pub fn create_member_wire(&self) -> MemberParameterWire {
-    MemberParameterWire {
-      id: 0,
-      lv: 1,
-      exp: 0,
-      member_id: self.id,
-      ac_skill_id_a: 0,
-      ac_skill_lv_a: 1,
-      ac_skill_val_a: 0,
-      ac_skill_id_b: 0,
-      ac_skill_lv_b: 1,
-      ac_skill_val_b: 0,
-      ac_skill_id_c: 0,
-      ac_skill_lv_c: 1,
-      ac_skill_val_c: 0,
-      hp: self.stats.hp.max,
-      magicattack: self.stats.magic_attack.max,
-      defense: self.stats.defense.max,
-      magicdefence: self.stats.magic_defense.max,
-      agility: self.stats.agility.max,
-      dexterity: self.stats.dexterity.max,
-      luck: self.stats.luck.max,
-      limit_break: 0,
-      character_id: self.character_id,
-      passiveskill: 0,
-      specialattack: 0,
-      resist_state: self.resistance_group.id,
-      resist_attr: 0,
-      attack: self.stats.attack.min,
+  pub fn create_member(&self, id: i32) -> Member<'_> {
+    Member {
+      id,
+      prototype: self,
+      xp: if self.character_id == 102 { 150_000 } else { 35_000 },
+      active_skills: self
+        .active_skills
+        .iter()
+        .map(|skill_opt| {
+          skill_opt.as_ref().map(|skill| MemberActiveSkill {
+            prototype: skill,
+            level: 1,
+            value: skill.value.max,
+          })
+        })
+        .collect::<Vec<_>>()
+        .try_into()
+        .unwrap(),
+      stats: MemberStats {
+        hp: self.stats.hp.max,
+        attack: self.stats.attack.max,
+        magicattack: self.stats.magic_attack.max,
+        defense: self.stats.defense.max,
+        magicdefence: self.stats.magic_defense.max,
+        agility: self.stats.agility.max,
+        dexterity: self.stats.dexterity.max,
+        luck: self.stats.luck.max,
+      },
+      limit_break: 2,
       waiting_room: 0,
-      main_strength: 0,
-      main_strength_for_fame_quest: 0,
-      sub_strength: 0,
-      sub_strength_for_fame_quest: 0,
-      sub_strength_bonus: 0,
-      sub_strength_bonus_for_fame_quest: 0,
-      fame_hp_rank: 0,
-      fame_attack_rank: 0,
-      fame_defense_rank: 0,
-      fame_magicattack_rank: 0,
-      fame_magicdefence_rank: 0,
+      main_strength: MemberStrength::default(),
+      sub_strength: MemberStrength::default(),
+      sub_strength_bonus: MemberStrength::default(),
+      fame_stats: MemberFameStats::default(),
       skill_pa_fame_list: vec![],
     }
   }
+}
 
-  pub fn create_party_member_wire(&self, id: i32) -> PartyMember {
+/// ## Members vs Characters
+/// *Members* are playable character units you build your team with (Front, Back, Sub),
+/// while *Characters* are the actual people from the anime (Kazuma, Aqua, Megumin, etc.)
+/// that these units represent. A single Character can have multiple Member versions
+/// (e.g., "Yunyun (Beginnger)" and "Yunyun (Wakey Wakey)"), each with unique stats
+/// that determine how effective they are in battle as a Front, Back, or Sub member.
+// See [Wonder_Data_MemberParameter_Fields]
+#[derive(Debug)]
+pub struct Member<'a> {
+  pub id: i32,
+  pub prototype: &'a MemberPrototype,
+  pub xp: i32,
+  pub active_skills: [Option<MemberActiveSkill<'a>>; 3],
+  pub stats: MemberStats,
+  /// "Promotions"
+  pub limit_break: i32,
+  pub waiting_room: i32,
+  pub main_strength: MemberStrength,
+  pub sub_strength: MemberStrength,
+  pub sub_strength_bonus: MemberStrength,
+  pub fame_stats: MemberFameStats,
+  pub skill_pa_fame_list: Vec<SkillPaFame>,
+}
+
+impl Member<'_> {
+  pub fn level(&self) -> i32 {
+    get_member_level_calculator().get_level(self.prototype.rarity, self.xp)
+  }
+
+  pub fn to_member_parameter_wire(&self) -> MemberParameterWire {
+    MemberParameterWire {
+      id: self.id,
+      lv: self.level(),
+      exp: self.xp,
+      member_id: self.prototype.id,
+      ac_skill_id_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.value),
+      ac_skill_id_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.value),
+      ac_skill_id_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.value),
+      hp: self.stats.hp,
+      magicattack: self.stats.magicattack,
+      defense: self.stats.defense,
+      magicdefence: self.stats.magicdefence,
+      agility: self.stats.agility,
+      dexterity: self.stats.dexterity,
+      luck: self.stats.luck,
+      limit_break: self.limit_break,
+      character_id: self.prototype.character_id,
+      passiveskill: self.prototype.passive_skill.as_ref().map_or(0, |skill| skill.id),
+      specialattack: self.prototype.special_attack.as_ref().map_or(0, |skill| skill.id),
+      resist_state: self.prototype.resistance_group.id,
+      resist_attr: 0,
+      attack: self.stats.attack,
+      waiting_room: self.waiting_room,
+      main_strength: self.main_strength.strength,
+      main_strength_for_fame_quest: self.main_strength.for_fame_quest,
+      sub_strength: self.sub_strength.strength,
+      sub_strength_for_fame_quest: self.sub_strength.for_fame_quest,
+      sub_strength_bonus: self.sub_strength_bonus.strength,
+      sub_strength_bonus_for_fame_quest: self.sub_strength_bonus.for_fame_quest,
+      fame_hp_rank: self.fame_stats.fame_hp,
+      fame_attack_rank: self.fame_stats.fame_attack,
+      fame_defense_rank: self.fame_stats.fame_defense,
+      fame_magicattack_rank: self.fame_stats.fame_magicattack,
+      fame_magicdefence_rank: self.fame_stats.fame_magicdefence,
+      skill_pa_fame_list: self.skill_pa_fame_list.clone(),
+    }
+  }
+
+  pub fn to_party_member(&self) -> PartyMember {
     PartyMember {
-      id,
-      lv: 1,
-      exp: 0,
-      member_id: self.id,
-      ac_skill_lv_a: self.active_skills[0].as_ref().map_or(0, |skill| 1),
-      ac_skill_val_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.value.max as i64),
-      ac_skill_lv_b: self.active_skills[1].as_ref().map_or(0, |skill| 1),
-      ac_skill_val_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.value.max as i64),
-      ac_skill_lv_c: self.active_skills[2].as_ref().map_or(0, |skill| 1),
-      ac_skill_val_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.value.max as i64),
-      hp: self.stats.hp.max,
-      attack: self.stats.attack.max,
-      magicattack: self.stats.magic_attack.max,
-      defense: self.stats.defense.max,
-      magicdefence: self.stats.magic_defense.max,
-      agility: self.stats.agility.max,
-      dexterity: self.stats.dexterity.max,
-      luck: self.stats.luck.max,
-      limit_break: 0,
-      character_id: self.character_id,
-      waiting_room: 0,
+      id: self.id,
+      lv: self.level(),
+      exp: self.xp,
+      member_id: self.prototype.id,
+      ac_skill_lv_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.value as i64),
+      ac_skill_lv_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.value as i64),
+      ac_skill_lv_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.value as i64),
+      hp: self.stats.hp,
+      attack: self.stats.attack,
+      magicattack: self.stats.magicattack,
+      defense: self.stats.defense,
+      magicdefence: self.stats.magicdefence,
+      agility: self.stats.agility,
+      dexterity: self.stats.dexterity,
+      luck: self.stats.luck,
+      limit_break: self.limit_break,
+      character_id: self.prototype.character_id,
+      waiting_room: self.waiting_room,
       ex_flg: 0,
       is_undead: 0,
     }
   }
+}
+
+#[derive(Default, Debug, Clone)]
+pub struct MemberStrength {
+  pub strength: i32,
+  pub for_fame_quest: i32,
+}
+
+#[derive(Debug)]
+pub struct MemberActiveSkill<'a> {
+  pub prototype: &'a ActiveSkillPrototype,
+  pub level: i32,
+  pub value: i32,
 }
 
 #[derive(Debug, Clone)]

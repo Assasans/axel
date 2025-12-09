@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 
 use crate::api::dungeon::PartyMember;
 use crate::api::master_all::get_master_manager;
@@ -158,7 +157,8 @@ pub async fn party_info(session: Arc<Session>) -> impl IntoHandlerResponse {
         .enumerate()
         .map(|(index, member)| {
           MemberPrototype::load_from_id(member["id"].as_str().unwrap().parse::<i64>().unwrap())
-            .create_party_member_wire(index as i32 + 1)
+            .create_member(index as i32 + 1)
+            .to_party_member()
         })
         .collect::<Vec<_>>(),
       weapons: vec![],

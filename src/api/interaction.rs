@@ -1,7 +1,7 @@
 use crate::api::master_all::get_masters;
 use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Signed};
-use crate::intimacy_rank::get_intimacy_rank_calculator;
+use crate::level::get_intimacy_level_calculator;
 use crate::user::session::Session;
 use jwt_simple::prelude::Serialize;
 use serde::Serializer;
@@ -66,7 +66,7 @@ impl Character {
   }
 
   pub fn rank(&self) -> i32 {
-    get_intimacy_rank_calculator().get_rank(self.rank_progress)
+    get_intimacy_level_calculator().get_level(self.rank_progress)
   }
 }
 
@@ -110,7 +110,7 @@ pub async fn interaction(session: Arc<Session>) -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let characters: Vec<Value> = serde_json::from_str(&masters["character"].master_decompressed).unwrap();
 
-  let max_xp = get_intimacy_rank_calculator().get_xp_for_rank(50).unwrap();
+  let max_xp = get_intimacy_level_calculator().get_xp_for_level(50).unwrap();
 
   Ok(Signed(
     InteractionResponse {

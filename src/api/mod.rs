@@ -244,41 +244,6 @@ pub struct MemberFameStats {
   pub fame_magicdefence: i32,
 }
 
-/// ## Members vs Characters
-/// *Members* are playable character units you build your team with (Front, Back, Sub),
-/// while *Characters* are the actual people from the anime (Kazuma, Aqua, Megumin, etc.)
-/// that these units represent. A single Character can have multiple Member versions
-/// (e.g., "Yunyun (Beginnger)" and "Yunyun (Wakey Wakey)"), each with unique stats
-/// that determine how effective they are in battle as a Front, Back, or Sub member.
-// See [Wonder_Data_MemberParameter_Fields]
-#[derive(Debug)]
-pub struct Member {
-  pub id: i32,
-  pub lv: i32,
-  pub exp: i32,
-  pub member_id: i64,
-  pub active_skill_a: Option<ActiveSkill>,
-  pub active_skill_b: Option<ActiveSkill>,
-  pub active_skill_c: Option<ActiveSkill>,
-  pub stats: MemberStats,
-  pub limit_break: i32,
-  pub character_id: i64,
-  pub passiveskill: i64,
-  pub specialattack: i64,
-  pub resist_state: i32,
-  pub resist_attr: i64,
-  pub attack: i32,
-  pub waiting_room: i32,
-  pub main_strength: i32,
-  pub main_strength_for_fame_quest: i32,
-  pub sub_strength: i32,
-  pub sub_strength_for_fame_quest: i32,
-  pub sub_strength_bonus: i32,
-  pub sub_strength_bonus_for_fame_quest: i32,
-  pub fame_stats: MemberFameStats,
-  pub skill_pa_fame_list: Vec<SkillPaFame>,
-}
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MemberParameterWire {
   pub id: i32,

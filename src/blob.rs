@@ -1,5 +1,3 @@
-use serde_json::Value;
-
 use crate::api::master_all::get_master_manager;
 use crate::api::{CharacterParameter, MemberParameterWire, RemoteData, RemoteDataCommand, RemoteDataItemType, SpSkill};
 use crate::member::MemberPrototype;
@@ -15,21 +13,24 @@ pub async fn get_login_remote_data() -> Vec<RemoteData> {
     .iter()
     .enumerate()
     .map(|(index, character)| {
-      AddCharacter::new(index as i32, CharacterParameter {
-        id: index as i64,
-        character_id: character.get("id").unwrap().as_str().unwrap().parse().unwrap(),
-        rank: 1,
-        rank_progress: 5,
-        sp_skill: vec![SpSkill {
-          group_id: 10000,
-          id: 100001,
-          lv: 2,
+      AddCharacter::new(
+        index as i32,
+        CharacterParameter {
+          id: index as i64,
+          character_id: character.get("id").unwrap().as_str().unwrap().parse().unwrap(),
+          rank: 1,
+          rank_progress: 5,
+          sp_skill: vec![SpSkill {
+            group_id: 10000,
+            id: 100001,
+            lv: 2,
+            is_trial: false,
+          }],
+          character_enhance_stage_id_list: vec![0, 0, 0, 0],
+          character_piece_board_stage_id_list: vec![100001001, 100002002, 100003003, 100004004],
           is_trial: false,
-        }],
-        character_enhance_stage_id_list: vec![0, 0, 0, 0],
-        character_piece_board_stage_id_list: vec![100001001, 100002002, 100003003, 100004004],
-        is_trial: false,
-      })
+        },
+      )
       .into_remote_data()
     })
     .collect::<Vec<_>>();
@@ -63,7 +64,9 @@ pub async fn get_login_remote_data() -> Vec<RemoteData> {
     .enumerate()
     .map(|(index, member)| {
       AddMember::new(
-        MemberPrototype::load_from_id(member["id"].as_str().unwrap().parse::<i64>().unwrap()).create_member_wire(),
+        MemberPrototype::load_from_id(member["id"].as_str().unwrap().parse::<i64>().unwrap())
+          .create_member(index as i32 + 1)
+          .to_member_parameter_wire(),
         "front",
       )
       .into_remote_data()
