@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use crate::api::dungeon::PartyMember;
-use crate::api::master_all::get_masters;
+use crate::api::master_all::get_master_manager;
 use crate::api::party::PartyWire;
 use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Signed};
@@ -135,8 +135,7 @@ pub async fn party_info(session: Arc<Session>) -> impl IntoHandlerResponse {
   // let response: Value = serde_json::from_str(response).unwrap();
   // return Ok(Signed(response, session));
 
-  let masters = get_masters().await;
-  let members: Vec<Value> = serde_json::from_str(&masters["member"].master_decompressed).unwrap();
+  let members = get_master_manager().get_master("member");
 
   Ok(Signed(
     PartyWire {
@@ -156,7 +155,6 @@ pub async fn party_info(session: Arc<Session>) -> impl IntoHandlerResponse {
       // ],
       members: members
         .iter()
-        .take(30)
         .enumerate()
         .map(|(index, member)| {
           MemberPrototype::load_from_id(member["id"].as_str().unwrap().parse::<i64>().unwrap())

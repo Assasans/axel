@@ -1,15 +1,15 @@
 use serde_json::Value;
 
-use crate::api::master_all::get_masters;
+use crate::api::master_all::get_master_manager;
 use crate::api::{CharacterParameter, MemberParameterWire, RemoteData, RemoteDataCommand, RemoteDataItemType, SpSkill};
 use crate::member::MemberPrototype;
 
 pub async fn get_login_remote_data() -> Vec<RemoteData> {
-  let masters = get_masters().await;
-  let characters: Vec<Value> = serde_json::from_str(&masters["character"].master_decompressed).unwrap();
-  let members: Vec<Value> = serde_json::from_str(&masters["member"].master_decompressed).unwrap();
-  let costumes: Vec<Value> = serde_json::from_str(&masters["costume"].master_decompressed).unwrap();
-  let backgrounds: Vec<Value> = serde_json::from_str(&masters["background"].master_decompressed).unwrap();
+  let masters = get_master_manager();
+  let characters = masters.get_master("character");
+  let members = masters.get_master("member");
+  let costumes = masters.get_master("costume");
+  let backgrounds = masters.get_master("background");
 
   let characters = characters
     .iter()
@@ -60,7 +60,6 @@ pub async fn get_login_remote_data() -> Vec<RemoteData> {
 
   let members = members
     .iter()
-    .take(30)
     .enumerate()
     .map(|(index, member)| {
       AddMember::new(

@@ -1,7 +1,3 @@
-use std::collections::HashMap;
-use std::env;
-use std::io::{BufReader, Read};
-
 use base64::prelude::BASE64_STANDARD;
 use base64::Engine;
 use flate2::bufread::GzEncoder;
@@ -9,6 +5,11 @@ use flate2::Compression;
 use futures::future::join_all;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::collections::HashMap;
+use std::env;
+use std::io::{BufReader, Read};
+use std::sync::{LazyLock, OnceLock};
+use std::time::Instant;
 use tokio::fs::File;
 use tokio::io::AsyncReadExt;
 use tokio::sync::OnceCell;
@@ -339,10 +340,12 @@ struct GachaMasterItem {
   pub home_appeal_priority: String,
 }
 
+#[deprecated(note = "Use get_master_manager() instead, parsing each time manually is slow")]
 pub async fn get_masters() -> &'static HashMap<String, MasterAllItem> {
   MASTERS.get_or_init(load_masters).await
 }
 
+#[deprecated(note = "Use get_master_manager() instead, parsing each time manually is slow")]
 pub fn get_masters_definitely_initialized() -> &'static HashMap<String, MasterAllItem> {
   MASTERS.get().expect("masters not loaded yet")
 }
@@ -367,4 +370,39 @@ pub async fn master_all(Params(params): Params<MasterAllRequest>) -> impl IntoHa
     masterarray: masters,
     compressed: true,
   })
+}
+
+pub struct MasterManager {
+  masters: HashMap<String, Vec<Value>>,
+}
+
+impl MasterManager {
+  pub fn new(opaque_masters: &HashMap<String, MasterAllItem>) -> Self {
+    // Large and not needed on server side
+    let blacklist = ["pack", "assetname", "text", "voice", "navi"];
+
+    let start = Instant::now();
+    let mut masters = HashMap::new();
+    for (key, item) in opaque_masters.iter() {
+      if blacklist.contains(&key.as_str()) {
+        continue;
+      }
+
+      let value = serde_json::from_str::<Vec<Value>>(&item.master_decompressed).unwrap();
+      masters.insert(key.clone(), value);
+    }
+    info!("MasterManager initialized in {:?}", start.elapsed());
+
+    Self { masters }
+  }
+
+  pub fn get_master(&self, key: &str) -> &Vec<Value> {
+    self.masters.get(key).expect(&format!("master {:?} not found", key))
+  }
+}
+
+pub static MASTER_MANAGER: OnceLock<MasterManager> = OnceLock::new();
+
+pub fn get_master_manager() -> &'static MasterManager {
+  MASTER_MANAGER.get().expect("master manager not initialized yet")
 }

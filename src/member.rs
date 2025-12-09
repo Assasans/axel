@@ -1,8 +1,6 @@
-use serde_json::Value;
-
 use crate::api::MemberParameterWire;
 use crate::api::dungeon::PartyMember;
-use crate::api::master_all::get_masters_definitely_initialized;
+use crate::api::master_all::get_master_manager;
 
 /// Member information from master data. Can be used to create new [Member] instances.
 #[derive(Debug, Clone)]
@@ -21,9 +19,9 @@ pub struct MemberPrototype {
 
 impl MemberPrototype {
   pub fn load_from_id(id: i64) -> Self {
-    let masters = get_masters_definitely_initialized();
-    let members: Vec<Value> = serde_json::from_str(&masters["member"].master_decompressed).unwrap();
-    let active_skills: Vec<Value> = serde_json::from_str(&masters["skill_ac_details"].master_decompressed).unwrap();
+    let masters = get_master_manager();
+    let members = masters.get_master("member");
+    let active_skills = masters.get_master("skill_ac_details");
 
     let member = members
       .iter()

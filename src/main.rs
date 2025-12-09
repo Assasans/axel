@@ -40,7 +40,7 @@ use tracing_subscriber::EnvFilter;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 
-use crate::api::master_all::get_masters;
+use crate::api::master_all::{get_masters, MasterManager, MASTER_MANAGER};
 use crate::api::{RemoteData, RemoteDataCommand, RemoteDataItemType};
 use crate::database::create_pool;
 use crate::settings::Settings;
@@ -110,7 +110,8 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
   let state = Arc::new(state);
 
   // initialize lazies
-  get_masters().await;
+  let masters = get_masters().await;
+  MASTER_MANAGER.get_or_init(|| MasterManager::new(masters));
 
   let (static_result, api_result) = join!(static_server::start(state.clone()), api_server::start(state.clone()));
   static_result.unwrap();
