@@ -1,14 +1,14 @@
 use std::sync::Arc;
 
 use anyhow::Context;
-use base64::prelude::BASE64_STANDARD_NO_PAD;
 use base64::Engine;
+use base64::prelude::BASE64_STANDARD_NO_PAD;
 use serde::{Deserialize, Serialize};
 use tracing::warn;
 
-use crate::api::dungeon::{PartyAccessory, PartyMember, PartyWeapon};
-use crate::api::party_info::{party_info, Party};
 use crate::api::ApiRequest;
+use crate::api::dungeon::{PartyAccessory, PartyMember, PartyWeapon};
+use crate::api::party_info::{Party, party_info};
 use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::user::session::Session;
@@ -52,14 +52,14 @@ pub async fn grade_up(_request: ApiRequest) -> impl IntoHandlerResponse {
 // See [Wonder_Api_PartyresetResponseDto_Fields]
 // See [Wonder_Api_PartychangeResponseDto_Fields]
 #[derive(Debug, Serialize)]
-pub struct PartyForm {
-  pub party: Party,
-  pub members: PartyMember,
-  pub weapons: PartyWeapon,
-  pub accessories: PartyAccessory,
+pub struct PartyWire {
+  pub party: Vec<Party>,
+  pub members: Vec<PartyMember>,
+  pub weapons: Vec<PartyWeapon>,
+  pub accessories: Vec<PartyAccessory>,
 }
 
-impl CallCustom for PartyForm {}
+impl CallCustom for PartyWire {}
 
 // See [Wonder_Api_PartyFormInfoRequestDto_Fields]
 #[derive(Debug, Deserialize)]

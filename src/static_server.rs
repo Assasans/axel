@@ -9,11 +9,11 @@ use std::task::{Context, Poll};
 
 use axum::body::Body;
 use axum::extract::{Request, State};
-use axum::http::response::Builder;
 use axum::http::StatusCode;
+use axum::http::response::Builder;
 use axum::response::{Html, IntoResponse, Response};
 use axum::routing::get;
-use axum::{extract, middleware, Json, Router, ServiceExt};
+use axum::{Json, Router, ServiceExt, extract, middleware};
 use chrono::Utc;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
@@ -181,18 +181,32 @@ async fn get_news() -> axum::response::Result<impl IntoResponse, AppError> {
   info!("get news");
 
   let time = Utc::now();
-  let news = vec![NewsItem {
-    title: "May There Be a Blessing on This Wonderful Server!".to_string(),
-    category: NewsCategory::AnnouncementNotice,
-    platform: NewsPlatform::All,
-    thumbnail: None,
-    banner: Some("https://smb.assasans.dev/konofd/story-images/1013104.png".to_string()),
-    url: "./detail/00-axel.html".to_string(),
-    priority: Some(1),
-    start_at: (time - chrono::Duration::days(7)).timestamp(),
-    end_at: (time + chrono::Duration::days(7)).timestamp(),
-    date: "2025-07-28".to_owned(),
-  }];
+  let news = vec![
+    NewsItem {
+      title: "May There Be a Blessing on This Wonderful Server!".to_string(),
+      category: NewsCategory::AnnouncementNotice,
+      platform: NewsPlatform::All,
+      thumbnail: None,
+      banner: Some("https://smb.assasans.dev/konofd/story-images/1013104.png".to_string()),
+      url: "./detail/00-axel.html".to_string(),
+      priority: Some(1),
+      start_at: (time - chrono::Duration::days(7)).timestamp(),
+      end_at: (time + chrono::Duration::days(7)).timestamp(),
+      date: "2025-07-28".to_owned(),
+    },
+    NewsItem {
+      title: "May There Be a Database for This Wonderful Server!".to_string(),
+      category: NewsCategory::AnnouncementNotice,
+      platform: NewsPlatform::All,
+      thumbnail: None,
+      banner: Some("https://smb.assasans.dev/konofd/story-images/1063100.png".to_string()),
+      url: "./detail/01-axel.html".to_string(),
+      priority: Some(1),
+      start_at: (time - chrono::Duration::days(6)).timestamp(),
+      end_at: (time + chrono::Duration::days(7)).timestamp(),
+      date: "2025-12-09".to_owned(),
+    },
+  ];
 
   Ok(Json(news))
 }

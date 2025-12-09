@@ -1,11 +1,14 @@
 use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::Value;
 
 use crate::api::dungeon::PartyMember;
+use crate::api::master_all::get_masters;
+use crate::api::party::PartyWire;
 use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Signed};
+use crate::member::MemberPrototype;
 use crate::user::session::Session;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -21,50 +24,84 @@ impl CallCustom for PartyInfo {}
 // See [Wonder_Api_PartyinfoPartyResponseDto_Fields]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Party {
-  pub party_forms: Vec<PartyForm>,
-  pub party_no: u32,
-  pub assist: u32,
-  pub sub_assists: Vec<u32>,
+  /// ## Party formations
+  /// Front 1, Front 2, Front 3, Rear 1, Rear 2.
+  /// Rear members enter battle after front member is down.
+  pub party_forms: [PartyForm; 5],
+  pub party_no: i32,
+  /// Assist stats affect the stats of main party members.
+  pub assist: i64,
+  pub sub_assists: Vec<i64>,
+  /// "Party Trait"
   pub party_passive_skill: PartyPassiveSkillInfo,
 }
 
 impl Party {
-  pub fn new(
-    party_forms: Vec<PartyForm>,
-    party_no: u32,
-    assist: u32,
-    sub_assists: Vec<u32>,
-    party_passive_skill: Option<PartyPassiveSkillInfo>,
-  ) -> Self {
+  pub fn new(party_forms: [PartyForm; 5], party_no: i32) -> Self {
     Self {
       party_forms,
       party_no,
-      assist,
-      sub_assists,
-      party_passive_skill: party_passive_skill.unwrap_or_default(),
+      assist: 0,
+      sub_assists: vec![],
+      party_passive_skill: PartyPassiveSkillInfo {
+        skill_id: 0,
+        user_member_id: 0,
+      },
     }
   }
 }
 
+// See [Wonder_Api_PartyinfoPartyFormResponseDto_Fields]
+// extends [Wonder_Api_BasicPartyFormResponseDto_Fields]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PartyForm {
-  pub id: u32,
-  pub form_no: u32,
-  pub main: u32,
-  pub sub1: u32,
-  pub sub2: u32,
-  pub weapon: u32,
-  pub acc: u32,
-  pub strength: u32,
+  /* Wonder_Api_BasicPartyFormResponseDto_Fields */
+  pub id: i32,
+  pub form_no: i32,
+  pub main: i32,
+  /// ## Sub-members
+  /// 30% of sub-member stats and passive skills are applied to the main member.
+  /// If sub-member and main member are the same character, main member gets additional 10% stat boost.
+  pub sub1: i32,
+  pub sub2: i32,
+  pub weapon: i64,
+  pub acc: i64,
+  pub strength: i32,
   pub specialskill: SpecialSkillInfo,
-  pub skill_pa_fame: u32,
-  pub party_no: u32,
+  /// "Fame Trait"
+  pub skill_pa_fame: i64,
+  /* Wonder_Api_PartyinfoPartyFormResponseDto_Fields */
+  pub party_no: i32,
+  /// Must not be empty
   pub name: String,
+}
+
+impl PartyForm {
+  pub fn new(id: i32, form_no: i32, party_no: i32, main: i32) -> Self {
+    Self {
+      id,
+      form_no,
+      main,
+      sub1: 0,
+      sub2: 0,
+      weapon: 0,
+      acc: 0,
+      strength: 1,
+      specialskill: SpecialSkillInfo {
+        special_skill_id: 100001,
+        trial: false,
+      },
+      skill_pa_fame: 0,
+      party_no,
+      name: format!("Party{}", party_no),
+    }
+  }
 }
 
 // See [Wonder_Api_SpecialSkillInfoResponseDto_Fields]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SpecialSkillInfo {
+  /// Must be non-zero if main member is set
   pub special_skill_id: i32,
   pub trial: bool,
 }
@@ -88,88 +125,47 @@ impl PartyPassiveSkillInfo {
 impl Party {
   /// See [Wonder.UI.Data.PartyData$$get_Force]
   pub fn power(&self, assist_level: u32) -> u32 {
-    let party_forms_strength: u32 = self.party_forms.iter().map(|form| form.strength).sum();
+    let party_forms_strength: u32 = self.party_forms.iter().map(|form| form.strength as u32).sum();
     party_forms_strength + (4 * assist_level)
   }
 }
 
 pub async fn party_info(session: Arc<Session>) -> impl IntoHandlerResponse {
-  let response = include_str!("../party-info.json");
-  let response: Value = serde_json::from_str(response).unwrap();
-  return Ok(Signed(response, session));
+  // let response = include_str!("../party-info.json");
+  // let response: Value = serde_json::from_str(response).unwrap();
+  // return Ok(Signed(response, session));
+
+  let masters = get_masters().await;
+  let members: Vec<Value> = serde_json::from_str(&masters["member"].master_decompressed).unwrap();
+
   Ok(Signed(
-    json!({
-      "party": [
-        {
-          "party_forms": [
-            {
-              "id": 1000001,
-              "form_no": 1,
-              "main": 1011100,
-              "sub1": 1011100,
-              "sub2": 1011100,
-              "weapon": 42090,
-              "acc": 36014,
-              "strength": 393,
-              "specialskill": {
-                "special_skill_id": 0,
-                "trial": false
-              },
-              "skill_pa_fame": 0,
-              "party_no": 1,
-              "name": "Party1"
-            }
-          ],
-          "party_no": 1,
-          "assist": 0,
-          "sub_assists": [],
-          "party_passive_skill": {
-            "skill_id": 0,
-            "user_member_id": 0
-          }
-        }
-      ],
-      "members": [
-        {
-          "id": 1011100,
-          "lv": 1,
-          "exp": 0,
-          "member_id": 1011100,
-          "ac_skill_lv_a": 1,
-          "ac_skill_val_a": 93,
-          "ac_skill_lv_b": 1,
-          "ac_skill_val_b": 128,
-          "ac_skill_lv_c": 1,
-          "ac_skill_val_c": 122,
-          "hp": 239,
-          "attack": 25,
-          "magicattack": 32,
-          "defense": 24,
-          "magicdefence": 24,
-          "agility": 71,
-          "dexterity": 74,
-          "luck": 72,
-          "limit_break": 0,
-          "character_id": 101,
-          "waiting_room": 0,
-          "ex_flg": 0,
-          "is_undead": 0
-        }
-      ],
-      "weapons": [
-        {
-          "id": 42090,
-          "weapon_id": 42090,
-          "trial": false,
-        }
-      ],
-      "accessories": [
-        {
-          "id": 36014,
-          "accessory_id": 36014
-        }
-      ]
-    }),
+    PartyWire {
+      party: vec![Party::new(
+        [
+          PartyForm::new(666431194, 1, 1, 11),
+          PartyForm::new(666431194, 2, 1, 12),
+          PartyForm::new(666431194, 3, 1, 13),
+          PartyForm::new(666431194, 4, 1, 14),
+          PartyForm::new(666431194, 5, 1, 0),
+        ],
+        1,
+      )],
+      // members: vec![
+      //   MemberPrototype::load_from_id(1001100).create_party_member_wire(11),
+      //   //   MemberPrototype::load_from_id(1064100).create_party_member_wire(12),
+      // ],
+      members: members
+        .iter()
+        .take(30)
+        .enumerate()
+        .map(|(index, member)| {
+          MemberPrototype::load_from_id(member["id"].as_str().unwrap().parse::<i64>().unwrap())
+            .create_party_member_wire(index as i32 + 1)
+        })
+        .collect::<Vec<_>>(),
+      weapons: vec![],
+      accessories: vec![],
+    },
     session,
   ))
 }

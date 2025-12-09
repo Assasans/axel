@@ -13,6 +13,7 @@ pub mod handler;
 pub mod impl_handler;
 pub mod intimacy_rank;
 pub mod master;
+pub mod member;
 pub mod normalize_path;
 pub mod notification;
 pub mod params_deserializer;
@@ -35,9 +36,9 @@ use axum::response::{IntoResponse, Response};
 use clap::Parser;
 use tokio::join;
 use tracing::info;
+use tracing_subscriber::EnvFilter;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
-use tracing_subscriber::EnvFilter;
 
 use crate::api::master_all::get_masters;
 use crate::api::{RemoteData, RemoteDataCommand, RemoteDataItemType};
