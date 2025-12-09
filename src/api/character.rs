@@ -20,6 +20,7 @@ impl CallCustom for CharacterPieceBoardInfo {}
 #[derive(Debug, Serialize)]
 pub struct PieceBoardInfo {
   pub board_id: i32,
+  /// 0 if none
   pub stage_id: i32,
 }
 
@@ -28,16 +29,36 @@ pub struct CharacterPieceBoardInfoRequest {
   pub character_id: i32,
 }
 
+// Thanks to https://youtu.be/2NG0ZLuhNNg.
+// There are multiple blessing paths called 'boards' internally (Fire & Light, Water & Wind, etc.),
+// each of which contains 8+4 stages (Elemental ATK boost, Stats up, etc.).
 pub async fn character_piece_board_info(
   Params(params): Params<CharacterPieceBoardInfoRequest>,
 ) -> impl IntoHandlerResponse {
   warn!(?params, "encountered stub: character_piece_board_info");
 
+  let masters = get_masters().await;
+  let piece_boards: Vec<Value> = serde_json::from_str(&masters["character_piece_board"].master_decompressed).unwrap();
+  let piece_boards = piece_boards
+    .iter()
+    .filter(|board| board["chara_id"].as_str().unwrap().parse::<i32>().unwrap() == params.character_id)
+    .collect::<Vec<_>>();
+  let piece_board_stages: Vec<Value> =
+    serde_json::from_str(&masters["character_piece_board_stage"].master_decompressed).unwrap();
+
   Ok(Unsigned(CallResponse::new_success(Box::new(CharacterPieceBoardInfo {
-    board_info: vec![PieceBoardInfo {
-      board_id: 100001,
-      stage_id: 1,
-    }],
+    board_info: piece_boards
+      .iter()
+      .map(|board| {
+        let board_id: i32 = board["board_id"].as_str().unwrap().parse().unwrap();
+        let stage = piece_board_stages
+          .iter()
+          .find(|stage| stage["board_id"].as_str().unwrap().parse::<i32>().unwrap() == board_id)
+          .unwrap();
+        let stage_id: i32 = stage["stage_id"].as_str().unwrap().parse().unwrap();
+        PieceBoardInfo { board_id, stage_id: 0 }
+      })
+      .collect(),
     reward_ids: vec![],
   }))))
 }

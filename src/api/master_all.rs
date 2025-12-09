@@ -218,6 +218,22 @@ async fn patch_master(name: &str, value: &mut Value) {
         }
       }
     }
+    // Show hidden characters in character list
+    // "character" => {
+    //   info!("patching character");
+    //   if let Some(array) = value.as_array_mut() {
+    //     for item in array {
+    //       if let Some(item) = item.as_object_mut() {
+    //         if let Some(display_start_value) = item.get_mut("display_start") {
+    //           *display_start_value = Value::String(start_at_str.clone());
+    //         }
+    //         if let Some(display_end_value) = item.get_mut("display_end") {
+    //           *display_end_value = Value::String(end_at_str.clone());
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
     _ => {
       // let mut logged = false;
       // if let Some(array) = value.as_array_mut() {

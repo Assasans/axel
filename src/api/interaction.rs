@@ -1,12 +1,12 @@
-use std::sync::Arc;
-
-use jwt_simple::prelude::Serialize;
-use serde::Serializer;
-
+use crate::api::master_all::get_masters;
 use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Signed};
 use crate::intimacy_rank::get_intimacy_rank_calculator;
 use crate::user::session::Session;
+use jwt_simple::prelude::Serialize;
+use serde::Serializer;
+use serde_json::Value;
+use std::sync::Arc;
 
 // See [Wonder_Api_InteractionResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -89,24 +89,45 @@ impl Serialize for Character {
   }
 }
 
+pub fn parse_date(master_date: &str) -> Option<chrono::NaiveDateTime> {
+  if master_date == "0" {
+    return None;
+  }
+
+  let formats = [
+    "%Y/%m/%d %H:%M:%S",
+    "%Y/%m/%d %H:%M",
+  ];
+  for format in &formats {
+    if let Ok(date) = chrono::NaiveDateTime::parse_from_str(master_date, format) {
+      return Some(date);
+    }
+  }
+  todo!("unhandled date format: {}", master_date);
+}
+
 pub async fn interaction(session: Arc<Session>) -> impl IntoHandlerResponse {
+  let masters = get_masters().await;
+  let characters: Vec<Value> = serde_json::from_str(&masters["character"].master_decompressed).unwrap();
+
   let max_xp = get_intimacy_rank_calculator().get_xp_for_rank(50).unwrap();
 
   Ok(Signed(
     InteractionResponse {
-      characters: vec![
-        Character::new(100, max_xp, "".to_owned(), 1000101, 0, [0, 0, 0, 0], "".to_owned()),
-        Character::new(101, max_xp, "".to_owned(), 1010101, 0, [0, 0, 0, 0], "".to_owned()),
-        Character::new(102, max_xp, "".to_owned(), 1020101, 0, [0, 0, 0, 0], "".to_owned()),
-        Character::new(103, max_xp, "".to_owned(), 1030101, 0, [0, 0, 0, 0], "".to_owned()),
-        Character::new(106, max_xp, "".to_owned(), 1060101, 0, [0, 0, 0, 0], "".to_owned()),
-        Character::new(108, max_xp, "".to_owned(), 1080101, 0, [0, 0, 0, 0], "".to_owned()),
-        Character::new(109, max_xp, "".to_owned(), 1090101, 0, [0, 0, 0, 0], "".to_owned()),
-        Character::new(112, max_xp, "".to_owned(), 1120101, 0, [0, 0, 0, 0], "".to_owned()),
-        Character::new(113, max_xp, "".to_owned(), 1130101, 0, [0, 0, 0, 0], "".to_owned()),
-        Character::new(115, max_xp, "".to_owned(), 1150101, 0, [0, 0, 0, 0], "".to_owned()),
-        Character::new(128, max_xp, "".to_owned(), 1280101, 0, [0, 0, 0, 0], "".to_owned()),
-      ],
+      characters: characters
+        .iter()
+        .map(|character| {
+          Character::new(
+            character["id"].as_str().unwrap().parse().unwrap(),
+            max_xp,
+            "".to_string(),
+            0,
+            0,
+            [0, 0, 0, 0],
+            "".to_string(),
+          )
+        })
+        .collect(),
     },
     session,
   ))

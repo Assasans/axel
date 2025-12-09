@@ -1,12 +1,11 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use jwt_simple::prelude::Serialize;
-use serde::Deserialize;
-use serde_repr::{Deserialize_repr, Serialize_repr};
-
 use crate::call::ApiCallParams;
 use crate::AppState;
+use jwt_simple::prelude::Serialize;
+use serde::{Deserialize, Serializer};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 
 pub mod ad_reward;
 pub mod assist;
@@ -211,6 +210,40 @@ impl From<i32> for RemoteDataItemType {
   }
 }
 
+#[derive(Debug)]
+pub struct ActiveSkill {
+  pub id: i64,
+  pub level: i32,
+  pub value: i32,
+}
+
+impl ActiveSkill {
+  pub fn new(id: i64, level: i32, value: i32) -> Self {
+    Self { id, level, value }
+  }
+}
+
+#[derive(Debug)]
+pub struct MemberStats {
+  pub hp: i32,
+  pub attack: i32,
+  pub magicattack: i32,
+  pub defense: i32,
+  pub magicdefence: i32,
+  pub agility: i32,
+  pub dexterity: i32,
+  pub luck: i32,
+}
+
+#[derive(Default, Debug)]
+pub struct MemberFameStats {
+  pub fame_hp: i32,
+  pub fame_attack: i32,
+  pub fame_defense: i32,
+  pub fame_magicattack: i32,
+  pub fame_magicdefence: i32,
+}
+
 /// ## Members vs Characters
 /// *Members* are playable character units you build your team with (Front, Back, Sub),
 /// while *Characters* are the actual people from the anime (Kazuma, Aqua, Megumin, etc.)
@@ -218,8 +251,36 @@ impl From<i32> for RemoteDataItemType {
 /// (e.g., "Yunyun (Beginnger)" and "Yunyun (Wakey Wakey)"), each with unique stats
 /// that determine how effective they are in battle as a Front, Back, or Sub member.
 // See [Wonder_Data_MemberParameter_Fields]
+#[derive(Debug)]
+pub struct Member {
+  pub id: i32,
+  pub lv: i32,
+  pub exp: i32,
+  pub member_id: i64,
+  pub active_skill_a: Option<ActiveSkill>,
+  pub active_skill_b: Option<ActiveSkill>,
+  pub active_skill_c: Option<ActiveSkill>,
+  pub stats: MemberStats,
+  pub limit_break: i32,
+  pub character_id: i64,
+  pub passiveskill: i64,
+  pub specialattack: i64,
+  pub resist_state: i32,
+  pub resist_attr: i64,
+  pub attack: i32,
+  pub waiting_room: i32,
+  pub main_strength: i32,
+  pub main_strength_for_fame_quest: i32,
+  pub sub_strength: i32,
+  pub sub_strength_for_fame_quest: i32,
+  pub sub_strength_bonus: i32,
+  pub sub_strength_bonus_for_fame_quest: i32,
+  pub fame_stats: MemberFameStats,
+  pub skill_pa_fame_list: Vec<SkillPaFame>,
+}
+
 #[derive(Debug, Serialize, Deserialize)]
-pub struct MemberParameter {
+pub struct MemberParameterWire {
   pub id: i32,
   pub lv: i32,
   pub exp: i32,
@@ -263,7 +324,7 @@ pub struct MemberParameter {
 }
 
 // See [Wonder_Data_MemberParameter_SkillPaFame_Fields]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SkillPaFame {
   pub skill_pa_fame_id: i64,
   pub user_skill_pa_fame_id: i32,
@@ -271,7 +332,7 @@ pub struct SkillPaFame {
 }
 
 // See [Wonder_Data_MemberParameter_SkillPaFame_AddStatus_Fields]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SkillPaFameAddStatus {
   #[serde(rename = "type")]
   pub kind: i32,
@@ -285,8 +346,11 @@ pub struct CharacterParameter {
   pub character_id: i64,
   pub rank: i32,
   pub rank_progress: i32,
+  /// https://youtu.be/tk-4NT30Uyo
   pub sp_skill: Vec<SpSkill>,
+  /// "Trial of the Ancients"
   pub character_enhance_stage_id_list: Vec<i32>,
+  /// "Potential"
   pub character_piece_board_stage_id_list: Vec<i32>,
   pub is_trial: bool,
 }
@@ -306,7 +370,7 @@ pub struct SpSkill {
 }
 
 // See [Wonder_Api_RemotedataItemsResponseDto_Fields]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize)]
 pub struct RemoteData {
   pub cmd: i32,
   // Original server sends [uid] as a number, but the client uses a string type
@@ -321,7 +385,7 @@ pub struct RemoteData {
   pub tag: String,
   #[serde(rename = "memberparameter")]
   #[serde(skip_serializing_if = "Option::is_none")]
-  pub member_parameter: Option<MemberParameter>,
+  pub member_parameter: Option<MemberParameterWire>,
   #[serde(rename = "characterparameter")]
   #[serde(skip_serializing_if = "Option::is_none")]
   pub character_parameter: Option<CharacterParameter>,
