@@ -1,10 +1,18 @@
-use serde::{Deserialize, Serialize};
-use serde_json::json;
-
-use crate::api::{ApiRequest, NotificationData};
+use crate::api::party_info::{Party, PartyForm, PartyPassiveSkillInfo};
+use crate::api::surprise::BasicBattlePartyForm;
+use crate::api::{ApiRequest, MemberFameStats, NotificationData};
 use crate::call::{CallCustom, CallResponse};
 use crate::handler::{IntoHandlerResponse, Unsigned};
+use crate::level::get_member_level_calculator;
+use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::notification::{IntoNotificationData, MissionDone};
+use crate::user::session::Session;
+use crate::AppState;
+use anyhow::Context;
+use serde::{Deserialize, Serialize};
+use serde_json::json;
+use std::sync::Arc;
+use tracing::info;
 
 // See [Wonder_Api_BattlestartMembersResponseDto_Fields]
 // See [Wonder_Api_SurpriseQuestStartMembersResponseDto_Fields]
@@ -42,176 +50,275 @@ pub struct BattleMember {
   pub special_skill_lv: i32,
 }
 
+// See [Wonder_Api_BattlestartResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct BattleStartResponse {
+  pub chest: String,
+  pub party: BattleParty,
+  pub members: Vec<BattleMember>,
+}
+
+impl CallCustom for BattleStartResponse {}
+
+// See [Wonder_Api_BattlestartPartyResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct BattleParty {
+  pub party_forms: [BasicBattlePartyForm; 5],
+  pub assist: i32,
+  pub sub_assists: Vec<i32>,
+  pub party_passive_skill: PartyPassiveSkillInfo,
+}
+
 // quest_id=101011
 // party_no=1
 // auto_progression_info={"is_start":false,"stop_setting":0,"incomplete_setting":0}
-pub async fn battle_start(_request: ApiRequest) -> impl IntoHandlerResponse {
-  let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(json!({
-    "chest": "10101111,10101120,10101131",
-    "party": {
-      "party_forms": [
-        {
-          "id": 666431194,
-          "party_no": 1,
-          "form_no": 1,
-          "main": 11,
-          "sub1": 0,
-          "sub2": 0,
-          "weapon": 0,
-          "acc": 0,
-          "skill_pa_fame": 0
-        },
-        {
-          "id": 666431194,
-          "party_no": 1,
-          "form_no": 2,
-          "main": 12,
-          "sub1": 0,
-          "sub2": 0,
-          "weapon": 0,
-          "acc": 0,
-          "skill_pa_fame": 0
-        },
-        {
-          "id": 666431194,
-          "party_no": 1,
-          "form_no": 3,
-          "main": 10,
-          "sub1": 0,
-          "sub2": 0,
-          "weapon": 0,
-          "acc": 0,
-          "skill_pa_fame": 0
-        },
-        {
-          "id": 666431194,
-          "party_no": 1,
-          "form_no": 4,
-          "main": 0,
-          "sub1": 0,
-          "sub2": 0,
-          "weapon": 0,
-          "acc": 0,
-          "skill_pa_fame": 0
-        },
-        {
-          "id": 666431194,
-          "party_no": 1,
-          "form_no": 5,
-          "main": 0,
-          "sub1": 0,
-          "sub2": 0,
-          "weapon": 0,
-          "acc": 0,
-          "skill_pa_fame": 0
-        }
+pub async fn battle_start(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  _request: ApiRequest,
+) -> impl IntoHandlerResponse {
+  let client = state.pool.get().await.context("failed to get database connection")?;
+  #[rustfmt::skip]
+  let statement = client
+    .prepare(/* language=postgresql */ r#"
+      select
+        member_id,
+        xp,
+        promotion_level
+      from user_members
+      where user_id = $1
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  let rows = client
+    .query(&statement, &[&session.user_id])
+    .await
+    .context("failed to execute query")?;
+  info!(?rows, "get friend info query executed");
+
+  let mut response = CallResponse::new_success(Box::new(BattleStartResponse {
+    chest: "10101111,10101120,10101131".to_owned(),
+    party: Party::new(
+      [
+        PartyForm::new(666431194, 1, 1, 11),
+        PartyForm::new(666431194, 2, 1, 0),
+        PartyForm::new(666431194, 3, 1, 0),
+        PartyForm::new(666431194, 4, 1, 0),
+        PartyForm::new(666431194, 5, 1, 0),
       ],
-      "assist": 0,
-      "sub_assists": [],
-      "party_passive_skill": {
-        "skill_id": 0,
-        "user_member_id": 0
-      }
-    },
-    "members": [
-      {
-        "id": 11,
-        "lv": 1,
-        "exp": 0,
-        "member_id": 1001100,
-        "ac_skill_id_a": 10000100,
-        "ac_skill_lv_a": 1,
-        "ac_skill_val_a": 110,
-        "ac_skill_id_b": 54000130,
-        "ac_skill_lv_b": 1,
-        "ac_skill_val_b": 0,
-        "ac_skill_id_c": 22000140,
-        "ac_skill_lv_c": 1,
-        "ac_skill_val_c": 130,
-        "hp": 245,
-        "magicattack": 26,
-        "defense": 20,
-        "magicdefence": 19,
-        "agility": 72,
-        "dexterity": 78,
-        "luck": 88,
-        "limit_break": 0,
-        "character_id": 100,
-        "passiveskill": 210201,
-        "specialattack": 100001,
-        "resist_state": 210201,
-        "resist_attr": 150000000,
-        "attack": 27,
-        "ex_flg": 0,
-        "is_undead": 0,
-        "special_skill_lv": 1
-      },
-      {
-        "id": 12,
-        "lv": 1,
-        "exp": 0,
-        "member_id": 1011100,
-        "ac_skill_id_a": 10000100,
-        "ac_skill_lv_a": 1,
-        "ac_skill_val_a": 110,
-        "ac_skill_id_b": 31002024,
-        "ac_skill_lv_b": 1,
-        "ac_skill_val_b": 170,
-        "ac_skill_id_c": 12000146,
-        "ac_skill_lv_c": 1,
-        "ac_skill_val_c": 152,
-        "hp": 252,
-        "magicattack": 31,
-        "defense": 21,
-        "magicdefence": 23,
-        "agility": 66,
-        "dexterity": 76,
-        "luck": 10,
-        "limit_break": 0,
-        "character_id": 101,
-        "passiveskill": 220001,
-        "specialattack": 101001,
-        "resist_state": 220001,
-        "resist_attr": 155000000,
-        "attack": 28,
-        "ex_flg": 0,
-        "is_undead": 0,
-        "special_skill_lv": 1
-      },
-      {
-        "id": 10,
-        "lv": 1,
-        "exp": 0,
-        "member_id": 1064217,
-        "ac_skill_id_a": 210000000000010000i64,
-        "ac_skill_lv_a": 1,
-        "ac_skill_val_a": 100,
-        "ac_skill_id_b": 210042000000312082i64,
-        "ac_skill_lv_b": 1,
-        "ac_skill_val_b": 128,
-        "ac_skill_id_c": 212200000000030074i64,
-        "ac_skill_lv_c": 1,
-        "ac_skill_val_c": 173,
-        "hp": 247,
-        "magicattack": 36,
-        "defense": 22,
-        "magicdefence": 26,
-        "agility": 69,
-        "dexterity": 67,
-        "luck": 68,
-        "limit_break": 0,
-        "character_id": 106,
-        "passiveskill": 212004,
-        "specialattack": 106001,
-        "resist_state": 212004,
-        "resist_attr": 100005000,
-        "attack": 29,
-        "ex_flg": 0,
-        "is_undead": 0,
-        "special_skill_lv": 1
-      }
-    ]
-  })));
+      1,
+    ).to_battle_party(),
+    members: vec![
+      // MemberPrototype::load_from_id(1001100).create_member(11).to_battle_member(),
+        MemberPrototype::load_from_id(1064100).create_member(11).to_battle_member(),
+    ],
+    // members: rows
+    //   .iter()
+    //   .enumerate()
+    //   .map(|(index, row)| {
+    //     let member_id: i64 = row.get(0);
+    //     let xp: i32 = row.get(1);
+    //     let promotion_level: i32 = row.get(2);
+    //     // let active_skills: Value = row.get(3);
+    //     let prototype = MemberPrototype::load_from_id(member_id);
+    //
+    //     Member {
+    //       id: index as i32 + 1,
+    //       prototype: &prototype,
+    //       xp,
+    //       promotion_level: 2,
+    //       active_skills: prototype
+    //         .active_skills
+    //         .iter()
+    //         .map(|skill_opt| {
+    //           skill_opt.as_ref().map(|skill| MemberActiveSkill {
+    //             prototype: skill,
+    //             level: 1,
+    //             value: skill.value.max,
+    //           })
+    //         })
+    //         .collect::<Vec<_>>()
+    //         .try_into()
+    //         .unwrap(),
+    //       stats: prototype
+    //         .stats
+    //         .interpolate(get_member_level_calculator().get_level(prototype.rarity, xp)),
+    //       main_strength: MemberStrength::default(),
+    //       sub_strength: MemberStrength::default(),
+    //       sub_strength_bonus: MemberStrength::default(),
+    //       fame_stats: MemberFameStats::default(),
+    //       skill_pa_fame_list: vec![],
+    //     }
+    //     .to_battle_member()
+    //   })
+    //   .collect::<Vec<_>>(),
+  }));
+  // json!({
+  //   "chest": "10101111,10101120,10101131",
+  //   "party": {
+  //     "party_forms": [
+  //       {
+  //         "id": 666431194,
+  //         "party_no": 1,
+  //         "form_no": 1,
+  //         "main": 11,
+  //         "sub1": 0,
+  //         "sub2": 0,
+  //         "weapon": 0,
+  //         "acc": 0,
+  //         "skill_pa_fame": 0
+  //       },
+  //       {
+  //         "id": 666431194,
+  //         "party_no": 1,
+  //         "form_no": 2,
+  //         "main": 12,
+  //         "sub1": 0,
+  //         "sub2": 0,
+  //         "weapon": 0,
+  //         "acc": 0,
+  //         "skill_pa_fame": 0
+  //       },
+  //       {
+  //         "id": 666431194,
+  //         "party_no": 1,
+  //         "form_no": 3,
+  //         "main": 10,
+  //         "sub1": 0,
+  //         "sub2": 0,
+  //         "weapon": 0,
+  //         "acc": 0,
+  //         "skill_pa_fame": 0
+  //       },
+  //       {
+  //         "id": 666431194,
+  //         "party_no": 1,
+  //         "form_no": 4,
+  //         "main": 0,
+  //         "sub1": 0,
+  //         "sub2": 0,
+  //         "weapon": 0,
+  //         "acc": 0,
+  //         "skill_pa_fame": 0
+  //       },
+  //       {
+  //         "id": 666431194,
+  //         "party_no": 1,
+  //         "form_no": 5,
+  //         "main": 0,
+  //         "sub1": 0,
+  //         "sub2": 0,
+  //         "weapon": 0,
+  //         "acc": 0,
+  //         "skill_pa_fame": 0
+  //       }
+  //     ],
+  //     "assist": 0,
+  //     "sub_assists": [],
+  //     "party_passive_skill": {
+  //       "skill_id": 0,
+  //       "user_member_id": 0
+  //     }
+  //   },
+  //   "members": [
+  //     {
+  //       "id": 11,
+  //       "lv": 1,
+  //       "exp": 0,
+  //       "member_id": 1001100,
+  //       "ac_skill_id_a": 10000100,
+  //       "ac_skill_lv_a": 1,
+  //       "ac_skill_val_a": 110,
+  //       "ac_skill_id_b": 54000130,
+  //       "ac_skill_lv_b": 1,
+  //       "ac_skill_val_b": 0,
+  //       "ac_skill_id_c": 22000140,
+  //       "ac_skill_lv_c": 1,
+  //       "ac_skill_val_c": 130,
+  //       "hp": 245,
+  //       "magicattack": 26,
+  //       "defense": 20,
+  //       "magicdefence": 19,
+  //       "agility": 72,
+  //       "dexterity": 78,
+  //       "luck": 88,
+  //       "limit_break": 0,
+  //       "character_id": 100,
+  //       "passiveskill": 210201,
+  //       "specialattack": 100001,
+  //       "resist_state": 210201,
+  //       "resist_attr": 150000000,
+  //       "attack": 27,
+  //       "ex_flg": 0,
+  //       "is_undead": 0,
+  //       "special_skill_lv": 1
+  //     },
+  //     {
+  //       "id": 12,
+  //       "lv": 1,
+  //       "exp": 0,
+  //       "member_id": 1011100,
+  //       "ac_skill_id_a": 10000100,
+  //       "ac_skill_lv_a": 1,
+  //       "ac_skill_val_a": 110,
+  //       "ac_skill_id_b": 31002024,
+  //       "ac_skill_lv_b": 1,
+  //       "ac_skill_val_b": 170,
+  //       "ac_skill_id_c": 12000146,
+  //       "ac_skill_lv_c": 1,
+  //       "ac_skill_val_c": 152,
+  //       "hp": 252,
+  //       "magicattack": 31,
+  //       "defense": 21,
+  //       "magicdefence": 23,
+  //       "agility": 66,
+  //       "dexterity": 76,
+  //       "luck": 10,
+  //       "limit_break": 0,
+  //       "character_id": 101,
+  //       "passiveskill": 220001,
+  //       "specialattack": 101001,
+  //       "resist_state": 220001,
+  //       "resist_attr": 155000000,
+  //       "attack": 28,
+  //       "ex_flg": 0,
+  //       "is_undead": 0,
+  //       "special_skill_lv": 1
+  //     },
+  //     {
+  //       "id": 10,
+  //       "lv": 1,
+  //       "exp": 0,
+  //       "member_id": 1064217,
+  //       "ac_skill_id_a": 210000000000010000i64,
+  //       "ac_skill_lv_a": 1,
+  //       "ac_skill_val_a": 100,
+  //       "ac_skill_id_b": 210042000000312082i64,
+  //       "ac_skill_lv_b": 1,
+  //       "ac_skill_val_b": 128,
+  //       "ac_skill_id_c": 212200000000030074i64,
+  //       "ac_skill_lv_c": 1,
+  //       "ac_skill_val_c": 173,
+  //       "hp": 247,
+  //       "magicattack": 36,
+  //       "defense": 22,
+  //       "magicdefence": 26,
+  //       "agility": 69,
+  //       "dexterity": 67,
+  //       "luck": 68,
+  //       "limit_break": 0,
+  //       "character_id": 106,
+  //       "passiveskill": 212004,
+  //       "specialattack": 106001,
+  //       "resist_state": 212004,
+  //       "resist_attr": 100005000,
+  //       "attack": 29,
+  //       "ex_flg": 0,
+  //       "is_undead": 0,
+  //       "special_skill_lv": 1
+  //     }
+  //   ]
+  // })));
   response.add_notifications(vec![NotificationData::new(1, 7, 6, 0, "".to_string(), "".to_string())]);
   Ok(Unsigned(response))
 }

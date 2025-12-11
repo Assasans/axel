@@ -1,17 +1,18 @@
 use std::sync::Arc;
 
 use anyhow::Context;
-use base64::Engine;
 use base64::prelude::BASE64_STANDARD_NO_PAD;
+use base64::Engine;
 use serde::{Deserialize, Serialize};
 use tracing::warn;
 
-use crate::api::ApiRequest;
 use crate::api::dungeon::{PartyAccessory, PartyMember, PartyWeapon};
-use crate::api::party_info::{Party, party_info};
+use crate::api::party_info::{party_info, Party};
+use crate::api::ApiRequest;
 use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::user::session::Session;
+use crate::AppState;
 
 // See [Wonder_Api_PartymembersResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -85,14 +86,18 @@ pub struct SpecialSkillInfoRequestDto {
 // is_fame_quest=0
 // is_allow_trial=1
 // form_info=[{"form_no":1,"main":11,"sub1":10,"sub2":0,"weapon":0,"acc":0,"special_skill":{"special_skill_id":100001,"trial":false},"skill_pa_fame":0},{"form_no":2,"main":12,"sub1":0,"sub2":0,"weapon":0,"acc":0,"special_skill":{"special_skill_id":101001,"trial":false},"skill_pa_fame":0},{"form_no":3,"main":13,"sub1":0,"sub2":0,"weapon":0,"acc":0,"special_skill":{"special_skill_id":102001,"trial":false},"skill_pa_fame":0},{"form_no":4,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"special_skill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0},{"form_no":5,"main":0,"sub1":0,"sub2":0,"weapon":0,"acc":0,"special_skill":{"special_skill_id":0,"trial":false},"skill_pa_fame":0}]
-pub async fn update_party_form(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+pub async fn update_party_form(
+  state: Arc<AppState>,
+  request: ApiRequest,
+  session: Arc<Session>,
+) -> impl IntoHandlerResponse {
   let party_no: i32 = request.body["party_no"].parse().unwrap();
   let form_info: Vec<PartyFormInfoRequestDto> = serde_json::from_str(&request.body["form_info"]).unwrap();
 
   warn!(?party_no, "encountered stub: update_party_form");
 
   // Response is identical to party_info
-  Ok(party_info(session).await)
+  Ok(party_info(state, session).await)
 }
 
 // trial=1
@@ -108,26 +113,26 @@ pub async fn update_party_form(request: ApiRequest, session: Arc<Session>) -> im
 // elemental=["none","none"]
 // is_fame_quest=0
 /// "Suggest party" button
-pub async fn party_offer(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+pub async fn party_offer(state: Arc<AppState>, request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let party_no: i32 = request.body["party_no"].parse().unwrap();
 
   warn!(?party_no, "encountered stub: party_offer");
 
   // Response is identical to party_info
-  Ok(party_info(session).await)
+  Ok(party_info(state, session).await)
 }
 
 // party_no=1
 // is_allow_trial=1
 // is_fame_quest=0
 /// "Tool" -> "Reset" button
-pub async fn party_reset(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+pub async fn party_reset(state: Arc<AppState>, request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
   let party_no: i32 = request.body["party_no"].parse().unwrap();
 
   warn!(?party_no, "encountered stub: party_reset");
 
   // Response is identical to party_info
-  Ok(party_info(session).await)
+  Ok(party_info(state, session).await)
 }
 
 // See [Wonder_Api_PartychangelistResponseDto_Fields]
@@ -196,13 +201,17 @@ pub async fn party_name_set(_request: ApiRequest) -> impl IntoHandlerResponse {
 // unique_id=50000010
 // update_type=party_passive_skill
 // trial=0
-pub async fn party_change(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+pub async fn party_change(
+  state: Arc<AppState>,
+  request: ApiRequest,
+  session: Arc<Session>,
+) -> impl IntoHandlerResponse {
   let party_no: i32 = request.body["party_no"].parse().unwrap();
 
   warn!(?party_no, "encountered stub: party_change");
 
   // Response is identical to party_info
-  Ok(party_info(session).await)
+  Ok(party_info(state, session).await)
 }
 
 // See [Wonder_Api_PartyStrengthResponseDto_Fields]

@@ -7,14 +7,18 @@ pub struct MemberLevelCalculator {
   absolute_xp_to_level: BTreeMap<i32, BTreeMap<i32, i32>>,
   // (rarity, (level, xp))
   level_to_absolute_xp: BTreeMap<i32, BTreeMap<i32, i32>>,
+  // (promotion_level, cumulative{bonus_levels))
+  promotion_levels: BTreeMap<i32, i32>,
 }
 
 impl MemberLevelCalculator {
   fn new() -> Self {
     let rarities = [1, 2, 3, 4];
-    let mut levels = Vec::new();
+    let mut absolute_xp_to_level = BTreeMap::new();
+    let mut level_to_absolute_xp = BTreeMap::new();
     for rarity in rarities {
-      let mut levels_for_rarity = Vec::new();
+      let mut xp_to_level = BTreeMap::new();
+      let mut level_to_xp = BTreeMap::new();
       for entry in get_master_manager().get_master("member_lv_exp") {
         let level: i32 = entry["lv"].as_str().unwrap().parse().unwrap();
         let xp: i32 = entry[&format!("exp_rare_{}", rarity)]
@@ -22,51 +26,64 @@ impl MemberLevelCalculator {
           .unwrap()
           .parse()
           .unwrap();
-        levels_for_rarity.push((level, xp));
+        xp_to_level.insert(xp, level);
+        level_to_xp.insert(level, xp);
       }
-      levels.push((rarity, levels_for_rarity));
+      absolute_xp_to_level.insert(rarity, xp_to_level);
+      level_to_absolute_xp.insert(rarity, level_to_xp);
     }
-    Self::from_levels(&levels)
-  }
 
-  pub fn from_levels(levels: &[(i32, Vec<(i32, i32)>)]) -> Self {
-    let mut absolute_xp_to_level = BTreeMap::new();
-    let mut level_to_absolute_xp = BTreeMap::new();
-    for (rarity, levels_for_rarity) in levels {
-      let mut absolute_xp_to_level_local = BTreeMap::new();
-      let mut level_to_absolute_xp_local = BTreeMap::new();
-      for &(level, required_exp) in levels_for_rarity {
-        absolute_xp_to_level_local.insert(required_exp, level);
-        level_to_absolute_xp_local.insert(level, required_exp);
-      }
-
-      absolute_xp_to_level.insert(*rarity, absolute_xp_to_level_local);
-      level_to_absolute_xp.insert(*rarity, level_to_absolute_xp_local);
+    let mut promotion_levels = BTreeMap::new();
+    let mut cumulative = 0;
+    for promotion_entry in get_master_manager().get_master("member_lv_limitbreak") {
+      let promotion_level: i32 = promotion_entry["lv"].as_str().unwrap().parse().unwrap();
+      let bonus_levels: i32 = promotion_entry["lv_limit"].as_str().unwrap().parse().unwrap();
+      cumulative += bonus_levels;
+      promotion_levels.insert(promotion_level, cumulative);
     }
 
     Self {
       absolute_xp_to_level,
       level_to_absolute_xp,
+      promotion_levels,
     }
   }
 
-  pub fn get_level(&self, rarity: i32, exp: i32) -> i32 {
+  pub fn get_level(&self, xp: i32, rarity: i32, promotion_level: i32) -> i32 {
     let absolute_xp_to_level_local = match self.absolute_xp_to_level.get(&rarity) {
       Some(map) => map,
       None => todo!("handle unknown rarity {}", rarity),
     };
-    match absolute_xp_to_level_local.range(..=exp).next_back() {
+
+    let base_level = match absolute_xp_to_level_local.range(..=xp).next_back() {
       Some((_, &level)) => level,
+      // 'member_lv_exp' starts from level 2, so this branch is actually reachable
+      None => 1,
+    };
+
+    // Not sure if .range() is needed here, 'member_lv_limitbreak' has no gaps
+    let bonus_levels = match self.promotion_levels.range(..=promotion_level).next_back() {
+      Some((_, &levels)) => levels,
+      // promotion_level is 0
       None => 0,
-    }
+    };
+
+    base_level + bonus_levels
   }
 
-  pub fn get_xp_for_level(&self, level: i32) -> Option<i32> {
-    let level_to_absolute_xp_local = match self.level_to_absolute_xp.get(&level) {
+  /// Returns the total XP required to reach the given level for a member of the given rarity,
+  /// ignoring level caps.
+  pub fn get_xp_for_level(&self, level: i32, rarity: i32) -> i32 {
+    let level_to_absolute_xp_local = match self.level_to_absolute_xp.get(&rarity) {
       Some(map) => map,
-      None => return None,
+      None => todo!("handle unknown rarity {}", rarity),
     };
-    level_to_absolute_xp_local.get(&level).copied()
+
+    match level_to_absolute_xp_local.range(..=level).next_back() {
+      Some((_, &xp)) => xp,
+      // 'member_lv_exp' starts from level 2, so this branch is actually reachable
+      None => 0,
+    }
   }
 }
 

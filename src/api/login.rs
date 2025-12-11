@@ -135,7 +135,7 @@ pub async fn login(state: Arc<AppState>, Params(params): Params<LoginRequestRequ
     created_at: created_at.format("%Y-%m-%d %H:%M:%S").to_string(),
   }));
 
-  response.add_remote_data(blob::get_login_remote_data().await);
+  response.add_remote_data(blob::get_login_remote_data(&state, &session).await);
   response.add_notifications(vec![
     // Jobs
     NotificationData::new(1, 7, 6, 0, "".to_string(), "".to_string()),

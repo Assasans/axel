@@ -3,10 +3,13 @@ use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Signed};
 use crate::level::get_intimacy_level_calculator;
 use crate::user::session::Session;
+use crate::AppState;
+use anyhow::Context;
 use jwt_simple::prelude::Serialize;
 use serde::Serializer;
 use serde_json::Value;
 use std::sync::Arc;
+use tracing::info;
 
 // See [Wonder_Api_InteractionResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -94,10 +97,7 @@ pub fn parse_date(master_date: &str) -> Option<chrono::NaiveDateTime> {
     return None;
   }
 
-  let formats = [
-    "%Y/%m/%d %H:%M:%S",
-    "%Y/%m/%d %H:%M",
-  ];
+  let formats = ["%Y/%m/%d %H:%M:%S", "%Y/%m/%d %H:%M"];
   for format in &formats {
     if let Ok(date) = chrono::NaiveDateTime::parse_from_str(master_date, format) {
       return Some(date);
@@ -106,20 +106,36 @@ pub fn parse_date(master_date: &str) -> Option<chrono::NaiveDateTime> {
   todo!("unhandled date format: {}", master_date);
 }
 
-pub async fn interaction(session: Arc<Session>) -> impl IntoHandlerResponse {
-  let masters = get_masters().await;
-  let characters: Vec<Value> = serde_json::from_str(&masters["character"].master_decompressed).unwrap();
+pub async fn interaction(state: Arc<AppState>, session: Arc<Session>) -> impl IntoHandlerResponse {
+  // let masters = get_masters().await;
+  // let characters: Vec<Value> = serde_json::from_str(&masters["character"].master_decompressed).unwrap();
 
-  let max_xp = get_intimacy_level_calculator().get_xp_for_level(50).unwrap();
+  let client = state.pool.get().await.context("failed to get database connection")?;
+  #[rustfmt::skip]
+  let statement = client
+    .prepare(/* language=postgresql */ r#"
+      select
+        character_id,
+        intimacy
+      from user_characters
+      where user_id = $1
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  let rows = client
+    .query(&statement, &[&session.user_id])
+    .await
+    .context("failed to execute query")?;
+  info!(?rows, "get friend info query executed");
 
   Ok(Signed(
     InteractionResponse {
-      characters: characters
+      characters: rows
         .iter()
-        .map(|character| {
+        .map(|row| {
           Character::new(
-            character["id"].as_str().unwrap().parse().unwrap(),
-            max_xp,
+            row.get(0),
+            row.get(1),
             "".to_string(),
             0,
             0,

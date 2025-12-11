@@ -1,14 +1,20 @@
-use std::sync::Arc;
-
-use serde::{Deserialize, Serialize};
-
+use crate::api::battle::BattleParty;
 use crate::api::dungeon::PartyMember;
 use crate::api::master_all::get_master_manager;
 use crate::api::party::PartyWire;
+use crate::api::surprise::BasicBattlePartyForm;
+use crate::api::{MemberFameStats, MemberStats};
 use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Signed};
-use crate::member::MemberPrototype;
+use crate::level::get_member_level_calculator;
+use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
+use crate::AppState;
+use anyhow::Context;
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use std::sync::Arc;
+use tracing::info;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PartyInfo {
@@ -46,6 +52,21 @@ impl Party {
         skill_id: 0,
         user_member_id: 0,
       },
+    }
+  }
+
+  pub fn to_battle_party(&self) -> BattleParty {
+    BattleParty {
+      party_forms: self
+        .party_forms
+        .iter()
+        .map(|ref form| form.to_basic_battle_party_form())
+        .collect::<Vec<_>>()
+        .try_into()
+        .unwrap(),
+      assist: self.assist as i32,
+      sub_assists: self.sub_assists.iter().map(|sub_assist| *sub_assist as i32).collect(),
+      party_passive_skill: self.party_passive_skill.clone(),
     }
   }
 }
@@ -95,6 +116,20 @@ impl PartyForm {
       name: format!("Party{}", party_no),
     }
   }
+
+  pub fn to_basic_battle_party_form(&self) -> BasicBattlePartyForm {
+    BasicBattlePartyForm {
+      id: self.id,
+      party_no: self.party_no,
+      form_no: self.form_no,
+      main: self.main,
+      sub1: self.sub1,
+      sub2: self.sub2,
+      weapon: self.weapon as i32,
+      acc: self.acc as i32,
+      skill_pa_fame: self.skill_pa_fame,
+    }
+  }
 }
 
 // See [Wonder_Api_SpecialSkillInfoResponseDto_Fields]
@@ -106,7 +141,7 @@ pub struct SpecialSkillInfo {
 }
 
 // See [Wonder_Api_PartyPassiveSkillInfoResponseDto_Fields]
-#[derive(Default, Debug, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct PartyPassiveSkillInfo {
   pub skill_id: i64,
   pub user_member_id: i64,
@@ -129,21 +164,44 @@ impl Party {
   }
 }
 
-pub async fn party_info(session: Arc<Session>) -> impl IntoHandlerResponse {
+pub async fn party_info(state: Arc<AppState>, session: Arc<Session>) -> impl IntoHandlerResponse {
   // let response = include_str!("../party-info.json");
   // let response: Value = serde_json::from_str(response).unwrap();
   // return Ok(Signed(response, session));
 
-  let members = get_master_manager().get_master("member");
+  // let member_prototypes = get_master_manager()
+  //   .get_master("member")
+  //   .iter()
+  //   .map(|data| MemberPrototype::load_from_id(data["id"].as_str().unwrap().parse::<i64>().unwrap()))
+  //   .collect::<Vec<_>>();
+
+  let client = state.pool.get().await.context("failed to get database connection")?;
+  #[rustfmt::skip]
+  let statement = client
+    .prepare(/* language=postgresql */ r#"
+      select
+        member_id,
+        xp,
+        promotion_level
+      from user_members
+      where user_id = $1
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  let rows = client
+    .query(&statement, &[&session.user_id])
+    .await
+    .context("failed to execute query")?;
+  info!(?rows, "get friend info query executed");
 
   Ok(Signed(
     PartyWire {
       party: vec![Party::new(
         [
-          PartyForm::new(666431194, 1, 1, 11),
-          PartyForm::new(666431194, 2, 1, 12),
-          PartyForm::new(666431194, 3, 1, 13),
-          PartyForm::new(666431194, 4, 1, 14),
+          PartyForm::new(666431194, 1, 1, 1),
+          PartyForm::new(666431194, 2, 1, 1),
+          PartyForm::new(666431194, 3, 1, 1),
+          PartyForm::new(666431194, 4, 1, 1),
           PartyForm::new(666431194, 5, 1, 0),
         ],
         1,
@@ -152,13 +210,60 @@ pub async fn party_info(session: Arc<Session>) -> impl IntoHandlerResponse {
       //   MemberPrototype::load_from_id(1001100).create_party_member_wire(11),
       //   //   MemberPrototype::load_from_id(1064100).create_party_member_wire(12),
       // ],
-      members: members
+      members: rows
         .iter()
         .enumerate()
-        .map(|(index, member)| {
-          MemberPrototype::load_from_id(member["id"].as_str().unwrap().parse::<i64>().unwrap())
-            .create_member(index as i32 + 1)
-            .to_party_member()
+        .map(|(index, row)| {
+          let member_id: i64 = row.get(0);
+          let xp: i32 = row.get(1);
+          let promotion_level: i32 = row.get(2);
+          // let active_skills: Value = row.get(3);
+          let prototype = MemberPrototype::load_from_id(member_id);
+
+          Member {
+            id: index as i32 + 1,
+            prototype: &prototype,
+            xp,
+            promotion_level,
+            active_skills: prototype
+              .active_skills
+              .iter()
+              .map(|skill_opt| {
+                skill_opt.as_ref().map(|skill| MemberActiveSkill {
+                  prototype: skill,
+                  level: 1,
+                  value: skill.value.max,
+                })
+              })
+              .collect::<Vec<_>>()
+              .try_into()
+              .unwrap(),
+            // active_skills: prototype
+            //   .active_skills
+            //   .iter()
+            //   .enumerate()
+            //   .map(|(index, prototype)| {
+            //     // TODO: Wrong
+            //     let active_skill = active_skills.get(index).unwrap();
+            //     // let skill_id = active_skill["id"].as_i64().unwrap();
+            //     let level = active_skill["level"].as_i64().unwrap() as i32;
+            //     let value = active_skill["value"].as_i64().unwrap() as i32;
+            //     Some(MemberActiveSkill {
+            //       prototype: &prototype,
+            //       level,
+            //       value,
+            //     })
+            //   })
+            //   .try_into()
+            //   .unwrap(),
+            stats: prototype.stats.clone(),
+            main_strength: MemberStrength::default(),
+            sub_strength: MemberStrength::default(),
+            sub_strength_bonus: MemberStrength::default(),
+            fame_stats: MemberFameStats::default(),
+            skill_pa_fame_list: vec![],
+          }
+          .to_party_member()
         })
         .collect::<Vec<_>>(),
       weapons: vec![],

@@ -11,6 +11,7 @@ use crate::call::CallCustom;
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Signed};
 use crate::user::session::Session;
+use crate::AppState;
 
 #[derive(Debug, Serialize)]
 pub struct MissionList {
@@ -332,13 +333,17 @@ pub async fn marathon_stage_list(
 // party_no=1
 // auto_progression_info={"is_start":false,"stop_setting":0,"incomplete_setting":0}
 // event_id=24013
-pub async fn marathon_quest_start(request: ApiRequest) -> impl IntoHandlerResponse {
+pub async fn marathon_quest_start(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  request: ApiRequest,
+) -> impl IntoHandlerResponse {
   let quest_id = request.body["quest_id"].parse::<i32>().unwrap();
   let party_no = request.body["party_no"].parse::<i32>().unwrap();
   let auto_progression_info: Value = serde_json::from_str(&request.body["auto_progression_info"])?;
   let event_id: Value = serde_json::from_str(&request.body["event_id"])?;
 
-  Ok(battle::battle_start(request).await)
+  Ok(battle::battle_start(state, session, request).await)
 }
 
 // quest_id=514012

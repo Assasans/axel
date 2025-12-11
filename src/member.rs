@@ -1,3 +1,4 @@
+use crate::api::battle::BattleMember;
 use crate::api::dungeon::PartyMember;
 use crate::api::master_all::get_master_manager;
 use crate::api::{MemberFameStats, MemberParameterWire, MemberStats, SkillPaFame};
@@ -80,7 +81,7 @@ impl MemberPrototype {
         member["min_attack"].as_str().unwrap().parse::<i32>().unwrap(),
         member["max_attack"].as_str().unwrap().parse::<i32>().unwrap(),
       ),
-      magic_attack: MinMaxRange::new(
+      attack_magic: MinMaxRange::new(
         member["min_magicattak"].as_str().unwrap().parse::<i32>().unwrap(),
         member["max_magicattak"].as_str().unwrap().parse::<i32>().unwrap(),
       ),
@@ -88,7 +89,7 @@ impl MemberPrototype {
         member["min_defense"].as_str().unwrap().parse::<i32>().unwrap(),
         member["max_defense"].as_str().unwrap().parse::<i32>().unwrap(),
       ),
-      magic_defense: MinMaxRange::new(
+      defense_magic: MinMaxRange::new(
         member["min_magicdefence"].as_str().unwrap().parse::<i32>().unwrap(),
         member["max_magicdefence"].as_str().unwrap().parse::<i32>().unwrap(),
       ),
@@ -123,7 +124,8 @@ impl MemberPrototype {
     Member {
       id,
       prototype: self,
-      xp: if self.character_id == 102 { 150_000 } else { 35_000 },
+      xp: if self.character_id == 102 { 150_000 } else { 35_000 } * 20,
+      promotion_level: 2,
       active_skills: self
         .active_skills
         .iter()
@@ -137,18 +139,7 @@ impl MemberPrototype {
         .collect::<Vec<_>>()
         .try_into()
         .unwrap(),
-      stats: MemberStats {
-        hp: self.stats.hp.max,
-        attack: self.stats.attack.max,
-        magicattack: self.stats.magic_attack.max,
-        defense: self.stats.defense.max,
-        magicdefence: self.stats.magic_defense.max,
-        agility: self.stats.agility.max,
-        dexterity: self.stats.dexterity.max,
-        luck: self.stats.luck.max,
-      },
-      limit_break: 2,
-      waiting_room: 0,
+      stats: self.stats.clone(),
       main_strength: MemberStrength::default(),
       sub_strength: MemberStrength::default(),
       sub_strength_bonus: MemberStrength::default(),
@@ -170,11 +161,10 @@ pub struct Member<'a> {
   pub id: i32,
   pub prototype: &'a MemberPrototype,
   pub xp: i32,
-  pub active_skills: [Option<MemberActiveSkill<'a>>; 3],
-  pub stats: MemberStats,
   /// "Promotions"
-  pub limit_break: i32,
-  pub waiting_room: i32,
+  pub promotion_level: i32,
+  pub active_skills: [Option<MemberActiveSkill<'a>>; 3],
+  pub stats: MemberStatsPrototype,
   pub main_strength: MemberStrength,
   pub sub_strength: MemberStrength,
   pub sub_strength_bonus: MemberStrength,
@@ -183,8 +173,15 @@ pub struct Member<'a> {
 }
 
 impl Member<'_> {
+  /// ## Level
+  /// Members have level cap ('member_lv_limit' master data, currently level 30 for all)
+  /// based on their rarity.
+  ///
+  /// ## Promotion
+  /// Called 'limit_break' internally, promotions increase the level cap of a member
+  /// ('member_lv_limitbreak' master data, currently 5 promotions resulting in 30 bonus levels).
   pub fn level(&self) -> i32 {
-    get_member_level_calculator().get_level(self.prototype.rarity, self.xp)
+    get_member_level_calculator().get_level(self.xp, self.prototype.rarity, self.promotion_level)
   }
 
   pub fn to_member_parameter_wire(&self) -> MemberParameterWire {
@@ -202,21 +199,21 @@ impl Member<'_> {
       ac_skill_id_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.prototype.id),
       ac_skill_lv_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.level),
       ac_skill_val_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.value),
-      hp: self.stats.hp,
-      magicattack: self.stats.magicattack,
-      defense: self.stats.defense,
-      magicdefence: self.stats.magicdefence,
-      agility: self.stats.agility,
-      dexterity: self.stats.dexterity,
-      luck: self.stats.luck,
-      limit_break: self.limit_break,
+      hp: self.stats.hp.interpolate(self.level()),
+      magicattack: self.stats.attack_magic.interpolate(self.level()),
+      defense: self.stats.defense.interpolate(self.level()),
+      magicdefence: self.stats.defense_magic.interpolate(self.level()),
+      agility: self.stats.agility.interpolate(self.level()),
+      dexterity: self.stats.dexterity.interpolate(self.level()),
+      luck: self.stats.luck.interpolate(self.level()),
+      limit_break: self.promotion_level,
       character_id: self.prototype.character_id,
       passiveskill: self.prototype.passive_skill.as_ref().map_or(0, |skill| skill.id),
       specialattack: self.prototype.special_attack.as_ref().map_or(0, |skill| skill.id),
       resist_state: self.prototype.resistance_group.id,
       resist_attr: 0,
-      attack: self.stats.attack,
-      waiting_room: self.waiting_room,
+      attack: self.stats.attack.interpolate(self.level()),
+      waiting_room: 0,
       main_strength: self.main_strength.strength,
       main_strength_for_fame_quest: self.main_strength.for_fame_quest,
       sub_strength: self.sub_strength.strength,
@@ -244,19 +241,54 @@ impl Member<'_> {
       ac_skill_val_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.value as i64),
       ac_skill_lv_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.level),
       ac_skill_val_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.value as i64),
-      hp: self.stats.hp,
-      attack: self.stats.attack,
-      magicattack: self.stats.magicattack,
-      defense: self.stats.defense,
-      magicdefence: self.stats.magicdefence,
-      agility: self.stats.agility,
-      dexterity: self.stats.dexterity,
-      luck: self.stats.luck,
-      limit_break: self.limit_break,
+      hp: self.stats.hp.interpolate(self.level()),
+      attack: self.stats.attack.interpolate(self.level()),
+      magicattack: self.stats.attack_magic.interpolate(self.level()),
+      defense: self.stats.defense.interpolate(self.level()),
+      magicdefence: self.stats.defense_magic.interpolate(self.level()),
+      agility: self.stats.agility.interpolate(self.level()),
+      dexterity: self.stats.dexterity.interpolate(self.level()),
+      luck: self.stats.luck.interpolate(self.level()),
+      limit_break: self.promotion_level,
       character_id: self.prototype.character_id,
-      waiting_room: self.waiting_room,
+      waiting_room: 0,
       ex_flg: 0,
       is_undead: 0,
+    }
+  }
+
+  pub fn to_battle_member(&self) -> BattleMember {
+    BattleMember {
+      id: self.id,
+      lv: self.level(),
+      exp: self.xp,
+      member_id: self.prototype.id,
+      ac_skill_id_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.value),
+      ac_skill_id_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.value),
+      ac_skill_id_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.value),
+      hp: self.stats.hp.interpolate(self.level()),
+      magicattack: self.stats.attack_magic.interpolate(self.level()),
+      defense: self.stats.defense.interpolate(self.level()),
+      magicdefence: self.stats.defense_magic.interpolate(self.level()),
+      agility: self.stats.agility.interpolate(self.level()),
+      dexterity: self.stats.dexterity.interpolate(self.level()),
+      luck: self.stats.luck.interpolate(self.level()),
+      limit_break: self.promotion_level,
+      character_id: self.prototype.character_id,
+      passiveskill: 210201,  // self.prototype.passive_skill.as_ref().map_or(0, |skill| skill.id),
+      specialattack: 100001, // self.prototype.special_attack.as_ref().map_or(0, |skill| skill.id),
+      resist_state: 210201,  // self.prototype.resistance_group.id,
+      resist_attr: 150000000,
+      attack: self.stats.attack.interpolate(self.level()),
+      ex_flg: 0,
+      is_undead: 0,
+      special_skill_lv: 1,
     }
   }
 }
@@ -278,9 +310,9 @@ pub struct MemberActiveSkill<'a> {
 pub struct MemberStatsPrototype {
   pub hp: MinMaxRange,
   pub attack: MinMaxRange,
-  pub magic_attack: MinMaxRange,
+  pub attack_magic: MinMaxRange,
   pub defense: MinMaxRange,
-  pub magic_defense: MinMaxRange,
+  pub defense_magic: MinMaxRange,
   pub agility: MinMaxRange,
   pub dexterity: MinMaxRange,
   pub luck: MinMaxRange,
@@ -316,5 +348,11 @@ pub struct MinMaxRange {
 impl MinMaxRange {
   pub fn new(min: i32, max: i32) -> Self {
     Self { min, max }
+  }
+
+  pub fn interpolate(&self, level: i32) -> i32 {
+    const MAX_LEVEL: i32 = 60;
+    let ratio = (level - 1) as f32 / (MAX_LEVEL - 1) as f32;
+    (self.min as f32 + (self.max - self.min) as f32 * ratio).round() as i32
   }
 }

@@ -82,6 +82,7 @@ pub struct SurpriseQuestStart {
 impl CallCustom for SurpriseQuestStart {}
 
 // See [Wonder_Api_SurpriseQuestStartPartyResponseDto_Fields]
+// TODO: Same as BattleParty?
 #[derive(Debug, Serialize)]
 pub struct SurpriseQuestStartParty {
   pub party_forms: Vec<BasicBattlePartyForm>,

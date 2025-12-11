@@ -1,13 +1,104 @@
 use crate::api::master_all::get_master_manager;
-use crate::api::{CharacterParameter, MemberParameterWire, RemoteData, RemoteDataCommand, RemoteDataItemType, SpSkill};
-use crate::member::MemberPrototype;
+use crate::api::{
+  CharacterParameter, MemberFameStats, MemberParameterWire, MemberStats, RemoteData, RemoteDataCommand,
+  RemoteDataItemType, SpSkill,
+};
+use crate::level::get_member_level_calculator;
+use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::user::session::Session;
+use crate::AppState;
+use anyhow::Context;
+use std::sync::Arc;
+use tracing::info;
 
-pub async fn get_login_remote_data() -> Vec<RemoteData> {
+pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<RemoteData> {
   let masters = get_master_manager();
   let characters = masters.get_master("character");
-  let members = masters.get_master("member");
+  // let members = masters.get_master("member");
   let costumes = masters.get_master("costume");
   let backgrounds = masters.get_master("background");
+
+  let client = state
+    .pool
+    .get()
+    .await
+    .context("failed to get database connection")
+    .unwrap();
+  #[rustfmt::skip]
+  let statement = client
+    .prepare(/* language=postgresql */ r#"
+      select
+        member_id,
+        xp,
+        promotion_level
+      from user_members
+      where user_id = $1
+    "#)
+    .await
+    .context("failed to prepare statement").unwrap();
+  let rows = client
+    .query(&statement, &[&session.user_id])
+    .await
+    .context("failed to execute query")
+    .unwrap();
+  info!(?rows, "get friend info query executed");
+
+  let members = rows
+    .iter()
+    .enumerate()
+    .map(|(index, row)| {
+      let member_id: i64 = row.get(0);
+      let xp: i32 = row.get(1);
+      let promotion_level: i32 = row.get(2);
+      // let active_skills: Value = row.get(3);
+      let prototype = MemberPrototype::load_from_id(member_id);
+
+      Member {
+        id: index as i32 + 1,
+        prototype: &prototype,
+        xp,
+        promotion_level,
+        active_skills: prototype
+          .active_skills
+          .iter()
+          .map(|skill_opt| {
+            skill_opt.as_ref().map(|skill| MemberActiveSkill {
+              prototype: skill,
+              level: 1,
+              value: skill.value.max,
+            })
+          })
+          .collect::<Vec<_>>()
+          .try_into()
+          .unwrap(),
+        // active_skills: prototype
+        //   .active_skills
+        //   .iter()
+        //   .enumerate()
+        //   .map(|(index, prototype)| {
+        //     // TODO: Wrong
+        //     let active_skill = active_skills.get(index).unwrap();
+        //     // let skill_id = active_skill["id"].as_i64().unwrap();
+        //     let level = active_skill["level"].as_i64().unwrap() as i32;
+        //     let value = active_skill["value"].as_i64().unwrap() as i32;
+        //     Some(MemberActiveSkill {
+        //       prototype: &prototype,
+        //       level,
+        //       value,
+        //     })
+        //   })
+        //   .try_into()
+        //   .unwrap(),
+        stats: prototype.stats.clone(),
+        main_strength: MemberStrength::default(),
+        sub_strength: MemberStrength::default(),
+        sub_strength_bonus: MemberStrength::default(),
+        fame_stats: MemberFameStats::default(),
+        skill_pa_fame_list: vec![],
+      }
+      .to_member_parameter_wire()
+    })
+    .collect::<Vec<_>>();
 
   let characters = characters
     .iter()
@@ -60,17 +151,9 @@ pub async fn get_login_remote_data() -> Vec<RemoteData> {
     .collect::<Vec<_>>();
 
   let members = members
-    .iter()
+    .into_iter()
     .enumerate()
-    .map(|(index, member)| {
-      AddMember::new(
-        MemberPrototype::load_from_id(member["id"].as_str().unwrap().parse::<i64>().unwrap())
-          .create_member(index as i32 + 1)
-          .to_member_parameter_wire(),
-        "front",
-      )
-      .into_remote_data()
-    })
+    .map(|(index, member)| AddMember::new(member, "front").into_remote_data())
     .collect::<Vec<_>>();
 
   #[cfg_attr(rustfmt, rustfmt::skip)]

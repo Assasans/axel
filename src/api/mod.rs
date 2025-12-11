@@ -227,9 +227,9 @@ impl ActiveSkill {
 pub struct MemberStats {
   pub hp: i32,
   pub attack: i32,
-  pub magicattack: i32,
+  pub attack_magic: i32,
   pub defense: i32,
-  pub magicdefence: i32,
+  pub defense_magic: i32,
   pub agility: i32,
   pub dexterity: i32,
   pub luck: i32,
