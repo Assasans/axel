@@ -81,7 +81,77 @@ pub async fn run_login_migration(state: &AppState, session: &Session) {
       .unwrap()
   };
 
-  info!(?characters_updated, ?members_updated, "login migration executed");
+  /*
+  drop table if exists user_parties cascade;
+create table user_parties
+(
+  user_id  bigint not null references users (id) on delete restrict,
+  party_id bigint not null,
+  name     text   not null,
+  primary key (user_id, party_id)
+);
+
+drop table if exists user_party_forms cascade;
+create table user_party_forms
+(
+  user_id        bigint not null references users (id) on delete restrict,
+  party_id       bigint not null,
+  form_id        bigint not null,
+  main_member_id bigint null default 0,
+  sub1_member_id bigint null default 0,
+  sub2_member_id bigint null default 0,
+  weapon_id      bigint null default 0,
+  accessory_id   bigint null default 0,
+  primary key (user_id, party_id, form_id),
+  foreign key (user_id, party_id) references user_parties (user_id, party_id) on delete restrict
+);
+   */
+  let party_forms_updated = {
+    // Create 8 default parties if none exist, for each new party create 5 default forms
+    #[rustfmt::skip]
+    let statement = client
+      .prepare(/* language=postgresql */ r#"
+        with inserted_parties as (
+          insert into user_parties (user_id, party_id, name)
+          select
+            $1,
+            p.party_id,
+            'Axel' || p.party_id::text
+          from generate_series(1, 8) as p(party_id)
+          where not exists (
+            select 1 from user_parties up
+            where up.user_id = $1 and up.party_id = p.party_id
+          )
+          returning user_id, party_id
+        )
+        insert into user_party_forms (user_id, party_id, form_id, main_member_id, sub1_member_id, sub2_member_id, weapon_id, accessory_id)
+        select
+          ip.user_id,
+          ip.party_id,
+          f.form_id,
+          1001100, -- main_member_id
+          0,       -- sub1_member_id
+          0,       -- sub2_member_id
+          0,       -- weapon_id
+          0        -- accessory_id
+        from inserted_parties ip
+        join generate_series(1, 5) as f(form_id) on true
+        where not exists (
+          select 1 from user_party_forms upf
+          where upf.user_id = ip.user_id and upf.party_id = ip.party_id and upf.form_id = f.form_id
+        )
+      "#)
+      .await
+      .context("failed to prepare statement")
+      .unwrap();
+    client
+      .execute(&statement, &[&session.user_id])
+      .await
+      .context("failed to execute query")
+      .unwrap()
+  };
+
+  info!(?characters_updated, ?members_updated, ?party_forms_updated, "login migration executed");
 }
 
 pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<RemoteData> {
@@ -114,7 +184,6 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     .await
     .context("failed to execute query")
     .unwrap();
-  info!(?rows, "get friend info query executed");
 
   let members = rows
     .iter()
@@ -127,7 +196,7 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
       let prototype = MemberPrototype::load_from_id(member_id);
 
       Member {
-        id: index as i32 + 1,
+        id: prototype.id as i32,
         prototype: &prototype,
         xp,
         promotion_level,

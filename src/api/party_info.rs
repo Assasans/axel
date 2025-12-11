@@ -1,20 +1,17 @@
 use crate::api::battle::BattleParty;
 use crate::api::dungeon::PartyMember;
-use crate::api::master_all::get_master_manager;
 use crate::api::party::PartyWire;
 use crate::api::surprise::BasicBattlePartyForm;
-use crate::api::{MemberFameStats, MemberStats};
+use crate::api::MemberFameStats;
 use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Signed};
-use crate::level::get_member_level_calculator;
 use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
 use crate::AppState;
 use anyhow::Context;
+use itertools::Itertools;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use std::sync::Arc;
-use tracing::info;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PartyInfo {
@@ -27,6 +24,7 @@ pub struct PartyInfo {
 impl CallCustom for PartyInfo {}
 
 // See [Wonder_Api_PartyinfoPartyResponseDto_Fields]
+// Thanks to https://youtu.be/Vv9r8wrDsZ8
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Party {
   /// ## Party formations
@@ -175,7 +173,7 @@ pub async fn party_info(state: Arc<AppState>, session: Arc<Session>) -> impl Int
   //   .map(|data| MemberPrototype::load_from_id(data["id"].as_str().unwrap().parse::<i64>().unwrap()))
   //   .collect::<Vec<_>>();
 
-  let client = state.pool.get().await.context("failed to get database connection")?;
+  let client = state.get_database_client().await?;
   #[rustfmt::skip]
   let statement = client
     .prepare(/* language=postgresql */ r#"
@@ -188,29 +186,92 @@ pub async fn party_info(state: Arc<AppState>, session: Arc<Session>) -> impl Int
     "#)
     .await
     .context("failed to prepare statement")?;
-  let rows = client
+  let members = client
     .query(&statement, &[&session.user_id])
     .await
     .context("failed to execute query")?;
-  info!(?rows, "get friend info query executed");
+
+  let statement = client
+    .prepare(
+      /* language=postgresql */
+      r#"
+      select
+        up.party_id,
+        -- Incidentally, client expects party name to be inside each form,
+        -- which is exactly how JOIN returns it.
+        up.name,
+        upf.form_id,
+        upf.main_member_id,
+        upf.sub1_member_id,
+        upf.sub2_member_id,
+        upf.weapon_id,
+        upf.accessory_id
+      from user_parties up
+        join user_party_forms upf
+          on up.user_id = upf.user_id and up.party_id = upf.party_id
+      where up.user_id = $1
+      order by up.party_id, upf.form_id
+    "#,
+    )
+    .await
+    .context("failed to prepare statement")?;
+  let parties = client
+    .query(&statement, &[&session.user_id])
+    .await
+    .context("failed to execute query")?;
 
   Ok(Signed(
     PartyWire {
-      party: vec![Party::new(
-        [
-          PartyForm::new(666431194, 1, 1, 1),
-          PartyForm::new(666431194, 2, 1, 1),
-          PartyForm::new(666431194, 3, 1, 1),
-          PartyForm::new(666431194, 4, 1, 1),
-          PartyForm::new(666431194, 5, 1, 0),
-        ],
-        1,
-      )],
+      party: parties
+        .iter()
+        .chunk_by(|row| {
+          let party_id: i64 = row.get(0);
+          party_id as i32
+        })
+        .into_iter()
+        .map(|(party_id, forms)| {
+          let forms = forms.collect::<Vec<_>>();
+          let forms = forms
+            .into_iter()
+            .map(|row| {
+              let party_name: String = row.get(1);
+              let form_id: i64 = row.get(2);
+              let main_member_id: i64 = row.get(3);
+              let sub1_member_id: i64 = row.get(4);
+              let sub2_member_id: i64 = row.get(5);
+              let weapon_id: i64 = row.get(6);
+              let accessory_id: i64 = row.get(7);
+
+              PartyForm {
+                id: form_id as i32,
+                form_no: form_id as i32,
+                party_no: party_id,
+                main: main_member_id as i32,
+                sub1: sub1_member_id as i32,
+                sub2: sub2_member_id as i32,
+                weapon: weapon_id,
+                acc: accessory_id,
+                name: party_name,
+                strength: 123,
+                specialskill: SpecialSkillInfo {
+                  special_skill_id: 100001,
+                  trial: false,
+                },
+                skill_pa_fame: 0,
+              }
+            })
+            .collect::<Vec<_>>()
+            .try_into()
+            .unwrap();
+
+          Party::new(forms, party_id)
+        })
+        .collect::<Vec<_>>(),
       // members: vec![
       //   MemberPrototype::load_from_id(1001100).create_party_member_wire(11),
       //   //   MemberPrototype::load_from_id(1064100).create_party_member_wire(12),
       // ],
-      members: rows
+      members: members
         .iter()
         .enumerate()
         .map(|(index, row)| {
@@ -221,7 +282,7 @@ pub async fn party_info(state: Arc<AppState>, session: Arc<Session>) -> impl Int
           let prototype = MemberPrototype::load_from_id(member_id);
 
           Member {
-            id: index as i32 + 1,
+            id: prototype.id as i32,
             prototype: &prototype,
             xp,
             promotion_level,

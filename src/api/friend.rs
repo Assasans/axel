@@ -397,7 +397,6 @@ pub async fn friend_info(
     .query(&statement, &[&params.friend_user_no])
     .await
     .context("failed to execute query")?;
-  info!(?rows, "get friend info query executed");
   let row = rows
     .first()
     .ok_or_else(|| anyhow::anyhow!("no profile found for user {:?}", params.friend_user_no))?;

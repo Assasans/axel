@@ -11,6 +11,7 @@ pub mod database;
 pub mod extractor;
 pub mod handler;
 pub mod impl_handler;
+pub mod level;
 pub mod master;
 pub mod member;
 pub mod normalize_path;
@@ -23,22 +24,24 @@ pub mod settings;
 pub mod static_server;
 pub mod string_as_base64;
 pub mod user;
-pub mod level;
 
 use std::collections::HashMap;
 use std::env;
 use std::error::Error;
+use std::fmt::{Debug, Display};
 use std::io::stdout;
+use std::ops::Deref;
 use std::sync::{Arc, Mutex};
 
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use clap::Parser;
+use deadpool_postgres::PoolError;
 use tokio::join;
 use tracing::info;
-use tracing_subscriber::EnvFilter;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
+use tracing_subscriber::EnvFilter;
 
 use crate::api::master_all::{get_masters, MasterManager, MASTER_MANAGER};
 use crate::api::{RemoteData, RemoteDataCommand, RemoteDataItemType};
@@ -55,6 +58,51 @@ pub struct AppState {
   pub settings: Settings,
   pub sessions: Mutex<HashMap<UserId, Arc<Session>>>,
   pub pool: deadpool_postgres::Pool,
+}
+
+pub struct AppPoolError(PoolError);
+
+impl From<PoolError> for AppPoolError {
+  fn from(err: PoolError) -> Self {
+    Self(err)
+  }
+}
+
+impl Debug for AppPoolError {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "{}", self.0)
+  }
+}
+
+impl Display for AppPoolError {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "{}", self.0)
+  }
+}
+
+impl Deref for AppPoolError {
+  type Target = PoolError;
+
+  fn deref(&self) -> &Self::Target {
+    &self.0
+  }
+}
+
+impl Error for AppPoolError {}
+
+impl AppState {
+  pub async fn get_database_client(&self) -> Result<deadpool_postgres::Client, AppPoolError> {
+    self.pool.get().await.map_err(AppPoolError::from)
+  }
+}
+
+impl IntoResponse for AppPoolError {
+  fn into_response(self) -> Response {
+    let error = self;
+    tracing::error!(?error, "database pool error");
+
+    (StatusCode::INTERNAL_SERVER_ERROR, format!("{}", error)).into_response()
+  }
 }
 
 #[tokio::main]

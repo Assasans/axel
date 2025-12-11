@@ -346,7 +346,9 @@ impl<'de> de::Deserializer<'de> for StrDeserializer<'de> {
   where
     V: Visitor<'de>,
   {
-    Err(de::Error::custom("nested structs are not supported"))
+    serde_json::Deserializer::from_str(self.0)
+      .deserialize_struct(_name, _fields, _visitor)
+      .map_err(de::Error::custom)
   }
 
   fn deserialize_enum<V>(

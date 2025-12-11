@@ -326,7 +326,7 @@ async fn api_call(
     if matches!(
       &*method,
       "masterlist" | "masterall" | "login" | "gachainfo" | "gacha_tutorial_reward"
-    ) {
+    ) || response_data.len() > 10000 {
       debug!("response: (...)");
     } else {
       debug!("response: {}", response_data);

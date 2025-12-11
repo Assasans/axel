@@ -82,7 +82,7 @@ pub async fn new_id(Params(request): Params<NewIdRequest>) -> impl IntoHandlerRe
   warn!(?request.newpassword, "encountered stub: new_id");
 
   Unsigned(NewId {
-    take_over_id: "MTF00LTR".to_owned(),
+    take_over_id: "MTF00LTL".to_owned(),
   })
 }
 

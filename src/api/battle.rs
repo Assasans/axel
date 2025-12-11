@@ -94,7 +94,6 @@ pub async fn battle_start(
     .query(&statement, &[&session.user_id])
     .await
     .context("failed to execute query")?;
-  info!(?rows, "get friend info query executed");
 
   let mut response = CallResponse::new_success(Box::new(BattleStartResponse {
     chest: "10101111,10101120,10101131".to_owned(),

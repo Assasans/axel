@@ -126,7 +126,6 @@ pub async fn interaction(state: Arc<AppState>, session: Arc<Session>) -> impl In
     .query(&statement, &[&session.user_id])
     .await
     .context("failed to execute query")?;
-  info!(?rows, "get friend info query executed");
 
   Ok(Signed(
     InteractionResponse {
