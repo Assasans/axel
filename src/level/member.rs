@@ -7,6 +7,8 @@ pub struct MemberLevelCalculator {
   absolute_xp_to_level: BTreeMap<i32, BTreeMap<i32, i32>>,
   // (rarity, (level, xp))
   level_to_absolute_xp: BTreeMap<i32, BTreeMap<i32, i32>>,
+  // (rarity, max_level)
+  level_limits: BTreeMap<i32, i32>,
   // (promotion_level, cumulative{bonus_levels))
   promotion_levels: BTreeMap<i32, i32>,
 }
@@ -33,6 +35,13 @@ impl MemberLevelCalculator {
       level_to_absolute_xp.insert(rarity, level_to_xp);
     }
 
+    let mut level_limits = BTreeMap::new();
+    for entry in get_master_manager().get_master("member_lv_limit") {
+      let rarity: i32 = entry["rare"].as_str().unwrap().parse().unwrap();
+      let max_level: i32 = entry["lv_limit"].as_str().unwrap().parse().unwrap();
+      level_limits.insert(rarity, max_level);
+    }
+
     let mut promotion_levels = BTreeMap::new();
     let mut cumulative = 0;
     for promotion_entry in get_master_manager().get_master("member_lv_limitbreak") {
@@ -45,6 +54,7 @@ impl MemberLevelCalculator {
     Self {
       absolute_xp_to_level,
       level_to_absolute_xp,
+      level_limits,
       promotion_levels,
     }
   }
@@ -55,20 +65,24 @@ impl MemberLevelCalculator {
       None => todo!("handle unknown rarity {}", rarity),
     };
 
-    let base_level = match absolute_xp_to_level_local.range(..=xp).next_back() {
+    let level = match absolute_xp_to_level_local.range(..=xp).next_back() {
       Some((_, &level)) => level,
       // 'member_lv_exp' starts from level 2, so this branch is actually reachable
       None => 1,
     };
 
-    // Not sure if .range() is needed here, 'member_lv_limitbreak' has no gaps
-    let bonus_levels = match self.promotion_levels.range(..=promotion_level).next_back() {
-      Some((_, &levels)) => levels,
-      // promotion_level is 0
-      None => 0,
+    let base_limit = match self.level_limits.get(&rarity) {
+      Some(&limit) => limit,
+      None => todo!("handle unknown rarity {}", rarity),
     };
 
-    base_level + bonus_levels
+    let bonus_limits = match self.promotion_levels.get(&promotion_level) {
+      Some(&bonus) => bonus,
+      None if promotion_level == 0 => 0,
+      None => todo!("handle unknown promotion level {}", promotion_level),
+    };
+
+    level.min(base_limit + bonus_limits)
   }
 
   /// Returns the total XP required to reach the given level for a member of the given rarity,

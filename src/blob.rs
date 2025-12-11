@@ -11,6 +11,79 @@ use anyhow::Context;
 use std::sync::Arc;
 use tracing::info;
 
+pub async fn run_login_migration(state: &AppState, session: &Session) {
+  let masters = get_master_manager();
+
+  let client = state
+    .pool
+    .get()
+    .await
+    .context("failed to get database connection")
+    .unwrap();
+
+  let characters_updated = {
+    // Create missing user_characters
+    #[rustfmt::skip]
+    let statement = client
+      .prepare(/* language=postgresql */ r#"
+        insert into user_characters (user_id, character_id, intimacy)
+        select $1, m.id::bigint, 0
+        from unnest($2::bigint[]) as m(id)
+        where not exists (
+          select 1 from user_characters uc
+          where uc.user_id = $1 and uc.character_id = m.id::bigint
+        )
+      "#)
+      .await
+      .context("failed to prepare statement")
+      .unwrap();
+    let character_ids: Vec<i64> = masters
+      .get_master("character")
+      .iter()
+      .map(|data| data.get("id").unwrap().as_str().unwrap().parse::<i64>().unwrap())
+      .collect();
+    client
+      .execute(&statement, &[&session.user_id, &character_ids])
+      .await
+      .context("failed to execute query")
+      .unwrap()
+  };
+
+  let members_updated = {
+    // Create missing user_members
+    #[rustfmt::skip]
+    let statement = client
+      .prepare(/* language=postgresql */ r#"
+        insert into user_members (user_id, member_id, xp, promotion_level)
+        select
+          $1,
+          m.id::bigint,
+          (floor(random() * 50000) + 5000)::int as xp,
+          (floor(random() * 6))::int
+        from unnest($2::bigint[]) as m(id)
+        where not exists (
+          select 1 from user_members um
+          where um.user_id = $1 and um.member_id = m.id::bigint
+        )
+      "#)
+      .await
+      .context("failed to prepare statement")
+      .unwrap();
+    let member_ids: Vec<i64> = masters
+      .get_master("member")
+      .iter()
+      .map(|data| data.get("id").unwrap().as_str().unwrap().parse::<i64>().unwrap())
+      .collect();
+    client
+      .execute(&statement, &[&session.user_id, &member_ids])
+      .await
+      .context("failed to execute query")
+      .unwrap()
+  };
+
+  info!(?characters_updated, ?members_updated, "login migration executed");
+}
+
 pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<RemoteData> {
   let masters = get_master_manager();
   let characters = masters.get_master("character");
