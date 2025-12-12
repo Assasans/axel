@@ -1,17 +1,17 @@
 //! Hierarchy is Rank (I) -> Area (Near the Axel Village) -> Stage (Dire Bunny Raid)
 
-use std::sync::Arc;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use std::sync::Arc;
 use tracing::debug;
 
 use crate::api::master_all::get_masters;
 use crate::api::{battle, ApiRequest};
-use crate::AppState;
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
-use crate::handler::{IntoHandlerResponse, Unsigned};
+use crate::handler::{HandlerResponse, IntoHandlerResponse, Unsigned};
 use crate::user::session::Session;
+use crate::AppState;
 
 // See [Wonder_Api_FameQuestRankListResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -195,14 +195,15 @@ pub struct FameQuestStart {
 pub async fn fame_quest_start(
   state: Arc<AppState>,
   session: Arc<Session>,
-  request: ApiRequest
+  request: ApiRequest,
 ) -> impl IntoHandlerResponse {
   let use_supplement_num: i32 = request.body["use_supplement_num"].parse().unwrap();
   let party_no: i32 = request.body["party_no"].parse().unwrap();
   let stage_id: i32 = request.body["stage_id"].parse().unwrap();
   let cost_ratio: i32 = request.body["cost_ratio"].parse().unwrap();
 
-  battle::battle_start(state, session, request).await
+  todo!() as Result<Unsigned<()>, anyhow::Error>
+  // battle::battle_start(state, session, request).await
 }
 
 // Interestingly it does not have [memcheckcount].

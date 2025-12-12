@@ -204,7 +204,7 @@ async fn get_news() -> axum::response::Result<impl IntoResponse, AppError> {
       priority: Some(1),
       start_at: (time - chrono::Duration::days(6)).timestamp(),
       end_at: (time + chrono::Duration::days(7)).timestamp(),
-      date: "2025-12-09".to_owned(),
+      date: "2025-12-12".to_owned(),
     },
   ];
 

@@ -9,7 +9,7 @@ use crate::api::master_all::get_masters;
 use crate::api::{battle, ApiRequest};
 use crate::call::CallCustom;
 use crate::extractor::Params;
-use crate::handler::{IntoHandlerResponse, Signed};
+use crate::handler::{IntoHandlerResponse, Signed, Unsigned};
 use crate::user::session::Session;
 use crate::AppState;
 
@@ -343,7 +343,8 @@ pub async fn marathon_quest_start(
   let auto_progression_info: Value = serde_json::from_str(&request.body["auto_progression_info"])?;
   let event_id: Value = serde_json::from_str(&request.body["event_id"])?;
 
-  Ok(battle::battle_start(state, session, request).await)
+  todo!() as Result<Unsigned<()>, anyhow::Error>
+  // Ok(battle::battle_start(state, session, request).await)
 }
 
 // quest_id=514012
