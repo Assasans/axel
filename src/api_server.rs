@@ -148,6 +148,7 @@ async fn api_call(
     .handle("quest_main_area_list", quest_main::quest_main_area_list)
     .handle("questhuntinglist", quest_hunting::quest_hunting_list)
     .handle("questhuntingstagelist", quest_hunting::quest_hunting_stage_list)
+    .handle("quest_hunting_limit_stage_list", quest_hunting::quest_hunting_limit_stage_list)
     .handle("fame_quest_rank_list", quest_fame::fame_quest_rank_list)
     .handle("fame_quest_area_list", quest_fame::fame_quest_area_list)
     .handle("fame_quest_stage_list", quest_fame::fame_quest_stage_list)

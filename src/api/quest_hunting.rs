@@ -1,4 +1,5 @@
 //! Hierarchy is Area (Relic Quest) -> Stage (Eris - Beginner)
+//! Reference: https://youtu.be/S9fX6sbXRHw (also shows character upgrade and promotion)
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -13,8 +14,8 @@ use crate::handler::{IntoHandlerResponse, Unsigned};
 pub struct QuestHuntingListResponse {
   pub limitquests: Vec<HuntingLimitQuest>,
   pub freequests: Vec<HuntingFreeQuest>,
+  /// Whether "purchase more attempts" button is enabled
   pub enablepackage: bool,
-  pub status: i32,
 }
 
 impl CallCustom for QuestHuntingListResponse {}
@@ -24,6 +25,7 @@ impl CallCustom for QuestHuntingListResponse {}
 pub struct HuntingLimitQuest {
   pub area_id: i32,
   pub status: i32,
+  /// Attempts left. "Challenges {master.limit_count - limit} / {master.limit_count}"
   pub limit: i32,
 }
 
@@ -39,7 +41,19 @@ pub async fn quest_hunting_list() -> impl IntoHandlerResponse {
   let areas: Vec<Value> = serde_json::from_str(&masters["huntingquest_area"].master_decompressed).unwrap();
 
   Ok(Unsigned(QuestHuntingListResponse {
-    limitquests: vec![],
+    limitquests: areas
+      .iter()
+      .filter(|area| area.get("type").unwrap().as_str().unwrap() == "LIMITED")
+      .map(|area| {
+        let area_id = area.get("area_id").unwrap().as_str().unwrap().parse::<i32>().unwrap();
+
+        HuntingLimitQuest {
+          area_id,
+          status: 0,
+          limit: 1,
+        }
+      })
+      .collect::<Vec<_>>(),
     freequests: areas
       .iter()
       .filter(|area| area.get("type").unwrap().as_str().unwrap() == "FREE")
@@ -49,8 +63,7 @@ pub async fn quest_hunting_list() -> impl IntoHandlerResponse {
         HuntingFreeQuest { area_id, status: 0 }
       })
       .collect::<Vec<_>>(),
-    enablepackage: false,
-    status: 0,
+    enablepackage: true,
   }))
 }
 
@@ -58,10 +71,22 @@ pub async fn quest_hunting_list() -> impl IntoHandlerResponse {
 #[derive(Debug, Serialize)]
 pub struct QuestHuntingStageListResponse {
   pub quests: Vec<HuntingStageQuest>,
-  pub status: i32,
 }
 
 impl CallCustom for QuestHuntingStageListResponse {}
+
+// Wonder.Util.ParameterUtil$$GetAttributeNum
+// See [Wonder.Util.ParameterUtil$$GetAttributeNum]
+// "all" = 8
+// "wind" = 3
+// "earth" = 2
+// "water" = 1
+// "0" = 7
+// "thunder" = 4
+// "light" = 5
+// "cursed" = 6
+// "fire" = 0
+// "unattributed" = 7
 
 // See [Wonder_Api_QuesthuntingstagelistQuestsResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -85,19 +110,53 @@ pub async fn quest_hunting_stage_list(
   let masters = get_masters().await;
   let stages: Vec<Value> = serde_json::from_str(&masters["huntingquest_stage"].master_decompressed).unwrap();
 
+  // TODO: This should probably return remote data or notification data, but I have no dumps for it.
+  //  All stages are locked...
   Ok(Unsigned(QuestHuntingStageListResponse {
     quests: stages
       .iter()
       .filter(|stage| stage.get("area_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == params.area_id)
       .map(|stage| HuntingStageQuest {
         stage_id: stage.get("stage_id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),
-        status: 0,
-        newstage: 0,
-        task1: 0,
-        task2: 0,
-        task3: 0,
+        status: 1,
+        newstage: 1,
+        task1: 12,
+        task2: 13,
+        task3: 15,
       })
       .collect::<Vec<_>>(),
-    status: 0,
+  }))
+}
+
+// See [Wonder_Api_QuestHuntingLimitStageListResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct QuestHuntingLimitStageListResponse {
+  pub quests: Vec<HuntingLimitStageQuest>,
+  pub bonuspack: i32,
+}
+
+impl CallCustom for QuestHuntingLimitStageListResponse {}
+
+// See [Wonder_Api_QuestHuntingLimitStageListQuestsResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct HuntingLimitStageQuest {
+  pub stage_id: i32,
+  pub challenge_count: i32,
+}
+
+pub async fn quest_hunting_limit_stage_list(
+) -> impl IntoHandlerResponse {
+  let masters = get_masters().await;
+  let stages: Vec<Value> = serde_json::from_str(&masters["huntingquest_stage"].master_decompressed).unwrap();
+
+  Ok(Unsigned(QuestHuntingLimitStageListResponse {
+    quests: stages
+      .iter()
+      .map(|stage| HuntingLimitStageQuest {
+        stage_id: stage.get("stage_id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),
+        challenge_count: 42,
+      })
+      .collect::<Vec<_>>(),
+    bonuspack: 0,
   }))
 }
