@@ -1,11 +1,21 @@
-use jwt_simple::prelude::Deserialize;
-use serde::Serialize;
-use tracing::warn;
+//! Reference: https://youtu.be/5xRIW8bDzc4, https://youtu.be/ViMtYimwca4
 
+use crate::api::battle::{BattleParty, LiveMember};
+use crate::api::master_all::get_master_manager;
 use crate::api::party_info::{PartyPassiveSkillInfo, SpecialSkillInfo};
+use crate::api::MemberFameStats;
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
+use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::user::session::Session;
+use crate::AppState;
+use anyhow::Context;
+use jwt_simple::prelude::Deserialize;
+use serde::Serialize;
+use std::sync::Arc;
+use tracing::warn;
+use crate::api::surprise::BasicBattlePartyForm;
 
 // See [Wonder_Api_DungeonStatusResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -64,6 +74,13 @@ pub struct DungeonStageState {
 #[derive(Debug, Serialize)]
 pub struct DungeonStageEnemyState {
   pub enemy_id: i32,
+  pub current_hp: i32,
+}
+
+// See [Wonder_Api_DungeonEnemyInfoResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct DungeonEnemyInfo {
+  pub enemy_id: i64,
   pub current_hp: i32,
 }
 
@@ -195,4 +212,751 @@ pub async fn dungeon_area_top(Params(params): Params<DungeonAreaTopRequest>) -> 
   }))
 }
 
-// TODO: dungeon_area_retire no body no reply
+pub async fn dungeon_area_retire() -> impl IntoHandlerResponse {
+  warn!("encountered stub: dungeon_area_retire");
+
+  // See [Wonder_Api_DungeonAreaRetireResponseDto_Fields]
+  Ok(Unsigned(()))
+}
+
+#[derive(Debug, Deserialize)]
+pub struct DungeonTopRequest {
+  pub dungeon_id: i32,
+}
+
+// See [Wonder_Api_DungeonTopResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct DungeonTopResponse {
+  pub challenging_area_id: i32,
+  pub area_info_list: Vec<DungeonAreaInfo>,
+  pub challenge_count_info: DungeonChallengeCountInfo,
+  pub has_new_dungeon: bool,
+}
+
+impl CallCustom for DungeonTopResponse {}
+
+// See [Wonder_Api_DungeonAreaInfoResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct DungeonAreaInfo {
+  pub area_id: i32,
+  pub clear_rank: i32,
+  pub is_challengeable: bool,
+}
+
+// See [Wonder_Api_DungeonChallengeCountInfoResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct DungeonChallengeCountInfo {
+  pub bought_count: i32,
+  pub available_buy_count: i32,
+}
+
+pub async fn dungeon_top(Params(params): Params<DungeonTopRequest>) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: dungeon_top");
+
+  let areas = get_master_manager().get_master("dungeon_area");
+
+  Ok(Unsigned(DungeonTopResponse {
+    challenging_area_id: 0,
+    area_info_list: areas
+      .iter()
+      .filter(|area| area["dungeon_id"].as_str().unwrap().parse::<i32>().unwrap() == params.dungeon_id)
+      .map(|area| DungeonAreaInfo {
+        area_id: area["id"].as_str().unwrap().parse::<i32>().unwrap(),
+        clear_rank: 0,
+        is_challengeable: true,
+      })
+      .collect(),
+    challenge_count_info: DungeonChallengeCountInfo {
+      bought_count: 2,
+      available_buy_count: 2,
+    },
+    has_new_dungeon: true,
+  }))
+}
+
+// See [Wonder_Api_DungeonListResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct DungeonListResponse {
+  pub dungeon: DungeonInfo,
+  pub regular_dungeons: RegularDungeonsInfo,
+}
+
+impl CallCustom for DungeonListResponse {}
+
+// See [Wonder_Api_DungeonInfoResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct DungeonInfo {
+  pub dungeon_id: i32,
+  pub is_completed: bool,
+  pub is_new: bool,
+}
+
+// See [Wonder_Api_RegularDungeonsInfoResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct RegularDungeonsInfo {
+  pub dungeon_list: Vec<DungeonInfo>,
+  pub challenge_count_info: DungeonChallengeCountInfo,
+}
+
+pub async fn dungeon_list() -> impl IntoHandlerResponse {
+  let dungeons = get_master_manager().get_master("dungeon");
+
+  Ok(Unsigned(DungeonListResponse {
+    dungeon: DungeonInfo {
+      dungeon_id: dungeons[0]["id"].as_str().unwrap().parse::<i32>().unwrap(),
+      is_completed: false,
+      is_new: true,
+    },
+    regular_dungeons: RegularDungeonsInfo {
+      dungeon_list: dungeons
+        .iter()
+        .map(|dungeon| DungeonInfo {
+          dungeon_id: dungeon["id"].as_str().unwrap().parse::<i32>().unwrap(),
+          is_completed: false,
+          is_new: true,
+        })
+        .collect(),
+      challenge_count_info: DungeonChallengeCountInfo {
+        bought_count: 2,
+        available_buy_count: 2,
+      },
+    },
+  }))
+}
+
+// See [Wonder_Api_DungeonTeamInfoResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct DungeonTeamInfoResponse {
+  pub team_set: DungeonTeamSet,
+}
+
+impl CallCustom for DungeonTeamInfoResponse {}
+
+// See [Wonder_Api_DungeonTeamSetResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct DungeonTeamSet {
+  /// Must be of size [master<dungeon_area>.member_num]
+  pub party: Vec<DungeonStagePartyForm>,
+  pub members: Vec<PartyMember>,
+  pub weapons: Vec<PartyWeapon>,
+  pub accessories: Vec<PartyAccessory>,
+  pub assist: i64,
+  pub sub_assists: Vec<i64>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct DungeonTeamInfoRequest {
+  pub area_id: i32,
+}
+
+pub async fn dungeon_team_info(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<DungeonTeamInfoRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: dungeon_team_info");
+
+  let client = state.get_database_client().await?;
+  #[rustfmt::skip]
+  let statement = client
+    .prepare(/* language=postgresql */ r#"
+      select
+        member_id,
+        xp,
+        promotion_level
+      from user_members
+      where user_id = $1
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  let rows = client
+    .query(&statement, &[&session.user_id])
+    .await
+    .context("failed to execute query")?;
+
+  let members = rows
+    .iter()
+    .enumerate()
+    .map(|(index, row)| {
+      let member_id: i64 = row.get(0);
+      let xp: i32 = row.get(1);
+      let promotion_level: i32 = row.get(2);
+      // let active_skills: Value = row.get(3);
+      let prototype = MemberPrototype::load_from_id(member_id);
+
+      Member {
+        id: prototype.id as i32,
+        prototype: &prototype,
+        xp,
+        promotion_level,
+        active_skills: prototype
+          .active_skills
+          .iter()
+          .map(|skill_opt| {
+            skill_opt.as_ref().map(|skill| MemberActiveSkill {
+              prototype: skill,
+              level: 1,
+              value: skill.value.max,
+            })
+          })
+          .collect::<Vec<_>>()
+          .try_into()
+          .unwrap(),
+        stats: prototype.stats.clone(),
+        main_strength: MemberStrength::default(),
+        sub_strength: MemberStrength::default(),
+        sub_strength_bonus: MemberStrength::default(),
+        fame_stats: MemberFameStats::default(),
+        skill_pa_fame_list: vec![],
+      }
+      .to_party_member()
+    })
+    .collect::<Vec<_>>();
+
+  let areas = get_master_manager().get_master("dungeon_area");
+  let area = areas
+    .iter()
+    .find(|area| area["id"].as_str().unwrap().parse::<i32>().unwrap() == params.area_id)
+    .context("invalid area_id")?;
+  let member_num = area["member_num"].as_str().unwrap().parse::<usize>().unwrap();
+
+  Ok(Unsigned(DungeonTeamInfoResponse {
+    team_set: DungeonTeamSet {
+      party: (1..=member_num)
+        .map(|i| DungeonStagePartyForm {
+          id: 1,
+          form_no: i as i32,
+          main: members.get(i - 1).map_or(0, |m| m.id),
+          sub1: 0,
+          sub2: 0,
+          weapon: 0,
+          acc: 0,
+          strength: 123,
+          specialskill: SpecialSkillInfo {
+            special_skill_id: 100001,
+            trial: false,
+          },
+          skill_pa_fame: 0,
+          current_hp: 100,
+          max_hp: 100,
+          current_sp: 0,
+        })
+        .collect(),
+      // We must send only members that are used in the party, otherwise hardlock occurs
+      members: members
+        .into_iter()
+        // .filter(|member| party.party_forms.iter().any(|form| form.main == member.id))
+        .take(member_num)
+        .collect(),
+      weapons: vec![],
+      accessories: vec![],
+      assist: 0,
+      sub_assists: vec![],
+    },
+  }))
+}
+
+// See [Wonder_Api_DungeonAreaChallengeResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct DungeonAreaChallengeResponse {
+  pub stage_state: DungeonStageState,
+  pub party_set: DungeonPartySet,
+}
+
+impl CallCustom for DungeonAreaChallengeResponse {}
+
+#[derive(Debug, Deserialize)]
+pub struct DungeonAreaChallengeRequest {
+  pub area_id: i32,
+  #[serde(with = "crate::bool_as_int")]
+  pub is_practice: bool,
+}
+
+pub async fn dungeon_area_challenge(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<DungeonAreaChallengeRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: dungeon_area_challenge");
+
+  let areas = get_master_manager().get_master("dungeon_area");
+  let stages = get_master_manager().get_master("dungeon_stage");
+  let enemies = get_master_manager().get_master("battle_enemy");
+
+  let area = areas
+    .iter()
+    .find(|area| area["id"].as_str().unwrap().parse::<i32>().unwrap() == params.area_id)
+    .context("invalid area_id")?;
+  let member_num = area["member_num"].as_str().unwrap().parse::<usize>().unwrap();
+
+  let mut stages = stages
+    .iter()
+    .filter(|stage| stage["area_id"].as_str().unwrap().parse::<i32>().unwrap() == params.area_id);
+  let stage = stages.next().context("no stages found for area")?;
+
+  let client = state.get_database_client().await?;
+  #[rustfmt::skip]
+  let statement = client
+    .prepare(/* language=postgresql */ r#"
+      select
+        member_id,
+        xp,
+        promotion_level
+      from user_members
+      where user_id = $1
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  let rows = client
+    .query(&statement, &[&session.user_id])
+    .await
+    .context("failed to execute query")?;
+  let members = rows
+    .iter()
+    .enumerate()
+    .map(|(index, row)| {
+      let member_id: i64 = row.get(0);
+      let xp: i32 = row.get(1);
+      let promotion_level: i32 = row.get(2);
+      // let active_skills: Value = row.get(3);
+      let prototype = MemberPrototype::load_from_id(member_id);
+
+      Member {
+        id: prototype.id as i32,
+        prototype: &prototype,
+        xp,
+        promotion_level,
+        active_skills: prototype
+          .active_skills
+          .iter()
+          .map(|skill_opt| {
+            skill_opt.as_ref().map(|skill| MemberActiveSkill {
+              prototype: skill,
+              level: 1,
+              value: skill.value.max,
+            })
+          })
+          .collect::<Vec<_>>()
+          .try_into()
+          .unwrap(),
+        stats: prototype.stats.clone(),
+        main_strength: MemberStrength::default(),
+        sub_strength: MemberStrength::default(),
+        sub_strength_bonus: MemberStrength::default(),
+        fame_stats: MemberFameStats::default(),
+        skill_pa_fame_list: vec![],
+      }
+      .to_party_member()
+    })
+    .collect::<Vec<_>>();
+
+  Ok(Unsigned(DungeonAreaChallengeResponse {
+    stage_state: DungeonStageState {
+      stage_id: stage["id"].as_str().unwrap().parse::<i32>().unwrap(),
+      is_challenge: false,
+      enemies: enemies
+        .iter()
+        .take(3)
+        .map(|enemy| DungeonStageEnemyState {
+          enemy_id: enemy["enemy_id"].as_str().unwrap().parse::<i32>().unwrap(),
+          current_hp: 100,
+        })
+        .collect(),
+    },
+    party_set: DungeonPartySet {
+      stage_party_set: DungeonStagePartySet {
+        party: (1..=member_num)
+          .map(|i| DungeonStagePartyForm {
+            id: 1,
+            form_no: i as i32,
+            main: members.get(i - 1).map_or(0, |m| m.id),
+            sub1: 0,
+            sub2: 0,
+            weapon: 0,
+            acc: 0,
+            strength: 123,
+            specialskill: SpecialSkillInfo {
+              special_skill_id: 100001,
+              trial: false,
+            },
+            skill_pa_fame: 0,
+            current_hp: 100,
+            max_hp: 100,
+            current_sp: 0,
+          })
+          .collect(),
+        reserved_party: vec![],
+        assist: 0,
+        sub_assists: vec![],
+        assist_remain_count: 0,
+        party_passive_skill: Default::default(),
+      },
+      // We must send only members that are used in the party, otherwise hardlock occurs
+      team_members: members
+        .into_iter()
+        // .filter(|member| party.party_forms.iter().any(|form| form.main == member.id))
+        .take(member_num)
+        .collect(),
+      team_weapons: vec![],
+      team_accessories: vec![],
+    },
+  }))
+}
+
+// See [Wonder_Api_DungeonStagePartyInfoResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct DungeonStagePartyInfoResponse {
+  pub party_set: DungeonPartySet,
+  pub is_allow_trial: bool,
+}
+
+impl CallCustom for DungeonStagePartyInfoResponse {}
+
+#[derive(Debug, Deserialize)]
+pub struct DungeonStagePartyInfoRequest {
+  pub area_id: i32,
+}
+
+pub async fn dungeon_stage_party_info(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<DungeonStagePartyInfoRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: dungeon_stage_party_info");
+
+  let areas = get_master_manager().get_master("dungeon_area");
+  let area = areas
+    .iter()
+    .find(|area| area["id"].as_str().unwrap().parse::<i32>().unwrap() == params.area_id)
+    .context("invalid area_id")?;
+  let member_num = area["member_num"].as_str().unwrap().parse::<usize>().unwrap();
+
+  let client = state.get_database_client().await?;
+  #[rustfmt::skip]
+  let statement = client
+    .prepare(/* language=postgresql */ r#"
+      select
+        member_id,
+        xp,
+        promotion_level
+      from user_members
+      where user_id = $1
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  let rows = client
+    .query(&statement, &[&session.user_id])
+    .await
+    .context("failed to execute query")?;
+  let members = rows
+    .iter()
+    .enumerate()
+    .map(|(index, row)| {
+      let member_id: i64 = row.get(0);
+      let xp: i32 = row.get(1);
+      let promotion_level: i32 = row.get(2);
+      // let active_skills: Value = row.get(3);
+      let prototype = MemberPrototype::load_from_id(member_id);
+
+      Member {
+        id: prototype.id as i32,
+        prototype: &prototype,
+        xp,
+        promotion_level,
+        active_skills: prototype
+          .active_skills
+          .iter()
+          .map(|skill_opt| {
+            skill_opt.as_ref().map(|skill| MemberActiveSkill {
+              prototype: skill,
+              level: 1,
+              value: skill.value.max,
+            })
+          })
+          .collect::<Vec<_>>()
+          .try_into()
+          .unwrap(),
+        stats: prototype.stats.clone(),
+        main_strength: MemberStrength::default(),
+        sub_strength: MemberStrength::default(),
+        sub_strength_bonus: MemberStrength::default(),
+        fame_stats: MemberFameStats::default(),
+        skill_pa_fame_list: vec![],
+      }
+        .to_party_member()
+    })
+    .collect::<Vec<_>>();
+
+  Ok(Unsigned(DungeonStagePartyInfoResponse {
+    party_set: DungeonPartySet {
+      stage_party_set: DungeonStagePartySet {
+        party: (1..=member_num)
+          .map(|i| DungeonStagePartyForm {
+            id: 1,
+            form_no: i as i32,
+            main: members.get(i - 1).map_or(0, |m| m.id),
+            sub1: 0,
+            sub2: 0,
+            weapon: 0,
+            acc: 0,
+            strength: 123,
+            specialskill: SpecialSkillInfo {
+              special_skill_id: 100001,
+              trial: false,
+            },
+            skill_pa_fame: 0,
+            current_hp: 100,
+            max_hp: 100,
+            current_sp: 0,
+          })
+          .collect(),
+        reserved_party: vec![],
+        assist: 0,
+        sub_assists: vec![],
+        assist_remain_count: 0,
+        party_passive_skill: Default::default(),
+      },
+      // We must send only members that are used in the party, otherwise hardlock occurs
+      team_members: members
+        .into_iter()
+        // .filter(|member| party.party_forms.iter().any(|form| form.main == member.id))
+        .take(member_num)
+        .collect(),
+      team_weapons: vec![],
+      team_accessories: vec![],
+    },
+    is_allow_trial: true,
+  }))
+}
+
+// See [Wonder_Api_DungeonBattleStartResponseDto_Fields]
+/*
+
+struct Wonder_Api_DungeonBattleStartResponseDto_Fields : Wonder_Api_ResponseDtoBase_Fields {
+	struct System_String_o* chest;
+	struct Wonder_Api_BattlestartPartyResponseDto_o* party;
+	struct System_Collections_Generic_List_DungeonBattleStartMembersResponseDto__o* members;
+	struct System_String_o* resume_info;
+	struct System_Collections_Generic_List_BattleresumeLivemembersResponseDto__o* livemembers;
+	struct System_Collections_Generic_List_int__o* benefit_id_list;
+	struct System_Collections_Generic_List_DungeonEnemyInfoResponseDto__o* enemy_info;
+	int32_t hp_increase;
+	int32_t status;
+};
+ */
+#[derive(Debug, Serialize)]
+pub struct DungeonBattleStartResponse {
+  pub chest: String,
+  pub party: BattleParty,
+  pub members: Vec<DungeonBattleMember>,
+  pub resume_info: String,
+  pub livemembers: Vec<DungeonBattleLiveMember>,
+  pub benefit_id_list: Vec<i32>,
+  pub enemy_info: Vec<DungeonEnemyInfo>,
+  pub hp_increase: i32,
+}
+
+impl CallCustom for DungeonBattleStartResponse {}
+
+// See [Wonder_Api_DungeonBattleStartMembersResponseDto_Fields]
+// extends [Wonder_Api_BattlestartMembersResponseDto_Fields]
+#[derive(Debug, Clone, Serialize)]
+pub struct DungeonBattleMember {
+  /* Wonder_Api_BattlestartMembersResponseDto_Fields */
+  pub id: i32,
+  pub lv: i32,
+  pub exp: i32,
+  pub member_id: i64,
+  pub ac_skill_id_a: i64,
+  pub ac_skill_lv_a: i32,
+  pub ac_skill_val_a: i32,
+  pub ac_skill_id_b: i64,
+  pub ac_skill_lv_b: i32,
+  pub ac_skill_val_b: i32,
+  pub ac_skill_id_c: i64,
+  pub ac_skill_lv_c: i32,
+  pub ac_skill_val_c: i32,
+  pub hp: i32,
+  pub magicattack: i32,
+  pub defense: i32,
+  pub magicdefence: i32,
+  pub agility: i32,
+  pub dexterity: i32,
+  pub luck: i32,
+  pub limit_break: i32,
+  pub character_id: i64,
+  pub passiveskill: i64,
+  pub specialattack: i64,
+  pub resist_state: i32,
+  pub resist_attr: i64,
+  pub attack: i32,
+  pub ex_flg: i32,
+  pub is_undead: i32,
+  pub special_skill_lv: i32,
+
+  /* Wonder_Api_DungeonBattleStartMembersResponseDto_Fields */
+  pub character_piece_board_stage_id_list: Vec<i32>,
+}
+
+// See [Wonder_Api_BattleresumeLivemembersResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct DungeonBattleLiveMember {
+  pub id: i32,
+  pub hp: i32,
+  pub form_no: i32,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct DungeonBattleStartRequest {
+  pub stage_id: i32,
+}
+
+pub async fn dungeon_battle_start(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<DungeonBattleStartRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: dungeon_battle_start");
+
+  let areas = get_master_manager().get_master("dungeon_area");
+  let stages = get_master_manager().get_master("dungeon_stage");
+  let enemies = get_master_manager().get_master("battle_enemy");
+
+  let stage = stages
+    .iter()
+    .find(|stage| stage["id"].as_str().unwrap().parse::<i32>().unwrap() == params.stage_id)
+    .context("invalid stage_id")?;
+  let area_id = stage["area_id"].as_str().unwrap().parse::<i32>().unwrap();
+  let area = areas
+    .iter()
+    .find(|area| area["id"].as_str().unwrap().parse::<i32>().unwrap() == area_id)
+    .context("invalid area_id")?;
+  let member_num = 5; // area["member_num"].as_str().unwrap().parse::<usize>().unwrap();
+  let enemy_list: Vec<_> = enemies
+    .iter()
+    .take(3)
+    .map(|enemy| DungeonEnemyInfo {
+      enemy_id: enemy["enemy_id"].as_str().unwrap().parse::<i32>().unwrap() as i64,
+      current_hp: 100,
+    })
+    .collect();
+
+  let client = state.get_database_client().await?;
+  #[rustfmt::skip]
+  let statement = client
+    .prepare(/* language=postgresql */ r#"
+      select
+        member_id,
+        xp,
+        promotion_level
+      from user_members
+      where user_id = $1
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  let rows = client
+    .query(&statement, &[&session.user_id])
+    .await
+    .context("failed to execute query")?;
+
+  let members = rows
+    .iter()
+    .enumerate()
+    .map(|(index, row)| {
+      let member_id: i64 = row.get(0);
+      let xp: i32 = row.get(1);
+      let promotion_level: i32 = row.get(2);
+      // let active_skills: Value = row.get(3);
+      let prototype = MemberPrototype::load_from_id(member_id);
+
+      Member {
+        id: prototype.id as i32,
+        prototype: &prototype,
+        xp,
+        promotion_level,
+        active_skills: prototype
+          .active_skills
+          .iter()
+          .map(|skill_opt| {
+            skill_opt.as_ref().map(|skill| MemberActiveSkill {
+              prototype: skill,
+              level: 1,
+              value: skill.value.max,
+            })
+          })
+          .collect::<Vec<_>>()
+          .try_into()
+          .unwrap(),
+        stats: prototype.stats.clone(),
+        main_strength: MemberStrength::default(),
+        sub_strength: MemberStrength::default(),
+        sub_strength_bonus: MemberStrength::default(),
+        fame_stats: MemberFameStats::default(),
+        skill_pa_fame_list: vec![],
+      }
+      .to_dungeon_battle_member()
+    })
+    .collect::<Vec<_>>();
+
+  Ok(Unsigned(DungeonBattleStartResponse {
+    chest: "10101111,10101120,10101131".to_string(),
+    party: BattleParty {
+      party_forms: (1..=5).map(|i| BasicBattlePartyForm {
+        party_no: 1,
+        id: 1,
+        form_no: i as i32,
+        main: members.get(i - 1).map_or(0, |m| m.id),
+        sub1: 0,
+        sub2: 0,
+        weapon: 0,
+        acc: 0,
+        skill_pa_fame: 0,
+      }).collect::<Vec<_>>().try_into().unwrap(),
+      assist: 0,
+      sub_assists: vec![],
+      party_passive_skill: Default::default(),
+    },
+    // We must send only members that are used in the party, otherwise hardlock occurs
+    members: members
+      .iter()
+      // .filter(|member| party.party_forms.iter().any(|form| form.main == member.id))
+      .take(member_num)
+      .cloned()
+      .collect(),
+    resume_info: "".to_string(),
+    livemembers: members
+      .iter()
+      .take(member_num)
+      .map(|member| DungeonBattleLiveMember {
+        id: member.id,
+        hp: 100,
+        form_no: 1,
+      })
+      .collect(),
+    benefit_id_list: vec![],
+    enemy_info: enemy_list,
+    hp_increase: 0,
+  }))
+}
+
+#[derive(Debug, Deserialize)]
+pub struct DungeonBattleDefeatRequest {
+  #[serde(with = "crate::bool_as_int")]
+  pub is_retire: bool,
+  pub assist_remain_count: i32,
+  pub enemy_info: Vec<DungeonEnemyInfoRequest>,
+}
+
+// See [Wonder_Api_DungeonEnemyInfoRequestDto_Fields]
+#[derive(Debug, Deserialize)]
+pub struct DungeonEnemyInfoRequest {
+  pub enemy_id: i64,
+  pub hp: i32,
+}
+
+pub async fn dungeon_battle_defeat(session: Arc<Session>, Params(params): Params<DungeonBattleDefeatRequest>) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: dungeon_battle_defeat");
+
+  // See [Wonder_Api_DungeonBattleDefeatResponseDto_Fields]
+  Ok(Unsigned(()))
+}

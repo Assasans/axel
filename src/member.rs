@@ -1,5 +1,5 @@
 use crate::api::battle::BattleMember;
-use crate::api::dungeon::PartyMember;
+use crate::api::dungeon::{DungeonBattleMember, PartyMember};
 use crate::api::master_all::get_master_manager;
 use crate::api::{MemberFameStats, MemberParameterWire, MemberStats, SkillPaFame};
 use crate::level::get_member_level_calculator;
@@ -289,6 +289,42 @@ impl Member<'_> {
       ex_flg: 0,
       is_undead: 0,
       special_skill_lv: 1,
+    }
+  }
+
+  pub fn to_dungeon_battle_member(&self) -> DungeonBattleMember {
+    DungeonBattleMember {
+      id: self.id,
+      lv: self.level(),
+      exp: self.xp,
+      member_id: self.prototype.id,
+      ac_skill_id_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.value),
+      ac_skill_id_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.value),
+      ac_skill_id_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.value),
+      hp: self.stats.hp.interpolate(self.level()),
+      magicattack: self.stats.attack_magic.interpolate(self.level()),
+      defense: self.stats.defense.interpolate(self.level()),
+      magicdefence: self.stats.defense_magic.interpolate(self.level()),
+      agility: self.stats.agility.interpolate(self.level()),
+      dexterity: self.stats.dexterity.interpolate(self.level()),
+      luck: self.stats.luck.interpolate(self.level()),
+      limit_break: self.promotion_level,
+      character_id: self.prototype.character_id,
+      passiveskill: 210201,  // self.prototype.passive_skill.as_ref().map_or(0, |skill| skill.id),
+      specialattack: 100001, // self.prototype.special_attack.as_ref().map_or(0, |skill| skill.id),
+      resist_state: 210201,  // self.prototype.resistance_group.id,
+      resist_attr: 150000000,
+      attack: self.stats.attack.interpolate(self.level()),
+      ex_flg: 0,
+      is_undead: 0,
+      special_skill_lv: 1,
+      character_piece_board_stage_id_list: vec![100001001, 100002002, 100003003, 100004004],
     }
   }
 }
