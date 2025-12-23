@@ -17,13 +17,13 @@
 
 ## Stub APK (recommended)
 
-This method supports both real devices and Waydroid.
+This method supports both real devices and Waydroid (both `libndk` and `libhoudini` work).
 
 The idea is to make separate APK with stubbed Java API that hosts original Unity files and does not have LIAPP protection (as it exists only in Java part).
 
 My stub implementation is available [here](https://github.com/Assasans/konofd-client-stub/releases), or you may build it [yourself](https://github.com/Assasans/konofd-client-stub).
 
-1. Install the stub APK on your device — `adb install-multiple jp.assasans.konofd.stub.apk`
+1. Install the stub APK on your device — `adb install jp.assasans.konofd.stub.apk`
 2. Start `KonoSuba: FD (stub)`
 
 No errors should appear as the game is already patched with correct server URL and public key.
@@ -44,7 +44,7 @@ Requirements:
 1. You will need a kernel with the `binder` module, see your distribution documentation for more information.
 2. Initialize the Waydroid image — `sudo waydroid init -s GAPPS`
 3. Start Waydroid service — `sudo systemctl start waydroid-container`
-4. Install `libhoudini` if you are not on an ARM host: https://github.com/casualsnek/waydroid_script
+4. Install `libhoudini` (`libndk` does not pass LIAPP tests) if you are not on an ARM64 host: https://github.com/casualsnek/waydroid_script (do not select `gapps`)
 5. Add the following properties to `/var/lib/waydroid/waydroid.cfg` ([source](https://github.com/waydroid/waydroid/issues/1060)):
 
 ```

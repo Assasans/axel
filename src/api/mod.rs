@@ -1,11 +1,12 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use crate::call::ApiCallParams;
-use crate::AppState;
 use jwt_simple::prelude::Serialize;
-use serde::{Deserialize, Serializer};
+use serde::Deserialize;
 use serde_repr::{Deserialize_repr, Serialize_repr};
+
+use crate::AppState;
+use crate::call::ApiCallParams;
 
 pub mod ad_reward;
 pub mod assist;
@@ -57,6 +58,7 @@ pub enum RemoteDataCommand {
 #[derive(Debug, Clone, Copy, Ord, PartialOrd, Eq, PartialEq)]
 pub enum RemoteDataItemType {
   /* IDA static analysis */
+  /// "Eris"
   Money,
   RealMoney,
   RealMoneyFree,

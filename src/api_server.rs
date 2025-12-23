@@ -11,22 +11,22 @@ use axum::extract::{Path, Query, State};
 use axum::http::HeaderMap;
 use axum::response::{Html, IntoResponse};
 use axum::routing::{get, post};
-use axum::{middleware, Router, ServiceExt};
-use base64::prelude::BASE64_STANDARD_NO_PAD;
+use axum::{Router, ServiceExt, middleware};
 use base64::Engine;
+use base64::prelude::BASE64_STANDARD_NO_PAD;
 use const_decoder::Decoder;
 use jwt_simple::algorithms::{RS256KeyPair, RSAKeyPairLike};
 use jwt_simple::claims::JWTClaims;
 use md5::Digest;
 use tokio::net::TcpListener;
 use tower::Layer;
-use tracing::{debug, info, info_span, trace, warn, Instrument, Span};
+use tracing::{Instrument, Span, debug, info, info_span, trace, warn};
 
 use crate::api::{
-  ad_reward, assist, battle, capture, character, dungeon, exchange, expedition, friend, gacha, home,
+  ApiRequest, ad_reward, assist, battle, capture, character, dungeon, exchange, expedition, friend, gacha, home,
   idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check, master_all, master_list, mission,
   notice, party, party_info, present, profile, quest_fame, quest_hunting, quest_main, smith_craft, smith_sell,
-  smith_upgrade, story, surprise, transfer, tutorial, ApiRequest,
+  smith_upgrade, story, surprise, transfer, tutorial,
 };
 use crate::call::{ApiCallParams, CallMeta};
 use crate::client_ip::add_client_ip;
@@ -209,6 +209,8 @@ async fn api_call(
     .handle("partychange", party::party_change)
     .handle("party_strength", party::party_strength)
     .handle("expeditiontop", expedition::expedition_top)
+    .handle("expeditioncharacter", expedition::expedition_character)
+    .handle("expeditionset", expedition::expedition_set)
     .handle("advertisement_reward_status", ad_reward::advertisement_reward_status)
     .handle("shopitemlist", ad_reward::shop_item_list)
     .handle("buy", ad_reward::buy)
@@ -326,7 +328,8 @@ async fn api_call(
     if matches!(
       &*method,
       "masterlist" | "masterall" | "login" | "gachainfo" | "gacha_tutorial_reward"
-    ) || response_data.len() > 10000 {
+    ) || response_data.len() > 10000
+    {
       debug!("response: (...)");
     } else {
       debug!("response: {}", response_data);
