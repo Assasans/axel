@@ -1,7 +1,7 @@
-use std::collections::HashMap;
-
 use crate::handler::{Handler, HandlerContext, IntoHandlerResponse};
 use crate::impl_handler::IntoHandler;
+use std::collections::HashMap;
+use tracing::error;
 
 pub struct Router {
   handlers: HashMap<String, Box<dyn Handler>>,

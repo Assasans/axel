@@ -22,12 +22,7 @@ use tokio::net::TcpListener;
 use tower::Layer;
 use tracing::{Instrument, Span, debug, info, info_span, trace, warn};
 
-use crate::api::{
-  ApiRequest, ad_reward, assist, battle, capture, character, dungeon, exchange, expedition, friend, gacha, home,
-  idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check, master_all, master_list, mission,
-  notice, party, party_info, present, profile, quest_fame, quest_hunting, quest_main, smith_craft, smith_sell,
-  smith_upgrade, story, surprise, transfer, tutorial,
-};
+use crate::api::{ApiRequest, ad_reward, assist, battle, capture, character, dungeon, exchange, expedition, friend, gacha, home, idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check, master_all, master_list, mission, notice, party, party_info, present, profile, quest_fame, quest_hunting, quest_main, smith_craft, smith_sell, smith_upgrade, story, surprise, transfer, tutorial, battle_arena};
 use crate::call::{ApiCallParams, CallMeta};
 use crate::client_ip::add_client_ip;
 use crate::handler::{HandlerContext, IntoHandlerResponse, Signed, Unsigned};
@@ -230,7 +225,14 @@ async fn api_call(
     .handle("surprise_short_event", surprise::surprise_short_event)
     .handle("surprise_story_start", surprise::surprise_story_start)
     .handle("surprise_story_select", surprise::surprise_story_select)
-    .handle("surprise_story_result", surprise::surprise_story_result);
+    .handle("surprise_story_result", surprise::surprise_story_result)
+    .handle("scorechallengeinfo", battle_arena::score_challenge_info)
+    .handle("scorechallengeranking", battle_arena::score_challenge_ranking)
+    .handle("scorechallengebestscoreparty", battle_arena::score_challenge_best_score_party)
+    .handle("scorechallengestart", battle_arena::score_challenge_start)
+    .handle("scorechallengeresult", battle_arena::score_challenge_result)
+    .handle("scorechallenge_mission", battle_arena::score_challenge_mission)
+    .handle("scorechallenge_mission_list", battle_arena::score_challenge_mission_list);
 
   let jwt = headers.get(JWT_HEADER).ok_or_else(|| anyhow!("no jwt header"))?;
   trace!("jwt header: {:?}", jwt);

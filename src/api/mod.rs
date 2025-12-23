@@ -11,6 +11,7 @@ use crate::call::ApiCallParams;
 pub mod ad_reward;
 pub mod assist;
 pub mod battle;
+pub mod battle_arena;
 pub mod capture;
 pub mod character;
 pub mod dungeon;

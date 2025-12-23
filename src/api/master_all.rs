@@ -1,7 +1,7 @@
-use base64::prelude::BASE64_STANDARD;
 use base64::Engine;
-use flate2::bufread::GzEncoder;
+use base64::prelude::BASE64_STANDARD;
 use flate2::Compression;
+use flate2::bufread::GzEncoder;
 use futures::future::join_all;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -235,39 +235,69 @@ async fn patch_master(name: &str, value: &mut Value) {
     //     }
     //   }
     // }
+    "scorechallenge" => {
+      info!("patching scorechallenge");
+      if let Some(array) = value.as_array_mut() {
+        for item in array {
+          let id = item.get("id").and_then(|v| v.as_str()).unwrap_or("");
+          if id != "2039" {
+            continue;
+          }
+
+          if let Some(item) = item.as_object_mut() {
+            if let Some(start_at_value) = item.get_mut("start_at") {
+              *start_at_value = Value::String(start_at_str.clone());
+            }
+            if let Some(end_at_value) = item.get_mut("end_at") {
+              *end_at_value = Value::String(end_at_str.clone());
+            }
+          }
+        }
+      }
+    }
     _ => {
       // let mut logged = false;
       // if let Some(array) = value.as_array_mut() {
       //   for item in array {
-      //     if let Some(item) = item.as_object_mut() {
-      //       for (key, value) in item.iter_mut() {
-      //         if key.contains("start") {
-      //           continue;
-      //         }
-      //         if let Value::String(s) = value {
-      //           if s.contains("2024/5/6") {
-      //             *value = Value::String(end_at_str);
-      //             info!("patched master {}: {}", name, key);
-      //           }
-      //         }
+      //     // if let Some(item) = item.as_object_mut() {
+      //     //   for (key, value) in item.iter_mut() {
+      //     //     if key.contains("start") {
+      //     //       continue;
+      //     //     }
+      //     //     if let Value::String(s) = value {
+      //     //       if s.contains("2024/5/6") {
+      //     //         *value = Value::String(end_at_str);
+      //     //         info!("patched master {}: {}", name, key);
+      //     //       }
+      //     //     }
+      //     //   }
+      //     // }
+      //
+      //     if let Some(end_at_value) = item.get_mut("end_at") {
+      //       if !logged {
+      //         info!("patching 'end_at' generic master {}", name);
+      //         logged = true;
       //       }
+      //
+      //       *end_at_value = Value::String(end_at_str.clone());
       //     }
-      // if let Some(end_at_value) = item.get_mut("end_at") {
-      //   if !logged {
-      //     info!("patching 'end_at' generic master {}", name);
-      //     logged = true;
-      //   }
+      //     if let Some(end_at_value) = item.get_mut("end") {
+      //       if !logged {
+      //         info!("patching 'end' generic master {}", name);
+      //         logged = true;
+      //       }
       //
-      //   *end_at_value = Value::String(end_at_str);
-      // }
-      // if let Some(end_at_value) = item.get_mut("end") {
-      //   if !logged {
-      //     info!("patching 'end' generic master {}", name);
-      //     logged = true;
-      //   }
+      //       *end_at_value = Value::String(end_at_str.clone());
+      //     }
       //
-      //   *end_at_value = Value::String(end_at_str);
-      // }
+      //     if let Some(end_at_value) = item.get_mut("display_end") {
+      //       if !logged {
+      //         info!("patching 'display_end' generic master {}", name);
+      //         logged = true;
+      //       }
+      //
+      //       *end_at_value = Value::String(end_at_str.clone());
+      //     }
       //   }
       // }
     }
