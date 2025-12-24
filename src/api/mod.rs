@@ -81,6 +81,8 @@ pub enum RemoteDataItemType {
   // See [Wonder.UI.Common.MemberPlanningEquipBoxCell$$SetTrial]
   Unknown6,
   GachaTicket,
+  // See [Wonder.Util.MasterDataManager$$GetItemName]
+  DungeonChallenge,
   FameRank,
 
   /* Dynamic analysis */
@@ -147,6 +149,7 @@ impl From<RemoteDataItemType> for i32 {
       RemoteDataItemType::DreamTicket => 30,
       RemoteDataItemType::CampaignTicket => 32,
       RemoteDataItemType::GachaTicket => 33,
+      RemoteDataItemType::DungeonChallenge => 34,
       // TODO: 35 - assist detail id - requires uniqid
       // See [Wonder.UI.Assist.AssistGachaResultWindow._ShowPoweUpEffect_d__29$$MoveNext] and [Wonder.Util.UserParam$$GetAssistByAssistId]
       RemoteDataItemType::AssistTicket => 36,
@@ -197,6 +200,7 @@ impl From<i32> for RemoteDataItemType {
       30 => RemoteDataItemType::DreamTicket,
       32 => RemoteDataItemType::CampaignTicket,
       33 => RemoteDataItemType::GachaTicket,
+      34 => RemoteDataItemType::DungeonChallenge,
       35 => RemoteDataItemType::Another(35), // TODO: 35 - assist detail id - requires uniqid
       36 => RemoteDataItemType::AssistTicket,
       37 => RemoteDataItemType::AssistMaterial,

@@ -473,6 +473,9 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     AddItem::new(RemoteDataItemType::ExchangeMedal, 0, 1001, 100100).into_remote_data(),
     AddItem::new(RemoteDataItemType::ExchangeMedal, 0, 1011, 101100).into_remote_data(),
     AddItem::new(RemoteDataItemType::ExchangeMedal, 0, 1012, 101200).into_remote_data(),
+    // Dynamic analysis: 1 - time-limited dungeon, 2 - permanent dungeon
+    AddItem::new(RemoteDataItemType::DungeonChallenge, 0, 1, 2).into_remote_data(),
+    AddItem::new(RemoteDataItemType::DungeonChallenge, 0, 2, 6).into_remote_data(),
   ]
     .into_iter()
     .chain(members)
