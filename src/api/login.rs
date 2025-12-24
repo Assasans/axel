@@ -1,8 +1,8 @@
 use std::sync::Arc;
 
 use anyhow::Context;
-use base64::prelude::BASE64_STANDARD_NO_PAD;
 use base64::Engine;
+use base64::prelude::BASE64_STANDARD_NO_PAD;
 use chrono::{DateTime, Utc};
 use jwt_simple::prelude::Serialize;
 use serde::Deserialize;
@@ -18,7 +18,7 @@ use crate::notification::{FriendGreetingNotify, IntoNotificationData};
 use crate::user::id::UserId;
 use crate::user::session::Session;
 use crate::user::uuid::UserUuid;
-use crate::{blob, AppState};
+use crate::{AppState, blob};
 
 // See [Wonder_Api_LoginInfoResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -47,6 +47,14 @@ pub enum TutorialState {
 #[derive(Debug, Deserialize)]
 pub struct LoginRequestRequest {
   pub uuid: String,
+  #[serde(rename = "devicename")]
+  pub device_name: Option<String>,
+  pub os: Option<String>,
+  #[serde(rename = "appver")]
+  pub game_version: Option<String>,
+  pub language: Option<String>,
+  #[serde(rename = "userCountry")]
+  pub country: Option<String>,
 }
 
 pub async fn login(state: Arc<AppState>, Params(params): Params<LoginRequestRequest>) -> impl IntoHandlerResponse {
@@ -94,13 +102,24 @@ pub async fn login(state: Arc<AppState>, Params(params): Params<LoginRequestRequ
     let statement = client
       .prepare(
         /* language=postgresql */ r#"
-        insert into user_devices (user_id, token, last_used)
-        values ($1, $2, now())
+        insert into user_devices (user_id, token, last_used, device_name, os, game_version, language, country)
+        values ($1, $2, now(), $3, $4, $5, $6, $7)
       "#)
       .await
       .context("failed to prepare device insert statement")?;
     client
-      .execute(&statement, &[&id, &uuid.to_string()])
+      .execute(
+        &statement,
+        &[
+          &id,
+          &uuid.to_string(),
+          &params.device_name,
+          &params.os,
+          &params.game_version,
+          &params.language,
+          &params.country,
+        ],
+      )
       .await
       .context("failed to execute device insert query")?;
 
@@ -116,6 +135,38 @@ pub async fn login(state: Arc<AppState>, Params(params): Params<LoginRequestRequ
     let username: Option<String> = row.get(1);
     let created_at: DateTime<Utc> = row.get(2);
     let tutorial_progress: i32 = row.get(3);
+
+    // update user_devices
+    #[rustfmt::skip]
+    let statement = client
+      .prepare(
+        /* language=postgresql */ r#"
+        update user_devices
+        set last_used = now(),
+            device_name = coalesce($2, device_name),
+            os = coalesce($3, os),
+            game_version = coalesce($4, game_version),
+            language = coalesce($5, language),
+            country = coalesce($6, country)
+        where token = $1
+      "#)
+      .await
+      .context("failed to prepare device update statement")?;
+    client
+      .execute(
+        &statement,
+        &[
+          &uuid.to_string(),
+          &params.device_name,
+          &params.os,
+          &params.game_version,
+          &params.language,
+          &params.country,
+        ],
+      )
+      .await
+      .context("failed to execute device update query")?;
+    debug!("updated device info for user {}, token {}", id, uuid);
 
     info!(?username, "user {} logged in", id);
     (id, username, created_at, tutorial_progress)
