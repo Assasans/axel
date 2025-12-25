@@ -193,12 +193,14 @@ async fn patch_master(name: &str, value: &mut Value) {
         }
       }
     }
+    // jq '.[]' text.json -c -C | grep -i 'new year' | grep -i 'area'
     "event_config" => {
       info!("patching event_config");
       if let Some(array) = value.as_array_mut() {
         for item in array {
           if let Some(item) = item.as_object_mut() {
-            if item.get("name").unwrap() != "AREA_TITLE_24013" {
+            // "Etiquette for This New Year's Party!"
+            if item.get("event_id").unwrap() != "24011" {
               continue;
             }
 

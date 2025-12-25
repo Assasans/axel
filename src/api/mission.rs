@@ -203,23 +203,13 @@ pub struct MarathonInfo {
   pub emergency_boss_info: EmergencyBossInfo,
 }
 
-// See [Wonder_Api_MultiBattleInvitationResponseDto_Fields]
-#[derive(Debug, Serialize)]
-pub struct MultiBattleInvitationRoom {
-  pub room_id: i32,
-  pub room_name: String,
-  pub room_type: i32,
-  pub room_status: i32,
-  pub room_member_count: i32,
-  pub room_member_max: i32,
-  pub room_member_list: Vec<MultiBattleInvitationMember>,
-}
-
 // See [Wonder_Api_MultiBattleInvitationRoomResponseDto_Fields]
 #[derive(Debug, Serialize)]
-pub struct MultiBattleInvitationMember {
-  pub user_id: i64,
+pub struct MultiBattleInvitationRoom {
+  pub room_no: i32,
+  pub quest_id: i32,
   pub user_icon: i64,
+  #[serde(with = "crate::string_as_base64")]
   pub user_name: String,
 }
 
@@ -253,13 +243,10 @@ pub async fn marathon_info(
       boss: 1,
       open_scorechallenge: true,
       multi_battle_invitation: MultiBattleInvitationRoom {
-        room_id: 0,
-        room_name: "Sosal".to_string(),
-        room_type: 0,
-        room_status: 0,
-        room_member_count: 0,
-        room_member_max: 0,
-        room_member_list: vec![],
+        room_no: 0,
+        quest_id: 0,
+        user_icon: 1083110,
+        user_name: "Megumin".to_string(),
       },
       total_boss_info: TotalBossInfo {
         total_defeat_count: 30,
