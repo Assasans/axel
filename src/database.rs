@@ -1,18 +1,16 @@
 use std::sync::Arc;
 
-use deadpool_postgres::Pool;
+use deadpool_postgres::{Config as PgConfig, Pool};
 use rustls::pki_types::pem::PemObject;
 use rustls::pki_types::{CertificateDer, PrivateKeyDer};
 use rustls::{ClientConfig, RootCertStore};
 use tokio_postgres::NoTls;
 use tracing::info;
 
-use crate::settings::DatabaseSettings;
+use crate::settings::{DatabaseSettings, DatabaseTlsSettings};
 
-pub async fn create_pool(settings: &DatabaseSettings) -> anyhow::Result<Pool> {
-  let pool = &settings.pool;
-
-  let pool = if let Some(tls) = &settings.tls {
+fn create_pool_from_config(cfg: &PgConfig, tls: &Option<DatabaseTlsSettings>) -> anyhow::Result<Pool> {
+  let pool = if let Some(tls) = tls {
     let ca = CertificateDer::from_pem_file(&tls.ca_cert).unwrap();
     let mut root_store = RootCertStore::empty();
     root_store.add(ca).unwrap();
@@ -27,7 +25,7 @@ pub async fn create_pool(settings: &DatabaseSettings) -> anyhow::Result<Pool> {
       .unwrap();
 
     info!("using tls database connection");
-    pool
+    cfg
       .create_pool(
         Some(deadpool_postgres::Runtime::Tokio1),
         tokio_postgres_rustls::MakeRustlsConnect::new(client_config),
@@ -35,10 +33,18 @@ pub async fn create_pool(settings: &DatabaseSettings) -> anyhow::Result<Pool> {
       .unwrap()
   } else {
     info!("using unencrypted database connection");
-    pool
+    cfg
       .create_pool(Some(deadpool_postgres::Runtime::Tokio1), NoTls)
       .unwrap()
   };
 
   Ok(pool)
+}
+
+pub async fn create_pool(settings: &DatabaseSettings) -> anyhow::Result<Pool> {
+  create_pool_from_config(&settings.pool, &settings.tls)
+}
+
+pub async fn create_sql_console_pool(settings: &DatabaseSettings) -> anyhow::Result<Pool> {
+  create_pool_from_config(&settings.sql_console_pool, &settings.sql_console_tls)
 }

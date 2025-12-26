@@ -23,6 +23,7 @@ pub mod serde_compat;
 pub mod settings;
 pub mod static_server;
 pub mod string_as_base64;
+pub mod sql_console;
 pub mod user;
 
 use std::collections::HashMap;
@@ -45,7 +46,7 @@ use tracing_subscriber::EnvFilter;
 
 use crate::api::master_all::{get_masters, MasterManager, MASTER_MANAGER};
 use crate::api::{RemoteData, RemoteDataCommand, RemoteDataItemType};
-use crate::database::create_pool;
+use crate::database::{create_pool, create_sql_console_pool};
 use crate::settings::Settings;
 use crate::user::id::UserId;
 use crate::user::session::Session;
@@ -58,6 +59,7 @@ pub struct AppState {
   pub settings: Settings,
   pub sessions: Mutex<HashMap<UserId, Arc<Session>>>,
   pub pool: deadpool_postgres::Pool,
+  pub sql_console_pool: deadpool_postgres::Pool,
 }
 
 pub struct AppPoolError(PoolError);
@@ -138,22 +140,15 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
     panic!("Failed to load settings: {err}");
   });
 
-  let pool = create_pool(&settings.database).await.unwrap();
-  let client = pool.get().await?;
-  let statement = client
-    .prepare(/* language=postgresql */ "select count(*) from users")
-    .await?;
-  let result = client.query(&statement, &[]).await?;
-  info!(
-    "database connection established successfully, {} users found",
-    result[0].get::<_, i64>(0)
-  );
+  let pool = create_pool(&settings.database).await?;
+  let sql_console_pool = create_sql_console_pool(&settings.database).await?;
 
   let state = AppState {
     args,
     settings,
     sessions: Mutex::new(HashMap::new()),
     pool,
+    sql_console_pool,
   };
   let state = Arc::new(state);
 

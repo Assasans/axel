@@ -11,6 +11,7 @@ set -e
 FRESH_MODE=false
 HELP=false
 FRESH_VERSION=""
+TO_VERSION=""
 CONNECTION_ARGS=""
 
 while [[ $# -gt 0 ]]; do
@@ -39,6 +40,23 @@ while [[ $# -gt 0 ]]; do
       fi
       shift
       ;;
+    --to)
+      if [ -n "$2" ] && [[ $2 =~ ^[0-9]+$ ]]; then
+        TO_VERSION="$2"
+        shift 2
+      else
+        echo "Error: --to requires a version number"
+        exit 1
+      fi
+      ;;
+    --to=*)
+      TO_VERSION="${1#--to=}"
+      if [[ ! $TO_VERSION =~ ^[0-9]+$ ]]; then
+        echo "Error: Invalid version number for --to option"
+        exit 1
+      fi
+      shift
+      ;;
     *)
       if [ -z "$CONNECTION_ARGS" ]; then
         CONNECTION_ARGS="$1"
@@ -52,14 +70,16 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ "$HELP" = true ] || [ -z "$CONNECTION_ARGS" ]; then
-  echo "Usage: $0 [--fresh [version]] <connection commands>"
+  echo "Usage: $0 [--fresh [version]] [--to <version>] <connection commands>"
   echo ""
   echo "Options:"
   echo "      --fresh            apply all migrations from scratch, ignoring applied migrations table"
   echo "      --fresh <version>  apply migrations from the specified version onwards"
+  echo "      --to <version>     apply migrations up to and including the specified version"
   echo "  -h, --help             display this help and exit"
   echo ""
   echo "Example: $0 \"host=localhost dbname=myapp user=postgres\""
+  echo "Example: $0 --to 5 \"host=localhost dbname=myapp user=postgres\""
   exit 1
 fi
 
@@ -132,6 +152,13 @@ for MIGRATION_FILE in "${MIGRATION_FILES[@]}"; do
       continue
     fi
 
+    # Skip migrations after the specified --to version
+    if [ -n "$TO_VERSION" ] && [ "$VERSION" -gt "$TO_VERSION" ]; then
+      printf "%-20s %-40s %s\n" "$VERSION" "$DESCRIPTION" "${GRAY}SKIP   ${NC}"
+      SKIPPED_COUNT=$((SKIPPED_COUNT + 1))
+      continue
+    fi
+
     # Check if migration was already applied (unless in fresh mode)
     if [ "$FRESH_MODE" = true ]; then
       printf "%-20s %-40s %s\n" "$VERSION" "$DESCRIPTION" "${RED}${INVERTED}PENDING${NC}"
@@ -157,6 +184,8 @@ if [ "$FRESH_MODE" = true ]; then
   else
     echo -e "${YELLOW}${BOLD}$PENDING_COUNT migrations pending:${NC}"
   fi
+elif [ -n "$TO_VERSION" ]; then
+  echo -e "${BOLD}$APPLIED_COUNT migration$( [ "$APPLIED_COUNT" -eq 1 ] || echo 's' ) applied, $SKIPPED_COUNT skipped, ${YELLOW}$PENDING_COUNT pending${NC}${BOLD}:"
 else
   echo -e "${BOLD}$APPLIED_COUNT migration$( [ "$APPLIED_COUNT" -eq 1 ] || echo 's' ) applied, ${YELLOW}$PENDING_COUNT pending${NC}${BOLD}:"
 fi

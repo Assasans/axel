@@ -21,3 +21,14 @@ dbname = "axel"
 # ca-cert = "/home/assasans/dev/00-aqua/ca.crt"
 # client-cert = "config/axel.crt"
 # client-key = "config/axel.key"
+
+[database.sql-console-pool]
+host = "10.66.66.1"
+port = 5432
+dbname = "axel"
+user = "axel_edit"
+
+# [database.sql-console-tls]
+# ca-cert = "config/ca.crt"
+# client-cert = "config/axel_edit.crt"
+# client-key = "config/axel_edit.key"

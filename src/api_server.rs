@@ -29,7 +29,7 @@ use crate::handler::{HandlerContext, IntoHandlerResponse, Signed, Unsigned};
 use crate::normalize_path::normalize_path;
 use crate::request_logging::log_requests_info;
 use crate::user::session::Session;
-use crate::{AppError, AppState};
+use crate::{AppError, AppState, sql_console};
 
 pub static AES_KEY: &[u8] = &Decoder::Base64.decode::<16>(b"0x9AHqGo1sHGl/nIvD+MhA==");
 pub static AES_IV: [u8; 16] = Decoder::Base64.decode::<16>(b"Ng84GF0J4+ahev99Wk/qMg==");
@@ -43,6 +43,7 @@ pub async fn start(state: Arc<AppState>) -> io::Result<()> {
   let app = Router::new()
     .route("/", get(get_root_friendly))
     .route("/api/{*method}", post(api_call))
+    .nest("/sql", sql_console::router())
     .layer(log_requests_info())
     .layer(middleware::from_fn(add_client_ip))
     .with_state(state.clone());

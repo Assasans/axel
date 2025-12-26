@@ -12,6 +12,7 @@ pub struct Settings {
   pub static_server: StaticServerSettings,
   pub api_server: ApiServerSettings,
   pub database: DatabaseSettings,
+  pub sql_console_token: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -34,7 +35,9 @@ pub struct ApiServerSettings {
 #[serde(rename_all = "kebab-case")]
 pub struct DatabaseSettings {
   pub pool: deadpool_postgres::Config,
+  pub sql_console_pool: deadpool_postgres::Config,
   pub tls: Option<DatabaseTlsSettings>,
+  pub sql_console_tls: Option<DatabaseTlsSettings>,
 }
 
 #[derive(Debug, Deserialize)]
