@@ -16,6 +16,7 @@ use std::sync::Arc;
 // See [Wonder_Api_BattlestartMembersResponseDto_Fields]
 // See [Wonder_Api_SurpriseQuestStartMembersResponseDto_Fields]
 // See [Wonder_Api_ScorechallengestartMembersResponseDto_Fields]
+// See [Wonder_Api_MarathonMultiStartMembersResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct BattleMember {
   pub id: i32,
@@ -62,6 +63,7 @@ impl CallCustom for BattleStartResponse {}
 
 // See [Wonder_Api_BattlestartPartyResponseDto_Fields]
 // See [Wonder_Api_ScorechallengestartPartyResponseDto_Fields]
+// See [Wonder_Api_MarathonMultiStartPartyResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct BattleParty {
   pub party_forms: [BasicBattlePartyForm; 5],

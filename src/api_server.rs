@@ -237,7 +237,19 @@ async fn api_call(
     .handle("scorechallenge_mission", battle_arena::score_challenge_mission)
     .handle("scorechallenge_mission_list", battle_arena::score_challenge_mission_list)
     .handle("multi_battle_invitation_list", battle_multi::multi_battle_invitation_list)
-    .handle("multi_battle_room_info", battle_multi::multi_battle_room_info);
+    .handle("multi_battle_room_info", battle_multi::multi_battle_room_info)
+    .handle("multi_battle_create_room", battle_multi::multi_battle_create_room)
+    .handle("multi_battle_search_and_join_room", battle_multi::multi_battle_search_and_join_room)
+    .handle("multi_battle_room_status", battle_multi::multi_battle_room_status)
+    .handle("marathon_multi_start", battle_multi::marathon_multi_start)
+    .handle("marathon_multi_battling", battle_multi::marathon_multi_battling)
+    .handle("marathon_multi_result_confirm", battle_multi::marathon_multi_result_confirm)
+    .handle("marathon_multi_log", battle_multi::marathon_multi_log)
+    .handle("marathon_multi_result", battle_multi::marathon_multi_result)
+    .handle("marathon_multi_stamp", battle_multi::marathon_multi_stamp)
+    .handle("multi_battle_join_room", battle_multi::multi_battle_join_room)
+    .handle("multi_battle_room_leave", battle_multi::multi_battle_room_leave)
+    ;
 
   let jwt = headers.get(JWT_HEADER).ok_or_else(|| anyhow!("no jwt header"))?;
   trace!("jwt header: {:?}", jwt);

@@ -39,8 +39,9 @@ See [DUMPING.md](DUMPING.md) for instructions on how to inspect the game code yo
 
 - In-game purchases (e.g. clicking add quartz button), hardlock, probably issue related to stub APK
 - \[Home\] → \[Shop\], no server requests at all, hardlock, probably issue related to stub APK (\[Menu\] → \[Shop\] works)
-- \[Others\] → \[Room Invitation\], unimplemented
+- \[Others\] → \[Room Invitation\], lags and does not work properly
 - \[Quest\] → \[Event\] → \[Draw\], unimplemented
+- \[Quest\] → \[Event\] → \[Boss Battle\] → \[Room ID\], response is ignored
 - \[Quest\] → \[Free Quest\], all items are locked
 
 Most working features are stubbed and do not save any progress.

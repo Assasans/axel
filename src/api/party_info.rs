@@ -252,7 +252,7 @@ pub async fn party_info(state: Arc<AppState>, session: Arc<Session>) -> impl Int
                 weapon: weapon_id,
                 acc: accessory_id,
                 name: party_name,
-                strength: 123,
+                strength: 12300,
                 specialskill: SpecialSkillInfo {
                   special_skill_id: 100001,
                   trial: false,

@@ -5,7 +5,7 @@ use serde_json::Value;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use tracing::warn;
 
-use crate::api::master_all::get_masters;
+use crate::api::master_all::{get_master_manager, get_masters};
 use crate::api::{battle, ApiRequest};
 use crate::call::CallCustom;
 use crate::extractor::Params;
@@ -198,7 +198,7 @@ pub struct MarathonInfo {
   /// 0 - not available, 1 - available
   pub boss: i32,
   pub open_scorechallenge: bool,
-  pub multi_battle_invitation: MultiBattleInvitationRoom,
+  pub multi_battle_invitation: Option<MultiBattleInvitationRoom>,
   pub total_boss_info: TotalBossInfo,
   pub emergency_boss_info: EmergencyBossInfo,
 }
@@ -242,22 +242,17 @@ pub async fn marathon_info(
       opflag: 0,
       boss: 1,
       open_scorechallenge: true,
-      multi_battle_invitation: MultiBattleInvitationRoom {
-        room_no: 0,
-        quest_id: 0,
-        user_icon: 1083110,
-        user_name: "Megumin".to_string(),
-      },
+      multi_battle_invitation: None,
       total_boss_info: TotalBossInfo {
-        total_defeat_count: 30,
-        my_defeat_count: 4,
+        total_defeat_count: 0,
+        my_defeat_count: 0,
         boss_count_rewards: vec![],
-        ranking: 3,
+        ranking: 0,
         in_ranking_period: false,
       },
       emergency_boss_info: EmergencyBossInfo {
         emergency_boss_id: 0,
-        status: 1,
+        status: 0,
         total_defeat_count: 0,
         my_defeat_count: 0,
         ranking: 0,
@@ -273,6 +268,7 @@ pub struct MarathonStageList {
   pub quests: Vec<MarathonStageQuest>,
 }
 
+// See [Wonder_Api_MarathonStageListQuestsResponseDto_Fields]
 // See [Wonder_Api_BattlemarathonstagelistQuestsResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct MarathonStageQuest {
@@ -353,9 +349,17 @@ pub struct MarathonBossList {
   pub bosses: Vec<MarathonBoss>,
 }
 
-// See [Wonder_Api_BattlemarathonbosslistBossResponseDto_Fields]
+// See [Wonder_Api_MarathonBossListBossResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct MarathonBoss {
+  pub quest_id: i32,
+  pub status: i32,
+  pub kill: i32,
+}
+
+// See [Wonder_Api_BattlemarathonbosslistBossResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct BattleMarathonBoss {
   pub quest_id: i32,
   pub hp1: i32,
   pub hp2: i32,
@@ -384,22 +388,18 @@ pub async fn marathon_boss_list(
 ) -> impl IntoHandlerResponse {
   warn!(?params, "encountered stub: marathon_boss_list");
 
-  let masters = get_masters().await;
-  let bosses: Vec<Value> =
-    serde_json::from_str(&masters["event_marathon_quest_stage_boss_single"].master_decompressed).unwrap();
+  let bosses = if params.is_multi {
+    get_master_manager().get_master("event_marathon_quest_stage_boss_multi")
+  } else {
+    get_master_manager().get_master("event_marathon_quest_stage_boss_single")
+  };
   let bosses = bosses
     .into_iter()
     .filter(|boss| boss.get("event_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == params.event_id)
     .map(|boss| MarathonBoss {
       quest_id: boss.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),
-      hp1: 10,
-      hp2: 20,
-      hp3: 30,
-      status: 2,
-      kill: 0,
-      limit_num: 0,
-      display: 0,
-      ticket_ratio: 0,
+      status: 1,
+      kill: 1,
     })
     .collect::<Vec<_>>();
 
