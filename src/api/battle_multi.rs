@@ -1,4 +1,5 @@
 //! Reference: https://youtu.be/R80TMWhTdik
+//! Stamps reference: https://youtu.be/sDF9jb8TIvY
 
 use crate::AppState;
 use crate::api::battle::{BattleMember, BattleParty};
@@ -620,10 +621,10 @@ pub struct MarathonMultiResultResponse {
   pub money: i32,
   pub friend_count: i32,
   pub request_count: i32,
-  pub love: Vec<MarathonMultiResultLoveResponse>,
-  pub member_exp: Vec<MarathonMultiResultMemberExpResponse>,
-  pub reward: Vec<MarathonMultiResultRewardResponse>,
-  pub clearreward: Vec<MarathonMultiResultClearrewardResponse>,
+  pub love: Vec<BattleMemberLove>,
+  pub member_exp: Vec<BattleMemberExp>,
+  pub reward: Vec<MultiBattleReward>,
+  pub clearreward: Vec<BattleClearReward>,
   pub user_host: Vec<MarathonMultiResultUser>,
   pub user_guest1: Vec<MarathonMultiResultUser>,
   pub user_guest2: Vec<MarathonMultiResultUser>,
@@ -634,22 +635,24 @@ pub struct MarathonMultiResultResponse {
 impl CallCustom for MarathonMultiResultResponse {}
 
 // See [Wonder_Api_MarathonMultiResultLoveResponseDto_Fields]
+// See [Wonder_Api_BattlehuntingresultLoveResponseDto_Fields]
 #[derive(Debug, Serialize)]
-pub struct MarathonMultiResultLoveResponse {
+pub struct BattleMemberLove {
   pub character_id: i64,
   pub love: i32,
 }
 
 // See [Wonder_Api_MarathonMultiResultMemberExpResponseDto_Fields]
+// See [Wonder_Api_BattlehuntingresultMemberExpResponseDto_Fields]
 #[derive(Debug, Serialize)]
-pub struct MarathonMultiResultMemberExpResponse {
+pub struct BattleMemberExp {
   pub member_id: i64,
   pub exp: i32,
 }
 
 // See [Wonder_Api_MarathonMultiResultRewardResponseDto_Fields]
 #[derive(Debug, Serialize)]
-pub struct MarathonMultiResultRewardResponse {
+pub struct MultiBattleReward {
   pub itemtype: i32,
   pub itemid: i64,
   pub itemnum: i32,
@@ -658,8 +661,9 @@ pub struct MarathonMultiResultRewardResponse {
 }
 
 // See [Wonder_Api_MarathonMultiResultClearrewardResponseDto_Fields]
+// See [Wonder_Api_BattlehuntingresultClearrewardResponseDto_Fields]
 #[derive(Debug, Serialize)]
-pub struct MarathonMultiResultClearrewardResponse {
+pub struct BattleClearReward {
   pub itemtype: i32,
   pub itemid: i64,
   pub itemnum: i32,
@@ -711,14 +715,14 @@ pub async fn marathon_multi_result(
     request_count: 0,
     love: vec![],
     member_exp: vec![],
-    reward: vec![MarathonMultiResultRewardResponse {
+    reward: vec![MultiBattleReward {
       itemtype: RemoteDataItemType::RealMoney.into(),
       itemid: 1,
       itemnum: 100,
       is_rare: 1,
       is_mvp: 1,
     }],
-    clearreward: vec![MarathonMultiResultClearrewardResponse {
+    clearreward: vec![BattleClearReward {
       itemtype: RemoteDataItemType::RealMoneyFree.into(),
       itemid: 1,
       itemnum: 5000,

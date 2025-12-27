@@ -1,13 +1,18 @@
 //! Hierarchy is Area (Relic Quest) -> Stage (Eris - Beginner)
 //! Reference: https://youtu.be/S9fX6sbXRHw (also shows character upgrade and promotion)
 
+use std::sync::Arc;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-
+use tracing::warn;
+use crate::api::{battle, RemoteDataItemType};
+use crate::api::battle_multi::{BattleClearReward, BattleMemberExp, BattleMemberLove};
 use crate::api::master_all::get_masters;
+use crate::AppState;
 use crate::call::CallCustom;
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
+use crate::user::session::Session;
 
 // See [Wonder_Api_QuesthuntinglistResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -92,7 +97,9 @@ impl CallCustom for QuestHuntingStageListResponse {}
 #[derive(Debug, Serialize)]
 pub struct HuntingStageQuest {
   pub stage_id: i32,
+  /// 0 - unlocked (new), 1 - unlocked, 2 - completed, 3 - 100% completed
   pub status: i32,
+  /// Unknown
   pub newstage: i32,
   pub task1: i32,
   pub task2: i32,
@@ -117,12 +124,12 @@ pub async fn quest_hunting_stage_list(
       .iter()
       .filter(|stage| stage.get("area_id").unwrap().as_str().unwrap().parse::<i32>().unwrap() == params.area_id)
       .map(|stage| HuntingStageQuest {
-        stage_id: stage.get("stage_id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),
-        status: 1,
-        newstage: 1,
-        task1: 12,
-        task2: 13,
-        task3: 15,
+        stage_id: stage.get("id").unwrap().as_str().unwrap().parse::<i32>().unwrap(),
+        status: 2,
+        newstage: 0,
+        task1: 1,
+        task2: 1,
+        task3: 0,
       })
       .collect::<Vec<_>>(),
   }))
@@ -144,8 +151,7 @@ pub struct HuntingLimitStageQuest {
   pub challenge_count: i32,
 }
 
-pub async fn quest_hunting_limit_stage_list(
-) -> impl IntoHandlerResponse {
+pub async fn quest_hunting_limit_stage_list() -> impl IntoHandlerResponse {
   let masters = get_masters().await;
   let stages: Vec<Value> = serde_json::from_str(&masters["huntingquest_stage"].master_decompressed).unwrap();
 
@@ -158,5 +164,89 @@ pub async fn quest_hunting_limit_stage_list(
       })
       .collect::<Vec<_>>(),
     bonuspack: 0,
+  }))
+}
+
+// body={"quest_id": "416055", "party_no": "1"}
+#[derive(Debug, Deserialize)]
+pub struct BattleHuntingStartRequest {
+  pub quest_id: i32,
+  #[serde(rename = "party_no")]
+  pub party_id: i32,
+}
+
+pub async fn battle_hunting_start(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<BattleHuntingStartRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: battle_hunting_start");
+
+  battle::make_battle_start(&state, &session, params.party_id).await
+}
+
+// See [Wonder_Api_BattlehuntingresultResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct BattleHuntingResultResponse {
+  pub limit: i32,
+  pub exp: i32,
+  pub lvup: i32,
+  pub money: i32,
+  pub storyunlock: Vec<i32>,
+  pub love: Vec<BattleMemberLove>,
+  pub member_exp: Vec<BattleMemberExp>,
+  pub mission: Vec<i32>,
+  pub reward: Vec<BattleReward>,
+  pub clearreward: Vec<BattleClearReward>,
+}
+
+// See [Wonder_Api_BattlehuntingresultRewardResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct BattleReward {
+  pub itemtype: i32,
+  pub itemid: i64,
+  pub itemnum: i32,
+  pub is_rare: i32,
+}
+
+impl CallCustom for BattleHuntingResultResponse {}
+
+// body={"party_no": "1", "win": "1", "quest_id": "416011", "memcheckcount": "0", "clearquestmission": "[12,13,15]", "wave": "3"}
+#[derive(Debug, Deserialize)]
+pub struct BattleHuntingResultRequest {
+  #[serde(rename = "party_no")]
+  pub party_id: i32,
+  pub win: i32,
+  pub quest_id: i32,
+  pub memcheckcount: i32,
+  pub clearquestmission: Vec<i32>,
+  pub wave: i32,
+}
+
+pub async fn battle_hunting_result(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<BattleHuntingResultRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: battle_hunting_result");
+
+  Ok(Unsigned(BattleHuntingResultResponse {
+    limit: 1,
+    exp: 230,
+    lvup: 3,
+    money: 42000,
+    storyunlock: vec![],
+    love: vec![],
+    member_exp: vec![],
+    mission: params.clearquestmission,
+    reward: vec![
+      BattleReward {
+        itemtype: RemoteDataItemType::RealMoney.into(),
+        itemid: 1,
+        itemnum: 54000,
+        is_rare: 1,
+      },
+    ],
+    clearreward: vec![],
   }))
 }

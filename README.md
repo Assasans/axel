@@ -4,21 +4,23 @@
 
 </div>
 
-### Current progress
+## Current progress
 
 The first scene ("And so the Adventure Begins!") works.
-The home and profile menus barely work.
+The home and profile menus work, and most actions there don't cause errors
+(see [Broken features](#broken-features) for details), but neither they save any progress.
 
 A lot of gacha banners (including collaborations ones) is visible, but still not all 947 of them.
 Loot pool is completely random, not saved to database.
 
 All main quests are enabled. All stories (including collaboration ones) are enabled.
-Battles work but no rewards are actually given, and you can't change your party.
+Battles work but no rewards are actually given, you can change your party, but not upgrade characters.
 
 All costumes and backgrounds are unlocked. Note that these customizations are not stored
 on the server by client design, so they are not synced across accounts and devices.
 
-Database support is being implemented, new account sequence works, you can change your name.
+Database support is being implemented, new account sequence works, you can edit your profile.
+On first login, you get all members with randomized XP.
 
 <p>
   <img src="https://files.catbox.moe/xvvt4z.png" width="300px">
@@ -26,6 +28,16 @@ Database support is being implemented, new account sequence works, you can chang
   <img src="https://files.catbox.moe/ghnpk8.webp" width="300px">
   <img src="https://files.catbox.moe/jxc5gp.png" width="300px">
 </p>
+
+### Broken features
+
+- In-game purchases (e.g. clicking add quartz button), hardlock, issue related to stub APK
+- \[Home\] → \[Shop\], no server requests at all, hardlock, issue related to stub APK (\[Menu\] → \[Shop\] works)
+- \[Others\] → \[Room Invitation\], lags and does not work properly
+- \[Quest\] → \[Event\] → \[Draw\], unimplemented
+- \[Quest\] → \[Event\] → \[Boss Battle\] → \[Room ID\], response is ignored
+- \[Quest\] → \[Free Quest\], all items are locked
+- Login screen → \[Menu\] → \[Data Transfer\] → \[Link to a Google account\], does nothing, `libnative-googlesignin.so` is missing
 
 ## Setup
 
@@ -35,16 +47,10 @@ See [SERVER-SETUP.md](SERVER-SETUP.md) for instructions on how to set up the ser
 
 See [DUMPING.md](DUMPING.md) for instructions on how to inspect the game code yourself.
 
-## Broken features
+### Game resources
 
-- In-game purchases (e.g. clicking add quartz button), hardlock, probably issue related to stub APK
-- \[Home\] → \[Shop\], no server requests at all, hardlock, probably issue related to stub APK (\[Menu\] → \[Shop\] works)
-- \[Others\] → \[Room Invitation\], lags and does not work properly
-- \[Quest\] → \[Event\] → \[Draw\], unimplemented
-- \[Quest\] → \[Event\] → \[Boss Battle\] → \[Room ID\], response is ignored
-- \[Quest\] → \[Free Quest\], all items are locked
-
-Most working features are stubbed and do not save any progress.
+Game needs around 16 GiB of resources, they are stored on a separate server with file indexing enabled: https://smb.assasans.dev/konofd/.
+Alternatively, rsync server is available at`rsync://aqua.assasans.dev/konofd/`.
 
 ## License
 

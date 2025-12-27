@@ -42,6 +42,8 @@ pub struct PrepareSetMigration {
 
 impl CallCustom for PrepareSetMigration {}
 
+// TODO: uuid is sent, but server session may not exist yet
+//  > failed to extract parameter: No session available
 pub async fn prepare_set_migration(session: Arc<Session>) -> impl IntoHandlerResponse {
   warn!("encountered stub: prepare_set_migration");
 

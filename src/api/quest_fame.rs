@@ -202,8 +202,7 @@ pub async fn fame_quest_start(
   let stage_id: i32 = request.body["stage_id"].parse().unwrap();
   let cost_ratio: i32 = request.body["cost_ratio"].parse().unwrap();
 
-  todo!() as Result<Unsigned<()>, anyhow::Error>
-  // battle::battle_start(state, session, request).await
+  battle::make_battle_start(&state, &session, party_no).await
 }
 
 // Interestingly it does not have [memcheckcount].

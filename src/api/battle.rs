@@ -87,14 +87,7 @@ pub struct AutoProgressionInfo {
   pub incomplete_setting: i32,
 }
 
-// quest_id=101011
-// party_no=1
-// auto_progression_info={"is_start":false,"stop_setting":0,"incomplete_setting":0}
-pub async fn battle_start(
-  state: Arc<AppState>,
-  session: Arc<Session>,
-  Params(params): Params<BattleStartRequest>,
-) -> impl IntoHandlerResponse {
+pub async fn make_battle_start(state: &AppState, session: &Session, party_id: i32) -> impl IntoHandlerResponse + use<> {
   let client = state.pool.get().await.context("failed to get database connection")?;
   #[rustfmt::skip]
   let statement = client
@@ -138,7 +131,7 @@ pub async fn battle_start(
     .await
     .context("failed to prepare statement")?;
   let forms = client
-    .query(&statement, &[&session.user_id, &(params.party_id as i64)])
+    .query(&statement, &[&session.user_id, &(party_id as i64)])
     .await
     .context("failed to execute query")?;
   let forms = forms
@@ -155,7 +148,7 @@ pub async fn battle_start(
       PartyForm {
         id: form_id as i32,
         form_no: form_id as i32,
-        party_no: params.party_id,
+        party_no: party_id,
         main: main_member_id as i32,
         sub1: sub1_member_id as i32,
         sub2: sub2_member_id as i32,
@@ -174,7 +167,7 @@ pub async fn battle_start(
     .try_into()
     .unwrap();
 
-  let party = Party::new(forms, params.party_id);
+  let party = Party::new(forms, party_id);
 
   let members = members
     .iter()
@@ -229,7 +222,7 @@ pub async fn battle_start(
         fame_stats: MemberFameStats::default(),
         skill_pa_fame_list: vec![],
       }
-      .to_battle_member()
+        .to_battle_member()
     })
     .collect::<Vec<_>>();
 
@@ -244,6 +237,17 @@ pub async fn battle_start(
   }));
   response.add_notifications(vec![NotificationData::new(1, 7, 6, 0, "".to_string(), "".to_string())]);
   Ok(Unsigned(response))
+}
+
+// quest_id=101011
+// party_no=1
+// auto_progression_info={"is_start":false,"stop_setting":0,"incomplete_setting":0}
+pub async fn battle_start(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<BattleStartRequest>,
+) -> impl IntoHandlerResponse {
+  make_battle_start(&state, &session, params.party_id).await
 }
 
 #[derive(Debug, Deserialize)]
