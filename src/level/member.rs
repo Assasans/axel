@@ -71,18 +71,7 @@ impl MemberLevelCalculator {
       None => 1,
     };
 
-    let base_limit = match self.level_limits.get(&rarity) {
-      Some(&limit) => limit,
-      None => todo!("handle unknown rarity {}", rarity),
-    };
-
-    let bonus_limits = match self.promotion_levels.get(&promotion_level) {
-      Some(&bonus) => bonus,
-      None if promotion_level == 0 => 0,
-      None => todo!("handle unknown promotion level {}", promotion_level),
-    };
-
-    level.min(base_limit + bonus_limits)
+    level.min(self.get_max_level(rarity, promotion_level))
   }
 
   /// Returns the total XP required to reach the given level for a member of the given rarity,
@@ -98,6 +87,21 @@ impl MemberLevelCalculator {
       // 'member_lv_exp' starts from level 2, so this branch is actually reachable
       None => 0,
     }
+  }
+
+  pub fn get_max_level(&self, rarity: i32, promotion_level: i32) -> i32 {
+    let base_limit = match self.level_limits.get(&rarity) {
+      Some(&limit) => limit,
+      None => todo!("handle unknown rarity {}", rarity),
+    };
+
+    let bonus_limits = match self.promotion_levels.get(&promotion_level) {
+      Some(&bonus) => bonus,
+      None if promotion_level == 0 => 0,
+      None => todo!("handle unknown promotion level {}", promotion_level),
+    };
+
+    base_limit + bonus_limits
   }
 }
 

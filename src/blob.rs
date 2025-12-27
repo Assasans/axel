@@ -1,3 +1,4 @@
+use crate::AppState;
 use crate::api::master_all::get_master_manager;
 use crate::api::{
   CharacterParameter, MemberFameStats, MemberParameterWire, MemberStats, RemoteData, RemoteDataCommand,
@@ -6,7 +7,6 @@ use crate::api::{
 use crate::level::get_member_level_calculator;
 use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
-use crate::AppState;
 use anyhow::Context;
 use std::sync::Arc;
 use tracing::info;
@@ -81,31 +81,6 @@ pub async fn run_login_migration(state: &AppState, session: &Session) {
       .unwrap()
   };
 
-  /*
-  drop table if exists user_parties cascade;
-create table user_parties
-(
-  user_id  bigint not null references users (id) on delete restrict,
-  party_id bigint not null,
-  name     text   not null,
-  primary key (user_id, party_id)
-);
-
-drop table if exists user_party_forms cascade;
-create table user_party_forms
-(
-  user_id        bigint not null references users (id) on delete restrict,
-  party_id       bigint not null,
-  form_id        bigint not null,
-  main_member_id bigint null default 0,
-  sub1_member_id bigint null default 0,
-  sub2_member_id bigint null default 0,
-  weapon_id      bigint null default 0,
-  accessory_id   bigint null default 0,
-  primary key (user_id, party_id, form_id),
-  foreign key (user_id, party_id) references user_parties (user_id, party_id) on delete restrict
-);
-   */
   let party_forms_updated = {
     // Create 8 default parties if none exist, for each new party create 5 default forms
     #[rustfmt::skip]
@@ -151,7 +126,40 @@ create table user_party_forms
       .unwrap()
   };
 
-  info!(?characters_updated, ?members_updated, ?party_forms_updated, "login migration executed");
+  let items_updated = {
+    // Give some default items if none exist
+    #[rustfmt::skip]
+    let statement = client
+      .prepare(/* language=postgresql */ r#"
+        insert into user_items (user_id, item_type, item_id, quantity)
+        select $1 as user_id,
+               v.item_type,
+               v.item_id,
+               v.quantity
+        from (select item_type, item_id, sum(quantity) as quantity
+              from (values (18::bigint, 1::bigint, 30000::integer),
+                           (18::bigint, 2::bigint, 20000::integer),
+                           (18::bigint, 3::bigint, 10000::integer)) as t(item_type, item_id, quantity)
+              group by item_type, item_id) as v
+        on conflict (user_id, item_type, item_id) do nothing
+      "#)
+      .await
+      .context("failed to prepare statement")
+      .unwrap();
+    client
+      .execute(&statement, &[&session.user_id])
+      .await
+      .context("failed to execute query")
+      .unwrap()
+  };
+
+  info!(
+    ?characters_updated,
+    ?members_updated,
+    ?party_forms_updated,
+    ?items_updated,
+    "login migration executed"
+  );
 }
 
 pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<RemoteData> {
@@ -298,6 +306,37 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     .map(|(index, member)| AddMember::new(member, "front").into_remote_data())
     .collect::<Vec<_>>();
 
+  // Fetch items
+  let items = {
+    #[rustfmt::skip]
+    let statement = client
+      .prepare(/* language=postgresql */ r#"
+        select
+          item_type,
+          item_id,
+          quantity
+        from user_items
+        where user_id = $1
+      "#)
+      .await
+      .context("failed to prepare statement").unwrap();
+    let rows = client
+      .query(&statement, &[&session.user_id])
+      .await
+      .context("failed to execute query")
+      .unwrap();
+
+    rows
+      .iter()
+      .map(|row| {
+        let item_type: i64 = row.get(0);
+        let item_id: i64 = row.get(1);
+        let quantity: i32 = row.get(2);
+        AddItem::new(RemoteDataItemType::from(item_type as i32), 0, item_id, quantity).into_remote_data()
+      })
+      .collect::<Vec<_>>()
+  };
+
   #[cfg_attr(rustfmt, rustfmt::skip)]
   vec![
     ClearUserParams.into_remote_data(),
@@ -441,9 +480,9 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     AddItem::new(RemoteDataItemType::MaterialWA, 2, 1100, 3).into_remote_data(),
     AddItem::new(RemoteDataItemType::MaterialWA, 1, 5001, 4).into_remote_data(),
     AddItem::new(RemoteDataItemType::MaterialLimit, 1, 151, 1).into_remote_data(),
-    AddItem::new(RemoteDataItemType::PowerPotion, 2, 1, 1).into_remote_data(),
-    AddItem::new(RemoteDataItemType::PowerPotion, 3, 2, 2).into_remote_data(),
-    AddItem::new(RemoteDataItemType::PowerPotion, 1, 3, 2).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::PowerPotion, 2, 1, 1).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::PowerPotion, 3, 2, 2).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::PowerPotion, 1, 3, 2).into_remote_data(),
     AddItem::new(RemoteDataItemType::Ticket, 0, 17, 2).into_remote_data(),
     AddSingletonItem::new(RemoteDataItemType::Level, 35).into_remote_data(),
     // AddMemberBackground::new(5, 1010).into_remote_data(),
@@ -483,6 +522,7 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     .chain(characters)
     .chain(costumes)
     .chain(backgrounds)
+    .chain(items)
     .collect::<Vec<_>>()
 }
 
@@ -587,6 +627,42 @@ impl IntoRemoteData for AddItem {
   }
 }
 
+pub struct UpdateItem {
+  pub item_type: RemoteDataItemType,
+  pub unique_id: i32,
+  pub item_id: i64,
+  pub item_num: i32,
+}
+
+impl UpdateItem {
+  pub fn new(item_type: RemoteDataItemType, unique_id: i32, item_id: i64, item_num: i32) -> Self {
+    Self {
+      item_type,
+      unique_id,
+      item_id,
+      item_num,
+    }
+  }
+}
+
+impl IntoRemoteData for UpdateItem {
+  fn into_remote_data(self) -> RemoteData {
+    RemoteData {
+      cmd: RemoteDataCommand::UserParamUpdate as i32,
+      uid: None,
+      item_type: self.item_type.into(),
+      item_id: self.item_id,
+      item_num: self.item_num,
+      uniqid: self.unique_id,
+      lv: 0,
+      tag: String::from("-"),
+      member_parameter: None,
+      character_parameter: None,
+      is_trial: None,
+    }
+  }
+}
+
 /// Singleton items have no [item_id] and [uniqid] set.
 pub struct AddSingletonItem {
   pub item_type: RemoteDataItemType,
@@ -642,6 +718,35 @@ impl IntoRemoteData for AddMember {
       uniqid: self.member_parameter.id,
       lv: self.member_parameter.lv,
       tag: self.tag,
+      member_parameter: Some(self.member_parameter),
+      character_parameter: None,
+      is_trial: None,
+    }
+  }
+}
+
+pub struct UpdateMember {
+  pub member_parameter: MemberParameterWire,
+}
+
+impl UpdateMember {
+  pub fn new(member_parameter: MemberParameterWire) -> Self {
+    Self { member_parameter }
+  }
+}
+
+impl IntoRemoteData for UpdateMember {
+  fn into_remote_data(self) -> RemoteData {
+    RemoteData {
+      cmd: RemoteDataCommand::UserParamUpdate as i32,
+      uid: None,
+      item_type: RemoteDataItemType::Member.into(),
+      item_id: self.member_parameter.member_id,
+      item_num: 1,
+      uniqid: self.member_parameter.id,
+      lv: self.member_parameter.lv,
+      // Seems is must always be "front", otherwise the member is not displayed in the list
+      tag: String::from("front"),
       member_parameter: Some(self.member_parameter),
       character_parameter: None,
       is_trial: None,

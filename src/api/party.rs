@@ -1,19 +1,23 @@
+use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use anyhow::Context;
-use base64::prelude::BASE64_STANDARD_NO_PAD;
 use base64::Engine;
+use base64::prelude::BASE64_STANDARD_NO_PAD;
 use serde::{Deserialize, Serialize};
-use tracing::{info, warn};
+use tracing::{debug, info, warn};
 
+use crate::AppState;
 use crate::api::dungeon::{PartyAccessory, PartyMember, PartyWeapon};
-use crate::api::party_info::{party_info, Party};
-use crate::api::ApiRequest;
-use crate::call::CallCustom;
+use crate::api::party_info::{Party, party_info};
+use crate::api::{ApiRequest, MemberFameStats, RemoteData, RemoteDataItemType};
+use crate::blob::{IntoRemoteData, UpdateItem, UpdateMember};
+use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
+use crate::level::get_member_level_calculator;
+use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
-use crate::AppState;
 
 // See [Wonder_Api_PartymembersResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -38,14 +42,173 @@ pub async fn party_members(_request: ApiRequest) -> impl IntoHandlerResponse {
   }))
 }
 
-// num3=2
-// num2=2
-// num1=1
-// user_member_id=10
-pub async fn grade_up(_request: ApiRequest) -> impl IntoHandlerResponse {
+// body={"user_member_id": "1004100", "num2": "0", "num3": "0", "num1": "60"}
+#[derive(Debug, Deserialize)]
+pub struct GradeUpRequest {
+  // [user_*] fields reference [unique_id], in our case it always same as master [member_id].
+  pub user_member_id: i64,
+  pub num1: i32,
+  pub num2: i32,
+  pub num3: i32,
+}
+
+pub async fn grade_up(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<GradeUpRequest>,
+) -> impl IntoHandlerResponse {
+  debug!(?params.user_member_id, "upgrading member");
+
+  #[rustfmt::skip]
+  let potions_to_use: BTreeMap<i64, i32> = BTreeMap::from([
+    (1, params.num1),
+    (2, params.num2),
+    (3, params.num3)
+  ]);
+
+  // XP points are hardcoded in the game code,
+  // see [Wonder.UI.Chara.LevelUpCell$$GetExpMaterialPoint]
+  #[rustfmt::skip]
+  let potion_to_xp: BTreeMap<i64, i32> = BTreeMap::from([
+    (1, 300),
+    (2, 1500),
+    (3, 7500)
+  ]);
+
+  let total_xp: i32 = potions_to_use
+    .iter()
+    .map(|(potion_type, count)| potion_to_xp.get(potion_type).unwrap() * count)
+    .sum();
+
+  let mut client = state.get_database_client().await?;
+  let transaction = client.transaction().await.context("failed to start transaction")?;
+
+  #[rustfmt::skip]
+  let statement = transaction
+    .prepare(/* language=postgresql */ r#"
+      select member_id, xp, promotion_level
+      from user_members
+      where user_id = $1 and member_id = $2
+      for update
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+
+  let row = transaction
+    .query_one(&statement, &[&session.user_id, &params.user_member_id])
+    .await
+    .context("failed to query user member")?;
+  let member_id: i64 = row.get(0);
+  let xp: i32 = row.get(1);
+  let promotion_level: i32 = row.get(2);
+  // let active_skills: Value = row.get(3);
+
+  let prototype = MemberPrototype::load_from_id(member_id);
+
+  let calculator = get_member_level_calculator();
+  let current_level = calculator.get_level(xp, prototype.rarity, promotion_level);
+  let max_level = calculator.get_max_level(prototype.rarity, promotion_level);
+  let max_xp = calculator.get_xp_for_level(max_level, prototype.rarity);
+
+  // It clamps and the lost XP is not refunded (but technically can be, in 300 XP increments)
+  let new_xp = (xp + total_xp).min(max_xp);
+  let new_level = calculator.get_level(new_xp, prototype.rarity, promotion_level);
+  info!(
+    member_id,
+    current_xp = ?xp,
+    ?current_level,
+    add_xp = ?total_xp,
+    ?new_xp,
+    ?new_level,
+    ?max_xp,
+    ?max_level,
+    "upgrading member xp"
+  );
+
+  // update xp in database
+  #[rustfmt::skip]
+  let statement = transaction
+    .prepare(/* language=postgresql */ r#"
+      update user_members
+      set xp = $3
+      where user_id = $1 and member_id = $2
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  transaction
+    .execute(&statement, &[&session.user_id, &params.user_member_id, &new_xp])
+    .await
+    .context("failed to update user member xp")?;
+  debug!(member_id, ?new_xp, "updated member xp in database");
+
+  let member = Member {
+    id: prototype.id as i32,
+    prototype: &prototype,
+    xp: new_xp,
+    promotion_level,
+    active_skills: prototype
+      .active_skills
+      .iter()
+      .map(|skill_opt| {
+        skill_opt.as_ref().map(|skill| MemberActiveSkill {
+          prototype: skill,
+          level: 1,
+          value: skill.value.max,
+        })
+      })
+      .collect::<Vec<_>>()
+      .try_into()
+      .unwrap(),
+    stats: prototype.stats.clone(),
+    main_strength: MemberStrength::default(),
+    sub_strength: MemberStrength::default(),
+    sub_strength_bonus: MemberStrength::default(),
+    fame_stats: MemberFameStats::default(),
+    skill_pa_fame_list: vec![],
+  };
+
+  // Update used items
+  // TODO: This does not check if the user has enough potions
+  // TODO: Maybe some UpdateDatabaseItem struct would be cleaner here
+  #[rustfmt::skip]
+  let statement = transaction
+    .prepare(/* language=postgresql */ r#"
+      update user_items
+      set quantity = quantity - $3
+      where user_id = $1 and item_id = $2
+      returning item_type, item_id, quantity
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  let mut item_updates = Vec::new();
+  for (item_id, count) in potions_to_use {
+    if count > 0 {
+      let rows = transaction
+        .query(&statement, &[&session.user_id, &item_id, &count])
+        .await
+        .context("failed to update user items")?;
+      let row = rows.first().unwrap();
+      let item_type: i64 = row.get(0);
+      let item_id: i64 = row.get(1);
+      let quantity: i32 = row.get(2);
+      debug!(?item_id, ?item_type, ?quantity, "consumed power potions");
+
+      let item_update =
+        UpdateItem::new(RemoteDataItemType::from(item_type as i32), 0, item_id, quantity).into_remote_data();
+      item_updates.push(item_update);
+    }
+  }
+
+  transaction.commit().await.context("failed to commit transaction")?;
+
   // See [Wonder_Api_GradeupResponseDto_Fields]
   // TODO: This probably should send remote data to update member: level in UI rolls back after animation
-  Ok(Unsigned(()))
+  let mut response = CallResponse::new_success_empty();
+  response
+    .remote
+    .extend([UpdateMember::new(member.to_member_parameter_wire()).into_remote_data()]);
+  response.remote.extend(item_updates);
+  Ok(Unsigned(response))
 }
 
 // See [Wonder_Api_UpdatePartyFormResponseDto_Fields]

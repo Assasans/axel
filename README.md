@@ -36,7 +36,6 @@ On first login, you get all members with randomized XP.
 - \[Others\] → \[Room Invitation\], lags and does not work properly
 - \[Quest\] → \[Event\] → \[Draw\], unimplemented
 - \[Quest\] → \[Event\] → \[Boss Battle\] → \[Room ID\], response is ignored
-- \[Quest\] → \[Free Quest\], all items are locked
 - Login screen → \[Menu\] → \[Data Transfer\] → \[Link to a Google account\], does nothing, `libnative-googlesignin.so` is missing
 
 ## Setup
@@ -50,7 +49,7 @@ See [DUMPING.md](DUMPING.md) for instructions on how to inspect the game code yo
 ### Game resources
 
 Game needs around 16 GiB of resources, they are stored on a separate server with file indexing enabled: https://smb.assasans.dev/konofd/.
-Alternatively, rsync server is available at`rsync://aqua.assasans.dev/konofd/`.
+Alternatively, rsync server is available at `rsync://aqua.assasans.dev/konofd/`.
 
 ## License
 
