@@ -1,13 +1,19 @@
-use std::sync::Arc;
-
+use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use tracing::warn;
+use std::collections::HashMap;
+use std::sync::Arc;
+use tracing::{debug, info, trace, warn};
 
-use crate::api::master_all::get_masters;
-use crate::call::CallCustom;
+use crate::AppState;
+use crate::api::RemoteDataItemType;
+use crate::api::master_all::{get_master_manager, get_masters};
+use crate::blob::{DeleteMember, IntoRemoteData};
+use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Signed};
+use crate::item::UpdateItemCountBy;
+use crate::member::MemberPrototype;
 use crate::user::session::Session;
 
 // See [Wonder_Api_ExchangelistResponseDto_Fields]
@@ -72,17 +78,79 @@ pub async fn exchange_list(
 
 #[derive(Debug, Deserialize)]
 pub struct LeaveMembersRequest {
-  #[serde(deserialize_with = "crate::serde_compat::comma_separated_i32")]
-  pub ids: Vec<i32>,
+  #[serde(deserialize_with = "crate::serde_compat::comma_separated_i64")]
+  pub ids: Vec<i64>,
 }
 
-// ids=1
 pub async fn leave_members(
+  state: Arc<AppState>,
   session: Arc<Session>,
   Params(params): Params<LeaveMembersRequest>,
 ) -> impl IntoHandlerResponse {
-  warn!(?params.ids, "encountered stub: leave_members");
-  Ok(Signed((), session))
+  let medal_rate = get_master_manager()
+    .get_master("member_medal_rate")
+    .into_iter()
+    .map(|m| {
+      let rarity = m["rare"].as_str().unwrap().parse::<i32>().unwrap();
+      let medals = m["medal_rate"].as_str().unwrap().parse::<i32>().unwrap();
+      (rarity, medals)
+    })
+    .collect::<HashMap<_, _>>();
+
+  let mut client = state.get_database_client().await?;
+  let transaction = client.transaction().await.context("failed to start transaction")?;
+
+  #[rustfmt::skip]
+  let statement = transaction.prepare(/* language=postgresql */ r#"
+    delete from user_members_reserve
+    where user_id = $1
+      and id = any($2)
+    returning id, member_id
+  "#).await.context("failed to prepare statement")?;
+  let rows = transaction
+    .query(&statement, &[&session.user_id, &params.ids])
+    .await
+    .context("failed to execute statement")?;
+
+  // See [Wonder_Api_LeavemenbersResponseDto_Fields]
+  let mut response = CallResponse::new_success_empty();
+
+  let mut total_medal_count = 0;
+  for row in rows {
+    let id: i64 = row.get(0);
+    let member_id: i64 = row.get(1);
+
+    let prototype = MemberPrototype::load_from_id(member_id);
+    let medal_count = *medal_rate
+      .get(&prototype.rarity)
+      .context(format!("no medal rate found for member rarity {}", prototype.rarity))?;
+    trace!(
+      ?id,
+      ?member_id,
+      ?medal_count,
+      "calculated medals for releasing reserve member"
+    );
+
+    total_medal_count += medal_count;
+    response.remote.extend(DeleteMember::new(id, member_id).into_remote_data());
+  }
+
+  const ADVENTURER_MEDAL_ID: i64 = 1001;
+  let update = UpdateItemCountBy::new(&transaction).await?;
+  let item = update
+    .run(
+      session.user_id,
+      (RemoteDataItemType::ExchangeMedal, ADVENTURER_MEDAL_ID),
+      total_medal_count,
+    )
+    .await
+    .context("failed to execute query")?;
+  info!(members = ?params.ids, ?item, "granted medals for releasing reserve members");
+  response.remote.extend(item.into_remote_data());
+
+  transaction.commit().await.context("failed to commit transaction")?;
+
+  Ok(Signed(response, session))
 }
 
 #[derive(Debug, Deserialize)]

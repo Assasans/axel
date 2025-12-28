@@ -81,6 +81,35 @@ pub async fn run_login_migration(state: &AppState, session: &Session) {
       .unwrap()
   };
 
+  let reserve_members_updated = {
+    // Create missing reserve members if none exist
+    #[rustfmt::skip]
+    let statement = client
+      .prepare(/* language=postgresql */ r#"
+        insert into user_members_reserve (user_id, member_id)
+        select $1, m.id::bigint
+        from unnest($2::bigint[]) as m(id)
+               cross join lateral generate_series(1, floor(random() * 10 + 1)::int) as s
+        where not exists (select 1
+                          from user_members_reserve um
+                          where um.user_id = $1
+                            and um.member_id = m.id::bigint)
+      "#)
+      .await
+      .context("failed to prepare statement")
+      .unwrap();
+    let member_ids: Vec<i64> = masters
+      .get_master("member")
+      .iter()
+      .map(|data| data.get("id").unwrap().as_str().unwrap().parse::<i64>().unwrap())
+      .collect();
+    client
+      .execute(&statement, &[&session.user_id, &member_ids])
+      .await
+      .context("failed to execute query")
+      .unwrap()
+  };
+
   let party_forms_updated = {
     // Create 8 default parties if none exist, for each new party create 5 default forms
     #[rustfmt::skip]
@@ -156,6 +185,7 @@ pub async fn run_login_migration(state: &AppState, session: &Session) {
   info!(
     ?characters_updated,
     ?members_updated,
+    ?reserve_members_updated,
     ?party_forms_updated,
     ?items_updated,
     "login migration executed"
@@ -324,6 +354,7 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
   let members = members
     .into_iter()
     .enumerate()
+    // "front" - normal member; "back" - reserve member, non-playable
     .map(|(index, member)| AddMember::new(member, "front").into_remote_data())
     .flatten()
     .collect::<Vec<_>>();
@@ -356,6 +387,47 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
         let quantity: i32 = row.get(2);
         AddItem::new(RemoteDataItemType::from(item_type as i32), 0, item_id, quantity).into_remote_data()
       })
+      .flatten()
+      .collect::<Vec<_>>()
+  };
+
+  let members_reserve = {
+    #[rustfmt::skip]
+    let statement = client
+      .prepare(/* language=postgresql */ r#"
+        select id, member_id
+        from user_members_reserve
+        where user_id = $1
+      "#)
+      .await
+      .context("failed to prepare statement").unwrap();
+    let rows = client
+      .query(&statement, &[&session.user_id])
+      .await
+      .context("failed to execute query")
+      .unwrap();
+    rows
+      .iter()
+      .map(|row| {
+        let id: i64 = row.get(0);
+        let member_id: i64 = row.get(1);
+        let prototype = MemberPrototype::load_from_id(member_id);
+        Member {
+          id: id as i32,
+          prototype: &prototype,
+          xp: 0,
+          promotion_level: 0,
+          active_skills: [None, None, None],
+          stats: prototype.stats.clone(),
+          main_strength: MemberStrength::default(),
+          sub_strength: MemberStrength::default(),
+          sub_strength_bonus: MemberStrength::default(),
+          fame_stats: MemberFameStats::default(),
+          skill_pa_fame_list: vec![],
+        }
+        .to_member_parameter_wire()
+      })
+      .map(|member| AddMember::new(member, "back").into_remote_data())
       .flatten()
       .collect::<Vec<_>>()
   };
@@ -532,7 +604,7 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     AddItem::new(RemoteDataItemType::CharacterPiece, 0, 119, 2).into_remote_data(),
     AddItem::new(RemoteDataItemType::CharacterPiece, 0, 128, 1).into_remote_data(),
     AddSingletonItem::new(RemoteDataItemType::FameRank, 1).into_remote_data(),
-    AddItem::new(RemoteDataItemType::ExchangeMedal, 0, 1001, 100100).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::ExchangeMedal, 0, 1001, 100100).into_remote_data(),
     AddItem::new(RemoteDataItemType::ExchangeMedal, 0, 1011, 101100).into_remote_data(),
     AddItem::new(RemoteDataItemType::ExchangeMedal, 0, 1012, 101200).into_remote_data(),
     // Dynamic analysis: 1 - time-limited dungeon, 2 - permanent dungeon
@@ -543,6 +615,7 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     .into_iter()
     .flatten()
     .chain(members)
+    .chain(members_reserve)
     .chain(characters)
     .chain(costumes)
     .chain(backgrounds)
@@ -772,6 +845,35 @@ impl IntoRemoteData for UpdateMember {
       // Seems is must always be "front", otherwise the member is not displayed in the list
       tag: String::from("front"),
       member_parameter: Some(self.member_parameter),
+      character_parameter: None,
+      is_trial: None,
+    }]
+  }
+}
+
+pub struct DeleteMember {
+  pub id: i64,
+  pub member_id: i64,
+}
+
+impl DeleteMember {
+  pub fn new(id: i64, member_id: i64) -> Self {
+    Self { id, member_id }
+  }
+}
+
+impl IntoRemoteData for DeleteMember {
+  fn into_remote_data(self) -> Vec<RemoteData> {
+    vec![RemoteData {
+      cmd: RemoteDataCommand::UserParamDelete as i32,
+      uid: None,
+      item_type: RemoteDataItemType::Member.into(),
+      item_id: self.member_id,
+      item_num: 1,
+      uniqid: self.id as i32,
+      lv: 0,
+      tag: String::from("back"),
+      member_parameter: None,
       character_parameter: None,
       is_trial: None,
     }]
