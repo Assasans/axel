@@ -5,8 +5,9 @@ use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use tracing::{debug, info, warn};
 
+use crate::AppState;
 use crate::api::dungeon::{PartyAccessory, PartyMember, PartyWeapon};
-use crate::api::party_info::{party_info, Party};
+use crate::api::party_info::{Party, party_info};
 use crate::api::{ApiRequest, MemberFameStats, RemoteDataItemType};
 use crate::blob::{IntoRemoteData, UpdateMember};
 use crate::call::{CallCustom, CallResponse};
@@ -16,7 +17,6 @@ use crate::item::UpdateItemCountBy;
 use crate::level::get_member_level_calculator;
 use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
-use crate::AppState;
 
 // See [Wonder_Api_PartymembersResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -188,8 +188,8 @@ pub async fn grade_up(
   let mut response = CallResponse::new_success_empty();
   response
     .remote
-    .extend([UpdateMember::new(member.to_member_parameter_wire()).into_remote_data()]);
-  response.remote.extend(item_updates);
+    .extend(UpdateMember::new(member.to_member_parameter_wire()).into_remote_data());
+  response.remote.extend(item_updates.into_iter().flatten());
   Ok(Unsigned(response))
 }
 
@@ -443,4 +443,91 @@ pub async fn party_strength(request: ApiRequest) -> impl IntoHandlerResponse {
   warn!(?party_no, "encountered stub: party_strength");
 
   Ok(Unsigned(PartyStrengthResponseDto { strength: 1000 }))
+}
+
+// See [Wonder_Api_LimitbreakResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct LimitBreakResponse {
+  pub newlv: i32,
+}
+
+impl CallCustom for LimitBreakResponse {}
+
+// body={"break_count": "1", "target_card_id": "1004116"}
+#[derive(Debug, Deserialize)]
+pub struct LimitBreakRequest {
+  #[serde(rename = "target_card_id")]
+  pub member_id: i64,
+  #[serde(rename = "break_count")]
+  pub levels: i32,
+}
+
+pub async fn limit_break(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<LimitBreakRequest>,
+) -> impl IntoHandlerResponse {
+  debug!(?params, ?params, "promote member");
+
+  let mut client = state.get_database_client().await?;
+  let transaction = client.transaction().await.context("failed to start transaction")?;
+  #[rustfmt::skip]
+  let statement = transaction
+    .prepare(/* language=postgresql */ r#"
+      update user_members
+      set promotion_level = promotion_level + $3
+      where user_id = $1 and member_id = $2
+      returning member_id, xp, promotion_level
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  let row = transaction
+    .query(&statement, &[&session.user_id, &params.member_id, &params.levels])
+    .await
+    .context("failed to update user member promotion level")?
+    .into_iter()
+    .next()
+    .context("no such member")?;
+  let member_id: i64 = row.get(0);
+  let xp: i32 = row.get(1);
+  let promotion_level: i32 = row.get(2);
+
+  // TODO: Consume items
+  transaction.commit().await.context("failed to commit transaction")?;
+
+  let prototype = MemberPrototype::load_from_id(member_id);
+
+  let member = Member {
+    id: prototype.id as i32,
+    prototype: &prototype,
+    xp,
+    promotion_level,
+    active_skills: prototype
+      .active_skills
+      .iter()
+      .map(|skill_opt| {
+        skill_opt.as_ref().map(|skill| MemberActiveSkill {
+          prototype: skill,
+          level: 1,
+          value: skill.value.max,
+        })
+      })
+      .collect::<Vec<_>>()
+      .try_into()
+      .unwrap(),
+    stats: prototype.stats.clone(),
+    main_strength: MemberStrength::default(),
+    sub_strength: MemberStrength::default(),
+    sub_strength_bonus: MemberStrength::default(),
+    fame_stats: MemberFameStats::default(),
+    skill_pa_fame_list: vec![],
+  };
+
+  let mut response = CallResponse::new_success(Box::new(LimitBreakResponse {
+    newlv: member.promotion_level,
+  }));
+  response
+    .remote
+    .extend(UpdateMember::new(member.to_member_parameter_wire()).into_remote_data());
+  Ok(Unsigned(response))
 }

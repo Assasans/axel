@@ -291,6 +291,7 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
         )
         .into_remote_data()
       })
+      .flatten()
       .collect::<Vec<_>>()
   };
 
@@ -304,6 +305,7 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
       )
       .into_remote_data()
     })
+    .flatten()
     .collect::<Vec<_>>();
 
   let backgrounds = backgrounds
@@ -316,12 +318,14 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
       )
       .into_remote_data()
     })
+    .flatten()
     .collect::<Vec<_>>();
 
   let members = members
     .into_iter()
     .enumerate()
     .map(|(index, member)| AddMember::new(member, "front").into_remote_data())
+    .flatten()
     .collect::<Vec<_>>();
 
   // Fetch items
@@ -352,6 +356,7 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
         let quantity: i32 = row.get(2);
         AddItem::new(RemoteDataItemType::from(item_type as i32), 0, item_id, quantity).into_remote_data()
       })
+      .flatten()
       .collect::<Vec<_>>()
   };
 
@@ -536,6 +541,7 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     AddItem::new(RemoteDataItemType::BossTicket, 0, 240111, 600).into_remote_data(),
   ]
     .into_iter()
+    .flatten()
     .chain(members)
     .chain(characters)
     .chain(costumes)
@@ -545,7 +551,7 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
 }
 
 pub trait IntoRemoteData {
-  fn into_remote_data(self) -> RemoteData;
+  fn into_remote_data(self) -> Vec<RemoteData>;
 }
 
 pub struct AddMemberBackground {
@@ -563,8 +569,8 @@ impl AddMemberBackground {
 }
 
 impl IntoRemoteData for AddMemberBackground {
-  fn into_remote_data(self) -> RemoteData {
-    RemoteData {
+  fn into_remote_data(self) -> Vec<RemoteData> {
+    vec![RemoteData {
       cmd: RemoteDataCommand::UserParamAdd as i32,
       uid: None,
       item_type: RemoteDataItemType::MemberBackground.into(),
@@ -576,7 +582,7 @@ impl IntoRemoteData for AddMemberBackground {
       member_parameter: None,
       character_parameter: None,
       is_trial: None,
-    }
+    }]
   }
 }
 
@@ -592,8 +598,8 @@ impl AddMemberCostume {
 }
 
 impl IntoRemoteData for AddMemberCostume {
-  fn into_remote_data(self) -> RemoteData {
-    RemoteData {
+  fn into_remote_data(self) -> Vec<RemoteData> {
+    vec![RemoteData {
       cmd: RemoteDataCommand::UserParamAdd as i32,
       uid: None,
       item_type: RemoteDataItemType::MemberCostume.into(),
@@ -605,7 +611,7 @@ impl IntoRemoteData for AddMemberCostume {
       member_parameter: None,
       character_parameter: None,
       is_trial: None,
-    }
+    }]
   }
 }
 
@@ -628,8 +634,8 @@ impl AddItem {
 }
 
 impl IntoRemoteData for AddItem {
-  fn into_remote_data(self) -> RemoteData {
-    RemoteData {
+  fn into_remote_data(self) -> Vec<RemoteData> {
+    vec![RemoteData {
       cmd: RemoteDataCommand::UserParamAdd as i32,
       uid: None,
       item_type: self.item_type.into(),
@@ -641,7 +647,7 @@ impl IntoRemoteData for AddItem {
       member_parameter: None,
       character_parameter: None,
       is_trial: None,
-    }
+    }]
   }
 }
 
@@ -664,8 +670,8 @@ impl UpdateItem {
 }
 
 impl IntoRemoteData for UpdateItem {
-  fn into_remote_data(self) -> RemoteData {
-    RemoteData {
+  fn into_remote_data(self) -> Vec<RemoteData> {
+    vec![RemoteData {
       cmd: RemoteDataCommand::UserParamUpdate as i32,
       uid: None,
       item_type: self.item_type.into(),
@@ -677,7 +683,7 @@ impl IntoRemoteData for UpdateItem {
       member_parameter: None,
       character_parameter: None,
       is_trial: None,
-    }
+    }]
   }
 }
 
@@ -694,8 +700,8 @@ impl AddSingletonItem {
 }
 
 impl IntoRemoteData for AddSingletonItem {
-  fn into_remote_data(self) -> RemoteData {
-    RemoteData {
+  fn into_remote_data(self) -> Vec<RemoteData> {
+    vec![RemoteData {
       cmd: RemoteDataCommand::UserParamAdd as i32,
       uid: None,
       item_type: self.item_type.into(),
@@ -707,7 +713,7 @@ impl IntoRemoteData for AddSingletonItem {
       member_parameter: None,
       character_parameter: None,
       is_trial: None,
-    }
+    }]
   }
 }
 
@@ -726,8 +732,8 @@ impl AddMember {
 }
 
 impl IntoRemoteData for AddMember {
-  fn into_remote_data(self) -> RemoteData {
-    RemoteData {
+  fn into_remote_data(self) -> Vec<RemoteData> {
+    vec![RemoteData {
       cmd: RemoteDataCommand::UserParamAdd as i32,
       uid: None,
       item_type: RemoteDataItemType::Member.into(),
@@ -739,7 +745,7 @@ impl IntoRemoteData for AddMember {
       member_parameter: Some(self.member_parameter),
       character_parameter: None,
       is_trial: None,
-    }
+    }]
   }
 }
 
@@ -754,8 +760,8 @@ impl UpdateMember {
 }
 
 impl IntoRemoteData for UpdateMember {
-  fn into_remote_data(self) -> RemoteData {
-    RemoteData {
+  fn into_remote_data(self) -> Vec<RemoteData> {
+    vec![RemoteData {
       cmd: RemoteDataCommand::UserParamUpdate as i32,
       uid: None,
       item_type: RemoteDataItemType::Member.into(),
@@ -768,7 +774,7 @@ impl IntoRemoteData for UpdateMember {
       member_parameter: Some(self.member_parameter),
       character_parameter: None,
       is_trial: None,
-    }
+    }]
   }
 }
 
@@ -788,8 +794,8 @@ impl AddCharacter {
 }
 
 impl IntoRemoteData for AddCharacter {
-  fn into_remote_data(self) -> RemoteData {
-    RemoteData {
+  fn into_remote_data(self) -> Vec<RemoteData> {
+    vec![RemoteData {
       cmd: RemoteDataCommand::UserParamAdd as i32,
       uid: None,
       item_type: RemoteDataItemType::Character.into(),
@@ -801,15 +807,15 @@ impl IntoRemoteData for AddCharacter {
       member_parameter: None,
       character_parameter: Some(self.character_parameter),
       is_trial: None,
-    }
+    }]
   }
 }
 
 pub struct ClearUserParams;
 
 impl IntoRemoteData for ClearUserParams {
-  fn into_remote_data(self) -> RemoteData {
-    RemoteData {
+  fn into_remote_data(self) -> Vec<RemoteData> {
+    vec![RemoteData {
       cmd: RemoteDataCommand::UserParamClear as i32,
       uid: None,
       item_type: 0,
@@ -821,6 +827,6 @@ impl IntoRemoteData for ClearUserParams {
       member_parameter: None,
       character_parameter: None,
       is_trial: None,
-    }
+    }]
   }
 }

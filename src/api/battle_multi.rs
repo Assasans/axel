@@ -621,7 +621,7 @@ pub struct MarathonMultiResultResponse {
   pub money: i32,
   pub friend_count: i32,
   pub request_count: i32,
-  pub love: Vec<BattleMemberLove>,
+  pub love: Vec<BattleCharacterLove>,
   pub member_exp: Vec<BattleMemberExp>,
   pub reward: Vec<MultiBattleReward>,
   pub clearreward: Vec<BattleClearReward>,
@@ -637,7 +637,7 @@ impl CallCustom for MarathonMultiResultResponse {}
 // See [Wonder_Api_MarathonMultiResultLoveResponseDto_Fields]
 // See [Wonder_Api_BattlehuntingresultLoveResponseDto_Fields]
 #[derive(Debug, Serialize)]
-pub struct BattleMemberLove {
+pub struct BattleCharacterLove {
   pub character_id: i64,
   pub love: i32,
 }

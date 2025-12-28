@@ -4,26 +4,46 @@ use crate::database::QueryExecutor;
 use crate::user::id::UserId;
 use tokio_postgres::Statement;
 
+#[derive(Debug, Clone, Ord, PartialOrd, Eq, PartialEq)]
 pub struct CountedItem {
   pub item: ItemReference,
   pub quantity: i32,
 }
 
 impl IntoRemoteData for CountedItem {
-  fn into_remote_data(self) -> RemoteData {
-    RemoteData {
-      cmd: RemoteDataCommand::UserParamUpdate as i32,
-      uid: None,
-      item_type: self.item.item_type.into(),
-      item_id: self.item.item_id,
-      item_num: self.quantity,
-      uniqid: 0,
-      lv: 0,
-      tag: String::from("-"),
-      member_parameter: None,
-      character_parameter: None,
-      is_trial: None,
-    }
+  fn into_remote_data(self) -> Vec<RemoteData> {
+    vec![
+      // TODO: This is a hack, UserParamAdd combines amount with existing amount.
+      //  UserParamUpdate does not create new items. We need to either track state what was sent
+      //  to the client, or delete item entirely and re-add it.
+      RemoteData {
+        cmd: RemoteDataCommand::UserParamDelete as i32,
+        uid: None,
+        item_type: self.item.item_type.into(),
+        item_id: self.item.item_id,
+        // UserParamDelete decreases by this amount, and clamps at zero
+        item_num: i32::MAX,
+        uniqid: 0,
+        lv: 0,
+        tag: String::from("-"),
+        member_parameter: None,
+        character_parameter: None,
+        is_trial: None,
+      },
+      RemoteData {
+        cmd: RemoteDataCommand::UserParamAdd as i32,
+        uid: None,
+        item_type: self.item.item_type.into(),
+        item_id: self.item.item_id,
+        item_num: self.quantity,
+        uniqid: 0,
+        lv: 0,
+        tag: String::from("-"),
+        member_parameter: None,
+        character_parameter: None,
+        is_trial: None,
+      },
+    ]
   }
 }
 
@@ -63,9 +83,13 @@ impl<'a> UpdateItemCountBy<'a> {
     Ok(Self {
       #[rustfmt::skip]
       statement: executor.prepare(/* language=postgresql */ r#"
-        update user_items
-        set quantity = quantity + $4
-        where user_id = $1 and item_type = $2 and item_id = $3
+        insert into user_items (user_id, item_type, item_id, quantity)
+        values ($1, $2, $3, $4)
+        on conflict (user_id, item_type, item_id)
+          do update
+          set quantity = user_items.quantity + excluded.quantity
+        -- Check that we don't go below zero
+        where user_items.quantity + excluded.quantity >= 0
         returning quantity
       "#).await?,
       executor,

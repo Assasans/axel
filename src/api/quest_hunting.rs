@@ -1,18 +1,23 @@
 //! Hierarchy is Area (Relic Quest) -> Stage (Eris - Beginner)
 //! Reference: https://youtu.be/S9fX6sbXRHw (also shows character upgrade and promotion)
 
-use std::sync::Arc;
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
-use tracing::warn;
-use crate::api::{battle, RemoteDataItemType};
-use crate::api::battle_multi::{BattleClearReward, BattleMemberExp, BattleMemberLove};
-use crate::api::master_all::get_masters;
 use crate::AppState;
-use crate::call::CallCustom;
+use crate::api::battle_multi::{BattleCharacterLove, BattleClearReward, BattleMemberExp};
+use crate::api::master_all::{get_master_manager, get_masters};
+use crate::api::smith_upgrade::{DungeonAreaMaterialInfoResponseDto, FameQuestMaterialInfoResponseDto};
+use crate::api::{RemoteDataItemType, battle};
+use crate::blob::IntoRemoteData;
+use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
+use crate::item::UpdateItemCountBy;
 use crate::user::session::Session;
+use anyhow::Context;
+use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use std::collections::HashMap;
+use std::sync::Arc;
+use tracing::{debug, warn};
 
 // See [Wonder_Api_QuesthuntinglistResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -193,7 +198,7 @@ pub struct BattleHuntingResultResponse {
   pub lvup: i32,
   pub money: i32,
   pub storyunlock: Vec<i32>,
-  pub love: Vec<BattleMemberLove>,
+  pub love: Vec<BattleCharacterLove>,
   pub member_exp: Vec<BattleMemberExp>,
   pub mission: Vec<i32>,
   pub reward: Vec<BattleReward>,
@@ -206,7 +211,8 @@ pub struct BattleReward {
   pub itemtype: i32,
   pub itemid: i64,
   pub itemnum: i32,
-  pub is_rare: i32,
+  #[serde(with = "crate::bool_as_int")]
+  pub is_rare: bool,
 }
 
 impl CallCustom for BattleHuntingResultResponse {}
@@ -230,23 +236,208 @@ pub async fn battle_hunting_result(
 ) -> impl IntoHandlerResponse {
   warn!(?params, "encountered stub: battle_hunting_result");
 
-  Ok(Unsigned(BattleHuntingResultResponse {
+  let rewards = get_master_manager()
+    .get_master("huntingquest_stage_itemreward")
+    .into_iter()
+    .map(|reward| (reward["id"].as_str().unwrap().parse::<i32>().unwrap(), reward))
+    .collect::<HashMap<_, _>>();
+  let mut rewards = extract_items(&rewards[&params.quest_id]);
+  for item in &mut rewards {
+    item.item_num *= 20;
+  }
+
+  let mut client = state.get_database_client().await?;
+  let transaction = client.transaction().await.context("failed to start transaction")?;
+  let update = UpdateItemCountBy::new(&transaction).await?;
+  let mut update_items = Vec::new();
+  for item in &rewards {
+    let item = update
+      .run(
+        session.user_id,
+        (RemoteDataItemType::from(item.item_type), item.item_id),
+        item.item_num,
+      )
+      .await
+      .context("failed to execute query")?;
+    debug!(?item, "granted hunting quest reward");
+
+    update_items.push(item.into_remote_data());
+  }
+  transaction.commit().await.context("failed to commit transaction")?;
+
+  let mut response = CallResponse::new_success(Box::new(BattleHuntingResultResponse {
     limit: 1,
     exp: 230,
-    lvup: 3,
+    lvup: 0,
     money: 42000,
     storyunlock: vec![],
-    love: vec![],
-    member_exp: vec![],
+    love: vec![BattleCharacterLove {
+      character_id: 101,
+      love: 5,
+    }],
+    member_exp: vec![BattleMemberExp {
+      member_id: 1004200,
+      exp: 5000,
+    }],
     mission: params.clearquestmission,
-    reward: vec![
-      BattleReward {
-        itemtype: RemoteDataItemType::RealMoney.into(),
-        itemid: 1,
-        itemnum: 54000,
-        is_rare: 1,
-      },
-    ],
+    reward: rewards
+      .iter()
+      .map(|item| BattleReward {
+        itemtype: item.item_type,
+        itemid: item.item_id,
+        itemnum: item.item_num,
+        is_rare: item.item_rare,
+      })
+      .collect(),
     clearreward: vec![],
+  }));
+  response.remote.extend(update_items.into_iter().flatten());
+  Ok(Unsigned(response))
+}
+
+// See [Wonder_Api_HuntingquestListByItemResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct HuntingQuestListByItemResponse {
+  pub huntingquests: Vec<HuntingQuest>,
+  pub eventboxgachas: Vec<i32>,
+  pub exchanges: Vec<i32>,
+  pub expedition: i32,
+  pub scorechallenge: i32,
+  pub scorechallenge_ex: i32,
+  pub dungeon: DungeonAreaMaterialInfoResponseDto,
+  pub fame_quest: Vec<FameQuestMaterialInfoResponseDto>,
+}
+
+// See [Wonder_Api_HuntingquestListByItemHuntingquestsResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct HuntingQuest {
+  pub quest_id: i32,
+  pub task1: i32,
+  pub task2: i32,
+  pub task3: i32,
+  pub limit: i32,
+  pub status: i32,
+}
+
+impl CallCustom for HuntingQuestListByItemResponse {}
+
+// body={"item_type": "16", "item_id": "161"}
+#[derive(Debug, Deserialize)]
+pub struct HuntingQuestListByItemRequest {
+  pub item_type: i32,
+  pub item_id: i64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct HuntingRewardItem {
+  pub item_type: i32,
+  pub item_id: i64,
+  pub item_num: i32,
+  pub item_rare: bool,
+}
+
+pub fn extract_items(value: &Value) -> Vec<HuntingRewardItem> {
+  let object = value.as_object().unwrap();
+
+  // Find all indices that appear in keys like "item_type{n}"
+  let mut indices: Vec<u32> = object
+    .keys()
+    .filter_map(|k| k.strip_prefix("item_type"))
+    .filter_map(|suffix| suffix.parse::<u32>().ok())
+    .collect();
+
+  indices.sort_unstable();
+  indices.dedup();
+
+  indices
+    .into_iter()
+    .filter_map(|i| {
+      let item_type = object
+        .get(format!("item_type{i}").as_str())?
+        .as_str()
+        .unwrap()
+        .parse::<i32>()
+        .ok()?;
+      let item_id = object
+        .get(format!("item_id{i}").as_str())?
+        .as_str()
+        .unwrap()
+        .parse::<i64>()
+        .ok()?;
+      let item_num = object
+        .get(format!("item_num{i}").as_str())?
+        .as_str()
+        .unwrap()
+        .parse::<i32>()
+        .ok()?;
+      let item_rare = object
+        .get(format!("item_rare{i}").as_str())?
+        .as_str()
+        .unwrap()
+        .parse::<i32>()
+        .ok()?
+        != 0;
+
+      // Skip empty item slots
+      if item_type == 0 || item_id == 0 || item_num == 0 {
+        return None;
+      }
+
+      Some(HuntingRewardItem {
+        item_type,
+        item_id,
+        item_num,
+        item_rare,
+      })
+    })
+    .collect()
+}
+
+pub async fn hunting_quest_list_by_item(
+  Params(params): Params<HuntingQuestListByItemRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: hunting_quest_list_by_item");
+
+  let stages = get_master_manager().get_master("huntingquest_stage");
+  let rewards = get_master_manager()
+    .get_master("huntingquest_stage_itemreward")
+    .into_iter()
+    .map(|reward| (reward["id"].as_str().unwrap().parse::<i32>().unwrap(), reward))
+    .collect::<HashMap<_, _>>();
+
+  let stages = stages.iter().filter(|stage| {
+    let id = stage["id"].as_str().unwrap().parse::<i32>().unwrap();
+    let rewards = extract_items(&rewards[&id]);
+
+    rewards
+      .iter()
+      .any(|item| item.item_type == params.item_type && item.item_id == params.item_id)
+  });
+
+  Ok(Unsigned(HuntingQuestListByItemResponse {
+    huntingquests: stages
+      .map(|stage| {
+        let id = stage["id"].as_str().unwrap().parse::<i32>().unwrap();
+        HuntingQuest {
+          quest_id: id,
+          task1: 1,
+          task2: 1,
+          task3: 0,
+          limit: 42,
+          status: 2,
+        }
+      })
+      .collect(),
+    eventboxgachas: vec![20043],
+    exchanges: vec![100],
+    expedition: 0,
+    scorechallenge: 0,
+    scorechallenge_ex: 0,
+    dungeon: DungeonAreaMaterialInfoResponseDto {
+      area_ids: vec![],
+      unlocked_area_ids: vec![],
+      challenging_area_id: 0,
+    },
+    fame_quest: vec![],
   }))
 }
