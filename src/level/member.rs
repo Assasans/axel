@@ -84,8 +84,8 @@ impl MemberLevelCalculator {
 
     match level_to_absolute_xp_local.range(..=level).next_back() {
       Some((_, &xp)) => xp,
-      // 'member_lv_exp' starts from level 2, so this branch is actually reachable
-      None => 0,
+      // Level must be at least 1; 'member_lv_exp' starts from level 2, this branch is reachable
+      None => 1,
     }
   }
 

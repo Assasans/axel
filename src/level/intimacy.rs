@@ -38,7 +38,8 @@ impl IntimacyLevelCalculator {
   pub fn get_level(&self, exp: i32) -> i32 {
     match self.absolute_xp_to_level.range(..=exp).next_back() {
       Some((_, &level)) => level,
-      None => 0,
+      // Level must be at least 1; 'intimacy_exp' starts from level 2, this branch is reachable
+      None => 1,
     }
   }
 

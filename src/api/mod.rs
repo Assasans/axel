@@ -315,6 +315,7 @@ pub struct SkillPaFameAddStatus {
 // See [Wonder_Data_CharacterParameter_Fields]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CharacterParameter {
+  /// Seems to be database-unique ID for user character
   pub id: i64,
   pub character_id: i64,
   pub rank: i32,

@@ -4,7 +4,7 @@ use crate::api::{
   CharacterParameter, MemberFameStats, MemberParameterWire, MemberStats, RemoteData, RemoteDataCommand,
   RemoteDataItemType, SpSkill,
 };
-use crate::level::get_member_level_calculator;
+use crate::level::get_intimacy_level_calculator;
 use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
 use anyhow::Context;
@@ -164,8 +164,6 @@ pub async fn run_login_migration(state: &AppState, session: &Session) {
 
 pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<RemoteData> {
   let masters = get_master_manager();
-  let characters = masters.get_master("character");
-  // let members = masters.get_master("member");
   let costumes = masters.get_master("costume");
   let backgrounds = masters.get_master("background");
 
@@ -250,31 +248,51 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     })
     .collect::<Vec<_>>();
 
-  let characters = characters
-    .iter()
-    .enumerate()
-    .map(|(index, character)| {
-      AddCharacter::new(
-        index as i32,
-        CharacterParameter {
-          id: index as i64,
-          character_id: character.get("id").unwrap().as_str().unwrap().parse().unwrap(),
-          rank: 1,
-          rank_progress: 5,
-          sp_skill: vec![SpSkill {
-            group_id: 10000,
-            id: 100001,
-            lv: 2,
+  let characters = {
+    #[rustfmt::skip]
+    let statement = client
+      .prepare(/* language=postgresql */ r#"
+        select
+          character_id,
+          intimacy
+        from user_characters
+        where user_id = $1
+      "#)
+      .await
+      .context("failed to prepare statement").unwrap();
+    let rows = client
+      .query(&statement, &[&session.user_id])
+      .await
+      .context("failed to execute query")
+      .unwrap();
+    rows
+      .iter()
+      .map(|row| {
+        let character_id: i64 = row.get(0);
+        let intimacy: i32 = row.get(1);
+
+        AddCharacter::new(
+          character_id as i32,
+          CharacterParameter {
+            id: character_id,
+            character_id,
+            rank: intimacy,
+            rank_progress: get_intimacy_level_calculator().get_level(intimacy),
+            sp_skill: vec![SpSkill {
+              group_id: 10000,
+              id: 100001,
+              lv: 2,
+              is_trial: false,
+            }],
+            character_enhance_stage_id_list: vec![0, 0, 0, 0],
+            character_piece_board_stage_id_list: vec![100001001, 100002002, 100003003, 100004004],
             is_trial: false,
-          }],
-          character_enhance_stage_id_list: vec![0, 0, 0, 0],
-          character_piece_board_stage_id_list: vec![100001001, 100002002, 100003003, 100004004],
-          is_trial: false,
-        },
-      )
-      .into_remote_data()
-    })
-    .collect::<Vec<_>>();
+          },
+        )
+        .into_remote_data()
+      })
+      .collect::<Vec<_>>()
+  };
 
   let costumes = costumes
     .iter()
