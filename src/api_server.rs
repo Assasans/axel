@@ -130,6 +130,8 @@ async fn api_call(
     .handle("story_read", story::story_read)
     .handle("loginbonus", login_bonus::login_bonus)
     .handle("home", home::home)
+    .handle("home_members_set", home::home_members_set)
+    .handle("missionhome", home::mission_home)
     .handle("profile", profile::profile)
     .handle("setprofile", profile::set_profile)
     .handle("honor_list", profile::honor_list)

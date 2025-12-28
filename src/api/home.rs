@@ -1,10 +1,13 @@
 use std::sync::Arc;
 
-use jwt_simple::prelude::Serialize;
-
+use crate::AppState;
 use crate::call::CallCustom;
-use crate::handler::{IntoHandlerResponse, Signed};
+use crate::extractor::Params;
+use crate::handler::{IntoHandlerResponse, Signed, Unsigned};
 use crate::user::session::Session;
+use jwt_simple::prelude::Serialize;
+use serde::Deserialize;
+use tracing::warn;
 
 // See [Wonder_Api_HomeResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -66,4 +69,34 @@ pub async fn home(session: Arc<Session>) -> impl IntoHandlerResponse {
     },
     session,
   ))
+}
+
+// body={"illustration_ids": "[1011100,10242131,1064200,0,0]"}
+#[derive(Debug, Deserialize)]
+pub struct HomeMembersSetRequest {
+  pub illustration_ids: Vec<i32>,
+}
+
+pub async fn home_members_set(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<HomeMembersSetRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: home_members_set");
+
+  // See [Wonder_Api_HomeMembersSetResponseDto_Fields]
+  Ok(Signed((), session))
+}
+
+// body={"user_character_id": "1024213"}
+#[derive(Debug, Deserialize)]
+pub struct MissionHomeRequest {
+  pub user_character_id: i32,
+}
+
+pub async fn mission_home(Params(params): Params<MissionHomeRequest>) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: mission_home");
+
+  // See [Wonder_Api_MissionHomeResponseDto_Fields]
+  Ok(Unsigned(()))
 }
