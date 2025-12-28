@@ -4,7 +4,7 @@ use deadpool_postgres::Pool;
 use rustls::pki_types::pem::PemObject;
 use rustls::pki_types::{CertificateDer, PrivateKeyDer};
 use rustls::{ClientConfig, RootCertStore};
-use tokio_postgres::NoTls;
+use tokio_postgres::{Error, NoTls, Statement};
 use tracing::info;
 
 use crate::settings::DatabaseSettings;
@@ -41,4 +41,42 @@ pub async fn create_pool(settings: &DatabaseSettings) -> anyhow::Result<Pool> {
   };
 
   Ok(pool)
+}
+
+pub enum QueryExecutor<'a> {
+  Client(&'a tokio_postgres::Client),
+  TokioTransaction(&'a tokio_postgres::Transaction<'a>),
+  DeadpoolTransaction(&'a deadpool_postgres::Transaction<'a>),
+}
+
+impl<'a> From<&'a tokio_postgres::Client> for QueryExecutor<'a> {
+  fn from(client: &'a tokio_postgres::Client) -> Self {
+    QueryExecutor::Client(client)
+  }
+}
+
+impl<'a> From<&'a tokio_postgres::Transaction<'a>> for QueryExecutor<'a> {
+  fn from(transaction: &'a tokio_postgres::Transaction<'a>) -> Self {
+    QueryExecutor::TokioTransaction(transaction)
+  }
+}
+
+impl<'a> From<&'a deadpool_postgres::Transaction<'a>> for QueryExecutor<'a> {
+  fn from(transaction: &'a deadpool_postgres::Transaction<'a>) -> Self {
+    QueryExecutor::DeadpoolTransaction(transaction)
+  }
+}
+
+impl QueryExecutor<'_> {
+  pub fn client(&self) -> &tokio_postgres::Client {
+    match self {
+      QueryExecutor::Client(client) => client,
+      QueryExecutor::TokioTransaction(transaction) => transaction.client(),
+      QueryExecutor::DeadpoolTransaction(transaction) => transaction.client(),
+    }
+  }
+
+  pub async fn prepare(&self, query: &str) -> Result<Statement, Error> {
+    self.client().prepare(query).await
+  }
 }

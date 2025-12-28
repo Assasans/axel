@@ -24,6 +24,7 @@ pub mod settings;
 pub mod static_server;
 pub mod string_as_base64;
 pub mod user;
+pub mod item;
 
 use std::collections::HashMap;
 use std::env;

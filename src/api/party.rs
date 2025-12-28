@@ -2,22 +2,21 @@ use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use anyhow::Context;
-use base64::Engine;
-use base64::prelude::BASE64_STANDARD_NO_PAD;
 use serde::{Deserialize, Serialize};
 use tracing::{debug, info, warn};
 
-use crate::AppState;
 use crate::api::dungeon::{PartyAccessory, PartyMember, PartyWeapon};
-use crate::api::party_info::{Party, party_info};
-use crate::api::{ApiRequest, MemberFameStats, RemoteData, RemoteDataItemType};
-use crate::blob::{IntoRemoteData, UpdateItem, UpdateMember};
+use crate::api::party_info::{party_info, Party};
+use crate::api::{ApiRequest, MemberFameStats, RemoteDataItemType};
+use crate::blob::{IntoRemoteData, UpdateMember};
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
+use crate::item::UpdateItemCountBy;
 use crate::level::get_member_level_calculator;
 use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
+use crate::AppState;
 
 // See [Wonder_Api_PartymembersResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -169,40 +168,23 @@ pub async fn grade_up(
 
   // Update used items
   // TODO: This does not check if the user has enough potions
-  // TODO: Maybe some UpdateDatabaseItem struct would be cleaner here
-  #[rustfmt::skip]
-  let statement = transaction
-    .prepare(/* language=postgresql */ r#"
-      update user_items
-      set quantity = quantity - $3
-      where user_id = $1 and item_id = $2
-      returning item_type, item_id, quantity
-    "#)
-    .await
-    .context("failed to prepare statement")?;
+  let update = UpdateItemCountBy::new(&transaction).await?;
   let mut item_updates = Vec::new();
   for (item_id, count) in potions_to_use {
     if count > 0 {
-      let rows = transaction
-        .query(&statement, &[&session.user_id, &item_id, &count])
+      let item = update
+        .run(session.user_id, (RemoteDataItemType::PowerPotion, item_id), -count)
         .await
-        .context("failed to update user items")?;
-      let row = rows.first().unwrap();
-      let item_type: i64 = row.get(0);
-      let item_id: i64 = row.get(1);
-      let quantity: i32 = row.get(2);
-      debug!(?item_id, ?item_type, ?quantity, "consumed power potions");
+        .context("failed to update item count")?;
+      debug!(?item_id, ?count, new_quantity = ?item.quantity, "consumed power potions");
 
-      let item_update =
-        UpdateItem::new(RemoteDataItemType::from(item_type as i32), 0, item_id, quantity).into_remote_data();
-      item_updates.push(item_update);
+      item_updates.push(item.into_remote_data());
     }
   }
 
   transaction.commit().await.context("failed to commit transaction")?;
 
   // See [Wonder_Api_GradeupResponseDto_Fields]
-  // TODO: This probably should send remote data to update member: level in UI rolls back after animation
   let mut response = CallResponse::new_success_empty();
   response
     .remote
