@@ -306,7 +306,16 @@ async fn api_call(
       warn!("user_id is not set in params, but user key is present in meta");
     }
 
-    session_span = Some(info_span!("session", user_id = ?session.user_id));
+    let span: Span = info_span!(
+      "session",
+      user_id = %session.user_id,
+      username = tracing::field::Empty
+    );
+    // We don't want to do database query each time, so use cached username
+    if let Some(username) = session.get_cached_username() {
+      span.record("username", tracing::field::display(username));
+    }
+    session_span = Some(span);
     Some(session)
   } else {
     None

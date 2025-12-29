@@ -171,6 +171,8 @@ pub async fn set_name(
     .context("failed to execute query")?;
   info!(?session.user_id, ?params.username, "username updated");
 
+  session.set_cached_username(Some(params.username.clone()));
+
   Ok(Signed((), session))
 }
 

@@ -16,6 +16,7 @@ pub struct Session {
   pub user_id: UserId,
   pub user_key: Mutex<Option<[u8; 16]>>,
   pub device_token: Option<String>,
+  cached_username: Mutex<Option<String>>,
 }
 
 impl Session {
@@ -24,6 +25,7 @@ impl Session {
       user_id,
       user_key: Mutex::new(None),
       device_token,
+      cached_username: Mutex::new(None),
     }
   }
 
@@ -68,5 +70,15 @@ impl Session {
     trace!("response jwt: {}", token);
 
     Ok((encrypted, token))
+  }
+
+  /// Retrieves the cached username, if available.
+  pub fn get_cached_username(&self) -> Option<String> {
+    self.cached_username.lock().unwrap().clone()
+  }
+
+  pub fn set_cached_username(&self, username: Option<String>) {
+    let mut cached_username = self.cached_username.lock().unwrap();
+    *cached_username = username;
   }
 }

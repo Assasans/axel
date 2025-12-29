@@ -175,6 +175,7 @@ pub async fn login(state: Arc<AppState>, Params(params): Params<LoginRequestRequ
   let session = Arc::new(Session::new(id, Some(uuid.to_string())));
 
   session.rotate_user_key();
+  session.set_cached_username(username.clone());
   state.sessions.lock().unwrap().insert(session.user_id, session.clone());
 
   let mut response = CallResponse::new_success(Box::new(Login {

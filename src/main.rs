@@ -11,6 +11,7 @@ pub mod database;
 pub mod extractor;
 pub mod handler;
 pub mod impl_handler;
+pub mod item;
 pub mod level;
 pub mod master;
 pub mod member;
@@ -24,7 +25,6 @@ pub mod settings;
 pub mod static_server;
 pub mod string_as_base64;
 pub mod user;
-pub mod item;
 
 use std::collections::HashMap;
 use std::env;
@@ -34,22 +34,22 @@ use std::io::stdout;
 use std::ops::Deref;
 use std::sync::{Arc, Mutex};
 
+use crate::api::master_all::{MASTER_MANAGER, MasterManager, get_masters};
+use crate::api::{RemoteDataCommand, RemoteDataItemType};
+use crate::database::create_pool;
+use crate::settings::Settings;
+use crate::user::id::UserId;
+use crate::user::session::Session;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use clap::Parser;
 use deadpool_postgres::PoolError;
 use tokio::join;
 use tracing::info;
+use tracing_subscriber::filter::FilterFn;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
-use tracing_subscriber::EnvFilter;
-
-use crate::api::master_all::{get_masters, MasterManager, MASTER_MANAGER};
-use crate::api::{RemoteData, RemoteDataCommand, RemoteDataItemType};
-use crate::database::create_pool;
-use crate::settings::Settings;
-use crate::user::id::UserId;
-use crate::user::session::Session;
+use tracing_subscriber::{EnvFilter, Layer};
 
 #[derive(Parser, Debug)]
 pub struct Args {}
@@ -109,25 +109,37 @@ impl IntoResponse for AppPoolError {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
   #[rustfmt::skip]
-  let env_filter = EnvFilter::builder().parse_lossy(
+  let console_filter = EnvFilter::builder().parse_lossy(
     env::var("RUST_LOG")
       .as_deref()
       .unwrap_or("info"),
   );
 
+  #[rustfmt::skip]
+  let file_filter = EnvFilter::builder().parse_lossy(
+    env::var("RUST_LOG_FILE")
+      .as_deref()
+      .unwrap_or("info,axel=debug"),
+  );
+
   let file_appender = tracing_appender::rolling::hourly("logs", "rolling.log");
   let (non_blocking_file, _file_guard) = tracing_appender::non_blocking(file_appender);
   let (non_blocking_stdout, _stdout_guard) = tracing_appender::non_blocking(stdout());
-  let console = tracing_subscriber::fmt::layer().with_writer(non_blocking_stdout);
-  #[rustfmt::skip]
+
+  let console = tracing_subscriber::fmt::layer()
+    .with_writer(non_blocking_stdout)
+    .with_filter(console_filter)
+    // Drop spans named "request"
+    .with_filter(FilterFn::new(|meta| !(meta.is_span() && meta.name() == "request")));
+
   let file = tracing_subscriber::fmt::layer()
     .json()
     .with_ansi(false)
-    .with_writer(non_blocking_file);
+    .with_writer(non_blocking_file)
+    .with_filter(file_filter);
 
   #[rustfmt::skip]
   tracing_subscriber::registry()
-    .with(env_filter)
     .with(console)
     .with(file)
     .init();
