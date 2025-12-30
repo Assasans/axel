@@ -214,6 +214,7 @@ async fn api_call(
     .handle("partymembers", party::party_members)
     .handle("gradeup", party::grade_up)
     .handle("limitbreak", party::limit_break)
+    .handle("memberskillup", party::member_skill_up)
     .handle("update_party_form", party::update_party_form)
     .handle("partyoffer", party::party_offer)
     .handle("partyreset", party::party_reset)

@@ -3,8 +3,8 @@ use serde::Deserialize;
 use serde_json::Value;
 use tracing::warn;
 
-use crate::api::master_all::get_masters;
 use crate::api::ApiRequest;
+use crate::api::master_all::{get_master_manager, get_masters};
 use crate::call::CallCustom;
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
@@ -37,9 +37,8 @@ pub struct SaleListRequest {
 }
 
 pub async fn sale_list(Params(params): Params<SaleListRequest>) -> impl IntoHandlerResponse {
-  let masters = get_masters().await;
-  let items: Vec<Value> = serde_json::from_str(&masters["item"].master_decompressed).unwrap();
-  let equip_weapons: Vec<Value> = serde_json::from_str(&masters["equip_weapon"].master_decompressed).unwrap();
+  let items = get_master_manager().get_master("item");
+  let equip_weapons = get_master_manager().get_master("equip_weapon");
 
   warn!(?params, "encountered stub: sale_list");
 
@@ -49,12 +48,21 @@ pub async fn sale_list(Params(params): Params<SaleListRequest>) -> impl IntoHand
     .map(|item| SaleItem {
       item_type: item["type"].as_str().unwrap().parse().unwrap(),
       item_id: item["id"].as_str().unwrap().parse().unwrap(),
-      target_item_id: 0,
+      target_item_id: item["id"].as_str().unwrap().parse().unwrap(),
       item_num: 1,
       islock: 0,
       isuse: 0,
       trial: false,
     })
+    .chain(equip_weapons.iter().map(|item| SaleItem {
+      item_type: 5,
+      item_id: item["item_id"].as_str().unwrap().parse().unwrap(),
+      target_item_id: item["item_id"].as_str().unwrap().parse().unwrap(),
+      item_num: 1,
+      islock: 0,
+      isuse: 0,
+      trial: false,
+    }))
     .collect();
 
   Ok(Unsigned(SaleList { items }))

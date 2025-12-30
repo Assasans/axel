@@ -1,17 +1,24 @@
+use crate::AppState;
+use crate::api::battle_multi::{BattleCharacterLove, BattleClearReward, BattleMemberExp};
+use crate::api::master_all::get_master_manager;
 use crate::api::party_info::{Party, PartyForm, PartyPassiveSkillInfo, SpecialSkillInfo};
+use crate::api::quest_hunting::{BattleReward, extract_items};
 use crate::api::surprise::BasicBattlePartyForm;
-use crate::api::{ApiRequest, MemberFameStats, NotificationData};
+use crate::api::{ApiRequest, MemberFameStats, NotificationData, RemoteDataItemType};
+use crate::blob::IntoRemoteData;
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
+use crate::item::UpdateItemCountBy;
 use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::notification::{IntoNotificationData, MissionDone};
 use crate::user::session::Session;
-use crate::AppState;
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use std::collections::HashMap;
 use std::sync::Arc;
+use tracing::{debug, warn};
 
 // See [Wonder_Api_BattlestartMembersResponseDto_Fields]
 // See [Wonder_Api_SurpriseQuestStartMembersResponseDto_Fields]
@@ -222,7 +229,7 @@ pub async fn make_battle_start(state: &AppState, session: &Session, party_id: i3
         fame_stats: MemberFameStats::default(),
         skill_pa_fame_list: vec![],
       }
-        .to_battle_member()
+      .to_battle_member()
     })
     .collect::<Vec<_>>();
 
@@ -339,123 +346,114 @@ pub async fn battle_wave_result(request: ApiRequest) -> impl IntoHandlerResponse
   Ok(Unsigned(response))
 }
 
-// quest_id=101011
-// party_no=1
-// win=1
-// wave=3
-// clearquestmission=[12,13,15]
-// auto_progression_stop=1
-// memcheckcount=0
-pub async fn battle_result(request: ApiRequest) -> impl IntoHandlerResponse {
-  let quest_id: i32 = request.body["quest_id"].parse().unwrap();
-  let party_no: i32 = request.body["party_no"].parse().unwrap();
-  let win: i32 = request.body["win"].parse().unwrap();
-  let wave: i32 = request.body["wave"].parse().unwrap();
-  let clear_quest_mission: Vec<i32> = serde_json::from_str(&request.body["clearquestmission"]).unwrap();
-  let auto_progression_stop: i32 = request.body["auto_progression_stop"].parse().unwrap();
-  let mem_check_count: i32 = request.body["memcheckcount"].parse().unwrap();
+// See [Wonder_Api_ResultResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct BattleResultResponse {
+  pub limit: i32,
+  pub exp: i32,
+  pub lvup: i32,
+  pub money: i32,
+  pub storyunlock: Vec<i32>,
+  pub love: Vec<BattleCharacterLove>,
+  pub member_exp: Vec<BattleMemberExp>,
+  pub mission: Vec<i32>,
+  pub reward: Vec<BattleReward>,
+  pub clearreward: Vec<BattleClearReward>,
+  pub auto_progression_result: AutoProgressionResultResponse,
+  pub firstclear: bool,
+}
 
-  let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(json!({
-    "limit": 0,
-    "exp": 5,
-    "lvup": 0,
-    "money": 720,
-    "storyunlock": [],
-    "love": [
-      {
-        "character_id": 100,
-        "love": 4
-      },
-      {
-        "character_id": 101,
-        "love": 4
-      },
-      {
-        "character_id": 106,
-        "love": 4
-      }
-    ],
-    "member_exp": [
-      {
-        "member_id": 1001100,
-        "exp": 150
-      },
-      {
-        "member_id": 1011100,
-        "exp": 150
-      },
-      {
-        "member_id": 1064217,
-        "exp": 150
-      }
-    ],
-    "mission": [
-      1,
-      1,
-      1
-    ],
-    "reward": [
-      {
-        "itemtype": 15,
-        "itemid": 5001,
-        "itemnum": 4,
-        "is_rare": 0
-      },
-      {
-        "itemtype": 18,
-        "itemid": 1,
-        "itemnum": 1,
-        "is_rare": 0
-      },
-      {
-        "itemtype": 16,
-        "itemid": 151,
-        "itemnum": 1,
-        "is_rare": 0
-      },
-      {
-        "itemtype": 18,
-        "itemid": 2,
-        "itemnum": 2,
-        "is_rare": 0
-      },
-      {
-        "itemtype": 27,
-        "itemid": 230831,
-        "itemnum": 3,
-        "is_rare": 0
-      }
-    ],
-    "clearreward": [
-      {
-        "itemtype": 15,
-        "itemid": 1100,
-        "itemnum": 3,
-        "mission": 1
-      },
-      {
-        "itemtype": 4,
-        "itemid": 1061100,
-        "itemnum": 1,
-        "mission": 1
-      },
-      {
-        "itemtype": 3,
-        "itemid": 1,
-        "itemnum": 50,
-        "mission": 3
-      }
-    ],
-    "firstclear": true,
-    "auto_progression_result": {
-      "auto_count": 0,
-      "is_continue": false,
-      "stop_reason": 0,
-      "stamina_all": 0,
-      "reward_all": [],
-      "clearreward_all": []
-    }
-  })));
+impl CallCustom for BattleResultResponse {}
+
+#[derive(Debug, Serialize)]
+pub struct AutoProgressionResultResponse {
+  pub auto_count: i32,
+  pub is_continue: bool,
+  pub stop_reason: i32,
+  pub stamina_all: i32,
+  pub reward_all: Vec<BattleReward>,
+  pub clearreward_all: Vec<BattleClearReward>,
+}
+
+// body={"wave": "3", "party_no": "1", "win": "1", "clearquestmission": "[12,0,0]", "memcheckcount": "0", "quest_id": "104041", "auto_progression_stop": "1"}
+#[derive(Debug, Deserialize)]
+pub struct BattleResultRequest {
+  pub quest_id: i32,
+  #[serde(rename = "party_no")]
+  pub party_id: i32,
+  pub win: i32,
+  pub wave: i32,
+  pub clearquestmission: Vec<i32>,
+  pub auto_progression_stop: i32,
+  pub memcheckcount: i32,
+}
+
+pub async fn battle_result(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<BattleResultRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: battle_result");
+
+  let rewards = get_master_manager()
+    .get_master("mainquest_stage_itemreward")
+    .into_iter()
+    .map(|reward| (reward["id"].as_str().unwrap().parse::<i32>().unwrap(), reward))
+    .collect::<HashMap<_, _>>();
+  let mut rewards = extract_items(&rewards[&params.quest_id]);
+  for item in &mut rewards {
+    item.item_num *= 20;
+  }
+
+  let mut client = state.get_database_client().await?;
+  let transaction = client.transaction().await.context("failed to start transaction")?;
+  let update = UpdateItemCountBy::new(&transaction).await?;
+  let mut update_items = Vec::new();
+  for item in &rewards {
+    let item = update
+      .run(
+        session.user_id,
+        (RemoteDataItemType::from(item.item_type), item.item_id),
+        item.item_num,
+      )
+      .await
+      .context("failed to execute query")?;
+    debug!(?item, "granted main quest reward");
+
+    update_items.push(item.into_remote_data());
+  }
+  transaction.commit().await.context("failed to commit transaction")?;
+
+  let mut response = CallResponse::new_success(Box::new(BattleResultResponse {
+    limit: 0,
+    exp: 5,
+    lvup: 0,
+    money: 85000,
+    storyunlock: vec![],
+    love: vec![],
+    member_exp: vec![],
+    mission: params.clearquestmission,
+    reward: rewards
+      .iter()
+      .map(|item| BattleReward {
+        itemtype: item.item_type,
+        itemid: item.item_id,
+        itemnum: item.item_num,
+        is_rare: item.item_rare,
+      })
+      .collect(),
+    clearreward: vec![],
+    auto_progression_result: AutoProgressionResultResponse {
+      auto_count: 0,
+      is_continue: false,
+      stop_reason: 0,
+      stamina_all: 0,
+      reward_all: vec![],
+      clearreward_all: vec![],
+    },
+    firstclear: true,
+  }));
+  response.remote.extend(update_items.into_iter().flatten());
   // TODO: Send remote data to actually update characters stats
   response.add_notifications(vec![
     NotificationData::new(1, 16, 1, 0, "".to_string(), "".to_string()),

@@ -76,11 +76,12 @@ pub enum RemoteDataItemType {
   MemberCostume,
   // See [Wonder.UI.Chara.MemberPlanningData$$.ctor_71291148], requires uniqid and is_trial
   SpecialSkill,
+  // See [Wonder.Util.BlacksmithUtil$$GetItemId]
   // See [Wonder.UI.Chara.MemberPlanningData$$.ctor_71291148], requires uniqid and is_trial
   Weapon,
-  // TODO: 6 - ?? - requires uniqid and is_trial
-  // See [Wonder.UI.Common.MemberPlanningEquipBoxCell$$SetTrial]
-  Unknown6,
+  // See [Wonder.Util.BlacksmithUtil$$GetItemId]
+  // See [Wonder.UI.Common.MemberPlanningEquipBoxCell$$SetTrial], requires uniqid and is_trial
+  Accessory,
   GachaTicket,
   // See [Wonder.Util.MasterDataManager$$GetItemName]
   DungeonChallenge,
@@ -126,7 +127,7 @@ impl From<RemoteDataItemType> for i32 {
       RemoteDataItemType::RealMoneyFree => 3,
       RemoteDataItemType::Member => 4,
       RemoteDataItemType::Weapon => 5,
-      RemoteDataItemType::Unknown6 => 6,
+      RemoteDataItemType::Accessory => 6,
       RemoteDataItemType::SkipTicket => 8,
       RemoteDataItemType::Stamina => 9,
       RemoteDataItemType::Exp => 10,
@@ -178,7 +179,7 @@ impl From<i32> for RemoteDataItemType {
       3 => RemoteDataItemType::RealMoneyFree,
       4 => RemoteDataItemType::Member,
       5 => RemoteDataItemType::Weapon,
-      6 => RemoteDataItemType::Unknown6,
+      6 => RemoteDataItemType::Accessory,
       8 => RemoteDataItemType::SkipTicket,
       9 => RemoteDataItemType::Stamina,
       10 => RemoteDataItemType::Exp,

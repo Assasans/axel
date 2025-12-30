@@ -338,7 +338,8 @@ pub async fn marathon_quest_result(request: ApiRequest) -> impl IntoHandlerRespo
   let party_no = request.body["party_no"].parse::<i32>().unwrap();
   let event_id: Value = serde_json::from_str(&request.body["event_id"])?;
 
-  Ok(battle::battle_result(request).await)
+  todo!() as Result<Unsigned<()>, anyhow::Error>
+  // Ok(battle::battle_result(request).await)
 }
 
 // See [Wonder_Api_MarathonBossListResponseDto_Fields]

@@ -7,6 +7,7 @@ use tracing::{debug, info, warn};
 
 use crate::AppState;
 use crate::api::dungeon::{PartyAccessory, PartyMember, PartyWeapon};
+use crate::api::master_all::get_master_manager;
 use crate::api::party_info::{Party, party_info};
 use crate::api::{ApiRequest, MemberFameStats, RemoteDataItemType};
 use crate::blob::{IntoRemoteData, UpdateMember};
@@ -529,5 +530,55 @@ pub async fn limit_break(
   response
     .remote
     .extend(UpdateMember::new(member.to_member_parameter_wire()).into_remote_data());
+  Ok(Unsigned(response))
+}
+
+// See [Wonder_Api_MemberskillupResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct MemberSkillUpResponse {
+  #[serde(rename = "skilllvs")]
+  pub skill_levels: Vec<MemberSkillLevelUp>,
+}
+
+impl CallCustom for MemberSkillUpResponse {}
+
+// See [Wonder_Api_MemberskillupSkilllvsResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct MemberSkillLevelUp {
+  pub skill: i32,
+  pub lvup: i32,
+}
+
+// body={"user_member_id": "1004100", "type": "0", "num": "1"}
+#[derive(Debug, Deserialize)]
+pub struct MemberSkillUpRequest {
+  // [user_*] fields reference [unique_id], in our case it always same as master [member_id].
+  pub user_member_id: i64,
+  #[serde(rename = "type")]
+  pub kind: i32,
+  pub num: i32,
+}
+
+// Reference: https://youtu.be/2zcAVWr9u4k
+pub async fn member_skill_up(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<MemberSkillUpRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: member_skill_up");
+
+  let members = get_master_manager().get_master("member");
+  let member = members
+    .iter()
+    .find(|member| member["id"].as_str().unwrap().parse::<i64>().unwrap() == params.user_member_id)
+    .unwrap();
+
+  let mut response = CallResponse::new_success(Box::new(MemberSkillUpResponse {
+    skill_levels: vec![
+      MemberSkillLevelUp { skill: 1, lvup: 1 },
+      MemberSkillLevelUp { skill: 2, lvup: 1 },
+      MemberSkillLevelUp { skill: 3, lvup: 1 },
+    ],
+  }));
   Ok(Unsigned(response))
 }

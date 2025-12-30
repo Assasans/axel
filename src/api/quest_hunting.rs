@@ -206,6 +206,7 @@ pub struct BattleHuntingResultResponse {
 }
 
 // See [Wonder_Api_BattlehuntingresultRewardResponseDto_Fields]
+// See [Wonder_Api_ResultRewardResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct BattleReward {
   pub itemtype: i32,
@@ -309,6 +310,7 @@ pub struct HuntingQuestListByItemResponse {
 }
 
 // See [Wonder_Api_HuntingquestListByItemHuntingquestsResponseDto_Fields]
+// See [Wonder_Api_BlacksmithquestlistHuntingquestsResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct HuntingQuest {
   pub quest_id: i32,
