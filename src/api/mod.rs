@@ -57,6 +57,9 @@ pub enum RemoteDataCommand {
   UserParamUpdate = 5,
 }
 
+// TODO: See for more types:
+//  [Wonder.UI.ItemInfoAdapterFactory$$Create_82029124]
+//  [Wonder.Util.UserParam$$GetList]
 #[derive(Debug, Clone, Copy, Ord, PartialOrd, Eq, PartialEq)]
 pub enum RemoteDataItemType {
   /* IDA static analysis */

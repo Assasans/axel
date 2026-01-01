@@ -1,4 +1,3 @@
-use crate::AppState;
 use crate::api::master_all::get_master_manager;
 use crate::api::{
   CharacterParameter, MemberFameStats, MemberParameterWire, MemberStats, RemoteData, RemoteDataCommand,
@@ -7,14 +6,15 @@ use crate::api::{
 use crate::level::get_intimacy_level_calculator;
 use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
+use crate::AppState;
 use anyhow::Context;
-use std::sync::Arc;
+use std::collections::HashMap;
 use tracing::info;
 
 pub async fn run_login_migration(state: &AppState, session: &Session) {
   let masters = get_master_manager();
 
-  let client = state
+  let mut client = state
     .pool
     .get()
     .await
@@ -182,12 +182,111 @@ pub async fn run_login_migration(state: &AppState, session: &Session) {
       .unwrap()
   };
 
+  let items_equipment_updated = {
+    // Check if user has any equipment items
+    #[rustfmt::skip]
+    let check_statement = client
+      .prepare(/* language=postgresql */ r#"
+        select exists(
+          select 1 from user_items_equipment
+          where user_id = $1
+        )
+      "#)
+      .await
+      .context("failed to prepare check statement")
+      .unwrap();
+
+    let has_items: bool = client
+      .query_one(&check_statement, &[&session.user_id])
+      .await
+      .context("failed to check for existing items")
+      .unwrap()
+      .get(0);
+
+    if has_items {
+      0
+    } else {
+      let items = get_master_manager()
+        .get_master("equip_weapon_details")
+        .into_iter()
+        .filter_map(|data| {
+          let item_id = data["item_id"].as_str().unwrap().parse::<i64>().unwrap();
+          let level = data["lv"].as_str().unwrap().parse::<i32>().unwrap();
+          if matches!(level, 0 | 5) {
+            Some((
+              session.user_id,
+              Into::<i32>::into(RemoteDataItemType::Weapon) as i64,
+              item_id,
+              level,
+            ))
+          } else {
+            None
+          }
+        })
+        .collect::<Vec<_>>();
+
+      let transaction = client
+        .transaction()
+        .await
+        .context("failed to start transaction")
+        .unwrap();
+
+      #[rustfmt::skip]
+      let copy_statement = transaction
+        .prepare(/* language=postgresql */ r#"
+          copy user_items_equipment (user_id, item_type, item_id, level)
+          from stdin with (format binary)
+        "#)
+        .await
+        .context("failed to prepare COPY statement")
+        .unwrap();
+
+      let sink = transaction
+        .copy_in(&copy_statement)
+        .await
+        .context("failed to start COPY")
+        .unwrap();
+
+      let writer = tokio_postgres::binary_copy::BinaryCopyInWriter::new(
+        sink,
+        &[
+          tokio_postgres::types::Type::INT8, // user_id
+          tokio_postgres::types::Type::INT8, // item_type
+          tokio_postgres::types::Type::INT8, // item_id
+          tokio_postgres::types::Type::INT4, // level
+        ],
+      );
+
+      tokio::pin!(writer);
+
+      for item in &items {
+        writer
+          .as_mut()
+          .write(&[&item.0, &item.1, &item.2, &item.3])
+          .await
+          .context("failed to write row")
+          .unwrap();
+      }
+
+      let rows_inserted = writer.finish().await.context("failed to finish COPY").unwrap();
+
+      transaction
+        .commit()
+        .await
+        .context("failed to commit transaction")
+        .unwrap();
+
+      rows_inserted
+    }
+  };
+
   info!(
     ?characters_updated,
     ?members_updated,
     ?reserve_members_updated,
     ?party_forms_updated,
     ?items_updated,
+    ?items_equipment_updated,
     "login migration executed"
   );
 }
@@ -432,6 +531,65 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
       .collect::<Vec<_>>()
   };
 
+  let weapons = {
+    let weapon_details = masters.get_master("equip_weapon_details");
+
+    // (item_id, level) -> item_id_details
+    let item_to_item_details: HashMap<(i64, i32), i64> = weapon_details
+      .iter()
+      .map(|data| {
+        let item_id: i64 = data["item_id"].as_str().unwrap().parse::<i64>().unwrap();
+        let level: i32 = data["lv"].as_str().unwrap().parse::<i32>().unwrap();
+        let item_id_details: i64 = data["item_id_details"].as_str().unwrap().parse::<i64>().unwrap();
+        ((item_id, level), item_id_details)
+      })
+      .collect::<HashMap<_, _>>();
+
+    #[rustfmt::skip]
+    let statement = client
+      .prepare(/* language=postgresql */ r#"
+        select
+          id,
+          item_type,
+          item_id,
+          level,
+          is_locked
+        from user_items_equipment
+        where user_id = $1
+      "#)
+      .await
+      .context("failed to prepare statement").unwrap();
+    let rows = client
+      .query(&statement, &[&session.user_id])
+      .await
+      .context("failed to execute query")
+      .unwrap();
+
+    rows
+      .iter()
+      .map(|row| {
+        let id: i64 = row.get(0);
+        let item_type: i64 = row.get(1);
+        let item_id: i64 = row.get(2);
+        let level: i32 = row.get(3);
+        let is_locked: bool = row.get(4);
+        let item_id_details = *item_to_item_details.get(&(item_id, level)).expect(&format!(
+          "missing item details for item_id={} level={}",
+          item_id, level
+        ));
+
+        AddEquipment::new(
+          RemoteDataItemType::from(item_type as i32),
+          item_id_details,
+          id as i32,
+          is_locked,
+        )
+          .into_remote_data()
+      })
+      .flatten()
+      .collect::<Vec<_>>()
+  };
+
   #[cfg_attr(rustfmt, rustfmt::skip)]
   vec![
     ClearUserParams.into_remote_data(),
@@ -620,11 +778,56 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     .chain(costumes)
     .chain(backgrounds)
     .chain(items)
+    .chain(weapons)
     .collect::<Vec<_>>()
 }
 
 pub trait IntoRemoteData {
   fn into_remote_data(self) -> Vec<RemoteData>;
+}
+
+pub struct AddEquipment {
+  pub item_type: RemoteDataItemType,
+  pub item_id: i64,
+  pub unique_id: i32,
+  pub is_locked: bool,
+}
+
+impl AddEquipment {
+  pub fn new(item_type: RemoteDataItemType, item_id: i64, unique_id: i32, is_locked: bool) -> Self {
+    if !matches!(item_type, RemoteDataItemType::Weapon | RemoteDataItemType::Accessory) {
+      panic!("AddEquipment can only be used for equipment items, got {:?}", item_type);
+    }
+
+    Self {
+      item_type,
+      item_id,
+      unique_id,
+      is_locked,
+    }
+  }
+}
+
+impl IntoRemoteData for AddEquipment {
+  fn into_remote_data(self) -> Vec<RemoteData> {
+    vec![RemoteData {
+      cmd: RemoteDataCommand::UserParamNew as i32,
+      uid: None,
+      item_type: self.item_type.into(),
+      item_id: self.item_id,
+      item_num: 1,
+      uniqid: self.unique_id,
+      lv: 0,
+      tag: if self.is_locked {
+        String::from("lock:1")
+      } else {
+        String::from("")
+      },
+      member_parameter: None,
+      character_parameter: None,
+      is_trial: None,
+    }]
+  }
 }
 
 pub struct AddMemberBackground {

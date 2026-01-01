@@ -1,17 +1,16 @@
-use serde::{Deserialize, Serialize};
-use serde_json::Value;
-use std::collections::HashMap;
-use std::sync::Arc;
-use anyhow::Context;
-use crate::api::master_all::{get_master_manager, get_masters};
+use crate::api::master_all::get_master_manager;
 use crate::api::quest_fame::FameQuestReleaseConditionInfo;
-use crate::api::quest_hunting::{HuntingQuest, extract_items};
+use crate::api::quest_hunting::{extract_items, HuntingQuest};
 use crate::api::smith_craft::BlacksmithEquippedItemResponseDto;
-use crate::AppState;
 use crate::call::CallCustom;
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::user::session::Session;
+use crate::AppState;
+use anyhow::Context;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::sync::Arc;
 
 // See [Wonder_Api_ItempoweruplistResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -30,23 +29,23 @@ pub struct ItempoweruplistItemsResponseDto {
   pub item_id: i64,
   pub target_item_id: i32,
   pub lv: i32,
-  pub islock: i32,
+  #[serde(with = "crate::bool_as_int")]
+  pub islock: bool,
   pub trial: bool,
 }
 
-pub async fn item_power_up_list(
-  state: Arc<AppState>,
-  session: Arc<Session>,
-) -> impl IntoHandlerResponse {
+pub async fn item_power_up_list(state: Arc<AppState>, session: Arc<Session>) -> impl IntoHandlerResponse {
   let client = state.get_database_client().await?;
   #[rustfmt::skip]
   let statement = client
     .prepare(/* language=postgresql */ r#"
       select
+        id,
         item_type,
         item_id,
-        quantity
-      from user_items
+        level,
+        is_locked
+      from user_items_equipment
       where user_id = $1
     "#)
     .await
@@ -60,11 +59,11 @@ pub async fn item_power_up_list(
     items: items
       .iter()
       .map(|item| ItempoweruplistItemsResponseDto {
-        item_type: item.get::<_, i64>(0) as i32,
-        item_id: item.get::<_, i64>(1),
-        target_item_id: 0,
-        lv: 0,
-        islock: 0,
+        item_type: item.get::<_, i64>("item_type") as i32,
+        item_id: item.get::<_, i64>("item_id"),
+        target_item_id: item.get::<_, i64>("id") as i32,
+        lv: item.get::<_, i32>("level"),
+        islock: item.get::<_, bool>("is_locked"),
         trial: false,
       })
       .collect(),
