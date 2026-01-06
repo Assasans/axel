@@ -621,7 +621,9 @@ pub struct MarathonMultiResultResponse {
   pub money: i32,
   pub friend_count: i32,
   pub request_count: i32,
+  /// Must contain all characters used in the battle
   pub love: Vec<BattleCharacterLove>,
+  /// Must contain all members used in the battle
   pub member_exp: Vec<BattleMemberExp>,
   pub reward: Vec<MultiBattleReward>,
   pub clearreward: Vec<BattleClearReward>,

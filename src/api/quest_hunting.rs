@@ -5,7 +5,7 @@ use crate::AppState;
 use crate::api::battle_multi::{BattleCharacterLove, BattleClearReward, BattleMemberExp};
 use crate::api::master_all::{get_master_manager, get_masters};
 use crate::api::smith_upgrade::{DungeonAreaMaterialInfoResponseDto, FameQuestMaterialInfoResponseDto};
-use crate::api::{RemoteDataItemType, battle};
+use crate::api::{RemoteDataItemType, battle, MemberFameStats};
 use crate::blob::IntoRemoteData;
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
@@ -18,6 +18,8 @@ use serde_json::Value;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tracing::{debug, warn};
+use crate::api::party_info::{Party, PartyForm, SpecialSkillInfo};
+use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 
 // See [Wonder_Api_QuesthuntinglistResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -198,7 +200,9 @@ pub struct BattleHuntingResultResponse {
   pub lvup: i32,
   pub money: i32,
   pub storyunlock: Vec<i32>,
+  /// Must contain all characters used in the battle
   pub love: Vec<BattleCharacterLove>,
+  /// Must contain all members used in the battle
   pub member_exp: Vec<BattleMemberExp>,
   pub mission: Vec<i32>,
   pub reward: Vec<BattleReward>,
@@ -266,20 +270,194 @@ pub async fn battle_hunting_result(
   }
   transaction.commit().await.context("failed to commit transaction")?;
 
+  #[rustfmt::skip]
+  let statement = client
+    .prepare(/* language=postgresql */ r#"
+      select
+        member_id,
+        xp,
+        promotion_level
+      from user_members
+      where user_id = $1
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  let members = client
+    .query(&statement, &[&session.user_id])
+    .await
+    .context("failed to execute query")?;
+
+  let statement = client
+    .prepare(
+      /* language=postgresql */
+      r#"
+      select
+        up.party_id,
+        -- Incidentally, client expects party name to be inside each form,
+        -- which is exactly how JOIN returns it.
+        up.name,
+        upf.form_id,
+        upf.main_member_id,
+        upf.sub1_member_id,
+        upf.sub2_member_id,
+        upf.weapon_id,
+        upf.accessory_id
+      from user_parties up
+        join user_party_forms upf
+          on up.user_id = upf.user_id and up.party_id = upf.party_id
+      where up.user_id = $1 and up.party_id = $2
+      order by upf.form_id
+    "#,
+    )
+    .await
+    .context("failed to prepare statement")?;
+  let forms = client
+    .query(&statement, &[&session.user_id, &(params.party_id as i64)])
+    .await
+    .context("failed to execute query")?;
+  let forms = forms
+    .into_iter()
+    .map(|row| {
+      let party_name: String = row.get(1);
+      let form_id: i64 = row.get(2);
+      let main_member_id: i64 = row.get(3);
+      let sub1_member_id: i64 = row.get(4);
+      let sub2_member_id: i64 = row.get(5);
+      let weapon_id: i64 = row.get(6);
+      let accessory_id: i64 = row.get(7);
+
+      PartyForm {
+        id: form_id as i32,
+        form_no: form_id as i32,
+        party_no: params.party_id,
+        main: main_member_id as i32,
+        sub1: sub1_member_id as i32,
+        sub2: sub2_member_id as i32,
+        weapon: weapon_id,
+        acc: accessory_id,
+        name: party_name,
+        strength: 123,
+        specialskill: SpecialSkillInfo {
+          special_skill_id: 100001,
+          trial: false,
+        },
+        skill_pa_fame: 0,
+      }
+    })
+    .collect::<Vec<_>>()
+    .try_into()
+    .unwrap();
+
+  let party = Party::new(forms, params.party_id);
+
+  let members = members
+    .iter()
+    .enumerate()
+    .map(|(index, row)| {
+      let member_id: i64 = row.get(0);
+      let xp: i32 = row.get(1);
+      let promotion_level: i32 = row.get(2);
+      // let active_skills: Value = row.get(3);
+      let prototype = MemberPrototype::load_from_id(member_id);
+
+      Member {
+        id: prototype.id as i32,
+        prototype: &prototype,
+        xp,
+        promotion_level,
+        active_skills: prototype
+          .active_skills
+          .iter()
+          .map(|skill_opt| {
+            skill_opt.as_ref().map(|skill| MemberActiveSkill {
+              prototype: skill,
+              level: 1,
+              value: skill.value.max,
+            })
+          })
+          .collect::<Vec<_>>()
+          .try_into()
+          .unwrap(),
+        // active_skills: prototype
+        //   .active_skills
+        //   .iter()
+        //   .enumerate()
+        //   .map(|(index, prototype)| {
+        //     // TODO: Wrong
+        //     let active_skill = active_skills.get(index).unwrap();
+        //     // let skill_id = active_skill["id"].as_i64().unwrap();
+        //     let level = active_skill["level"].as_i64().unwrap() as i32;
+        //     let value = active_skill["value"].as_i64().unwrap() as i32;
+        //     Some(MemberActiveSkill {
+        //       prototype: &prototype,
+        //       level,
+        //       value,
+        //     })
+        //   })
+        //   .try_into()
+        //   .unwrap(),
+        stats: prototype.stats.clone(),
+        main_strength: MemberStrength::default(),
+        sub_strength: MemberStrength::default(),
+        sub_strength_bonus: MemberStrength::default(),
+        fame_stats: MemberFameStats::default(),
+        skill_pa_fame_list: vec![],
+      }
+        .to_battle_member()
+    })
+    .collect::<Vec<_>>();
+
+  let characters = party.party_forms.iter().map(|form| {
+    vec![
+      members.iter().find(|member| member.member_id == form.main as i64).map(|m| m.character_id),
+      members.iter().find(|member| member.member_id == form.sub1 as i64).map(|m| m.character_id),
+      members.iter().find(|member| member.member_id == form.sub2 as i64).map(|m| m.character_id),
+    ]
+  }).flatten().flatten().collect::<Vec<_>>();
+  let characters = {
+    #[rustfmt::skip]
+    let statement = client
+      .prepare(/* language=postgresql */ r#"
+        select
+          character_id,
+          intimacy
+        from user_characters
+        where user_id = $1
+      "#)
+      .await
+      .context("failed to prepare statement")?;
+    let rows = client
+      .query(&statement, &[&session.user_id])
+      .await
+      .context("failed to execute query")?;
+    rows
+      .iter()
+      .map(|row| {
+        let character_id: i64 = row.get(0);
+        let intimacy: i32 = row.get(1);
+        (character_id, intimacy)
+      })
+      .filter(|(id, _)| characters.contains(id))
+      .collect::<HashMap<_, _>>()
+  };
+
   let mut response = CallResponse::new_success(Box::new(BattleHuntingResultResponse {
     limit: 1,
     exp: 230,
     lvup: 0,
     money: 42000,
     storyunlock: vec![],
-    love: vec![BattleCharacterLove {
-      character_id: 101,
-      love: 5,
-    }],
-    member_exp: vec![BattleMemberExp {
-      member_id: 1004200,
-      exp: 5000,
-    }],
+    love: characters.iter().map(|(id, intimacy)| BattleCharacterLove {
+      character_id: *id,
+      love: *intimacy + 10,
+    }).collect(),
+    member_exp: members
+      .iter()
+      .map(|member| BattleMemberExp {
+        member_id: member.member_id,
+        exp: 230,
+      })
+      .collect(),
     mission: params.clearquestmission,
     reward: rewards
       .iter()
