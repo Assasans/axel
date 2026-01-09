@@ -17,6 +17,7 @@ use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::{master, AppState};
 use crate::member::MemberPrototype;
 
+// See [Wonder_Api_GachaInfoResponseDto_Fields]
 #[derive(Default, Debug, Serialize)]
 pub struct GachaInfo {
   pub gacha: Vec<GachaItem>,
@@ -24,73 +25,87 @@ pub struct GachaInfo {
 
 impl CallCustom for GachaInfo {}
 
+// See [Wonder_Api_GachainfoGachaResponseDto_Fields]
 #[derive(Debug, Clone, Serialize)]
 pub struct GachaItem {
-  pub gachaid: u32,
+  #[serde(rename = "gachaid")]
+  pub gacha_id: i32,
   #[serde(with = "crate::bool_as_int")]
   pub daily: bool,
   pub type1: String,
-  pub val1: u32,
+  pub val1: i32,
   pub type10: String,
-  pub val10: u32,
-  pub ticket: u32,
-  pub ticket_num: u32,
-  pub draw_count: u32,
-  pub remain_draw_count: u32,
-  pub upperlimitcount: u32,
-  pub user_story_id: u32,
+  pub val10: i32,
+  pub ticket: i32,
+  pub ticket_num: i32,
+  pub draw_count: i32,
+  pub remain_draw_count: i32,
+  pub upperlimitcount: i32,
+  pub user_story_id: i32,
   pub stepup_bonus: Option<StepupBonus>,
   pub random_bonus: Option<RandomBonus>,
   pub stepup_info: Option<StepupInfo>,
   pub select_info: Option<SelectInfo>,
   pub continuation_info: Option<ContinuationInfo>,
   pub member_select_info: Option<MemberSelectInfo>,
-  pub first_free_ids: Vec<u32>,
+  pub first_free_ids: Vec<i32>,
 }
 
+// See [Wonder_Api_GachainfoStepupBonusResponseDto_Fields]
 #[derive(Debug, Clone, Serialize)]
-// Unknown structure
-pub struct StepupBonus;
+pub struct StepupBonus {
+  pub gacha_item_id: u32,
+  pub stepup_bonus_id: u32,
+  pub step: u32,
+}
 
+// See [Wonder_Api_GachainfoRandomBonusResponseDto_Fields]
 #[derive(Debug, Clone, Serialize)]
 pub struct RandomBonus {
-  pub gacha_item_id: u32,
+  pub gacha_item_id: i32,
   pub items: Vec<RandomBonusItem>,
 }
 
+// See [Wonder_Api_GachainfoRandomBonusItemResponseDto_Fields]
 #[derive(Debug, Clone, Serialize)]
 pub struct RandomBonusItem {
-  pub pack_id: u32,
-  pub rate: u32,
+  pub pack_id: i64,
+  pub rate: i32,
 }
 
+// See [Wonder_Api_GachainfoStepupResponseDto_Fields]
 #[derive(Debug, Clone, Serialize)]
 pub struct StepupInfo {
-  pub step: u32,
+  pub step: i32,
   #[serde(rename = "loop")]
-  pub loop_count: u32,
+  pub loop_count: i32,
   pub is_drawable: bool,
 }
 
+// See [Wonder_Api_GachainfoSelectResponseDto_Fields]
 #[derive(Debug, Clone, Serialize)]
 pub struct SelectInfo {
-  pub select_character_id: u32,
-  pub select_character_id_list: Vec<u32>,
+  pub select_character_id: i32,
+  pub select_character_id_list: Vec<i32>,
 }
 
+// See [Wonder_Api_GachainfoContinuationResponseDto_Fields]
 #[derive(Debug, Clone, Serialize)]
-// Unknown structure
-pub struct ContinuationInfo;
+pub struct ContinuationInfo {
+  pub remain_sns_share_count: i32,
+  pub next_draw: bool,
+}
 
+// See [Wonder_Api_GachainfoMemberSelectResponseDto_Fields]
 #[derive(Debug, Clone, Serialize)]
 pub struct MemberSelectInfo {
-  pub select_member_id_list: Vec<u32>,
+  pub select_member_id_list: Vec<i64>,
 }
 
 impl GachaItem {
-  pub fn new_simple(gachaid: u32) -> Self {
+  pub fn new_simple(gacha_id: i32) -> Self {
     Self {
-      gachaid,
+      gacha_id,
       daily: true,
       type1: String::new(),
       val1: 0,
@@ -113,25 +128,27 @@ impl GachaItem {
   }
 }
 
+// See [Wonder_Api_GachaTutorialResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct GachaTutorial {
-  pub gacha_id: u32,
+  pub gacha_id: i32,
   pub goods: Vec<GachaGoodItem>,
 }
 
 impl CallCustom for GachaTutorial {}
 
+// See [Wonder_Api_GachaTutorialGoodsResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct GachaGoodItem {
-  pub item_type: u8,
-  pub item_id: u32,
-  pub item_num: u32,
+  pub item_type: i32,
+  pub item_id: i64,
+  pub item_num: i32,
   #[serde(with = "crate::bool_as_int")]
   pub is_new: bool,
 }
 
 impl GachaGoodItem {
-  pub fn new(item_type: u8, item_id: u32, item_num: u32, is_new: bool) -> Self {
+  pub fn new(item_type: i32, item_id: i64, item_num: i32, is_new: bool) -> Self {
     Self {
       item_type,
       item_id,
@@ -200,7 +217,7 @@ pub struct BonusItem {
 pub async fn gacha_info() -> impl IntoHandlerResponse {
   let gacha_items = vec![
     GachaItem {
-      gachaid: 100001,
+      gacha_id: 100001,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -221,7 +238,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410321,
+      gacha_id: 410321,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -242,7 +259,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 323083,
+      gacha_id: 323083,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -263,7 +280,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 200021,
+      gacha_id: 200021,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -284,7 +301,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 323083,
+      gacha_id: 323083,
       daily: true,
       type1: String::new(),
       val1: 0,
@@ -305,7 +322,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410211,
+      gacha_id: 410211,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -326,7 +343,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 500007,
+      gacha_id: 500007,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -347,7 +364,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410248,
+      gacha_id: 410248,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -368,7 +385,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410305,
+      gacha_id: 410305,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -389,7 +406,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410317,
+      gacha_id: 410317,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -410,7 +427,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410321,
+      gacha_id: 410321,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -431,7 +448,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410326,
+      gacha_id: 410326,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -452,7 +469,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410353,
+      gacha_id: 410353,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -473,7 +490,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410364,
+      gacha_id: 410364,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -494,7 +511,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410393,
+      gacha_id: 410393,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -515,7 +532,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410395,
+      gacha_id: 410395,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -584,7 +601,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410402,
+      gacha_id: 410402,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -605,7 +622,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410403,
+      gacha_id: 410403,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -626,7 +643,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410410,
+      gacha_id: 410410,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -647,7 +664,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410430,
+      gacha_id: 410430,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -668,7 +685,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410433,
+      gacha_id: 410433,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -691,7 +708,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410436,
+      gacha_id: 410436,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -718,7 +735,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410437,
+      gacha_id: 410437,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -739,7 +756,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410441,
+      gacha_id: 410441,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -760,7 +777,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410458,
+      gacha_id: 410458,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -781,7 +798,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410486,
+      gacha_id: 410486,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -802,7 +819,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410490,
+      gacha_id: 410490,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -823,7 +840,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410509,
+      gacha_id: 410509,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -844,7 +861,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410522,
+      gacha_id: 410522,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -865,7 +882,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410531,
+      gacha_id: 410531,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -886,7 +903,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410535,
+      gacha_id: 410535,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -907,7 +924,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410536,
+      gacha_id: 410536,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -928,7 +945,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410544,
+      gacha_id: 410544,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -949,7 +966,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410546,
+      gacha_id: 410546,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -970,7 +987,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410548,
+      gacha_id: 410548,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -991,7 +1008,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410550,
+      gacha_id: 410550,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -1012,7 +1029,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410552,
+      gacha_id: 410552,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -1033,7 +1050,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410553,
+      gacha_id: 410553,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -1054,7 +1071,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410554,
+      gacha_id: 410554,
       daily: false,
       type1: "step".to_string(),
       val1: 0,
@@ -1079,7 +1096,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410627,
+      gacha_id: 410627,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -1100,7 +1117,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410639,
+      gacha_id: 410639,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -1121,7 +1138,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410653,
+      gacha_id: 410653,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -1142,7 +1159,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410661,
+      gacha_id: 410661,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -1163,7 +1180,7 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       first_free_ids: vec![],
     },
     GachaItem {
-      gachaid: 410670,
+      gacha_id: 410670,
       daily: false,
       type1: String::new(),
       val1: 0,
@@ -1193,57 +1210,6 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
       // .filter(|gacha| gacha.gacha_id != "323083")
       .map(|gacha| GachaItem::new_simple(gacha.gacha_id.parse().unwrap()))
       .collect(),
-    // gacha: vec![
-    //   // GachaItem::new_simple(323083),
-    //   GachaItem {
-    //     gachaid: 410436,
-    //     daily: false,
-    //     type1: String::new(),
-    //     val1: 0,
-    //     type10: String::new(),
-    //     val10: 0,
-    //     ticket: 0,
-    //     ticket_num: 0,
-    //     draw_count: 0,
-    //     remain_draw_count: 1,
-    //     upperlimitcount: 0,
-    //     user_story_id: 0,
-    //     stepup_bonus: None,
-    //     random_bonus: None,
-    //     stepup_info: None,
-    //     select_info: Some(SelectInfo {
-    //       select_character_id: 0,
-    //       select_character_id_list: vec![
-    //         100, 101, 102, 103, 104, 105, 106, 107, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 108, 151,
-    //         128, 169,
-    //       ],
-    //     }),
-    //     continuation_info: None,
-    //     member_select_info: None,
-    //     first_free_ids: vec![],
-    //   },
-    //   GachaItem {
-    //     gachaid: 323041,
-    //     daily: false,
-    //     type1: String::new(),
-    //     val1: 0,
-    //     type10: String::new(),
-    //     val10: 0,
-    //     ticket: 0,
-    //     ticket_num: 0,
-    //     draw_count: 0,
-    //     remain_draw_count: 1,
-    //     upperlimitcount: 0,
-    //     user_story_id: 0,
-    //     stepup_bonus: None,
-    //     random_bonus: None,
-    //     stepup_info: None,
-    //     select_info: None,
-    //     continuation_info: None,
-    //     member_select_info: None,
-    //     first_free_ids: vec![],
-    //   },
-    // ],
     // gacha: gacha_items,
   }));
   // response.time = Some(1723059410); // 7 Aug 2024
@@ -1388,20 +1354,60 @@ pub struct GachaRateAssistRequest {
   pub gacha_id: i32,
 }
 
-// TODO: Unable to find struct definition
+// See [Wonder_Api_GacharateAssistResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct GachaRateAssist {
+  pub gacha_id: i32,
+  pub rate: Vec<GachaRateRate>,
+  pub limit_rate: Vec<GachaRateRate>,
+  pub rare_rate: Vec<GachaRateRare>,
+  pub limit_rare_rate: Vec<GachaRateRare>,
+}
+
+impl CallCustom for GachaRateAssist {}
+
 pub async fn gacha_rate_assist(
   Params(params): Params<GachaRateAssistRequest>,
 ) -> impl IntoHandlerResponse {
   warn!(?params, "encountered stub: gacha_rate_assist");
 
-  Ok(Unsigned(()))
+  Ok(Unsigned(GachaRateAssist {
+    gacha_id: params.gacha_id,
+    rate: vec![],
+    limit_rate: vec![],
+    rare_rate: vec![],
+    limit_rare_rate: vec![],
+  }))
 }
 
-// TODO: Unable to find struct definition
+// See [Wonder_Api_GachaAssistLogResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct GachaAssistLog {
+  pub goods: Vec<GachaLogItem>,
+}
+
+impl CallCustom for GachaAssistLog {}
+
+// See [Wonder_Api_GachalogGoodsResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct GachaLogItem {
+  #[serde(rename = "itemtype")]
+  pub item_type: i32,
+  #[serde(rename = "itemid")]
+  pub item_id: i64,
+  #[serde(rename = "itemnum")]
+  pub item_num: i32,
+  pub time: String,
+  #[serde(rename = "gachaid")]
+  pub gacha_id: i32,
+}
+
 pub async fn gacha_assist_log() -> impl IntoHandlerResponse {
   warn!("encountered stub: gacha_assist_log");
 
-  Ok(Unsigned(()))
+  Ok(Unsigned(GachaAssistLog {
+    goods: vec![]
+  }))
 }
 
 #[derive(Debug)]

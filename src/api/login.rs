@@ -249,6 +249,36 @@ pub async fn login(state: Arc<AppState>, Params(params): Params<LoginRequestRequ
     NotificationData::new(1, 7, 12, 0, "".to_string(), "".to_string()),
     NotificationData::new(1, 7, 24, 0, "".to_string(), "".to_string()),
     NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
+
+    // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], [_infoButton], boolean
+    NotificationData::new(1, 7, 1, 1, "".to_string(), "".to_string()),
+    // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], seems to be fallback if [1] is not present
+    NotificationData::new(1, 7, 25, 1, "".to_string(), "".to_string()),
+    // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], [_presentButton], counted
+    NotificationData::new(1, 7, 2, 1, "".to_string(), "".to_string()),
+    // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], [_missionButton], counted
+    NotificationData::new(1, 7, 3, 1, "".to_string(), "".to_string()),
+    // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], [_shopButton], [EnableFreeItemFlag], boolean
+    NotificationData::new(1, 7, 4, 1, "".to_string(), "".to_string()),
+    // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], [_exchangeButton], boolean
+    NotificationData::new(1, 7, 5, 1, "".to_string(), "".to_string()),
+    // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], [_expeditionButton], boolean
+    NotificationData::new(1, 7, 6, 1, "".to_string(), "".to_string()),
+    // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], [_benefitButton], boolean
+    NotificationData::new(1, 7, 7, 1, "".to_string(), "".to_string()),
+    // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], [_missionButton], boolean
+    NotificationData::new(1, 7, 13, 1, "".to_string(), "".to_string()),
+    // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], [_multiBattleInvitedRoomButton], boolean
+    NotificationData::new(1, 7, 26, 1, "".to_string(), "".to_string()),
+    // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], [_surpriseEventButton], boolean
+    NotificationData::new(1, 7, 43, 1, "".to_string(), "".to_string()),
+    // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], [_specialBoxGachaButton], boolean
+    NotificationData::new(1, 7, 45, 1, "".to_string(), "".to_string()),
+    // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], [_keywordCampaignButton], boolean
+    NotificationData::new(1, 7, 46, 1, "".to_string(), "".to_string()),
+
+    // See [Wonder.UI.Mypage.MyPageScreen$$IsMenuBadgeOn] for conditions to show "Home" button badge
+
     FriendGreetingNotify::new({
       let hash = BUILD_INFO.git_hash.chars().take(8).collect();
       let revision = if BUILD_INFO.git_dirty {

@@ -10,6 +10,7 @@ pub struct FriendGreetingNotify {
 }
 
 impl FriendGreetingNotify {
+  // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], [_friendButton]
   const KIND: i32 = 27;
 
   pub fn new(message: String) -> Self {

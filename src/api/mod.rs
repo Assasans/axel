@@ -85,6 +85,7 @@ pub enum RemoteDataItemType {
   // See [Wonder.Util.BlacksmithUtil$$GetItemId]
   // See [Wonder.UI.Common.MemberPlanningEquipBoxCell$$SetTrial], requires uniqid and is_trial
   Accessory,
+  // See [Wonder.UI.Mypage.MyPageScreen$$IsItemGachaBadgeOn]
   GachaTicket,
   // See [Wonder.Util.MasterDataManager$$GetItemName]
   DungeonChallenge,
@@ -105,7 +106,7 @@ pub enum RemoteDataItemType {
   SlayerMedal,
   StaminaItem,
   DreamTicket,
-  #[deprecated(note = "seems to be unused")]
+  // See [Wonder.UI.Mypage.MyPageScreen$$IsCampaignBoxGachaBadgeOn]
   CampaignTicket,
   AssistTicket,
   AssistMaterial,
@@ -122,7 +123,6 @@ pub enum RemoteDataItemType {
 
 // See [Wonder.Util.UserParam$$Add] code and [Wonder.Util.UserParam$$Get] cross-references
 impl From<RemoteDataItemType> for i32 {
-  #[allow(deprecated)]
   fn from(item_type: RemoteDataItemType) -> Self {
     match item_type {
       RemoteDataItemType::Money => 1,
@@ -174,7 +174,6 @@ impl From<RemoteDataItemType> for i32 {
 }
 
 impl From<i32> for RemoteDataItemType {
-  #[allow(deprecated)]
   fn from(value: i32) -> Self {
     match value {
       1 => RemoteDataItemType::Money,
@@ -396,6 +395,7 @@ pub struct NotificationData {
   pub kind: i32,
   pub key: i32,
   pub value: i32,
+  // See [Wonder.Util.NotificationDataSet$$GetBadgeMessage]
   pub msgkey: String,
   pub tag: String,
 }
