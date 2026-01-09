@@ -120,6 +120,8 @@ async fn api_call(
     .handle("gachachain", gacha::gacha_chain)
     .handle("gachanormal", gacha::gacha_normal)
     .handle("gacharate", gacha::gacha_rate)
+    .handle("gacharate_assist", gacha::gacha_rate_assist)
+    .handle("gacha_assist_log", gacha::gacha_assist_log)
     .handle("gachalog", gacha::gacha_log)
     .handle("root_box_check", root_check_box)
     .handle("maintenancecheck", maintenance_check::maintenance_check)

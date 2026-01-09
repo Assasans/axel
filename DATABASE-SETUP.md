@@ -142,3 +142,19 @@ Edit the command below to match your database connection settings.
   sslkey=config/axel.key \
   sslmode=verify-full"
 ```
+
+### Importing gacha configuration
+
+Gacha rates JSON files are available for download from https://smb.assasans.dev/konofd/gacha_infos/gacha_rates/, thanks to CatzumaGaming.
+Alternatively, rsync server is available at `rsync://aqua.assasans.dev/konofd/gacha-infos/gacha_rates/`.
+
+```sh
+./migrations/import_gacha_rates.py ./gacha_rates "host=10.66.66.1 \
+  port=5432 \
+  dbname=axel \
+  user=axel \
+  sslrootcert=/home/assasans/dev/00-aqua/ca.crt \
+  sslcert=config/axel.crt \
+  sslkey=config/axel.key \
+  sslmode=verify-full"
+```

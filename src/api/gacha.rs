@@ -1,5 +1,10 @@
+use std::collections::BTreeMap;
+use std::sync::Arc;
+use anyhow::Context;
 use jwt_simple::prelude::Serialize;
 use rand::seq::IteratorRandom;
+use rust_decimal::Decimal;
+use rust_decimal::prelude::ToPrimitive;
 use serde::Deserialize;
 use serde_json::{json, Value};
 use tracing::warn;
@@ -9,7 +14,8 @@ use crate::api::{NotificationData, RemoteData, RemoteDataItemType};
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
-use crate::master;
+use crate::{master, AppState};
+use crate::member::MemberPrototype;
 
 #[derive(Default, Debug, Serialize)]
 pub struct GachaInfo {
@@ -1377,44 +1383,159 @@ pub struct GachaRateRequest {
   pub gacha_id: i32,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct GachaRateAssistRequest {
+  pub gacha_id: i32,
+}
+
+// TODO: Unable to find struct definition
+pub async fn gacha_rate_assist(
+  Params(params): Params<GachaRateAssistRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: gacha_rate_assist");
+
+  Ok(Unsigned(()))
+}
+
+// TODO: Unable to find struct definition
+pub async fn gacha_assist_log() -> impl IntoHandlerResponse {
+  warn!("encountered stub: gacha_assist_log");
+
+  Ok(Unsigned(()))
+}
+
+#[derive(Debug)]
+pub struct DatabaseGachaRate {
+  pub gacha_id: i64,
+  pub member: MemberPrototype,
+  pub probability: Decimal,
+  pub probability_pity: Option<Decimal>,
+  pub is_rate_up: bool,
+  pub details_priority: Option<i32>,
+}
+
 // IDA static analysis, not real data
-pub async fn gacha_rate(Params(params): Params<GachaRateRequest>) -> impl IntoHandlerResponse {
+// CLIENT BUG: Clicking "Details" and immediately pressing back causes hard lock.
+// TODO: Per-rarity probabilities do not sum to 100% and per-item probabilities can fluctuate,
+//  e.g. 0.015% and 0.014%. Maybe original server did some corrections for per-rarity values.
+pub async fn gacha_rate(
+  state: Arc<AppState>,
+  Params(params): Params<GachaRateRequest>,
+) -> impl IntoHandlerResponse {
   warn!(?params, "encountered stub: gacha_rate");
+
+  let client = state.get_database_client().await?;
+  let rates = {
+    #[rustfmt::skip]
+    let statement = client
+      .prepare(/* language=postgresql */ r#"
+        select gacha_id, item_id, probability, probability_pity, is_rate_up, details_priority
+        from gacha.rates
+        where gacha_id = $1
+      "#)
+      .await
+      .context("failed to prepare statement")?;
+    let rows = client
+      .query(&statement, &[&(params.gacha_id as i64)])
+      .await
+      .context("failed to execute query")?;
+    rows
+      .into_iter()
+      .map(|row| DatabaseGachaRate {
+        gacha_id: row.get("gacha_id"),
+        member: MemberPrototype::load_from_id(row.get("item_id")),
+        probability: row.get("probability"),
+        probability_pity: row.get("probability_pity"),
+        is_rate_up: row.get("is_rate_up"),
+        details_priority: row.get("details_priority"),
+      })
+      .collect::<Vec<_>>()
+  };
+
+  let bonus_packs = {
+    #[rustfmt::skip]
+    let statement = client
+      .prepare(/* language=postgresql */ r#"
+        select pack_id, probability
+        from gacha.bonus_rates
+        where gacha_id = $1
+      "#)
+      .await
+      .context("failed to prepare statement")?;
+    let rows = client
+      .query(&statement, &[&(params.gacha_id as i64)])
+      .await
+      .context("failed to execute query")?;
+    rows
+      .into_iter()
+      .map(|row| GachaRateBonusItem {
+        pack_id: row.get("pack_id"),
+        rate: (row.get::<_, Decimal>("rate") * Decimal::from(1000)).round().to_i32().unwrap(),
+      })
+      .collect::<Vec<_>>()
+  };
 
   let response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(GachaRate {
     gacha_id: params.gacha_id,
-    rate: vec![GachaRateRate {
-      rare: 3,
-      itemid: 1023104,
-      rate: 10,
-      pickup: 0,
-      detailview: 0,
-      detailpriority: 0,
-    }],
-    limitrate: vec![GachaRateRate {
-      rare: 4,
-      itemid: 1814100,
-      rate: 20,
-      pickup: 0,
-      detailview: 0,
-      detailpriority: 0,
-    }],
-    rarerate: vec![GachaRateRare { rare: 4, rate: 30 }],
-    limitrarerate: vec![GachaRateRare { rare: 4, rate: 40 }],
+    rate: rates
+      .iter()
+      .map(|rate| GachaRateRate {
+        rarity: rate.member.rarity,
+        member_id: rate.member.id,
+        rate: (rate.probability * Decimal::from(1000)).round().to_i32().unwrap(),
+        is_rate_up: rate.is_rate_up,
+        is_details_visible: rate.details_priority.is_some(),
+        details_priority: rate.details_priority.unwrap_or(0),
+      })
+      .collect(),
+    limitrate: rates
+      .iter()
+      .filter_map(|rate| {
+        rate.probability_pity.map(|pity| GachaRateRate {
+          rarity: rate.member.rarity,
+          member_id: rate.member.id,
+          rate: (pity * Decimal::from(1000)).round().to_i32().unwrap(),
+          is_rate_up: rate.is_rate_up,
+          is_details_visible: rate.details_priority.is_some(),
+          details_priority: rate.details_priority.unwrap_or(0),
+        })
+      })
+      .collect(),
+    rarerate: rates
+      .iter()
+      .fold(BTreeMap::new(), |mut acc, rate| {
+        *acc.entry(rate.member.rarity).or_insert(Decimal::ZERO) += rate.probability;
+        acc
+      })
+      .into_iter()
+      .map(|(rare, rate)| GachaRateRare {
+        rare,
+        rate: (rate * Decimal::from(100)).round().to_i32().unwrap(),
+      })
+      .collect(),
+    limitrarerate: rates
+      .iter()
+      .filter_map(|rate| rate.probability_pity)
+      .fold(BTreeMap::new(), |mut acc, pity| {
+        let rare = rates
+          .iter()
+          .find(|r| r.probability_pity == Some(pity))
+          .map(|r| r.member.rarity)
+          .unwrap_or(0);
+        *acc.entry(rare).or_insert(Decimal::ZERO) += pity;
+        acc
+      })
+      .into_iter()
+      .map(|(rare, rate)| GachaRateRare {
+        rare,
+        rate: (rate * Decimal::from(100)).round().to_i32().unwrap(),
+      })
+      .collect(),
     bonus_per_draw_count: 42,
-    bonusrate: vec![
-      GachaRateBonusItem {
-        pack_id: 241039504,
-        rate: 7,
-      },
-      GachaRateBonusItem {
-        pack_id: 241039509,
-        rate: 8,
-      },
-    ],
+    bonusrate: bonus_packs,
   }));
 
-  Unsigned(response)
+  Ok(Unsigned(response))
 }
 
 // See [Wonder_Api_GacharateResponseDto_Fields]
@@ -1423,11 +1544,11 @@ pub struct GachaRate {
   pub gacha_id: i32,
   /// "10x recruit (1st-9th use) and 1x recruit appearance rates"
   pub rate: Vec<GachaRateRate>,
-  /// "10x recruit (10th use) appearance rates"
+  /// "10x recruit (10th use) appearance rates".
   pub limitrate: Vec<GachaRateRate>,
-  /// "10x recruit (1st-9th use) and 1x recruit"
+  /// "10x recruit (1st-9th use) and 1x recruit". Derived from [rate].
   pub rarerate: Vec<GachaRateRare>,
-  /// "10x recruit (10th use)"
+  /// "10x recruit (10th use)". Derived from [limitrate].
   pub limitrarerate: Vec<GachaRateRare>,
   pub bonus_per_draw_count: i32,
   /// "10x recruit (draw [bonus_per_draw_count]) set item appearance rates"
@@ -1438,22 +1559,30 @@ pub struct GachaRate {
 // See [Wonder_Api_GacharateLimitrateResponseDto_Fields]
 #[derive(Default, Debug, Serialize)]
 pub struct GachaRateRate {
-  pub rare: i32,
-  pub itemid: i64,
+  #[serde(rename = "rare")]
+  pub rarity: i32,
+  #[serde(rename = "itemid")]
+  pub member_id: i64,
   /// Three decimal places, e.g. 10.500 = 10.500%
   pub rate: i32,
-  /// Non-zero displays "appearance rates up" in UI
-  pub pickup: i32,
-  pub detailview: i32,
-  pub detailpriority: i32,
+  /// Displays "appearance rates up" in UI
+  #[serde(rename = "pickup", with = "crate::bool_as_int")]
+  pub is_rate_up: bool,
+  /// Displays character in "character details" tab
+  #[serde(rename = "detailview", with = "crate::bool_as_int")]
+  pub is_details_visible: bool,
+  #[serde(rename = "detailpriority")]
+  pub details_priority: i32,
 }
+
+pub struct Rate(pub i32);
 
 // See [Wonder_Api_GacharateRarerateResponseDto_Fields]
 // See [Wonder_Api_GacharateLimitrarerateResponseDto_Fields]
 #[derive(Default, Debug, Serialize)]
 pub struct GachaRateRare {
   pub rare: i32,
-  /// Three decimal places, e.g. 10.500 = 10.500%
+  /// Three decimal places, e.g. 12.234 = 123.450%
   pub rate: i32,
 }
 
@@ -1461,7 +1590,7 @@ pub struct GachaRateRare {
 #[derive(Default, Debug, Serialize)]
 pub struct GachaRateBonusItem {
   pub pack_id: i64,
-  /// Three decimal places, e.g. 10.500 = 10.500%
+  /// Three decimal places, e.g. 12.345 = 12.345%
   pub rate: i32,
 }
 
