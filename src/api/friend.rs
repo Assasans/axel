@@ -5,7 +5,7 @@ use chrono::{DateTime, Utc};
 use indoc::indoc;
 use jwt_simple::prelude::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
-use tracing::{debug, info, warn};
+use tracing::{debug, info, trace, warn};
 
 use crate::call::CallCustom;
 use crate::extractor::Params;
@@ -105,7 +105,7 @@ pub async fn friend_list(
         .query(&statement, &[&session.user_id])
         .await
         .context("failed to execute query")?;
-      info!(?rows, "get friend list query executed");
+      trace!(?rows, "get friend list query executed");
       rows
         .iter()
         .map(|row| {

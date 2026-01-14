@@ -133,6 +133,7 @@ async fn api_call(
     .handle("loginbonus", login_bonus::login_bonus)
     .handle("home", home::home)
     .handle("home_members_set", home::home_members_set)
+    .handle("home_current_member_set", home::home_current_member_set)
     .handle("missionhome", home::mission_home)
     .handle("profile", profile::profile)
     .handle("setprofile", profile::set_profile)

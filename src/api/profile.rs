@@ -5,7 +5,7 @@ use chrono::{DateTime, Utc};
 use jwt_simple::prelude::Serialize;
 use serde::Deserialize;
 use serde_json::Value;
-use tracing::{info, warn};
+use tracing::{info, trace, warn};
 
 use crate::api::master_all::get_masters;
 use crate::call::CallCustom;
@@ -68,7 +68,7 @@ pub async fn profile(state: Arc<AppState>, session: Arc<Session>) -> impl IntoHa
     .query(&statement, &[&session.user_id])
     .await
     .context("failed to execute query")?;
-  info!(?rows, "get profile query executed");
+  trace!(?rows, "get profile query executed");
   let row = rows
     .first()
     .ok_or_else(|| anyhow::anyhow!("no profile found for user"))?;

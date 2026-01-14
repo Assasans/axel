@@ -7,7 +7,7 @@ use chrono::{DateTime, Utc};
 use jwt_simple::prelude::Serialize;
 use serde::Deserialize;
 use serde_repr::{Deserialize_repr, Serialize_repr};
-use tracing::{debug, info};
+use tracing::{debug, info, trace};
 
 use crate::api::NotificationData;
 use crate::build_info::BUILD_INFO;
@@ -76,7 +76,7 @@ pub async fn login(state: Arc<AppState>, Params(params): Params<LoginRequestRequ
     .query(&statement, &[&uuid.to_string()])
     .await
     .context("failed to execute query")?;
-  debug!(?rows, "login query executed");
+  trace!(?rows, "login query executed");
 
   let (id, username, created_at, tutorial_progress) = if rows.is_empty() {
     #[rustfmt::skip]

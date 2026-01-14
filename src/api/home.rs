@@ -88,6 +88,24 @@ pub async fn home_members_set(
   Ok(Signed((), session))
 }
 
+// body={"illustration_ids": "1024213"}
+#[derive(Debug, Deserialize)]
+pub struct HomeCurrentMemberSetRequest {
+  pub illustration_id: i32,
+}
+
+/// Called when moving from home screen if character was changed.
+pub async fn home_current_member_set(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<HomeCurrentMemberSetRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: home_current_member_set");
+
+  // See [Wonder_Api_HomeCurrentMemberSetResponseDto_Fields]
+  Ok(Signed((), session))
+}
+
 // body={"user_character_id": "1024213"}
 #[derive(Debug, Deserialize)]
 pub struct MissionHomeRequest {
