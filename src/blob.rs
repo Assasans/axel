@@ -9,7 +9,7 @@ use crate::user::session::Session;
 use crate::AppState;
 use anyhow::Context;
 use std::collections::HashMap;
-use tracing::info;
+use tracing::{debug, info, trace, warn};
 
 pub async fn run_login_migration(state: &AppState, session: &Session) {
   let masters = get_master_manager();
@@ -280,6 +280,229 @@ pub async fn run_login_migration(state: &AppState, session: &Session) {
     }
   };
 
+  // Create missing character skills, read 'sp_skill' master and filter by character_id for each character user has
+  let skills_by_character: HashMap<i64, Vec<&serde_json::Value>> =
+    masters
+      .get_master("skill_sp")
+      .iter()
+      .fold(HashMap::new(), |mut acc, skill| {
+        let character_id: i64 = skill["character_id"].as_str().unwrap().parse::<i64>().unwrap();
+        acc.entry(character_id).or_default().push(skill);
+        acc
+      });
+  trace!(?skills_by_character, "mapped skills by character");
+
+  let character_skills_updated = {
+    // build (user_id, character_id, skill_id, level) tuples and insert missing ones
+    let skills = {
+      #[rustfmt::skip]
+      let statement = client
+        .prepare(/* language=postgresql */ r#"
+          select character_id
+          from user_characters
+          where user_id = $1
+        "#)
+        .await
+        .context("failed to prepare statement")
+        .unwrap();
+      let rows = client
+        .query(&statement, &[&session.user_id])
+        .await
+        .context("failed to execute query")
+        .unwrap();
+      rows
+        .iter()
+        .flat_map(|row| {
+          let character_id: i64 = row.get(0);
+          skills_by_character
+            .get(&character_id)
+            .into_iter()
+            .flatten()
+            .map(move |skill| {
+              let skill_id: i64 = skill["skill_id"].as_str().unwrap().parse::<i64>().unwrap();
+              (session.user_id, character_id, skill_id, 1i32)
+            })
+        })
+        .collect::<Vec<_>>()
+    };
+
+    // remove existing skills
+    let skills = {
+      #[rustfmt::skip]
+      let statement = client
+        .prepare(/* language=postgresql */ r#"
+          select character_id, skill_id
+          from user_character_special_skills
+          where user_id = $1
+        "#)
+        .await
+        .context("failed to prepare statement")
+        .unwrap();
+      let rows = client
+        .query(&statement, &[&session.user_id])
+        .await
+        .context("failed to execute query")
+        .unwrap();
+      let existing_skills: HashMap<(i64, i64), ()> = rows
+        .iter()
+        .map(|row| {
+          let character_id: i64 = row.get(0);
+          let skill_id: i64 = row.get(1);
+          ((character_id, skill_id), ())
+        })
+        .collect();
+      skills
+        .into_iter()
+        .filter(|skill| !existing_skills.contains_key(&(skill.1, skill.2)))
+        .collect::<Vec<_>>()
+    };
+
+    // use copy from
+    if skills.is_empty() {
+      0
+    } else {
+      let transaction = client
+        .transaction()
+        .await
+        .context("failed to start transaction")
+        .unwrap();
+
+      #[rustfmt::skip]
+      let copy_statement = transaction
+        .prepare(/* language=postgresql */ r#"
+          copy user_character_special_skills (user_id, character_id, skill_id, level)
+          from stdin with (format binary)
+        "#)
+        .await
+        .context("failed to prepare COPY statement")
+        .unwrap();
+
+      let sink = transaction
+        .copy_in(&copy_statement)
+        .await
+        .context("failed to start COPY")
+        .unwrap();
+
+      let writer = tokio_postgres::binary_copy::BinaryCopyInWriter::new(
+        sink,
+        &[
+          tokio_postgres::types::Type::INT8, // user_id
+          tokio_postgres::types::Type::INT8, // character_id
+          tokio_postgres::types::Type::INT8, // skill_id
+          tokio_postgres::types::Type::INT4, // level
+        ],
+      );
+
+      tokio::pin!(writer);
+
+      for skill in &skills {
+        writer
+          .as_mut()
+          .write(&[&skill.0, &skill.1, &skill.2, &skill.3])
+          .await
+          .context("failed to write row")
+          .unwrap();
+      }
+
+      let rows_inserted = writer.finish().await.context("failed to finish COPY").unwrap();
+
+      transaction
+        .commit()
+        .await
+        .context("failed to commit transaction")
+        .unwrap();
+
+      rows_inserted
+    }
+  };
+
+  let party_form_skills_updated = {
+    let mut transaction = client
+      .transaction()
+      .await
+      .context("failed to start transaction")
+      .unwrap();
+    // XXX: This does not check for inconsistent skill / main character combinations
+    #[rustfmt::skip]
+    let statement = transaction
+      .prepare(/* language=postgresql */ r#"
+        select user_id, party_id, form_id, main_member_id
+        from user_party_forms
+        where user_id = $1
+          and special_skill_id is null
+        for update
+      "#)
+      .await
+      .context("failed to prepare statement")
+      .unwrap();
+
+    let rows = transaction
+      .query(&statement, &[&session.user_id])
+      .await
+      .context("failed to execute query")
+      .unwrap();
+    debug!("found {} party_forms with null special_skill_id", rows.len());
+    let mut updated_count = 0;
+    for row in rows.iter() {
+      let user_id: i64 = row.get(0);
+      let party_id: i64 = row.get(1);
+      let form_id: i64 = row.get(2);
+      let main_member_id: i64 = row.get(3);
+
+      let character_id = MemberPrototype::load_from_id(main_member_id).character_id;
+
+      // get some default skill for main_member_id
+      let default_skill_id = {
+        let skills = skills_by_character.get(&character_id);
+        if let Some(skills) = skills {
+          // TODO: Not first?
+          let skill = skills.first().unwrap();
+          skill["skill_id"].as_str().unwrap().parse::<i64>().unwrap()
+        } else {
+          warn!(
+            ?user_id,
+            ?party_id,
+            ?form_id,
+            ?main_member_id,
+            ?character_id,
+            "no skills found, skipping special_skill_id update"
+          );
+          continue;
+        }
+      };
+
+      #[rustfmt::skip]
+      let update_statement = transaction
+        .prepare(/* language=postgresql */ r#"
+          update user_party_forms
+          set special_skill_id = $4
+          where user_id = $1
+            and party_id = $2
+            and form_id = $3
+        "#)
+        .await
+        .context("failed to prepare update statement")
+        .unwrap();
+      transaction
+        .execute(&update_statement, &[&user_id, &party_id, &form_id, &default_skill_id])
+        .await
+        .context("failed to execute update")
+        .unwrap();
+      updated_count += 1;
+      debug!(
+        ?user_id,
+        ?party_id,
+        ?form_id,
+        ?main_member_id,
+        ?default_skill_id,
+        "updated special_skill_id for party_form"
+      );
+    }
+
+    transaction.commit().await.context("failed to commit transaction").unwrap();
+    updated_count
+  };
+
   info!(
     ?characters_updated,
     ?members_updated,
@@ -287,6 +510,8 @@ pub async fn run_login_migration(state: &AppState, session: &Session) {
     ?party_forms_updated,
     ?items_updated,
     ?items_equipment_updated,
+    ?character_skills_updated,
+    ?party_form_skills_updated,
     "login migration executed"
   );
 }
@@ -382,10 +607,12 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     let statement = client
       .prepare(/* language=postgresql */ r#"
         select
-          character_id,
-          intimacy
-        from user_characters
-        where user_id = $1
+          c.user_id, c.character_id, c.intimacy,
+          s.skill_id, s.level as skill_level
+        from user_characters c
+          left join user_character_special_skills s
+            on s.user_id = c.user_id and s.character_id = c.character_id
+        where c.user_id = $1
       "#)
       .await
       .context("failed to prepare statement").unwrap();
@@ -394,32 +621,59 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
       .await
       .context("failed to execute query")
       .unwrap();
-    rows
-      .iter()
-      .map(|row| {
-        let character_id: i64 = row.get(0);
-        let intimacy: i32 = row.get(1);
 
-        AddCharacter::new(
-          character_id as i32,
-          CharacterParameter {
-            id: character_id,
-            character_id,
-            rank: intimacy,
-            rank_progress: get_intimacy_level_calculator().get_level(intimacy),
-            sp_skill: vec![SpSkill {
-              group_id: 10000,
-              id: 100001,
-              lv: 2,
-              is_trial: false,
-            }],
-            character_enhance_stage_id_list: vec![0, 0, 0, 0],
-            character_piece_board_stage_id_list: vec![100001001, 100002002, 100003003, 100004004],
-            is_trial: false,
-          },
-        )
-        .into_remote_data()
-      })
+    let skill_to_group = {
+      let mut map: HashMap<i64, i32> = HashMap::new();
+      for skill in masters.get_master("skill_sp").iter() {
+        let skill_id = skill["skill_id"].as_str().unwrap().parse::<i64>().unwrap();
+        let skill_group_id = skill["skill_group_id"].as_str().unwrap().parse::<i32>().unwrap();
+        map.insert(skill_id, skill_group_id);
+      }
+      map
+    };
+
+    let mut map: HashMap<i64, CharacterParameter> = HashMap::new();
+    for row in rows.iter() {
+      let character_id: i64 = row.get("character_id");
+      let intimacy: i32 = row.get("intimacy");
+
+      let character = map.entry(character_id).or_insert_with(|| {
+        debug!("adding character_id={} intimacy={}", character_id, intimacy);
+        CharacterParameter {
+          id: character_id,
+          character_id,
+          rank: intimacy,
+          rank_progress: get_intimacy_level_calculator().get_level(intimacy),
+          sp_skill: vec![],
+          character_enhance_stage_id_list: vec![0, 0, 0, 0],
+          character_piece_board_stage_id_list: vec![100001001, 100002002, 100003003, 100004004],
+          is_trial: false,
+        }
+      });
+
+      let skill_id: Option<i64> = row.get("skill_id");
+      let skill_level: Option<i32> = row.get("skill_level");
+
+      if let (Some(skill_id), Some(level)) = (skill_id, skill_level) {
+        let group_id = *skill_to_group
+          .get(&skill_id)
+          .expect(&format!("missing group_id for skill_id={}", skill_id));
+        debug!(
+          "adding group_id={} skill_id={} level={} to character_id={}",
+          group_id, skill_id, level, character_id
+        );
+        character.sp_skill.push(SpSkill {
+          group_id,
+          id: skill_id,
+          lv: level,
+          is_trial: false,
+        });
+      }
+    }
+
+    map
+      .into_values()
+      .map(|character| AddCharacter::new(character.character_id as i32, character).into_remote_data())
       .flatten()
       .collect::<Vec<_>>()
   };
@@ -573,10 +827,9 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
         let item_id: i64 = row.get(2);
         let level: i32 = row.get(3);
         let is_locked: bool = row.get(4);
-        let item_id_details = *item_to_item_details.get(&(item_id, level)).expect(&format!(
-          "missing item details for item_id={} level={}",
-          item_id, level
-        ));
+        let item_id_details = *item_to_item_details
+          .get(&(item_id, level))
+          .expect(&format!("missing item details for item_id={} level={}", item_id, level));
 
         AddEquipment::new(
           RemoteDataItemType::from(item_type as i32),
@@ -584,7 +837,7 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
           id as i32,
           is_locked,
         )
-          .into_remote_data()
+        .into_remote_data()
       })
       .flatten()
       .collect::<Vec<_>>()

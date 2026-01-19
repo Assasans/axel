@@ -131,9 +131,19 @@ impl PartyForm {
 }
 
 // See [Wonder_Api_SpecialSkillInfoResponseDto_Fields]
+/// ## Special skills
+///
+/// Client loads special skills from `skill_sp` master, keyed by `character_id`.
+/// Skills are upgraded based on member's promotion level.
+/// See `skill_sp_details.unlock_intimacy_lv`.
+/// `skill_sp.pattern_number` can be 1 or 2.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SpecialSkillInfo {
-  /// Must be non-zero if main member is set
+  /// Must be non-zero if main member is set.
+  ///
+  /// CLIENT QUIRK: Client shows list of skills for the character *of the skill itself*,
+  /// not the main character of the party form. For example, sending Kazuma's skill ID
+  /// will show his skills in selection screen, even if the main character is Megumin.
   pub special_skill_id: i32,
   pub trial: bool,
 }
@@ -205,7 +215,8 @@ pub async fn party_info(state: Arc<AppState>, session: Arc<Session>) -> impl Int
         upf.sub1_member_id,
         upf.sub2_member_id,
         upf.weapon_id,
-        upf.accessory_id
+        upf.accessory_id,
+        upf.special_skill_id
       from user_parties up
         join user_party_forms upf
           on up.user_id = upf.user_id and up.party_id = upf.party_id
@@ -241,6 +252,7 @@ pub async fn party_info(state: Arc<AppState>, session: Arc<Session>) -> impl Int
               let sub2_member_id: i64 = row.get(5);
               let weapon_id: i64 = row.get(6);
               let accessory_id: i64 = row.get(7);
+              let special_skill_id: i64 = row.get(8);
 
               PartyForm {
                 id: form_id as i32,
@@ -254,7 +266,7 @@ pub async fn party_info(state: Arc<AppState>, session: Arc<Session>) -> impl Int
                 name: party_name,
                 strength: 12300,
                 specialskill: SpecialSkillInfo {
-                  special_skill_id: 100001,
+                  special_skill_id: special_skill_id as i32,
                   trial: false,
                 },
                 skill_pa_fame: 0,

@@ -322,7 +322,8 @@ pub async fn marathon_multi_start(
         upf.sub1_member_id,
         upf.sub2_member_id,
         upf.weapon_id,
-        upf.accessory_id
+        upf.accessory_id,
+        upf.special_skill_id
       from user_parties up
         join user_party_forms upf
           on up.user_id = upf.user_id and up.party_id = upf.party_id
@@ -346,6 +347,7 @@ pub async fn marathon_multi_start(
       let sub2_member_id: i64 = row.get(5);
       let weapon_id: i64 = row.get(6);
       let accessory_id: i64 = row.get(7);
+      let special_skill_id: i64 = row.get(8);
 
       PartyForm {
         id: form_id as i32,
@@ -359,7 +361,7 @@ pub async fn marathon_multi_start(
         name: party_name,
         strength: 123,
         specialskill: SpecialSkillInfo {
-          special_skill_id: 100001,
+          special_skill_id: special_skill_id as i32,
           trial: false,
         },
         skill_pa_fame: 0,
@@ -381,6 +383,11 @@ pub async fn marathon_multi_start(
       // let active_skills: Value = row.get(3);
       let prototype = MemberPrototype::load_from_id(member_id);
 
+      let form = party
+        .party_forms
+        .iter()
+        .find(|form| form.main as i64 == member_id)
+        .unwrap();
       Member {
         id: prototype.id as i32,
         prototype: &prototype,
@@ -406,7 +413,7 @@ pub async fn marathon_multi_start(
         fame_stats: MemberFameStats::default(),
         skill_pa_fame_list: vec![],
       }
-      .to_battle_member()
+      .to_battle_member(form)
     })
     .collect::<Vec<_>>();
 

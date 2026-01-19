@@ -2,6 +2,7 @@ use crate::api::battle::BattleMember;
 use crate::api::dungeon::{DungeonBattleMember, PartyMember};
 use crate::api::master_all::get_master_manager;
 use crate::api::{MemberFameStats, MemberParameterWire, MemberStats, SkillPaFame};
+use crate::api::party_info::PartyForm;
 use crate::level::get_member_level_calculator;
 
 /// Member information from master data. Can be used to create new [Member] instances.
@@ -257,7 +258,7 @@ impl Member<'_> {
     }
   }
 
-  pub fn to_battle_member(&self) -> BattleMember {
+  pub fn to_battle_member(&self, form: &PartyForm) -> BattleMember {
     BattleMember {
       id: self.id,
       lv: self.level(),
@@ -282,7 +283,7 @@ impl Member<'_> {
       limit_break: self.promotion_level,
       character_id: self.prototype.character_id,
       passiveskill: 210201,  // self.prototype.passive_skill.as_ref().map_or(0, |skill| skill.id),
-      specialattack: 100001, // self.prototype.special_attack.as_ref().map_or(0, |skill| skill.id),
+      specialattack: form.specialskill.special_skill_id as i64, // self.prototype.special_attack.as_ref().map_or(0, |skill| skill.id),
       resist_state: 210201,  // self.prototype.resistance_group.id,
       resist_attr: 150000000,
       attack: self.stats.attack.interpolate(self.level()),

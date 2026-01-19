@@ -1,8 +1,7 @@
-use crate::AppState;
 use crate::api::battle_multi::{BattleCharacterLove, BattleClearReward, BattleMemberExp};
 use crate::api::master_all::get_master_manager;
 use crate::api::party_info::{Party, PartyForm, PartyPassiveSkillInfo, SpecialSkillInfo};
-use crate::api::quest_hunting::{BattleReward, extract_items};
+use crate::api::quest_hunting::{extract_items, BattleReward};
 use crate::api::surprise::BasicBattlePartyForm;
 use crate::api::{ApiRequest, MemberFameStats, NotificationData, RemoteDataItemType};
 use crate::blob::IntoRemoteData;
@@ -13,6 +12,7 @@ use crate::item::UpdateItemCountBy;
 use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::notification::{IntoNotificationData, MissionDone};
 use crate::user::session::Session;
+use crate::AppState;
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -127,7 +127,8 @@ pub async fn make_battle_start(state: &AppState, session: &Session, party_id: i3
         upf.sub1_member_id,
         upf.sub2_member_id,
         upf.weapon_id,
-        upf.accessory_id
+        upf.accessory_id,
+        upf.special_skill_id
       from user_parties up
         join user_party_forms upf
           on up.user_id = upf.user_id and up.party_id = upf.party_id
@@ -151,6 +152,7 @@ pub async fn make_battle_start(state: &AppState, session: &Session, party_id: i3
       let sub2_member_id: i64 = row.get(5);
       let weapon_id: i64 = row.get(6);
       let accessory_id: i64 = row.get(7);
+      let special_skill_id: i64 = row.get(8);
 
       PartyForm {
         id: form_id as i32,
@@ -164,7 +166,7 @@ pub async fn make_battle_start(state: &AppState, session: &Session, party_id: i3
         name: party_name,
         strength: 123,
         specialskill: SpecialSkillInfo {
-          special_skill_id: 100001,
+          special_skill_id: special_skill_id as i32,
           trial: false,
         },
         skill_pa_fame: 0,
@@ -179,6 +181,8 @@ pub async fn make_battle_start(state: &AppState, session: &Session, party_id: i3
   let members = members
     .iter()
     .enumerate()
+    // We must send only members that are used in the party, otherwise hardlock occurs
+    .filter(|(_, row)| party.party_forms.iter().any(|form| form.main == row.get::<_, i64>(0) as i32))
     .map(|(index, row)| {
       let member_id: i64 = row.get(0);
       let xp: i32 = row.get(1);
@@ -186,6 +190,11 @@ pub async fn make_battle_start(state: &AppState, session: &Session, party_id: i3
       // let active_skills: Value = row.get(3);
       let prototype = MemberPrototype::load_from_id(member_id);
 
+      let form = party
+        .party_forms
+        .iter()
+        .find(|form| form.main as i64 == member_id)
+        .unwrap();
       Member {
         id: prototype.id as i32,
         prototype: &prototype,
@@ -229,18 +238,14 @@ pub async fn make_battle_start(state: &AppState, session: &Session, party_id: i3
         fame_stats: MemberFameStats::default(),
         skill_pa_fame_list: vec![],
       }
-      .to_battle_member()
+      .to_battle_member(form)
     })
     .collect::<Vec<_>>();
 
   let mut response = CallResponse::new_success(Box::new(BattleStartResponse {
     chest: "10101111,10101120,10101131".to_owned(),
     party: party.to_battle_party(),
-    // We must send only members that are used in the party, otherwise hardlock occurs
-    members: members
-      .into_iter()
-      .filter(|member| party.party_forms.iter().any(|form| form.main == member.id))
-      .collect(),
+    members,
   }));
   response.add_notifications(vec![NotificationData::new(1, 7, 6, 0, "".to_string(), "".to_string())]);
   Ok(Unsigned(response))
@@ -457,7 +462,8 @@ pub async fn battle_result(
         upf.sub1_member_id,
         upf.sub2_member_id,
         upf.weapon_id,
-        upf.accessory_id
+        upf.accessory_id,
+        upf.special_skill_id
       from user_parties up
         join user_party_forms upf
           on up.user_id = upf.user_id and up.party_id = upf.party_id
@@ -481,6 +487,7 @@ pub async fn battle_result(
       let sub2_member_id: i64 = row.get(5);
       let weapon_id: i64 = row.get(6);
       let accessory_id: i64 = row.get(7);
+      let special_skill_id: i64 = row.get(8);
 
       PartyForm {
         id: form_id as i32,
@@ -494,7 +501,7 @@ pub async fn battle_result(
         name: party_name,
         strength: 123,
         specialskill: SpecialSkillInfo {
-          special_skill_id: 100001,
+          special_skill_id: special_skill_id as i32,
           trial: false,
         },
         skill_pa_fame: 0,
@@ -509,6 +516,8 @@ pub async fn battle_result(
   let members = members
     .iter()
     .enumerate()
+    // We must send only members that are used in the party, otherwise hardlock occurs
+    .filter(|(_, row)| party.party_forms.iter().any(|form| form.main == row.get::<_, i64>(0) as i32))
     .map(|(index, row)| {
       let member_id: i64 = row.get(0);
       let xp: i32 = row.get(1);
@@ -516,6 +525,11 @@ pub async fn battle_result(
       // let active_skills: Value = row.get(3);
       let prototype = MemberPrototype::load_from_id(member_id);
 
+      let form = party
+        .party_forms
+        .iter()
+        .find(|form| form.main as i64 == member_id)
+        .unwrap();
       Member {
         id: prototype.id as i32,
         prototype: &prototype,
@@ -559,17 +573,32 @@ pub async fn battle_result(
         fame_stats: MemberFameStats::default(),
         skill_pa_fame_list: vec![],
       }
-        .to_battle_member()
+      .to_battle_member(form)
     })
     .collect::<Vec<_>>();
 
-  let characters = party.party_forms.iter().map(|form| {
-    vec![
-      members.iter().find(|member| member.member_id == form.main as i64).map(|m| m.character_id),
-      members.iter().find(|member| member.member_id == form.sub1 as i64).map(|m| m.character_id),
-      members.iter().find(|member| member.member_id == form.sub2 as i64).map(|m| m.character_id),
-    ]
-  }).flatten().flatten().collect::<Vec<_>>();
+  let characters = party
+    .party_forms
+    .iter()
+    .map(|form| {
+      vec![
+        members
+          .iter()
+          .find(|member| member.member_id == form.main as i64)
+          .map(|m| m.character_id),
+        members
+          .iter()
+          .find(|member| member.member_id == form.sub1 as i64)
+          .map(|m| m.character_id),
+        members
+          .iter()
+          .find(|member| member.member_id == form.sub2 as i64)
+          .map(|m| m.character_id),
+      ]
+    })
+    .flatten()
+    .flatten()
+    .collect::<Vec<_>>();
   let characters = {
     #[rustfmt::skip]
     let statement = client
