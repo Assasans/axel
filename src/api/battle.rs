@@ -9,7 +9,7 @@ use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::item::UpdateItemCountBy;
-use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::notification::{IntoNotificationData, MissionDone};
 use crate::user::session::Session;
 use crate::AppState;
@@ -95,23 +95,10 @@ pub struct AutoProgressionInfo {
 }
 
 pub async fn make_battle_start(state: &AppState, session: &Session, party_id: i32) -> impl IntoHandlerResponse + use<> {
-  let client = state.pool.get().await.context("failed to get database connection")?;
-  #[rustfmt::skip]
-  let statement = client
-    .prepare(/* language=postgresql */ r#"
-      select
-        member_id,
-        xp,
-        promotion_level
-      from user_members
-      where user_id = $1
-    "#)
+  let client = state
+    .get_database_client()
     .await
-    .context("failed to prepare statement")?;
-  let members = client
-    .query(&statement, &[&session.user_id])
-    .await
-    .context("failed to execute query")?;
+    .context("failed to get database connection")?;
 
   let statement = client
     .prepare(
@@ -178,74 +165,24 @@ pub async fn make_battle_start(state: &AppState, session: &Session, party_id: i3
 
   let party = Party::new(forms, party_id);
 
-  let members = members
-    .iter()
-    .enumerate()
-    // We must send only members that are used in the party, otherwise hardlock occurs
-    .filter(|(_, row)| party.party_forms.iter().any(|form| form.main == row.get::<_, i64>(0) as i32))
-    .map(|(index, row)| {
-      let member_id: i64 = row.get(0);
-      let xp: i32 = row.get(1);
-      let promotion_level: i32 = row.get(2);
-      // let active_skills: Value = row.get(3);
-      let prototype = MemberPrototype::load_from_id(member_id);
-
-      let form = party
-        .party_forms
-        .iter()
-        .find(|form| form.main as i64 == member_id)
-        .unwrap();
-      Member {
-        id: prototype.id as i32,
-        prototype: &prototype,
-        xp,
-        promotion_level,
-        active_skills: prototype
-          .active_skills
-          .iter()
-          .map(|skill_opt| {
-            skill_opt.as_ref().map(|skill| MemberActiveSkill {
-              prototype: skill,
-              level: 1,
-              value: skill.value.max,
-            })
-          })
-          .collect::<Vec<_>>()
-          .try_into()
-          .unwrap(),
-        // active_skills: prototype
-        //   .active_skills
-        //   .iter()
-        //   .enumerate()
-        //   .map(|(index, prototype)| {
-        //     // TODO: Wrong
-        //     let active_skill = active_skills.get(index).unwrap();
-        //     // let skill_id = active_skill["id"].as_i64().unwrap();
-        //     let level = active_skill["level"].as_i64().unwrap() as i32;
-        //     let value = active_skill["value"].as_i64().unwrap() as i32;
-        //     Some(MemberActiveSkill {
-        //       prototype: &prototype,
-        //       level,
-        //       value,
-        //     })
-        //   })
-        //   .try_into()
-        //   .unwrap(),
-        stats: prototype.stats.clone(),
-        main_strength: MemberStrength::default(),
-        sub_strength: MemberStrength::default(),
-        sub_strength_bonus: MemberStrength::default(),
-        fame_stats: MemberFameStats::default(),
-        skill_pa_fame_list: vec![],
-      }
-      .to_battle_member(form)
-    })
-    .collect::<Vec<_>>();
+  // We must send only members that are used in the party, otherwise hardlock occurs
+  let fetch_members = FetchUserMembersIn::new(&client).await.unwrap();
+  #[rustfmt::skip]
+  let members = fetch_members.run(
+    session.user_id,
+    &party.party_forms.iter().map(|form| form.main as i64).collect::<Vec<_>>(),
+  ).await.unwrap();
 
   let mut response = CallResponse::new_success(Box::new(BattleStartResponse {
     chest: "10101111,10101120,10101131".to_owned(),
     party: party.to_battle_party(),
-    members,
+    members: members
+      .into_iter()
+      .map(|member| {
+        let form = party.party_forms.iter().find(|form| form.main == member.id).unwrap();
+        member.to_battle_member(form)
+      })
+      .collect(),
   }));
   response.add_notifications(vec![NotificationData::new(1, 7, 6, 0, "".to_string(), "".to_string())]);
   Ok(Unsigned(response))
@@ -431,23 +368,6 @@ pub async fn battle_result(
   }
   transaction.commit().await.context("failed to commit transaction")?;
 
-  #[rustfmt::skip]
-  let statement = client
-    .prepare(/* language=postgresql */ r#"
-      select
-        member_id,
-        xp,
-        promotion_level
-      from user_members
-      where user_id = $1
-    "#)
-    .await
-    .context("failed to prepare statement")?;
-  let members = client
-    .query(&statement, &[&session.user_id])
-    .await
-    .context("failed to execute query")?;
-
   let statement = client
     .prepare(
       /* language=postgresql */
@@ -513,69 +433,13 @@ pub async fn battle_result(
 
   let party = Party::new(forms, params.party_id);
 
-  let members = members
-    .iter()
-    .enumerate()
-    // We must send only members that are used in the party, otherwise hardlock occurs
-    .filter(|(_, row)| party.party_forms.iter().any(|form| form.main == row.get::<_, i64>(0) as i32))
-    .map(|(index, row)| {
-      let member_id: i64 = row.get(0);
-      let xp: i32 = row.get(1);
-      let promotion_level: i32 = row.get(2);
-      // let active_skills: Value = row.get(3);
-      let prototype = MemberPrototype::load_from_id(member_id);
-
-      let form = party
-        .party_forms
-        .iter()
-        .find(|form| form.main as i64 == member_id)
-        .unwrap();
-      Member {
-        id: prototype.id as i32,
-        prototype: &prototype,
-        xp,
-        promotion_level,
-        active_skills: prototype
-          .active_skills
-          .iter()
-          .map(|skill_opt| {
-            skill_opt.as_ref().map(|skill| MemberActiveSkill {
-              prototype: skill,
-              level: 1,
-              value: skill.value.max,
-            })
-          })
-          .collect::<Vec<_>>()
-          .try_into()
-          .unwrap(),
-        // active_skills: prototype
-        //   .active_skills
-        //   .iter()
-        //   .enumerate()
-        //   .map(|(index, prototype)| {
-        //     // TODO: Wrong
-        //     let active_skill = active_skills.get(index).unwrap();
-        //     // let skill_id = active_skill["id"].as_i64().unwrap();
-        //     let level = active_skill["level"].as_i64().unwrap() as i32;
-        //     let value = active_skill["value"].as_i64().unwrap() as i32;
-        //     Some(MemberActiveSkill {
-        //       prototype: &prototype,
-        //       level,
-        //       value,
-        //     })
-        //   })
-        //   .try_into()
-        //   .unwrap(),
-        stats: prototype.stats.clone(),
-        main_strength: MemberStrength::default(),
-        sub_strength: MemberStrength::default(),
-        sub_strength_bonus: MemberStrength::default(),
-        fame_stats: MemberFameStats::default(),
-        skill_pa_fame_list: vec![],
-      }
-      .to_battle_member(form)
-    })
-    .collect::<Vec<_>>();
+  // We must send only members that are used in the party, otherwise hardlock occurs
+  let fetch_members = FetchUserMembersIn::new(&client).await.unwrap();
+  #[rustfmt::skip]
+  let members = fetch_members.run(
+    session.user_id,
+    &party.party_forms.iter().map(|form| form.main as i64).collect::<Vec<_>>(),
+  ).await.unwrap();
 
   let characters = party
     .party_forms
@@ -584,16 +448,16 @@ pub async fn battle_result(
       vec![
         members
           .iter()
-          .find(|member| member.member_id == form.main as i64)
-          .map(|m| m.character_id),
+          .find(|member| member.id == form.main)
+          .map(|m| m.prototype.character_id),
         members
           .iter()
-          .find(|member| member.member_id == form.sub1 as i64)
-          .map(|m| m.character_id),
+          .find(|member| member.id == form.sub1)
+          .map(|m| m.prototype.character_id),
         members
           .iter()
-          .find(|member| member.member_id == form.sub2 as i64)
-          .map(|m| m.character_id),
+          .find(|member| member.id == form.sub2)
+          .map(|m| m.prototype.character_id),
       ]
     })
     .flatten()

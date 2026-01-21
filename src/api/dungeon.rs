@@ -1,6 +1,5 @@
 //! Reference: https://youtu.be/5xRIW8bDzc4, https://youtu.be/ViMtYimwca4
 
-use crate::AppState;
 use crate::api::battle::{BattleParty, LiveMember};
 use crate::api::master_all::get_master_manager;
 use crate::api::party_info::{PartyPassiveSkillInfo, SpecialSkillInfo};
@@ -10,8 +9,9 @@ use crate::blob::{AddItem, IntoRemoteData};
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
-use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{FetchUserMembers, FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
+use crate::AppState;
 use anyhow::Context;
 use jwt_simple::prelude::Deserialize;
 use serde::Serialize;
@@ -362,61 +362,9 @@ pub struct DungeonTeamInfoRequest {
 
 async fn get_team_set(state: &AppState, session: &Session, member_num: usize) -> anyhow::Result<DungeonTeamSet> {
   let client = state.get_database_client().await?;
-  #[rustfmt::skip]
-  let statement = client
-    .prepare(/* language=postgresql */ r#"
-      select
-        member_id,
-        xp,
-        promotion_level
-      from user_members
-      where user_id = $1
-    "#)
-    .await
-    .context("failed to prepare statement")?;
-  let rows = client
-    .query(&statement, &[&session.user_id])
-    .await
-    .context("failed to execute query")?;
 
-  let members = rows
-    .iter()
-    .enumerate()
-    .map(|(index, row)| {
-      let member_id: i64 = row.get(0);
-      let xp: i32 = row.get(1);
-      let promotion_level: i32 = row.get(2);
-      // let active_skills: Value = row.get(3);
-      let prototype = MemberPrototype::load_from_id(member_id);
-
-      Member {
-        id: prototype.id as i32,
-        prototype: &prototype,
-        xp,
-        promotion_level,
-        active_skills: prototype
-          .active_skills
-          .iter()
-          .map(|skill_opt| {
-            skill_opt.as_ref().map(|skill| MemberActiveSkill {
-              prototype: skill,
-              level: 1,
-              value: skill.value.max,
-            })
-          })
-          .collect::<Vec<_>>()
-          .try_into()
-          .unwrap(),
-        stats: prototype.stats.clone(),
-        main_strength: MemberStrength::default(),
-        sub_strength: MemberStrength::default(),
-        sub_strength_bonus: MemberStrength::default(),
-        fame_stats: MemberFameStats::default(),
-        skill_pa_fame_list: vec![],
-      }
-      .to_party_member()
-    })
-    .collect::<Vec<_>>();
+  let fetch_members = FetchUserMembers::new(&client).await.unwrap();
+  let members = fetch_members.run(session.user_id).await.unwrap();
 
   Ok(DungeonTeamSet {
     party: (1..=member_num)
@@ -439,9 +387,10 @@ async fn get_team_set(state: &AppState, session: &Session, member_num: usize) ->
         current_sp: 0,
       })
       .collect(),
-    // We must send only members that are used in the party, otherwise hardlock occurs
+    // TODO: We must send only members that are used in the party, otherwise hardlock occurs?
     members: members
       .into_iter()
+      .map(|member| member.to_party_member())
       // .filter(|member| party.party_forms.iter().any(|form| form.main == member.id))
       .take(member_num)
       .collect(),
@@ -510,60 +459,9 @@ pub async fn dungeon_area_challenge(
   let stage = stages.next().context("no stages found for area")?;
 
   let client = state.get_database_client().await?;
-  #[rustfmt::skip]
-  let statement = client
-    .prepare(/* language=postgresql */ r#"
-      select
-        member_id,
-        xp,
-        promotion_level
-      from user_members
-      where user_id = $1
-    "#)
-    .await
-    .context("failed to prepare statement")?;
-  let rows = client
-    .query(&statement, &[&session.user_id])
-    .await
-    .context("failed to execute query")?;
-  let members = rows
-    .iter()
-    .enumerate()
-    .map(|(index, row)| {
-      let member_id: i64 = row.get(0);
-      let xp: i32 = row.get(1);
-      let promotion_level: i32 = row.get(2);
-      // let active_skills: Value = row.get(3);
-      let prototype = MemberPrototype::load_from_id(member_id);
 
-      Member {
-        id: prototype.id as i32,
-        prototype: &prototype,
-        xp,
-        promotion_level,
-        active_skills: prototype
-          .active_skills
-          .iter()
-          .map(|skill_opt| {
-            skill_opt.as_ref().map(|skill| MemberActiveSkill {
-              prototype: skill,
-              level: 1,
-              value: skill.value.max,
-            })
-          })
-          .collect::<Vec<_>>()
-          .try_into()
-          .unwrap(),
-        stats: prototype.stats.clone(),
-        main_strength: MemberStrength::default(),
-        sub_strength: MemberStrength::default(),
-        sub_strength_bonus: MemberStrength::default(),
-        fame_stats: MemberFameStats::default(),
-        skill_pa_fame_list: vec![],
-      }
-      .to_party_member()
-    })
-    .collect::<Vec<_>>();
+  let fetch_members = FetchUserMembers::new(&client).await.unwrap();
+  let members = fetch_members.run(session.user_id).await.unwrap();
 
   Ok(Unsigned(DungeonAreaChallengeResponse {
     stage_state: DungeonStageState {
@@ -606,9 +504,10 @@ pub async fn dungeon_area_challenge(
         assist_remain_count: 0,
         party_passive_skill: Default::default(),
       },
-      // We must send only members that are used in the party, otherwise hardlock occurs
+      // TODO: We must send only members that are used in the party, otherwise hardlock occurs?
       team_members: members
         .into_iter()
+        .map(|member| member.to_party_member())
         // .filter(|member| party.party_forms.iter().any(|form| form.main == member.id))
         .take(member_num)
         .collect(),
@@ -647,60 +546,9 @@ pub async fn dungeon_stage_party_info(
   let member_num = area["member_num"].as_str().unwrap().parse::<usize>().unwrap();
 
   let client = state.get_database_client().await?;
-  #[rustfmt::skip]
-  let statement = client
-    .prepare(/* language=postgresql */ r#"
-      select
-        member_id,
-        xp,
-        promotion_level
-      from user_members
-      where user_id = $1
-    "#)
-    .await
-    .context("failed to prepare statement")?;
-  let rows = client
-    .query(&statement, &[&session.user_id])
-    .await
-    .context("failed to execute query")?;
-  let members = rows
-    .iter()
-    .enumerate()
-    .map(|(index, row)| {
-      let member_id: i64 = row.get(0);
-      let xp: i32 = row.get(1);
-      let promotion_level: i32 = row.get(2);
-      // let active_skills: Value = row.get(3);
-      let prototype = MemberPrototype::load_from_id(member_id);
 
-      Member {
-        id: prototype.id as i32,
-        prototype: &prototype,
-        xp,
-        promotion_level,
-        active_skills: prototype
-          .active_skills
-          .iter()
-          .map(|skill_opt| {
-            skill_opt.as_ref().map(|skill| MemberActiveSkill {
-              prototype: skill,
-              level: 1,
-              value: skill.value.max,
-            })
-          })
-          .collect::<Vec<_>>()
-          .try_into()
-          .unwrap(),
-        stats: prototype.stats.clone(),
-        main_strength: MemberStrength::default(),
-        sub_strength: MemberStrength::default(),
-        sub_strength_bonus: MemberStrength::default(),
-        fame_stats: MemberFameStats::default(),
-        skill_pa_fame_list: vec![],
-      }
-      .to_party_member()
-    })
-    .collect::<Vec<_>>();
+  let fetch_members = FetchUserMembers::new(&client).await.unwrap();
+  let members = fetch_members.run(session.user_id).await.unwrap();
 
   Ok(Unsigned(DungeonStagePartyInfoResponse {
     party_set: DungeonPartySet {
@@ -731,9 +579,10 @@ pub async fn dungeon_stage_party_info(
         assist_remain_count: 0,
         party_passive_skill: Default::default(),
       },
-      // We must send only members that are used in the party, otherwise hardlock occurs
+      // TODO: We must send only members that are used in the party, otherwise hardlock occurs?
       team_members: members
         .into_iter()
+        .map(|member| member.to_party_member())
         // .filter(|member| party.party_forms.iter().any(|form| form.main == member.id))
         .take(member_num)
         .collect(),
@@ -745,20 +594,6 @@ pub async fn dungeon_stage_party_info(
 }
 
 // See [Wonder_Api_DungeonBattleStartResponseDto_Fields]
-/*
-
-struct Wonder_Api_DungeonBattleStartResponseDto_Fields : Wonder_Api_ResponseDtoBase_Fields {
-  struct System_String_o* chest;
-  struct Wonder_Api_BattlestartPartyResponseDto_o* party;
-  struct System_Collections_Generic_List_DungeonBattleStartMembersResponseDto__o* members;
-  struct System_String_o* resume_info;
-  struct System_Collections_Generic_List_BattleresumeLivemembersResponseDto__o* livemembers;
-  struct System_Collections_Generic_List_int__o* benefit_id_list;
-  struct System_Collections_Generic_List_DungeonEnemyInfoResponseDto__o* enemy_info;
-  int32_t hp_increase;
-  int32_t status;
-};
- */
 #[derive(Debug, Serialize)]
 pub struct DungeonBattleStartResponse {
   pub chest: String,
@@ -857,61 +692,9 @@ pub async fn dungeon_battle_start(
     .collect();
 
   let client = state.get_database_client().await?;
-  #[rustfmt::skip]
-  let statement = client
-    .prepare(/* language=postgresql */ r#"
-      select
-        member_id,
-        xp,
-        promotion_level
-      from user_members
-      where user_id = $1
-    "#)
-    .await
-    .context("failed to prepare statement")?;
-  let rows = client
-    .query(&statement, &[&session.user_id])
-    .await
-    .context("failed to execute query")?;
 
-  let members = rows
-    .iter()
-    .enumerate()
-    .map(|(index, row)| {
-      let member_id: i64 = row.get(0);
-      let xp: i32 = row.get(1);
-      let promotion_level: i32 = row.get(2);
-      // let active_skills: Value = row.get(3);
-      let prototype = MemberPrototype::load_from_id(member_id);
-
-      Member {
-        id: prototype.id as i32,
-        prototype: &prototype,
-        xp,
-        promotion_level,
-        active_skills: prototype
-          .active_skills
-          .iter()
-          .map(|skill_opt| {
-            skill_opt.as_ref().map(|skill| MemberActiveSkill {
-              prototype: skill,
-              level: 1,
-              value: skill.value.max,
-            })
-          })
-          .collect::<Vec<_>>()
-          .try_into()
-          .unwrap(),
-        stats: prototype.stats.clone(),
-        main_strength: MemberStrength::default(),
-        sub_strength: MemberStrength::default(),
-        sub_strength_bonus: MemberStrength::default(),
-        fame_stats: MemberFameStats::default(),
-        skill_pa_fame_list: vec![],
-      }
-      .to_dungeon_battle_member()
-    })
-    .collect::<Vec<_>>();
+  let fetch_members = FetchUserMembers::new(&client).await.unwrap();
+  let members = fetch_members.run(session.user_id).await.unwrap();
 
   Ok(Unsigned(DungeonBattleStartResponse {
     chest: "10101111,10101120,10101131".to_string(),
@@ -935,12 +718,12 @@ pub async fn dungeon_battle_start(
       sub_assists: vec![],
       party_passive_skill: Default::default(),
     },
-    // We must send only members that are used in the party, otherwise hardlock occurs
+    // TODO: We must send only members that are used in the party, otherwise hardlock occurs?
     members: members
       .iter()
+      .map(|member| member.to_dungeon_battle_member())
       // .filter(|member| party.party_forms.iter().any(|form| form.main == member.id))
       .take(member_num)
-      .cloned()
       .collect(),
     resume_info: "".to_string(),
     livemembers: members

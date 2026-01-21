@@ -1,7 +1,6 @@
 //! Reference: https://youtu.be/R80TMWhTdik
 //! Stamps reference: https://youtu.be/sDF9jb8TIvY
 
-use crate::AppState;
 use crate::api::battle::{BattleMember, BattleParty};
 use crate::api::dungeon::{DungeonStagePartyForm, DungeonTeamSet};
 use crate::api::home::{MultiBattleInvitation, MultiBattleRoom};
@@ -10,8 +9,9 @@ use crate::api::{MemberFameStats, RemoteDataItemType};
 use crate::call::CallCustom;
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
-use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
+use crate::AppState;
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
@@ -291,23 +291,6 @@ pub async fn marathon_multi_start(
   warn!(?params, "encountered stub: marathon_multi_start");
 
   let client = state.pool.get().await.context("failed to get database connection")?;
-  #[rustfmt::skip]
-  let statement = client
-    .prepare(/* language=postgresql */ r#"
-      select
-        member_id,
-        xp,
-        promotion_level
-      from user_members
-      where user_id = $1
-    "#)
-    .await
-    .context("failed to prepare statement")?;
-  let members = client
-    .query(&statement, &[&session.user_id])
-    .await
-    .context("failed to execute query")?;
-
   let statement = client
     .prepare(
       /* language=postgresql */
@@ -373,49 +356,13 @@ pub async fn marathon_multi_start(
 
   let party = Party::new(forms, params.party_id);
 
-  let members = members
-    .iter()
-    .enumerate()
-    .map(|(index, row)| {
-      let member_id: i64 = row.get(0);
-      let xp: i32 = row.get(1);
-      let promotion_level: i32 = row.get(2);
-      // let active_skills: Value = row.get(3);
-      let prototype = MemberPrototype::load_from_id(member_id);
-
-      let form = party
-        .party_forms
-        .iter()
-        .find(|form| form.main as i64 == member_id)
-        .unwrap();
-      Member {
-        id: prototype.id as i32,
-        prototype: &prototype,
-        xp,
-        promotion_level,
-        active_skills: prototype
-          .active_skills
-          .iter()
-          .map(|skill_opt| {
-            skill_opt.as_ref().map(|skill| MemberActiveSkill {
-              prototype: skill,
-              level: 1,
-              value: skill.value.max,
-            })
-          })
-          .collect::<Vec<_>>()
-          .try_into()
-          .unwrap(),
-        stats: prototype.stats.clone(),
-        main_strength: MemberStrength::default(),
-        sub_strength: MemberStrength::default(),
-        sub_strength_bonus: MemberStrength::default(),
-        fame_stats: MemberFameStats::default(),
-        skill_pa_fame_list: vec![],
-      }
-      .to_battle_member(form)
-    })
-    .collect::<Vec<_>>();
+  // We must send only members that are used in the party, otherwise hardlock occurs
+  let fetch_members = FetchUserMembersIn::new(&client).await.unwrap();
+  #[rustfmt::skip]
+  let members = fetch_members.run(
+    session.user_id,
+    &party.party_forms.iter().map(|form| form.main as i64).collect::<Vec<_>>(),
+  ).await.unwrap();
 
   Ok(Unsigned(MarathonMultiStartResponse {
     user_host: vec![
@@ -460,7 +407,10 @@ pub async fn marathon_multi_start(
     // We must send only members that are used in the party, otherwise hardlock occurs
     members: members
       .into_iter()
-      .filter(|member| party.party_forms.iter().any(|form| form.main == member.id))
+      .map(|member| {
+        let form = party.party_forms.iter().find(|form| form.main == member.id).unwrap();
+        member.to_battle_member(form)
+      })
       .collect(),
     battle_id: 1,
     will_use_ticket: 1,

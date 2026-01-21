@@ -1,6 +1,5 @@
 //! Reference: https://youtu.be/kbyEkBIw4-U
 
-use crate::AppState;
 use crate::api::battle::{BattleMember, BattleParty, BattleStartResponse};
 use crate::api::party_info::{Party, PartyForm, SpecialSkillInfo};
 use crate::api::surprise::BasicBattlePartyForm;
@@ -8,8 +7,9 @@ use crate::api::{MemberFameStats, NotificationData, RemoteDataItemType};
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
-use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{FetchUserMembers, FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
+use crate::AppState;
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
@@ -180,61 +180,10 @@ pub async fn score_challenge_best_score_party(
   warn!(?params, "encountered stub: score_challenge_best_score_party");
 
   let client = state.get_database_client().await?;
-  #[rustfmt::skip]
-  let statement = client
-    .prepare(/* language=postgresql */ r#"
-      select
-        member_id,
-        xp,
-        promotion_level
-      from user_members
-      where user_id = $1
-    "#)
-    .await
-    .context("failed to prepare statement")?;
-  let rows = client
-    .query(&statement, &[&session.user_id])
-    .await
-    .context("failed to execute query")?;
 
-  let members = rows
-    .iter()
-    .enumerate()
-    .map(|(index, row)| {
-      let member_id: i64 = row.get(0);
-      let xp: i32 = row.get(1);
-      let promotion_level: i32 = row.get(2);
-      // let active_skills: Value = row.get(3);
-      let prototype = MemberPrototype::load_from_id(member_id);
-
-      Member {
-        id: prototype.id as i32,
-        prototype: &prototype,
-        xp,
-        promotion_level,
-        active_skills: prototype
-          .active_skills
-          .iter()
-          .map(|skill_opt| {
-            skill_opt.as_ref().map(|skill| MemberActiveSkill {
-              prototype: skill,
-              level: 1,
-              value: skill.value.max,
-            })
-          })
-          .collect::<Vec<_>>()
-          .try_into()
-          .unwrap(),
-        stats: prototype.stats.clone(),
-        main_strength: MemberStrength::default(),
-        sub_strength: MemberStrength::default(),
-        sub_strength_bonus: MemberStrength::default(),
-        fame_stats: MemberFameStats::default(),
-        skill_pa_fame_list: vec![],
-      }
-      .to_member_parameter_wire()
-    })
-    .collect::<Vec<_>>();
+  // Send only members that are used in the party, no hardlock occurs, but just to expose less data
+  let fetch_members = FetchUserMembers::new(&client).await.unwrap();
+  let members = fetch_members.run(session.user_id).await.unwrap();
 
   Ok(Unsigned(ScoreChallengeBestScorePartyResponse {
     user_name: "Megumin".to_string(),
@@ -263,12 +212,11 @@ pub async fn score_challenge_best_score_party(
         member_id: 0,
       },
     },
-    // Send only members that are used in the party, no hardlock occurs, but just to expose less data.
     member: members
       .iter()
       .map(|m| BestScorePartyMember {
         member_id: m.id as i64,
-        lv: m.lv,
+        lv: m.level(),
         ex_flg: 0,
       })
       .collect::<Vec<_>>(),
@@ -301,22 +249,6 @@ pub async fn score_challenge_start(
   warn!(?params, "encountered stub: score_challenge_start");
 
   let client = state.pool.get().await.context("failed to get database connection")?;
-  #[rustfmt::skip]
-  let statement = client
-    .prepare(/* language=postgresql */ r#"
-      select
-        member_id,
-        xp,
-        promotion_level
-      from user_members
-      where user_id = $1
-    "#)
-    .await
-    .context("failed to prepare statement")?;
-  let members = client
-    .query(&statement, &[&session.user_id])
-    .await
-    .context("failed to execute query")?;
 
   let statement = client
     .prepare(
@@ -383,74 +315,22 @@ pub async fn score_challenge_start(
 
   let party = Party::new(forms, params.party_id);
 
-  let members = members
-    .iter()
-    .enumerate()
-    .map(|(index, row)| {
-      let member_id: i64 = row.get(0);
-      let xp: i32 = row.get(1);
-      let promotion_level: i32 = row.get(2);
-      // let active_skills: Value = row.get(3);
-      let prototype = MemberPrototype::load_from_id(member_id);
-
-      let form = party
-        .party_forms
-        .iter()
-        .find(|form| form.main as i64 == member_id)
-        .unwrap();
-      Member {
-        id: prototype.id as i32,
-        prototype: &prototype,
-        xp,
-        promotion_level,
-        active_skills: prototype
-          .active_skills
-          .iter()
-          .map(|skill_opt| {
-            skill_opt.as_ref().map(|skill| MemberActiveSkill {
-              prototype: skill,
-              level: 1,
-              value: skill.value.max,
-            })
-          })
-          .collect::<Vec<_>>()
-          .try_into()
-          .unwrap(),
-        // active_skills: prototype
-        //   .active_skills
-        //   .iter()
-        //   .enumerate()
-        //   .map(|(index, prototype)| {
-        //     // TODO: Wrong
-        //     let active_skill = active_skills.get(index).unwrap();
-        //     // let skill_id = active_skill["id"].as_i64().unwrap();
-        //     let level = active_skill["level"].as_i64().unwrap() as i32;
-        //     let value = active_skill["value"].as_i64().unwrap() as i32;
-        //     Some(MemberActiveSkill {
-        //       prototype: &prototype,
-        //       level,
-        //       value,
-        //     })
-        //   })
-        //   .try_into()
-        //   .unwrap(),
-        stats: prototype.stats.clone(),
-        main_strength: MemberStrength::default(),
-        sub_strength: MemberStrength::default(),
-        sub_strength_bonus: MemberStrength::default(),
-        fame_stats: MemberFameStats::default(),
-        skill_pa_fame_list: vec![],
-      }
-      .to_battle_member(form)
-    })
-    .collect::<Vec<_>>();
+  // We must send only members that are used in the party, otherwise hardlock occurs
+  let fetch_members = FetchUserMembersIn::new(&client).await.unwrap();
+  #[rustfmt::skip]
+  let members = fetch_members.run(
+    session.user_id,
+    &party.party_forms.iter().map(|form| form.main as i64).collect::<Vec<_>>(),
+  ).await.unwrap();
 
   Ok(Unsigned(ScoreChallengeStartResponse {
     party: party.to_battle_party(),
-    // We must send only members that are used in the party, otherwise hardlock occurs
     members: members
       .into_iter()
-      .filter(|member| party.party_forms.iter().any(|form| form.main == member.id))
+      .map(|member| {
+        let form = party.party_forms.iter().find(|form| form.main == member.id).unwrap();
+        member.to_battle_member(form)
+      })
       .collect(),
   }))
 }

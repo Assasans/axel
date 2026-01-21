@@ -5,10 +5,9 @@ use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use tracing::{debug, info, warn};
 
-use crate::AppState;
 use crate::api::dungeon::{PartyAccessory, PartyMember, PartyWeapon};
 use crate::api::master_all::get_master_manager;
-use crate::api::party_info::{Party, party_info};
+use crate::api::party_info::{party_info, Party};
 use crate::api::{ApiRequest, MemberFameStats, RemoteDataItemType};
 use crate::blob::{IntoRemoteData, UpdateMember};
 use crate::call::{CallCustom, CallResponse};
@@ -16,8 +15,11 @@ use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::item::UpdateItemCountBy;
 use crate::level::get_member_level_calculator;
-use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{
+  materialize_member_row, materialize_member_row_impl, Member, MemberActiveSkill, MemberPrototype, MemberStrength,
+};
 use crate::user::session::Session;
+use crate::AppState;
 
 // See [Wonder_Api_PartymembersResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -98,9 +100,9 @@ pub async fn grade_up(
     .query_one(&statement, &[&session.user_id, &params.user_member_id])
     .await
     .context("failed to query user member")?;
-  let member_id: i64 = row.get(0);
-  let xp: i32 = row.get(1);
-  let promotion_level: i32 = row.get(2);
+  let member_id: i64 = row.get("member_id");
+  let xp: i32 = row.get("xp");
+  let promotion_level: i32 = row.get("promotion_level");
   // let active_skills: Value = row.get(3);
 
   let prototype = MemberPrototype::load_from_id(member_id);
@@ -141,31 +143,7 @@ pub async fn grade_up(
     .context("failed to update user member xp")?;
   debug!(member_id, ?new_xp, "updated member xp in database");
 
-  let member = Member {
-    id: prototype.id as i32,
-    prototype: &prototype,
-    xp: new_xp,
-    promotion_level,
-    active_skills: prototype
-      .active_skills
-      .iter()
-      .map(|skill_opt| {
-        skill_opt.as_ref().map(|skill| MemberActiveSkill {
-          prototype: skill,
-          level: 1,
-          value: skill.value.max,
-        })
-      })
-      .collect::<Vec<_>>()
-      .try_into()
-      .unwrap(),
-    stats: prototype.stats.clone(),
-    main_strength: MemberStrength::default(),
-    sub_strength: MemberStrength::default(),
-    sub_strength_bonus: MemberStrength::default(),
-    fame_stats: MemberFameStats::default(),
-    skill_pa_fame_list: vec![],
-  };
+  let member = materialize_member_row_impl(member_id, new_xp, promotion_level, prototype);
 
   // Update used items
   // TODO: This does not check if the user has enough potions
@@ -257,14 +235,16 @@ pub async fn update_party_form(
           sub1_member_id = form_data.sub1_member_id,
           sub2_member_id = form_data.sub2_member_id,
           weapon_id = form_data.weapon_id,
-          accessory_id = form_data.accessory_id
+          accessory_id = form_data.accessory_id,
+          special_skill_id = form_data.special_skill_id
       from (
         select unnest($3::int8[]) as form_id,
                unnest($4::int8[]) as main_member_id,
                unnest($5::int8[]) as sub1_member_id,
                unnest($6::int8[]) as sub2_member_id,
                unnest($7::int8[]) as weapon_id,
-               unnest($8::int8[]) as accessory_id
+               unnest($8::int8[]) as accessory_id,
+               unnest($9::int8[]) as special_skill_id
       ) as form_data
       where user_party_forms.user_id = $1
         and user_party_forms.party_id = $2
@@ -284,6 +264,7 @@ pub async fn update_party_form(
         &params.form_info.iter().map(|f| f.sub2).collect::<Vec<_>>(),
         &params.form_info.iter().map(|f| f.weapon).collect::<Vec<_>>(),
         &params.form_info.iter().map(|f| f.acc).collect::<Vec<_>>(),
+        &params.form_info.iter().map(|f| f.special_skill.special_skill_id).collect::<Vec<_>>(),
       ],
     )
     .await
@@ -489,40 +470,11 @@ pub async fn limit_break(
     .into_iter()
     .next()
     .context("no such member")?;
-  let member_id: i64 = row.get(0);
-  let xp: i32 = row.get(1);
-  let promotion_level: i32 = row.get(2);
 
   // TODO: Consume items
   transaction.commit().await.context("failed to commit transaction")?;
 
-  let prototype = MemberPrototype::load_from_id(member_id);
-
-  let member = Member {
-    id: prototype.id as i32,
-    prototype: &prototype,
-    xp,
-    promotion_level,
-    active_skills: prototype
-      .active_skills
-      .iter()
-      .map(|skill_opt| {
-        skill_opt.as_ref().map(|skill| MemberActiveSkill {
-          prototype: skill,
-          level: 1,
-          value: skill.value.max,
-        })
-      })
-      .collect::<Vec<_>>()
-      .try_into()
-      .unwrap(),
-    stats: prototype.stats.clone(),
-    main_strength: MemberStrength::default(),
-    sub_strength: MemberStrength::default(),
-    sub_strength_bonus: MemberStrength::default(),
-    fame_stats: MemberFameStats::default(),
-    skill_pa_fame_list: vec![],
-  };
+  let member = materialize_member_row(row);
 
   let mut response = CallResponse::new_success(Box::new(LimitBreakResponse {
     newlv: member.promotion_level,

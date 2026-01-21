@@ -1,9 +1,13 @@
 use crate::api::battle::BattleMember;
 use crate::api::dungeon::{DungeonBattleMember, PartyMember};
 use crate::api::master_all::get_master_manager;
-use crate::api::{MemberFameStats, MemberParameterWire, MemberStats, SkillPaFame};
-use crate::api::party_info::PartyForm;
+use crate::api::party_info::{PartyForm, SpecialSkillInfo};
+use crate::api::{MemberFameStats, MemberParameterWire, SkillPaFame};
+use crate::database::QueryExecutor;
 use crate::level::get_member_level_calculator;
+use crate::user::id::UserId;
+use std::sync::Arc;
+use tokio_postgres::{Row, Statement};
 
 /// Member information from master data. Can be used to create new [Member] instances.
 #[derive(Debug, Clone)]
@@ -12,7 +16,8 @@ pub struct MemberPrototype {
   pub character_id: i64,
   pub rarity: i32,
   /// "Skill"
-  pub active_skills: [Option<ActiveSkillPrototype>; 3],
+  // TODO: Should it be 'struct SkillHandle(Arc<MemberPrototype>, usize)' instead of Arc?
+  pub active_skills: [Option<Arc<ActiveSkillPrototype>>; 3],
   /// "Trait"
   pub passive_skill: Option<PassiveSkillPrototype>,
   pub special_attack: Option<SpecialAttackPrototype>,
@@ -21,7 +26,7 @@ pub struct MemberPrototype {
 }
 
 impl MemberPrototype {
-  pub fn load_from_id(id: i64) -> Self {
+  pub fn load_from_id(id: i64) -> Arc<Self> {
     let masters = get_master_manager();
     let members = masters.get_master("member");
     let active_skills = masters.get_master("skill_ac_details");
@@ -52,15 +57,15 @@ impl MemberPrototype {
       member["activeskill1"]
         .as_str()
         .take_if(|s| *s != "0")
-        .map(|s| create_skill(s)),
+        .map(|s| Arc::new(create_skill(s))),
       member["activeskill2"]
         .as_str()
         .take_if(|s| *s != "0")
-        .map(|s| create_skill(s)),
+        .map(|s| Arc::new(create_skill(s))),
       member["activeskill3"]
         .as_str()
         .take_if(|s| *s != "0")
-        .map(|s| create_skill(s)),
+        .map(|s| Arc::new(create_skill(s))),
     ];
     let passive_skill = member["passiveskill"]
       .as_str()
@@ -108,7 +113,8 @@ impl MemberPrototype {
       ),
     };
 
-    Self {
+    // TODO: Caching?
+    Arc::new(Self {
       id,
       character_id,
       rarity,
@@ -117,14 +123,14 @@ impl MemberPrototype {
       special_attack,
       resistance_group,
       stats,
-    }
+    })
   }
 
   /// Creates a new [Member] instance from this prototype.
-  pub fn create_member(&self, id: i32) -> Member<'_> {
+  pub fn create_member(self: Arc<Self>, id: i32) -> Member {
     Member {
       id,
-      prototype: self,
+      prototype: self.clone(),
       xp: if self.character_id == 102 { 150_000 } else { 35_000 } * 20,
       promotion_level: 2,
       active_skills: self
@@ -132,7 +138,7 @@ impl MemberPrototype {
         .iter()
         .map(|skill_opt| {
           skill_opt.as_ref().map(|skill| MemberActiveSkill {
-            prototype: skill,
+            prototype: skill.clone(),
             level: 1,
             value: skill.value.max,
           })
@@ -140,6 +146,22 @@ impl MemberPrototype {
         .collect::<Vec<_>>()
         .try_into()
         .unwrap(),
+      stats: self.stats.clone(),
+      main_strength: MemberStrength::default(),
+      sub_strength: MemberStrength::default(),
+      sub_strength_bonus: MemberStrength::default(),
+      fame_stats: MemberFameStats::default(),
+      skill_pa_fame_list: vec![],
+    }
+  }
+
+  pub fn create_reserve_member(self: Arc<Self>, id: i32) -> Member {
+    Member {
+      id,
+      prototype: self.clone(),
+      xp: 0,
+      promotion_level: 0,
+      active_skills: [None, None, None],
       stats: self.stats.clone(),
       main_strength: MemberStrength::default(),
       sub_strength: MemberStrength::default(),
@@ -158,13 +180,13 @@ impl MemberPrototype {
 /// that determine how effective they are in battle as a Front, Back, or Sub member.
 // See [Wonder_Data_MemberParameter_Fields]
 #[derive(Debug)]
-pub struct Member<'a> {
+pub struct Member {
   pub id: i32,
-  pub prototype: &'a MemberPrototype,
+  pub prototype: Arc<MemberPrototype>,
   pub xp: i32,
   /// "Promotions"
   pub promotion_level: i32,
-  pub active_skills: [Option<MemberActiveSkill<'a>>; 3],
+  pub active_skills: [Option<MemberActiveSkill>; 3],
   pub stats: MemberStatsPrototype,
   pub main_strength: MemberStrength,
   pub sub_strength: MemberStrength,
@@ -173,7 +195,7 @@ pub struct Member<'a> {
   pub skill_pa_fame_list: Vec<SkillPaFame>,
 }
 
-impl Member<'_> {
+impl Member {
   /// ## Level
   /// Members have level cap ('member_lv_limit' master data, currently level 30 for all)
   /// based on their rarity.
@@ -282,9 +304,9 @@ impl Member<'_> {
       luck: self.stats.luck.interpolate(self.level()),
       limit_break: self.promotion_level,
       character_id: self.prototype.character_id,
-      passiveskill: 210201,  // self.prototype.passive_skill.as_ref().map_or(0, |skill| skill.id),
+      passiveskill: 210201, // self.prototype.passive_skill.as_ref().map_or(0, |skill| skill.id),
       specialattack: form.specialskill.special_skill_id as i64, // self.prototype.special_attack.as_ref().map_or(0, |skill| skill.id),
-      resist_state: 210201,  // self.prototype.resistance_group.id,
+      resist_state: 210201,                                     // self.prototype.resistance_group.id,
       resist_attr: 150000000,
       attack: self.stats.attack.interpolate(self.level()),
       ex_flg: 0,
@@ -337,8 +359,8 @@ pub struct MemberStrength {
 }
 
 #[derive(Debug)]
-pub struct MemberActiveSkill<'a> {
-  pub prototype: &'a ActiveSkillPrototype,
+pub struct MemberActiveSkill {
+  pub prototype: Arc<ActiveSkillPrototype>,
   pub level: i32,
   pub value: i32,
 }
@@ -391,5 +413,190 @@ impl MinMaxRange {
     const MAX_LEVEL: i32 = 60;
     let ratio = (level - 1) as f32 / (MAX_LEVEL - 1) as f32;
     (self.min as f32 + (self.max - self.min) as f32 * ratio).round() as i32
+  }
+}
+
+pub struct FetchUserMembers<'a> {
+  executor: QueryExecutor<'a>,
+  statement: Statement,
+}
+
+impl<'a> FetchUserMembers<'a> {
+  pub async fn new(executor: impl Into<QueryExecutor<'a>>) -> anyhow::Result<Self> {
+    let executor = executor.into();
+    Ok(Self {
+      #[rustfmt::skip]
+      statement: executor.prepare(/* language=postgresql */ r#"
+        select member_id, xp, promotion_level
+        from user_members
+        where user_id = $1
+      "#).await?,
+      executor,
+    })
+  }
+
+  pub async fn run(&self, user_id: UserId) -> anyhow::Result<Vec<Member>> {
+    let rows = self.executor.client().query(&self.statement, &[&user_id]).await?;
+    Ok(rows.into_iter().map(materialize_member_row).collect::<Vec<_>>())
+  }
+}
+
+pub struct FetchUserMembersIn<'a> {
+  executor: QueryExecutor<'a>,
+  statement: Statement,
+}
+
+impl<'a> FetchUserMembersIn<'a> {
+  pub async fn new(executor: impl Into<QueryExecutor<'a>>) -> anyhow::Result<Self> {
+    let executor = executor.into();
+    Ok(Self {
+      #[rustfmt::skip]
+      statement: executor.prepare(/* language=postgresql */ r#"
+        select member_id, xp, promotion_level
+        from user_members
+        where user_id = $1 and member_id = any($2)
+      "#).await?,
+      executor,
+    })
+  }
+
+  pub async fn run(&self, user_id: UserId, ids: &[i64]) -> anyhow::Result<Vec<Member>> {
+    let rows = self.executor.client().query(&self.statement, &[&user_id, &ids]).await?;
+    Ok(rows.into_iter().map(materialize_member_row).collect::<Vec<_>>())
+  }
+}
+
+pub fn materialize_member_row(row: Row) -> Member {
+  let member_id: i64 = row.get("member_id");
+  let xp: i32 = row.get("xp");
+  let promotion_level: i32 = row.get("promotion_level");
+
+  let prototype = MemberPrototype::load_from_id(member_id);
+  materialize_member_row_impl(member_id, xp, promotion_level, prototype)
+}
+
+pub fn materialize_member_row_impl(
+  member_id: i64,
+  xp: i32,
+  promotion_level: i32,
+  prototype: Arc<MemberPrototype>,
+) -> Member {
+  Member {
+    id: prototype.id as i32,
+    prototype: prototype.clone(),
+    xp,
+    promotion_level,
+    active_skills: prototype
+      .active_skills
+      .iter()
+      .map(|skill_opt| {
+        skill_opt.as_ref().map(|skill| MemberActiveSkill {
+          prototype: skill.clone(),
+          level: 1,
+          value: skill.value.max,
+        })
+      })
+      .collect::<Vec<_>>()
+      .try_into()
+      .unwrap(),
+    // active_skills: prototype
+    //   .active_skills
+    //   .iter()
+    //   .enumerate()
+    //   .map(|(index, prototype)| {
+    //     // TODO: Wrong
+    //     let active_skill = active_skills.get(index).unwrap();
+    //     // let skill_id = active_skill["id"].as_i64().unwrap();
+    //     let level = active_skill["level"].as_i64().unwrap() as i32;
+    //     let value = active_skill["value"].as_i64().unwrap() as i32;
+    //     Some(MemberActiveSkill {
+    //       prototype: &prototype,
+    //       level,
+    //       value,
+    //     })
+    //   })
+    //   .try_into()
+    //   .unwrap(),
+    stats: prototype.stats.clone(),
+    main_strength: MemberStrength::default(),
+    sub_strength: MemberStrength::default(),
+    sub_strength_bonus: MemberStrength::default(),
+    fame_stats: MemberFameStats::default(),
+    skill_pa_fame_list: vec![],
+  }
+}
+
+pub struct FetchUserPartyForms<'a> {
+  executor: QueryExecutor<'a>,
+  statement: Statement,
+}
+
+impl<'a> FetchUserPartyForms<'a> {
+  pub async fn new(executor: impl Into<QueryExecutor<'a>>) -> anyhow::Result<Self> {
+    let executor = executor.into();
+    Ok(Self {
+      #[rustfmt::skip]
+      statement: executor.prepare(/* language=postgresql */ r#"
+        select
+          up.party_id,
+          -- Incidentally, client expects party name to be inside each form,
+          -- which is exactly how JOIN returns it.
+          up.name,
+          upf.form_id,
+          upf.main_member_id,
+          upf.sub1_member_id,
+          upf.sub2_member_id,
+          upf.weapon_id,
+          upf.accessory_id,
+          upf.special_skill_id
+        from user_parties up
+          join user_party_forms upf
+            on up.user_id = upf.user_id and up.party_id = upf.party_id
+        where up.user_id = $1 and up.party_id = $2
+        order by upf.form_id
+      "#).await?,
+      executor,
+    })
+  }
+
+  pub async fn run(&self, user_id: UserId, party_id: i64) -> anyhow::Result<Vec<PartyForm>> {
+    let rows = self
+      .executor
+      .client()
+      .query(&self.statement, &[&user_id, &party_id])
+      .await?;
+    Ok(
+      rows
+        .into_iter()
+        .map(|row| {
+          let party_name: String = row.get("name");
+          let form_id: i64 = row.get("form_id");
+          let main_member_id: i64 = row.get("main_member_id");
+          let sub1_member_id: i64 = row.get("sub1_member_id");
+          let sub2_member_id: i64 = row.get("sub2_member_id");
+          let weapon_id: i64 = row.get("weapon_id");
+          let accessory_id: i64 = row.get("accessory_id");
+          let special_skill_id: i64 = row.get("special_skill_id");
+
+          PartyForm {
+            id: form_id as i32,
+            form_no: form_id as i32,
+            party_no: party_id as i32,
+            main: main_member_id as i32,
+            sub1: sub1_member_id as i32,
+            sub2: sub2_member_id as i32,
+            weapon: weapon_id,
+            acc: accessory_id,
+            name: party_name,
+            strength: 123,
+            specialskill: SpecialSkillInfo {
+              special_skill_id: special_skill_id as i32,
+              trial: false,
+            },
+            skill_pa_fame: 0,
+          }
+        })
+        .collect::<Vec<_>>(),
+    )
   }
 }

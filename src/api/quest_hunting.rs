@@ -1,25 +1,25 @@
 //! Hierarchy is Area (Relic Quest) -> Stage (Eris - Beginner)
 //! Reference: https://youtu.be/S9fX6sbXRHw (also shows character upgrade and promotion)
 
-use crate::AppState;
 use crate::api::battle_multi::{BattleCharacterLove, BattleClearReward, BattleMemberExp};
 use crate::api::master_all::{get_master_manager, get_masters};
+use crate::api::party_info::{Party, PartyForm, SpecialSkillInfo};
 use crate::api::smith_upgrade::{DungeonAreaMaterialInfoResponseDto, FameQuestMaterialInfoResponseDto};
-use crate::api::{RemoteDataItemType, battle, MemberFameStats};
+use crate::api::{battle, MemberFameStats, RemoteDataItemType};
 use crate::blob::IntoRemoteData;
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::item::UpdateItemCountBy;
+use crate::member::{FetchUserMembers, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
+use crate::AppState;
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tracing::{debug, warn};
-use crate::api::party_info::{Party, PartyForm, SpecialSkillInfo};
-use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 
 // See [Wonder_Api_QuesthuntinglistResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -270,22 +270,9 @@ pub async fn battle_hunting_result(
   }
   transaction.commit().await.context("failed to commit transaction")?;
 
-  #[rustfmt::skip]
-  let statement = client
-    .prepare(/* language=postgresql */ r#"
-      select
-        member_id,
-        xp,
-        promotion_level
-      from user_members
-      where user_id = $1
-    "#)
-    .await
-    .context("failed to prepare statement")?;
-  let members = client
-    .query(&statement, &[&session.user_id])
-    .await
-    .context("failed to execute query")?;
+  // TODO: We must send only members that are used in the party, otherwise hardlock occurs??
+  let fetch_members = FetchUserMembers::new(&client).await.unwrap();
+  let members = fetch_members.run(session.user_id).await.unwrap();
 
   let statement = client
     .prepare(
@@ -352,75 +339,28 @@ pub async fn battle_hunting_result(
 
   let party = Party::new(forms, params.party_id);
 
-  let members = members
+  let characters = party
+    .party_forms
     .iter()
-    .enumerate()
-    .map(|(index, row)| {
-      let member_id: i64 = row.get(0);
-      let xp: i32 = row.get(1);
-      let promotion_level: i32 = row.get(2);
-      // let active_skills: Value = row.get(3);
-      let prototype = MemberPrototype::load_from_id(member_id);
-
-      let form = party
-        .party_forms
-        .iter()
-        .find(|form| form.main as i64 == member_id)
-        .unwrap();
-      Member {
-        id: prototype.id as i32,
-        prototype: &prototype,
-        xp,
-        promotion_level,
-        active_skills: prototype
-          .active_skills
+    .map(|form| {
+      [
+        members
           .iter()
-          .map(|skill_opt| {
-            skill_opt.as_ref().map(|skill| MemberActiveSkill {
-              prototype: skill,
-              level: 1,
-              value: skill.value.max,
-            })
-          })
-          .collect::<Vec<_>>()
-          .try_into()
-          .unwrap(),
-        // active_skills: prototype
-        //   .active_skills
-        //   .iter()
-        //   .enumerate()
-        //   .map(|(index, prototype)| {
-        //     // TODO: Wrong
-        //     let active_skill = active_skills.get(index).unwrap();
-        //     // let skill_id = active_skill["id"].as_i64().unwrap();
-        //     let level = active_skill["level"].as_i64().unwrap() as i32;
-        //     let value = active_skill["value"].as_i64().unwrap() as i32;
-        //     Some(MemberActiveSkill {
-        //       prototype: &prototype,
-        //       level,
-        //       value,
-        //     })
-        //   })
-        //   .try_into()
-        //   .unwrap(),
-        stats: prototype.stats.clone(),
-        main_strength: MemberStrength::default(),
-        sub_strength: MemberStrength::default(),
-        sub_strength_bonus: MemberStrength::default(),
-        fame_stats: MemberFameStats::default(),
-        skill_pa_fame_list: vec![],
-      }
-        .to_battle_member(form)
+          .find(|member| member.id == form.main)
+          .map(|m| m.prototype.character_id),
+        members
+          .iter()
+          .find(|member| member.id == form.sub1)
+          .map(|m| m.prototype.character_id),
+        members
+          .iter()
+          .find(|member| member.id == form.sub2)
+          .map(|m| m.prototype.character_id),
+      ]
     })
+    .flatten()
+    .flatten()
     .collect::<Vec<_>>();
-
-  let characters = party.party_forms.iter().map(|form| {
-    vec![
-      members.iter().find(|member| member.member_id == form.main as i64).map(|m| m.character_id),
-      members.iter().find(|member| member.member_id == form.sub1 as i64).map(|m| m.character_id),
-      members.iter().find(|member| member.member_id == form.sub2 as i64).map(|m| m.character_id),
-    ]
-  }).flatten().flatten().collect::<Vec<_>>();
   let characters = {
     #[rustfmt::skip]
     let statement = client
@@ -454,14 +394,18 @@ pub async fn battle_hunting_result(
     lvup: 0,
     money: 42000,
     storyunlock: vec![],
-    love: characters.iter().map(|(id, intimacy)| BattleCharacterLove {
-      character_id: *id,
-      love: *intimacy + 10,
-    }).collect(),
+    love: characters
+      .iter()
+      .map(|(id, intimacy)| BattleCharacterLove {
+        character_id: *id,
+        love: *intimacy + 10,
+      })
+      .collect(),
     member_exp: members
       .iter()
       .map(|member| BattleMemberExp {
-        member_id: member.member_id,
+        // XXX: I don't know whether client wants user-id or prototype-id here
+        member_id: member.id as i64,
         exp: 230,
       })
       .collect(),

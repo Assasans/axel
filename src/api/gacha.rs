@@ -1413,7 +1413,7 @@ pub async fn gacha_assist_log() -> impl IntoHandlerResponse {
 #[derive(Debug)]
 pub struct DatabaseGachaRate {
   pub gacha_id: i64,
-  pub member: MemberPrototype,
+  pub member: Arc<MemberPrototype>,
   pub probability: Decimal,
   pub probability_pity: Option<Decimal>,
   pub is_rate_up: bool,

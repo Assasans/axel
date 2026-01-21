@@ -4,7 +4,7 @@ use crate::api::{
   RemoteDataItemType, SpSkill,
 };
 use crate::level::get_intimacy_level_calculator;
-use crate::member::{Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{FetchUserMembers, FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
 use crate::AppState;
 use anyhow::Context;
@@ -499,7 +499,11 @@ pub async fn run_login_migration(state: &AppState, session: &Session) {
       );
     }
 
-    transaction.commit().await.context("failed to commit transaction").unwrap();
+    transaction
+      .commit()
+      .await
+      .context("failed to commit transaction")
+      .unwrap();
     updated_count
   };
 
@@ -545,62 +549,8 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     .context("failed to execute query")
     .unwrap();
 
-  let members = rows
-    .iter()
-    .enumerate()
-    .map(|(index, row)| {
-      let member_id: i64 = row.get(0);
-      let xp: i32 = row.get(1);
-      let promotion_level: i32 = row.get(2);
-      // let active_skills: Value = row.get(3);
-      let prototype = MemberPrototype::load_from_id(member_id);
-
-      Member {
-        id: prototype.id as i32,
-        prototype: &prototype,
-        xp,
-        promotion_level,
-        active_skills: prototype
-          .active_skills
-          .iter()
-          .map(|skill_opt| {
-            skill_opt.as_ref().map(|skill| MemberActiveSkill {
-              prototype: skill,
-              level: 1,
-              value: skill.value.max,
-            })
-          })
-          .collect::<Vec<_>>()
-          .try_into()
-          .unwrap(),
-        // active_skills: prototype
-        //   .active_skills
-        //   .iter()
-        //   .enumerate()
-        //   .map(|(index, prototype)| {
-        //     // TODO: Wrong
-        //     let active_skill = active_skills.get(index).unwrap();
-        //     // let skill_id = active_skill["id"].as_i64().unwrap();
-        //     let level = active_skill["level"].as_i64().unwrap() as i32;
-        //     let value = active_skill["value"].as_i64().unwrap() as i32;
-        //     Some(MemberActiveSkill {
-        //       prototype: &prototype,
-        //       level,
-        //       value,
-        //     })
-        //   })
-        //   .try_into()
-        //   .unwrap(),
-        stats: prototype.stats.clone(),
-        main_strength: MemberStrength::default(),
-        sub_strength: MemberStrength::default(),
-        sub_strength_bonus: MemberStrength::default(),
-        fame_stats: MemberFameStats::default(),
-        skill_pa_fame_list: vec![],
-      }
-      .to_member_parameter_wire()
-    })
-    .collect::<Vec<_>>();
+  let fetch_members = FetchUserMembers::new(&client).await.unwrap();
+  let members = fetch_members.run(session.user_id).await.unwrap();
 
   let characters = {
     #[rustfmt::skip]
@@ -708,7 +658,7 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     .into_iter()
     .enumerate()
     // "front" - normal member; "back" - reserve member, non-playable
-    .map(|(index, member)| AddMember::new(member, "front").into_remote_data())
+    .map(|(index, member)| AddMember::new(member.to_member_parameter_wire(), "front").into_remote_data())
     .flatten()
     .collect::<Vec<_>>();
 
@@ -762,25 +712,12 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     rows
       .iter()
       .map(|row| {
-        let id: i64 = row.get(0);
-        let member_id: i64 = row.get(1);
+        let id: i64 = row.get("id");
+        let member_id: i64 = row.get("member_id");
         let prototype = MemberPrototype::load_from_id(member_id);
-        Member {
-          id: id as i32,
-          prototype: &prototype,
-          xp: 0,
-          promotion_level: 0,
-          active_skills: [None, None, None],
-          stats: prototype.stats.clone(),
-          main_strength: MemberStrength::default(),
-          sub_strength: MemberStrength::default(),
-          sub_strength_bonus: MemberStrength::default(),
-          fame_stats: MemberFameStats::default(),
-          skill_pa_fame_list: vec![],
-        }
-        .to_member_parameter_wire()
+        prototype.create_reserve_member(id as i32)
       })
-      .map(|member| AddMember::new(member, "back").into_remote_data())
+      .map(|member| AddMember::new(member.to_member_parameter_wire(), "back").into_remote_data())
       .flatten()
       .collect::<Vec<_>>()
   };
