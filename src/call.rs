@@ -71,6 +71,8 @@ impl<T: CallCustom + ?Sized> CallResponse<T> {
     }
   }
 
+  // Interestingly, sending invalid status codes (-1) does not seem to
+  // force client reload for non-retryable calls.
   pub fn new_custom(status: i32, custom: Box<T>) -> Self {
     Self {
       status,

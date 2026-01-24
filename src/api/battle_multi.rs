@@ -9,7 +9,7 @@ use crate::api::{MemberFameStats, RemoteDataItemType};
 use crate::call::CallCustom;
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
-use crate::member::{FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{FetchUserMemberSkillsIn, FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
 use crate::AppState;
 use anyhow::Context;
@@ -359,10 +359,14 @@ pub async fn marathon_multi_start(
   // We must send only members that are used in the party, otherwise hardlock occurs
   let fetch_members = FetchUserMembersIn::new(&client).await.unwrap();
   #[rustfmt::skip]
-  let members = fetch_members.run(
+  let mut members = fetch_members.run(
     session.user_id,
     &party.party_forms.iter().map(|form| form.main as i64).collect::<Vec<_>>(),
   ).await.unwrap();
+  FetchUserMemberSkillsIn::new(&client)
+    .await?
+    .run(session.user_id, &mut members.iter_mut().collect::<Vec<_>>())
+    .await?;
 
   Ok(Unsigned(MarathonMultiStartResponse {
     user_host: vec![

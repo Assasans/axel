@@ -9,7 +9,7 @@ use crate::blob::{AddItem, IntoRemoteData};
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
-use crate::member::{FetchUserMembers, FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{FetchUserMemberSkillsIn, FetchUserMembers, FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
 use crate::AppState;
 use anyhow::Context;
@@ -364,7 +364,11 @@ async fn get_team_set(state: &AppState, session: &Session, member_num: usize) ->
   let client = state.get_database_client().await?;
 
   let fetch_members = FetchUserMembers::new(&client).await.unwrap();
-  let members = fetch_members.run(session.user_id).await.unwrap();
+  let mut members = fetch_members.run(session.user_id).await.unwrap();
+  FetchUserMemberSkillsIn::new(&client)
+    .await?
+    .run(session.user_id, &mut members.iter_mut().collect::<Vec<_>>())
+    .await?;
 
   Ok(DungeonTeamSet {
     party: (1..=member_num)
@@ -461,7 +465,11 @@ pub async fn dungeon_area_challenge(
   let client = state.get_database_client().await?;
 
   let fetch_members = FetchUserMembers::new(&client).await.unwrap();
-  let members = fetch_members.run(session.user_id).await.unwrap();
+  let mut members = fetch_members.run(session.user_id).await.unwrap();
+  FetchUserMemberSkillsIn::new(&client)
+    .await?
+    .run(session.user_id, &mut members.iter_mut().collect::<Vec<_>>())
+    .await?;
 
   Ok(Unsigned(DungeonAreaChallengeResponse {
     stage_state: DungeonStageState {
@@ -548,7 +556,11 @@ pub async fn dungeon_stage_party_info(
   let client = state.get_database_client().await?;
 
   let fetch_members = FetchUserMembers::new(&client).await.unwrap();
-  let members = fetch_members.run(session.user_id).await.unwrap();
+  let mut members = fetch_members.run(session.user_id).await.unwrap();
+  FetchUserMemberSkillsIn::new(&client)
+    .await?
+    .run(session.user_id, &mut members.iter_mut().collect::<Vec<_>>())
+    .await?;
 
   Ok(Unsigned(DungeonStagePartyInfoResponse {
     party_set: DungeonPartySet {
@@ -694,7 +706,11 @@ pub async fn dungeon_battle_start(
   let client = state.get_database_client().await?;
 
   let fetch_members = FetchUserMembers::new(&client).await.unwrap();
-  let members = fetch_members.run(session.user_id).await.unwrap();
+  let mut members = fetch_members.run(session.user_id).await.unwrap();
+  FetchUserMemberSkillsIn::new(&client)
+    .await?
+    .run(session.user_id, &mut members.iter_mut().collect::<Vec<_>>())
+    .await?;
 
   Ok(Unsigned(DungeonBattleStartResponse {
     chest: "10101111,10101120,10101131".to_string(),

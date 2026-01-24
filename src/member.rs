@@ -6,6 +6,7 @@ use crate::api::{MemberFameStats, MemberParameterWire, SkillPaFame};
 use crate::database::QueryExecutor;
 use crate::level::get_member_level_calculator;
 use crate::user::id::UserId;
+use std::collections::HashMap;
 use std::sync::Arc;
 use tokio_postgres::{Row, Statement};
 
@@ -133,19 +134,21 @@ impl MemberPrototype {
       prototype: self.clone(),
       xp: if self.character_id == 102 { 150_000 } else { 35_000 } * 20,
       promotion_level: 2,
-      active_skills: self
-        .active_skills
-        .iter()
-        .map(|skill_opt| {
-          skill_opt.as_ref().map(|skill| MemberActiveSkill {
-            prototype: skill.clone(),
-            level: 1,
-            value: skill.value.max,
+      active_skills: OptionallyFetched::Fetched(
+        self
+          .active_skills
+          .iter()
+          .map(|skill_opt| {
+            skill_opt.as_ref().map(|skill| MemberActiveSkill {
+              prototype: skill.clone(),
+              level: 1,
+              value: skill.value.max,
+            })
           })
-        })
-        .collect::<Vec<_>>()
-        .try_into()
-        .unwrap(),
+          .collect::<Vec<_>>()
+          .try_into()
+          .unwrap(),
+      ),
       stats: self.stats.clone(),
       main_strength: MemberStrength::default(),
       sub_strength: MemberStrength::default(),
@@ -161,7 +164,7 @@ impl MemberPrototype {
       prototype: self.clone(),
       xp: 0,
       promotion_level: 0,
-      active_skills: [None, None, None],
+      active_skills: OptionallyFetched::Fetched([None, None, None]),
       stats: self.stats.clone(),
       main_strength: MemberStrength::default(),
       sub_strength: MemberStrength::default(),
@@ -170,6 +173,12 @@ impl MemberPrototype {
       skill_pa_fame_list: vec![],
     }
   }
+}
+
+#[derive(Debug)]
+pub enum OptionallyFetched<T> {
+  Fetched(T),
+  Unfetched,
 }
 
 /// ## Members vs Characters
@@ -181,12 +190,14 @@ impl MemberPrototype {
 // See [Wonder_Data_MemberParameter_Fields]
 #[derive(Debug)]
 pub struct Member {
+  // TODO: Should be i64, it is BIGINT in database and it being i32 just constantly
+  //  causes type-cast errors in database queries.
   pub id: i32,
   pub prototype: Arc<MemberPrototype>,
   pub xp: i32,
   /// "Promotions"
   pub promotion_level: i32,
-  pub active_skills: [Option<MemberActiveSkill>; 3],
+  pub active_skills: OptionallyFetched<[Option<MemberActiveSkill>; 3]>,
   pub stats: MemberStatsPrototype,
   pub main_strength: MemberStrength,
   pub sub_strength: MemberStrength,
@@ -208,20 +219,25 @@ impl Member {
   }
 
   pub fn to_member_parameter_wire(&self) -> MemberParameterWire {
+    let skills = match &self.active_skills {
+      OptionallyFetched::Fetched(skills) => skills,
+      OptionallyFetched::Unfetched => panic!("active skills not fetched for member {}", self.id),
+    };
+
     MemberParameterWire {
       id: self.id,
       lv: self.level(),
       exp: self.xp,
       member_id: self.prototype.id,
-      ac_skill_id_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.prototype.id),
-      ac_skill_lv_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.level),
-      ac_skill_val_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.value),
-      ac_skill_id_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.prototype.id),
-      ac_skill_lv_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.level),
-      ac_skill_val_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.value),
-      ac_skill_id_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.prototype.id),
-      ac_skill_lv_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.level),
-      ac_skill_val_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.value),
+      ac_skill_id_a: skills[0].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_a: skills[0].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_a: skills[0].as_ref().map_or(0, |skill| skill.value),
+      ac_skill_id_b: skills[1].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_b: skills[1].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_b: skills[1].as_ref().map_or(0, |skill| skill.value),
+      ac_skill_id_c: skills[2].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_c: skills[2].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_c: skills[2].as_ref().map_or(0, |skill| skill.value),
       hp: self.stats.hp.interpolate(self.level()),
       magicattack: self.stats.attack_magic.interpolate(self.level()),
       defense: self.stats.defense.interpolate(self.level()),
@@ -253,17 +269,22 @@ impl Member {
   }
 
   pub fn to_party_member(&self) -> PartyMember {
+    let skills = match &self.active_skills {
+      OptionallyFetched::Fetched(skills) => skills,
+      OptionallyFetched::Unfetched => panic!("active skills not fetched for member {}", self.id),
+    };
+
     PartyMember {
       id: self.id,
       lv: self.level(),
       exp: self.xp,
       member_id: self.prototype.id,
-      ac_skill_lv_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.level),
-      ac_skill_val_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.value as i64),
-      ac_skill_lv_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.level),
-      ac_skill_val_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.value as i64),
-      ac_skill_lv_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.level),
-      ac_skill_val_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.value as i64),
+      ac_skill_lv_a: skills[0].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_a: skills[0].as_ref().map_or(0, |skill| skill.value as i64),
+      ac_skill_lv_b: skills[1].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_b: skills[1].as_ref().map_or(0, |skill| skill.value as i64),
+      ac_skill_lv_c: skills[2].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_c: skills[2].as_ref().map_or(0, |skill| skill.value as i64),
       hp: self.stats.hp.interpolate(self.level()),
       attack: self.stats.attack.interpolate(self.level()),
       magicattack: self.stats.attack_magic.interpolate(self.level()),
@@ -281,20 +302,25 @@ impl Member {
   }
 
   pub fn to_battle_member(&self, form: &PartyForm) -> BattleMember {
+    let skills = match &self.active_skills {
+      OptionallyFetched::Fetched(skills) => skills,
+      OptionallyFetched::Unfetched => panic!("active skills not fetched for member {}", self.id),
+    };
+
     BattleMember {
       id: self.id,
       lv: self.level(),
       exp: self.xp,
       member_id: self.prototype.id,
-      ac_skill_id_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.prototype.id),
-      ac_skill_lv_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.level),
-      ac_skill_val_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.value),
-      ac_skill_id_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.prototype.id),
-      ac_skill_lv_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.level),
-      ac_skill_val_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.value),
-      ac_skill_id_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.prototype.id),
-      ac_skill_lv_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.level),
-      ac_skill_val_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.value),
+      ac_skill_id_a: skills[0].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_a: skills[0].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_a: skills[0].as_ref().map_or(0, |skill| skill.value),
+      ac_skill_id_b: skills[1].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_b: skills[1].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_b: skills[1].as_ref().map_or(0, |skill| skill.value),
+      ac_skill_id_c: skills[2].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_c: skills[2].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_c: skills[2].as_ref().map_or(0, |skill| skill.value),
       hp: self.stats.hp.interpolate(self.level()),
       magicattack: self.stats.attack_magic.interpolate(self.level()),
       defense: self.stats.defense.interpolate(self.level()),
@@ -316,20 +342,25 @@ impl Member {
   }
 
   pub fn to_dungeon_battle_member(&self) -> DungeonBattleMember {
+    let skills = match &self.active_skills {
+      OptionallyFetched::Fetched(skills) => skills,
+      OptionallyFetched::Unfetched => panic!("active skills not fetched for member {}", self.id),
+    };
+
     DungeonBattleMember {
       id: self.id,
       lv: self.level(),
       exp: self.xp,
       member_id: self.prototype.id,
-      ac_skill_id_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.prototype.id),
-      ac_skill_lv_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.level),
-      ac_skill_val_a: self.active_skills[0].as_ref().map_or(0, |skill| skill.value),
-      ac_skill_id_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.prototype.id),
-      ac_skill_lv_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.level),
-      ac_skill_val_b: self.active_skills[1].as_ref().map_or(0, |skill| skill.value),
-      ac_skill_id_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.prototype.id),
-      ac_skill_lv_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.level),
-      ac_skill_val_c: self.active_skills[2].as_ref().map_or(0, |skill| skill.value),
+      ac_skill_id_a: skills[0].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_a: skills[0].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_a: skills[0].as_ref().map_or(0, |skill| skill.value),
+      ac_skill_id_b: skills[1].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_b: skills[1].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_b: skills[1].as_ref().map_or(0, |skill| skill.value),
+      ac_skill_id_c: skills[2].as_ref().map_or(0, |skill| skill.prototype.id),
+      ac_skill_lv_c: skills[2].as_ref().map_or(0, |skill| skill.level),
+      ac_skill_val_c: skills[2].as_ref().map_or(0, |skill| skill.value),
       hp: self.stats.hp.interpolate(self.level()),
       magicattack: self.stats.attack_magic.interpolate(self.level()),
       defense: self.stats.defense.interpolate(self.level()),
@@ -486,37 +517,7 @@ pub fn materialize_member_row_impl(
     prototype: prototype.clone(),
     xp,
     promotion_level,
-    active_skills: prototype
-      .active_skills
-      .iter()
-      .map(|skill_opt| {
-        skill_opt.as_ref().map(|skill| MemberActiveSkill {
-          prototype: skill.clone(),
-          level: 1,
-          value: skill.value.max,
-        })
-      })
-      .collect::<Vec<_>>()
-      .try_into()
-      .unwrap(),
-    // active_skills: prototype
-    //   .active_skills
-    //   .iter()
-    //   .enumerate()
-    //   .map(|(index, prototype)| {
-    //     // TODO: Wrong
-    //     let active_skill = active_skills.get(index).unwrap();
-    //     // let skill_id = active_skill["id"].as_i64().unwrap();
-    //     let level = active_skill["level"].as_i64().unwrap() as i32;
-    //     let value = active_skill["value"].as_i64().unwrap() as i32;
-    //     Some(MemberActiveSkill {
-    //       prototype: &prototype,
-    //       level,
-    //       value,
-    //     })
-    //   })
-    //   .try_into()
-    //   .unwrap(),
+    active_skills: OptionallyFetched::Unfetched,
     stats: prototype.stats.clone(),
     main_strength: MemberStrength::default(),
     sub_strength: MemberStrength::default(),
@@ -598,5 +599,62 @@ impl<'a> FetchUserPartyForms<'a> {
         })
         .collect::<Vec<_>>(),
     )
+  }
+}
+
+pub struct FetchUserMemberSkillsIn<'a> {
+  executor: QueryExecutor<'a>,
+  statement: Statement,
+}
+
+impl<'a> FetchUserMemberSkillsIn<'a> {
+  pub async fn new(executor: impl Into<QueryExecutor<'a>>) -> anyhow::Result<Self> {
+    let executor = executor.into();
+    Ok(Self {
+      #[rustfmt::skip]
+      statement: executor.prepare(/* language=postgresql */ r#"
+        select member_id, skill_id, level
+        from user_member_skills
+        where user_id = $1 and member_id = any($2)
+      "#).await?,
+      executor,
+    })
+  }
+
+  pub async fn run(&self, user_id: UserId, members: &mut [&mut Member]) -> anyhow::Result<()> {
+    let member_ids: Vec<i64> = members.iter().map(|member| member.prototype.id).collect();
+    let rows = self
+      .executor
+      .client()
+      .query(&self.statement, &[&user_id, &member_ids])
+      .await?;
+
+    let mut skills = HashMap::new();
+    for row in rows {
+      let member_id: i64 = row.get("member_id");
+      let skill_id: i64 = row.get("skill_id");
+      let level: i32 = row.get("level");
+      skills.entry(member_id).or_insert_with(Vec::new).push((skill_id, level));
+    }
+
+    for member in members.iter_mut() {
+      if let Some(member_skills) = skills.get(&member.prototype.id) {
+        let mut active_skills_array: [Option<MemberActiveSkill>; 3] = [None, None, None];
+        for (skill_id, level) in member_skills {
+          for (index, prototype) in member.prototype.active_skills.iter().flatten().enumerate() {
+            if prototype.id == *skill_id {
+              active_skills_array[index] = Some(MemberActiveSkill {
+                prototype: prototype.clone(),
+                level: *level,
+                value: prototype.value.max, // TODO: Calculate actual value based on level
+              });
+            }
+          }
+        }
+        member.active_skills = OptionallyFetched::Fetched(active_skills_array);
+      }
+    }
+
+    Ok(())
   }
 }

@@ -253,6 +253,7 @@ pub async fn login(state: Arc<AppState>, Params(params): Params<LoginRequestRequ
     // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], [_infoButton], boolean
     NotificationData::new(1, 7, 1, 1, "".to_string(), "".to_string()),
     // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], seems to be fallback if [1] is not present
+    // [Wonder.Util.NotificationAnnounceUtil$$ShouldShowUserNews] checks for it
     NotificationData::new(1, 7, 25, 1, "".to_string(), "".to_string()),
     // See [Wonder.UI.Mypage.MyPageScreen$$UpdateBadgeAll], [_presentButton], counted
     NotificationData::new(1, 7, 2, 1, "".to_string(), "".to_string()),
@@ -278,6 +279,9 @@ pub async fn login(state: Arc<AppState>, Params(params): Params<LoginRequestRequ
     NotificationData::new(1, 7, 46, 1, "".to_string(), "".to_string()),
 
     // See [Wonder.UI.Mypage.MyPageScreen$$IsMenuBadgeOn] for conditions to show "Home" button badge
+    // See [Wonder.Util.CharacterUtil._OpenCharacterRankUpIfNeed_d__5$$MoveNext] for notification list type 39
+    // See [Wonder.Util.NotificationAnnounceUtil$$ShouldShowInformation] for notification list (15, 1)
+    // See [Wonder.Util.NotificationAnnounceUtil$$ShouldShowAdvertisement] for notification (15, 2)
 
     FriendGreetingNotify::new({
       let hash = BUILD_INFO.git_hash.chars().take(8).collect();

@@ -9,7 +9,9 @@ use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::item::UpdateItemCountBy;
-use crate::member::{FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{
+  FetchUserMemberSkillsIn, FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype, MemberStrength,
+};
 use crate::notification::{IntoNotificationData, MissionDone};
 use crate::user::session::Session;
 use crate::AppState;
@@ -168,10 +170,14 @@ pub async fn make_battle_start(state: &AppState, session: &Session, party_id: i3
   // We must send only members that are used in the party, otherwise hardlock occurs
   let fetch_members = FetchUserMembersIn::new(&client).await.unwrap();
   #[rustfmt::skip]
-  let members = fetch_members.run(
+  let mut members = fetch_members.run(
     session.user_id,
     &party.party_forms.iter().map(|form| form.main as i64).collect::<Vec<_>>(),
   ).await.unwrap();
+  FetchUserMemberSkillsIn::new(&client)
+    .await?
+    .run(session.user_id, &mut members.iter_mut().collect::<Vec<_>>())
+    .await?;
 
   let mut response = CallResponse::new_success(Box::new(BattleStartResponse {
     chest: "10101111,10101120,10101131".to_owned(),

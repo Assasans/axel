@@ -5,7 +5,7 @@ use crate::api::surprise::BasicBattlePartyForm;
 use crate::api::MemberFameStats;
 use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Signed};
-use crate::member::{FetchUserMembers, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{FetchUserMemberSkillsIn, FetchUserMembers, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
 use crate::AppState;
 use anyhow::Context;
@@ -186,7 +186,11 @@ pub async fn party_info(state: Arc<AppState>, session: Arc<Session>) -> impl Int
   let client = state.get_database_client().await?;
 
   let fetch_members = FetchUserMembers::new(&client).await.unwrap();
-  let members = fetch_members.run(session.user_id).await.unwrap();
+  let mut members = fetch_members.run(session.user_id).await.unwrap();
+  FetchUserMemberSkillsIn::new(&client)
+    .await?
+    .run(session.user_id, &mut members.iter_mut().collect::<Vec<_>>())
+    .await?;
 
   let statement = client
     .prepare(

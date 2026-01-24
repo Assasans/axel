@@ -1,14 +1,15 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use std::sync::Arc;
 
 use anyhow::Context;
+use rand::seq::IndexedMutRandom;
 use serde::{Deserialize, Serialize};
 use tracing::{debug, info, warn};
 
 use crate::api::dungeon::{PartyAccessory, PartyMember, PartyWeapon};
 use crate::api::master_all::get_master_manager;
 use crate::api::party_info::{party_info, Party};
-use crate::api::{ApiRequest, MemberFameStats, RemoteDataItemType};
+use crate::api::{ApiRequest, MemberFameStats, NotificationData, RemoteDataItemType};
 use crate::blob::{IntoRemoteData, UpdateMember};
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
@@ -16,7 +17,8 @@ use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::item::UpdateItemCountBy;
 use crate::level::get_member_level_calculator;
 use crate::member::{
-  materialize_member_row, materialize_member_row_impl, Member, MemberActiveSkill, MemberPrototype, MemberStrength,
+  materialize_member_row, materialize_member_row_impl, FetchUserMemberSkillsIn, FetchUserMembersIn, Member, MemberActiveSkill,
+  MemberPrototype, MemberStrength, OptionallyFetched,
 };
 use crate::user::session::Session;
 use crate::AppState;
@@ -143,7 +145,11 @@ pub async fn grade_up(
     .context("failed to update user member xp")?;
   debug!(member_id, ?new_xp, "updated member xp in database");
 
-  let member = materialize_member_row_impl(member_id, new_xp, promotion_level, prototype);
+  let mut member = materialize_member_row_impl(member_id, new_xp, promotion_level, prototype);
+  FetchUserMemberSkillsIn::new(&transaction)
+    .await?
+    .run(session.user_id, &mut [&mut member])
+    .await?;
 
   // Update used items
   // TODO: This does not check if the user has enough potions
@@ -264,7 +270,11 @@ pub async fn update_party_form(
         &params.form_info.iter().map(|f| f.sub2).collect::<Vec<_>>(),
         &params.form_info.iter().map(|f| f.weapon).collect::<Vec<_>>(),
         &params.form_info.iter().map(|f| f.acc).collect::<Vec<_>>(),
-        &params.form_info.iter().map(|f| f.special_skill.special_skill_id).collect::<Vec<_>>(),
+        &params
+          .form_info
+          .iter()
+          .map(|f| f.special_skill.special_skill_id)
+          .collect::<Vec<_>>(),
       ],
     )
     .await
@@ -474,7 +484,11 @@ pub async fn limit_break(
   // TODO: Consume items
   transaction.commit().await.context("failed to commit transaction")?;
 
-  let member = materialize_member_row(row);
+  let mut member = materialize_member_row(row);
+  FetchUserMemberSkillsIn::new(&client)
+    .await?
+    .run(session.user_id, &mut [&mut member])
+    .await?;
 
   let mut response = CallResponse::new_success(Box::new(LimitBreakResponse {
     newlv: member.promotion_level,
@@ -501,14 +515,17 @@ pub struct MemberSkillLevelUp {
   pub lvup: i32,
 }
 
+// See [Wonder_Api_MemberskillupRequest_Fields]
 // body={"user_member_id": "1004100", "type": "0", "num": "1"}
 #[derive(Debug, Deserialize)]
 pub struct MemberSkillUpRequest {
   // [user_*] fields reference [unique_id], in our case it always same as master [member_id].
   pub user_member_id: i64,
+  // 0 - reserve members (3x), 1 - skill potions (1x)
   #[serde(rename = "type")]
   pub kind: i32,
-  pub num: i32,
+  #[serde(rename = "num")]
+  pub amount: i32,
 }
 
 // Reference: https://youtu.be/2zcAVWr9u4k
@@ -517,20 +534,98 @@ pub async fn member_skill_up(
   session: Arc<Session>,
   Params(params): Params<MemberSkillUpRequest>,
 ) -> impl IntoHandlerResponse {
-  warn!(?params, "encountered stub: member_skill_up");
+  let rolls = params.amount
+    * match params.kind {
+      0 => 3, // reserve members
+      1 => 1, // skill potions
+      _ => todo!("unknown member skill up kind {}", params.kind),
+    };
 
-  let members = get_master_manager().get_master("member");
-  let member = members
+  let mut client = state.get_database_client().await?;
+  let fetch_members = FetchUserMembersIn::new(&client).await?;
+  let mut member = fetch_members
+    .run(session.user_id, &[params.user_member_id])
+    .await?
+    .into_iter()
+    .next()
+    .context("member not found")?;
+  FetchUserMemberSkillsIn::new(&client)
+    .await?
+    .run(session.user_id, &mut [&mut member])
+    .await?;
+
+  let skills = match &mut member.active_skills {
+    OptionallyFetched::Fetched(skills) => skills,
+    OptionallyFetched::Unfetched => panic!("active skills not fetched for member {}", member.id),
+  };
+
+  let mut transaction = client.transaction().await.context("failed to start transaction")?;
+  #[rustfmt::skip]
+  let statement = transaction
+    .prepare(/* language=postgresql */ r#"
+      update user_member_skills
+      set level = $4
+      where user_id = $1 and member_id = $2 and skill_id = $3
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+
+  // Take random skill with level < 5 and upgrade it
+  let mut upgrades = HashMap::new();
+  for roll in 0..rolls {
+    let mut upgradable_skills = skills.iter_mut().flatten().filter(|s| s.level < 5).collect::<Vec<_>>();
+    if upgradable_skills.is_empty() {
+      debug!(?roll, "no more upgradable skills for member {}", member.id);
+      break;
+    }
+
+    let skill_to_upgrade = upgradable_skills.choose_mut(&mut rand::rng()).unwrap();
+    skill_to_upgrade.level += 1;
+    upgrades
+      .entry(skill_to_upgrade.prototype.id)
+      .and_modify(|new_levels| *new_levels += 1)
+      .or_insert(1);
+    transaction
+      .execute(
+        &statement,
+        &[
+          &session.user_id,
+          &(member.id as i64),
+          &skill_to_upgrade.prototype.id,
+          &skill_to_upgrade.level,
+        ],
+      )
+      .await
+      .context("failed to update member skill level")?;
+
+    debug!(
+      ?roll,
+      skill_id = ?skill_to_upgrade.prototype.id,
+      new_level = ?skill_to_upgrade.level,
+      "upgraded member skill"
+    );
+  }
+
+  transaction.commit().await.context("failed to commit transaction")?;
+
+  // Map skill IDs to client indices, 1 is rightmost skill, 3 is leftmost.
+  // Indices are same as in Member.active_skills vector.
+  // TODO: This is some weird code, should refactor later...
+  let skill_levels: Vec<MemberSkillLevelUp> = skills
     .iter()
-    .find(|member| member["id"].as_str().unwrap().parse::<i64>().unwrap() == params.user_member_id)
-    .unwrap();
+    .enumerate()
+    .map(|(i, skill_opt)| {
+      let skill = skill_opt.as_ref().unwrap();
+      MemberSkillLevelUp {
+        skill: (skills.len() - i) as i32,
+        lvup: *upgrades.get(&skill.prototype.id).unwrap_or(&0),
+      }
+    })
+    .filter(|s| s.lvup > 0)
+    .collect();
 
-  let mut response = CallResponse::new_success(Box::new(MemberSkillUpResponse {
-    skill_levels: vec![
-      MemberSkillLevelUp { skill: 1, lvup: 1 },
-      MemberSkillLevelUp { skill: 2, lvup: 1 },
-      MemberSkillLevelUp { skill: 3, lvup: 1 },
-    ],
-  }));
+  let mut response = CallResponse::new_success(Box::new(MemberSkillUpResponse { skill_levels }));
+  response.add_remote_data(UpdateMember::new(member.to_member_parameter_wire()).into_remote_data());
+
   Ok(Unsigned(response))
 }

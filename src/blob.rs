@@ -4,11 +4,14 @@ use crate::api::{
   RemoteDataItemType, SpSkill,
 };
 use crate::level::get_intimacy_level_calculator;
-use crate::member::{FetchUserMembers, FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{
+  FetchUserMemberSkillsIn, FetchUserMembers, FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype,
+  MemberStrength,
+};
 use crate::user::session::Session;
 use crate::AppState;
 use anyhow::Context;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use tracing::{debug, info, trace, warn};
 
 pub async fn run_login_migration(state: &AppState, session: &Session) {
@@ -507,6 +510,100 @@ pub async fn run_login_migration(state: &AppState, session: &Session) {
     updated_count
   };
 
+  let member_skills_updated = {
+    // For each user member, get MemberPrototype and insert missing active skills
+    let fetch_members = FetchUserMembers::new(&client).await.unwrap();
+    let members = fetch_members.run(session.user_id).await.unwrap();
+
+    let existing_skills: HashSet<(i64, i64)> = {
+      #[rustfmt::skip]
+      let statement = client
+        .prepare(/* language=postgresql */ r#"
+          select member_id, skill_id
+          from user_member_skills
+          where user_id = $1
+        "#)
+        .await
+        .context("failed to prepare statement")
+        .unwrap();
+      let rows = client
+        .query(&statement, &[&session.user_id])
+        .await
+        .context("failed to execute query")
+        .unwrap();
+      let mut set = HashSet::new();
+      for row in rows.iter() {
+        let member_id: i64 = row.get("member_id");
+        let skill_id: i64 = row.get("skill_id");
+        set.insert((member_id, skill_id));
+      }
+      set
+    };
+
+    let mut total_inserted = 0;
+    // COPY FROM
+    let transaction = client
+      .transaction()
+      .await
+      .context("failed to start transaction")
+      .unwrap();
+    if members.is_empty() {
+      trace!("no members found for user, skipping member skills migration");
+    } else {
+      #[rustfmt::skip]
+      let copy_statement = transaction
+        .prepare(/* language=postgresql */ r#"
+          copy user_member_skills (user_id, member_id, skill_id, level)
+          from stdin with (format binary)
+        "#)
+        .await
+        .context("failed to prepare COPY statement")
+        .unwrap();
+
+      let sink = transaction
+        .copy_in(&copy_statement)
+        .await
+        .context("failed to start COPY")
+        .unwrap();
+
+      let writer = tokio_postgres::binary_copy::BinaryCopyInWriter::new(
+        sink,
+        &[
+          tokio_postgres::types::Type::INT8, // user_id
+          tokio_postgres::types::Type::INT8, // member_id
+          tokio_postgres::types::Type::INT8, // skill_id
+          tokio_postgres::types::Type::INT4, // level
+        ],
+      );
+
+      tokio::pin!(writer);
+
+      for member in members.iter() {
+        // .flatten() to skip None skills
+        for skill in member.prototype.active_skills.iter().flatten() {
+          if !existing_skills.contains(&(member.id as i64, skill.id)) {
+            writer
+              .as_mut()
+              .write(&[&session.user_id, &(member.id as i64), &skill.id, &1i32])
+              .await
+              .context("failed to write row")
+              .unwrap();
+            total_inserted += 1;
+          }
+        }
+      }
+
+      writer.finish().await.context("failed to finish COPY").unwrap();
+    }
+    transaction
+      .commit()
+      .await
+      .context("failed to commit transaction")
+      .unwrap();
+
+    total_inserted
+  };
+
   info!(
     ?characters_updated,
     ?members_updated,
@@ -516,6 +613,7 @@ pub async fn run_login_migration(state: &AppState, session: &Session) {
     ?items_equipment_updated,
     ?character_skills_updated,
     ?party_form_skills_updated,
+    ?member_skills_updated,
     "login migration executed"
   );
 }
@@ -550,7 +648,13 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     .unwrap();
 
   let fetch_members = FetchUserMembers::new(&client).await.unwrap();
-  let members = fetch_members.run(session.user_id).await.unwrap();
+  let mut members = fetch_members.run(session.user_id).await.unwrap();
+  FetchUserMemberSkillsIn::new(&client)
+    .await
+    .unwrap()
+    .run(session.user_id, &mut members.iter_mut().collect::<Vec<_>>())
+    .await
+    .unwrap();
 
   let characters = {
     #[rustfmt::skip]

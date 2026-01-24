@@ -391,6 +391,8 @@ impl RemoteData {
 #[derive(Debug, Serialize)]
 pub struct NotificationData {
   pub cmd: i32,
+  // 7 - badges, see [Wonder.Util.NotificationDataSet$$ClearBadge]
+  // [Wonder.Util.NotificationDataSet$$GetList(type)]
   #[serde(rename = "type")]
   pub kind: i32,
   pub key: i32,
