@@ -30,12 +30,13 @@ pub struct CaptureSendRequest {
   pub capture: String,
 }
 
-// Well... capture = base64(json(base64(gzip(json(json(TutorialData) + json(UserLocalSettings))))))
-// It seems to be a telemetry endpoint without API side effects.
+// Used for transferring local settings, see [Wonder.DataService.DataMigrationService$$SendLocalSaveData].
+// Consumed by [id_login].
 pub async fn capture_send(
   session: Arc<Session>,
   Params(params): Params<CaptureSendRequest>,
 ) -> impl IntoHandlerResponse {
+  // Well... capture = base64(json(base64(gzip(json(json(TutorialData) + json(UserLocalSettings))))))
   let capture = BASE64_STANDARD_NO_PAD
     .decode(params.capture)
     .expect("failed to decode capture from base64");

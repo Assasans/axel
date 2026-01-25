@@ -35,6 +35,11 @@ pub async fn id_confirm(Params(params): Params<IdConfirmRequest>) -> impl IntoHa
   })
 }
 
+#[derive(Debug, Deserialize)]
+pub struct PrepareSetMigrationRequest {
+  pub uuid: String,
+}
+
 #[derive(Debug, Serialize)]
 pub struct PrepareSetMigration {
   pub user_key: String,
@@ -42,17 +47,12 @@ pub struct PrepareSetMigration {
 
 impl CallCustom for PrepareSetMigration {}
 
-// TODO: uuid is sent, but server session may not exist yet
-//  > failed to extract parameter: No session available
-pub async fn prepare_set_migration(session: Arc<Session>) -> impl IntoHandlerResponse {
-  warn!("encountered stub: prepare_set_migration");
+pub async fn prepare_set_migration(Params(params): Params<PrepareSetMigrationRequest>) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: prepare_set_migration");
 
-  Signed(
-    PrepareSetMigration {
-      user_key: "ffffffffffffffffffffffffffffffee".to_string(),
-    },
-    session,
-  )
+  Unsigned(PrepareSetMigration {
+    user_key: "ffffffffffffffffffffffffffffffee".to_string(),
+  })
 }
 
 // See [Wonder_Api_NewidcheckResponseDto_Fields]
