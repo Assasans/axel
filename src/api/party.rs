@@ -364,11 +364,18 @@ pub async fn party_change_list(
 ) -> impl IntoHandlerResponse {
   warn!(?params, "encountered stub: party_change_list");
 
+  let assists = get_master_manager().get_master("assist_details");
+
   Ok(Unsigned(PartychangelistResponseDto {
     members: vec![],
     weapons: vec![],
     accessories: vec![],
-    assists: vec![ChangeListPartyAssist { id: 1134410001 }],
+    assists: assists
+      .iter()
+      .map(|assist| ChangeListPartyAssist {
+        id: assist["id"].as_str().unwrap().parse::<i64>().unwrap(),
+      })
+      .collect(),
   }))
 }
 

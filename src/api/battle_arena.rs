@@ -7,7 +7,7 @@ use crate::api::{MemberFameStats, NotificationData, RemoteDataItemType};
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
-use crate::member::{FetchUserMembers, FetchUserMembersIn, FetchUserParty, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{FetchUserMemberSkillsIn, FetchUserMembers, FetchUserMembersIn, FetchUserParty, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
 use crate::AppState;
 use anyhow::Context;
@@ -258,10 +258,16 @@ pub async fn score_challenge_start(
   // We must send only members that are used in the party, otherwise hardlock occurs
   let fetch_members = FetchUserMembersIn::new(&client).await.unwrap();
   #[rustfmt::skip]
-  let members = fetch_members.run(
+  let mut members = fetch_members.run(
     session.user_id,
     &party.party_forms.iter().map(|form| form.main as i64).collect::<Vec<_>>(),
   ).await.unwrap();
+  FetchUserMemberSkillsIn::new(&client)
+    .await
+    .unwrap()
+    .run(session.user_id, &mut members.iter_mut().collect::<Vec<_>>())
+    .await
+    .unwrap();
 
   Ok(Unsigned(ScoreChallengeStartResponse {
     party: party.to_battle_party(),
@@ -319,8 +325,16 @@ pub async fn score_challenge_result(
   state: Arc<AppState>,
   session: Arc<Session>,
   Params(params): Params<ScoreChallengeResultRequest>,
-) -> impl IntoHandlerResponse {
+) -> anyhow::Result<impl IntoHandlerResponse> {
   warn!(?params, "encountered stub: score_challenge_result");
+
+  let client = state.get_database_client().await?;
+  let score = (params.score ^ params.seed) as i32;
+  if score != params.original_score {
+    warn!("score challenge result score verification failed: decrypted score {} does not match original score {}", score, params.original_score);
+  }
+
+  // TODO: Take snapshot of party
 
   Ok(Unsigned(ScoreChallengeResultResponse {
     challengenum: 1,
@@ -343,14 +357,6 @@ pub async fn score_challenge_result(
 
 // See [Wonder_Api_ScorechallengeMissionResponseDto_Fields]
 #[derive(Debug, Serialize)]
-/*
-
-struct Wonder_Api_ScorechallengeMissionResponseDto_Fields : Wonder_Api_ResponseDtoBase_Fields {
-  int32_t status;
-  struct System_Collections_Generic_List_ScorechallengeMissionBestScoreInfoResponseDto__o* best_score_info;
-  struct System_Collections_Generic_List_ScorechallengeMissionDisplayBestScoreInfoResponseDto__o* display_best_score_info;
-};
- */
 pub struct ScoreChallengeMissionResponse {
   pub best_score_info: Vec<ScoreChallengeMissionBestScoreInfo>,
   pub display_best_score_info: Vec<ScoreChallengeMissionDisplayBestScoreInfo>,

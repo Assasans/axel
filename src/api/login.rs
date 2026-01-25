@@ -18,7 +18,7 @@ use crate::notification::{FriendGreetingNotify, IntoNotificationData};
 use crate::user::id::UserId;
 use crate::user::session::Session;
 use crate::user::uuid::UserUuid;
-use crate::{AppState, blob};
+use crate::{AppState, blob, migrations};
 
 // See [Wonder_Api_LoginInfoResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -61,7 +61,7 @@ pub async fn login(state: Arc<AppState>, Params(params): Params<LoginRequestRequ
   let uuid = params.uuid.parse::<UserUuid>().unwrap();
   debug!("{:?}", uuid);
 
-  let client = state.pool.get().await.context("failed to get database connection")?;
+  let mut client = state.pool.get().await.context("failed to get database connection")?;
   #[rustfmt::skip]
   let statement = client
     .prepare(/* language=postgresql */ r#"
@@ -187,7 +187,7 @@ pub async fn login(state: Arc<AppState>, Params(params): Params<LoginRequestRequ
     created_at: created_at.format("%Y-%m-%d %H:%M:%S").to_string(),
   }));
 
-  blob::run_login_migration(&state, &session).await;
+  migrations::run_migrations(&session, &mut client).await;
 
   response.add_remote_data(blob::get_login_remote_data(&state, &session).await);
   response.add_notifications(vec![

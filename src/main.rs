@@ -15,6 +15,7 @@ pub mod item;
 pub mod level;
 pub mod master;
 pub mod member;
+pub mod migrations;
 pub mod normalize_path;
 pub mod notification;
 pub mod params_deserializer;
