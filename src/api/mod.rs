@@ -108,6 +108,9 @@ pub enum RemoteDataItemType {
   DreamTicket,
   // See [Wonder.UI.Mypage.MyPageScreen$$IsCampaignBoxGachaBadgeOn]
   CampaignTicket,
+  // See [Wonder.UI.Assist.AssistGachaResultWindow._ShowPoweUpEffect_d__29$$MoveNext] and [Wonder.Util.UserParam$$GetAssistByAssistId]
+  /// Requires assist_details unique-id
+  Assist,
   AssistTicket,
   AssistMaterial,
   DungeonRedraw,
@@ -155,8 +158,7 @@ impl From<RemoteDataItemType> for i32 {
       RemoteDataItemType::CampaignTicket => 32,
       RemoteDataItemType::GachaTicket => 33,
       RemoteDataItemType::DungeonChallenge => 34,
-      // TODO: 35 - assist detail id - requires uniqid
-      // See [Wonder.UI.Assist.AssistGachaResultWindow._ShowPoweUpEffect_d__29$$MoveNext] and [Wonder.Util.UserParam$$GetAssistByAssistId]
+      RemoteDataItemType::Assist => 35,
       RemoteDataItemType::AssistTicket => 36,
       RemoteDataItemType::AssistMaterial => 37,
       RemoteDataItemType::DungeonRedraw => 38,
@@ -205,7 +207,7 @@ impl From<i32> for RemoteDataItemType {
       32 => RemoteDataItemType::CampaignTicket,
       33 => RemoteDataItemType::GachaTicket,
       34 => RemoteDataItemType::DungeonChallenge,
-      35 => RemoteDataItemType::Another(35), // TODO: 35 - assist detail id - requires uniqid
+      35 => RemoteDataItemType::Assist,
       36 => RemoteDataItemType::AssistTicket,
       37 => RemoteDataItemType::AssistMaterial,
       38 => RemoteDataItemType::DungeonRedraw,

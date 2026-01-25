@@ -94,6 +94,7 @@ pub struct DungeonPartySet {
 
 // See [Wonder_Api_PartyinfoMembersResponseDto_Fields]
 // Extended by [Wonder_Api_DungeonPartyMembersResponseDto_Fields]
+// See [Wonder_Api_PartychangeMembersResponseDto_Fields]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PartyMember {
   pub id: i32,
@@ -123,6 +124,7 @@ pub struct PartyMember {
 
 // See [Wonder_Api_PartyinfoWeaponsResponseDto_Fields]
 // Extended by [Wonder_Api_DungeonPartyWeaponsResponseDto_Fields]
+// See [Wonder_Api_PartychangeWeaponsResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct PartyWeapon {
   pub id: i64,
@@ -133,6 +135,7 @@ pub struct PartyWeapon {
 // See [Wonder_Api_PartyinfoAccessoriesResponseDto_Fields]
 // See [Wonder_Api_DungeonPartyAccessoriesResponseDto_Fields]
 // See [Wonder_Api_PartychangelistAccessoriesResponseDto_Fields]
+// See [Wonder_Api_PartychangeAccessoriesResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct PartyAccessory {
   pub id: i64,

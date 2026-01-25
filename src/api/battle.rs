@@ -10,7 +10,8 @@ use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::item::UpdateItemCountBy;
 use crate::member::{
-  FetchUserMemberSkillsIn, FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype, MemberStrength,
+  FetchUserMemberSkillsIn, FetchUserMembersIn, FetchUserParty, Member, MemberActiveSkill, MemberPrototype,
+  MemberStrength,
 };
 use crate::notification::{IntoNotificationData, MissionDone};
 use crate::user::session::Session;
@@ -101,79 +102,17 @@ pub async fn make_battle_start(state: &AppState, session: &Session, party_id: i3
     .get_database_client()
     .await
     .context("failed to get database connection")?;
-
-  let statement = client
-    .prepare(
-      /* language=postgresql */
-      r#"
-      select
-        up.party_id,
-        -- Incidentally, client expects party name to be inside each form,
-        -- which is exactly how JOIN returns it.
-        up.name,
-        upf.form_id,
-        upf.main_member_id,
-        upf.sub1_member_id,
-        upf.sub2_member_id,
-        upf.weapon_id,
-        upf.accessory_id,
-        upf.special_skill_id
-      from user_parties up
-        join user_party_forms upf
-          on up.user_id = upf.user_id and up.party_id = upf.party_id
-      where up.user_id = $1 and up.party_id = $2
-      order by upf.form_id
-    "#,
-    )
-    .await
-    .context("failed to prepare statement")?;
-  let forms = client
-    .query(&statement, &[&session.user_id, &(party_id as i64)])
-    .await
-    .context("failed to execute query")?;
-  let forms = forms
-    .into_iter()
-    .map(|row| {
-      let party_name: String = row.get(1);
-      let form_id: i64 = row.get(2);
-      let main_member_id: i64 = row.get(3);
-      let sub1_member_id: i64 = row.get(4);
-      let sub2_member_id: i64 = row.get(5);
-      let weapon_id: i64 = row.get(6);
-      let accessory_id: i64 = row.get(7);
-      let special_skill_id: i64 = row.get(8);
-
-      PartyForm {
-        id: form_id as i32,
-        form_no: form_id as i32,
-        party_no: party_id,
-        main: main_member_id as i32,
-        sub1: sub1_member_id as i32,
-        sub2: sub2_member_id as i32,
-        weapon: weapon_id,
-        acc: accessory_id,
-        name: party_name,
-        strength: 123,
-        specialskill: SpecialSkillInfo {
-          special_skill_id: special_skill_id as i32,
-          trial: false,
-        },
-        skill_pa_fame: 0,
-      }
-    })
-    .collect::<Vec<_>>()
-    .try_into()
-    .unwrap();
-
-  let party = Party::new(forms, party_id);
+  let party = FetchUserParty::new(&client)
+    .await?
+    .run(session.user_id, party_id as i64)
+    .await?;
 
   // We must send only members that are used in the party, otherwise hardlock occurs
-  let fetch_members = FetchUserMembersIn::new(&client).await.unwrap();
   #[rustfmt::skip]
-  let mut members = fetch_members.run(
-    session.user_id,
-    &party.party_forms.iter().map(|form| form.main as i64).collect::<Vec<_>>(),
-  ).await.unwrap();
+  let mut members = FetchUserMembersIn::new(&client)
+    .await?
+    .run(session.user_id, &party.party_forms.iter().map(|form| form.main as i64).collect::<Vec<_>>())
+    .await?;
   FetchUserMemberSkillsIn::new(&client)
     .await?
     .run(session.user_id, &mut members.iter_mut().collect::<Vec<_>>())
@@ -374,78 +313,17 @@ pub async fn battle_result(
   }
   transaction.commit().await.context("failed to commit transaction")?;
 
-  let statement = client
-    .prepare(
-      /* language=postgresql */
-      r#"
-      select
-        up.party_id,
-        -- Incidentally, client expects party name to be inside each form,
-        -- which is exactly how JOIN returns it.
-        up.name,
-        upf.form_id,
-        upf.main_member_id,
-        upf.sub1_member_id,
-        upf.sub2_member_id,
-        upf.weapon_id,
-        upf.accessory_id,
-        upf.special_skill_id
-      from user_parties up
-        join user_party_forms upf
-          on up.user_id = upf.user_id and up.party_id = upf.party_id
-      where up.user_id = $1 and up.party_id = $2
-      order by upf.form_id
-    "#,
-    )
-    .await
-    .context("failed to prepare statement")?;
-  let forms = client
-    .query(&statement, &[&session.user_id, &(params.party_id as i64)])
-    .await
-    .context("failed to execute query")?;
-  let forms = forms
-    .into_iter()
-    .map(|row| {
-      let party_name: String = row.get(1);
-      let form_id: i64 = row.get(2);
-      let main_member_id: i64 = row.get(3);
-      let sub1_member_id: i64 = row.get(4);
-      let sub2_member_id: i64 = row.get(5);
-      let weapon_id: i64 = row.get(6);
-      let accessory_id: i64 = row.get(7);
-      let special_skill_id: i64 = row.get(8);
-
-      PartyForm {
-        id: form_id as i32,
-        form_no: form_id as i32,
-        party_no: params.party_id,
-        main: main_member_id as i32,
-        sub1: sub1_member_id as i32,
-        sub2: sub2_member_id as i32,
-        weapon: weapon_id,
-        acc: accessory_id,
-        name: party_name,
-        strength: 123,
-        specialskill: SpecialSkillInfo {
-          special_skill_id: special_skill_id as i32,
-          trial: false,
-        },
-        skill_pa_fame: 0,
-      }
-    })
-    .collect::<Vec<_>>()
-    .try_into()
-    .unwrap();
-
-  let party = Party::new(forms, params.party_id);
+  let party = FetchUserParty::new(&client)
+    .await?
+    .run(session.user_id, params.party_id as i64)
+    .await?;
 
   // We must send only members that are used in the party, otherwise hardlock occurs
-  let fetch_members = FetchUserMembersIn::new(&client).await.unwrap();
   #[rustfmt::skip]
-  let members = fetch_members.run(
-    session.user_id,
-    &party.party_forms.iter().map(|form| form.main as i64).collect::<Vec<_>>(),
-  ).await.unwrap();
+  let members = FetchUserMembersIn::new(&client)
+    .await?
+    .run(session.user_id, &party.party_forms.iter().map(|form| form.main as i64).collect::<Vec<_>>())
+    .await?;
 
   let characters = party
     .party_forms

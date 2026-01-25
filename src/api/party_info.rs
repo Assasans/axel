@@ -2,14 +2,11 @@ use crate::api::battle::BattleParty;
 use crate::api::dungeon::PartyMember;
 use crate::api::party::PartyWire;
 use crate::api::surprise::BasicBattlePartyForm;
-use crate::api::MemberFameStats;
 use crate::call::CallCustom;
 use crate::handler::{IntoHandlerResponse, Signed};
-use crate::member::{FetchUserMemberSkillsIn, FetchUserMembers, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{FetchUserMemberSkillsIn, FetchUserMembers, FetchUserParties};
 use crate::user::session::Session;
 use crate::AppState;
-use anyhow::Context;
-use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
@@ -24,6 +21,7 @@ pub struct PartyInfo {
 impl CallCustom for PartyInfo {}
 
 // See [Wonder_Api_PartyinfoPartyResponseDto_Fields]
+// See [Wonder_Api_PartychangePartyResponseDto_Fields]
 // Thanks to https://youtu.be/Vv9r8wrDsZ8
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Party {
@@ -152,6 +150,8 @@ pub struct SpecialSkillInfo {
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct PartyPassiveSkillInfo {
   pub skill_id: i64,
+  // CLIENT QUIRK: Client displays trait of the member specified, ignoring [skill_id],
+  //  even if member has Character Trait and not Party Trait.
   pub user_member_id: i64,
 }
 
@@ -165,119 +165,29 @@ impl PartyPassiveSkillInfo {
 }
 
 impl Party {
-  /// See [Wonder.UI.Data.PartyData$$get_Force]
+  // See [Wonder.UI.Data.PartyData$$get_Force]
   pub fn power(&self, assist_level: u32) -> u32 {
+    // See [Wonder.Data.MemberParameter$$GetStrength]
     let party_forms_strength: u32 = self.party_forms.iter().map(|form| form.strength as u32).sum();
     party_forms_strength + (4 * assist_level)
   }
 }
 
 pub async fn party_info(state: Arc<AppState>, session: Arc<Session>) -> impl IntoHandlerResponse {
-  // let response = include_str!("../party-info.json");
-  // let response: Value = serde_json::from_str(response).unwrap();
-  // return Ok(Signed(response, session));
-
-  // let member_prototypes = get_master_manager()
-  //   .get_master("member")
-  //   .iter()
-  //   .map(|data| MemberPrototype::load_from_id(data["id"].as_str().unwrap().parse::<i64>().unwrap()))
-  //   .collect::<Vec<_>>();
-
   let client = state.get_database_client().await?;
 
-  let fetch_members = FetchUserMembers::new(&client).await.unwrap();
-  let mut members = fetch_members.run(session.user_id).await.unwrap();
+  let mut members = FetchUserMembers::new(&client).await?.run(session.user_id).await?;
   FetchUserMemberSkillsIn::new(&client)
     .await?
     .run(session.user_id, &mut members.iter_mut().collect::<Vec<_>>())
     .await?;
 
-  let statement = client
-    .prepare(
-      /* language=postgresql */
-      r#"
-      select
-        up.party_id,
-        -- Incidentally, client expects party name to be inside each form,
-        -- which is exactly how JOIN returns it.
-        up.name,
-        upf.form_id,
-        upf.main_member_id,
-        upf.sub1_member_id,
-        upf.sub2_member_id,
-        upf.weapon_id,
-        upf.accessory_id,
-        upf.special_skill_id
-      from user_parties up
-        join user_party_forms upf
-          on up.user_id = upf.user_id and up.party_id = upf.party_id
-      where up.user_id = $1
-      order by up.party_id, upf.form_id
-    "#,
-    )
-    .await
-    .context("failed to prepare statement")?;
-  let parties = client
-    .query(&statement, &[&session.user_id])
-    .await
-    .context("failed to execute query")?;
+  let parties = FetchUserParties::new(&client).await?.run(session.user_id).await?;
 
   Ok(Signed(
     PartyWire {
-      party: parties
-        .iter()
-        .chunk_by(|row| {
-          let party_id: i64 = row.get(0);
-          party_id as i32
-        })
-        .into_iter()
-        .map(|(party_id, forms)| {
-          let forms = forms.collect::<Vec<_>>();
-          let forms = forms
-            .into_iter()
-            .map(|row| {
-              let party_name: String = row.get(1);
-              let form_id: i64 = row.get(2);
-              let main_member_id: i64 = row.get(3);
-              let sub1_member_id: i64 = row.get(4);
-              let sub2_member_id: i64 = row.get(5);
-              let weapon_id: i64 = row.get(6);
-              let accessory_id: i64 = row.get(7);
-              let special_skill_id: i64 = row.get(8);
-
-              PartyForm {
-                id: form_id as i32,
-                form_no: form_id as i32,
-                party_no: party_id,
-                main: main_member_id as i32,
-                sub1: sub1_member_id as i32,
-                sub2: sub2_member_id as i32,
-                weapon: weapon_id,
-                acc: accessory_id,
-                name: party_name,
-                strength: 12300,
-                specialskill: SpecialSkillInfo {
-                  special_skill_id: special_skill_id as i32,
-                  trial: false,
-                },
-                skill_pa_fame: 0,
-              }
-            })
-            .collect::<Vec<_>>()
-            .try_into()
-            .unwrap();
-
-          Party::new(forms, party_id)
-        })
-        .collect::<Vec<_>>(),
-      // members: vec![
-      //   MemberPrototype::load_from_id(1001100).create_party_member_wire(11),
-      //   //   MemberPrototype::load_from_id(1064100).create_party_member_wire(12),
-      // ],
-      members: members
-        .iter()
-        .map(|member| member.to_party_member())
-        .collect(),
+      party: parties,
+      members: members.iter().map(|member| member.to_party_member()).collect(),
       weapons: vec![],
       accessories: vec![],
     },

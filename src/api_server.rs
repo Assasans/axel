@@ -222,6 +222,7 @@ async fn api_call(
     .handle("partyoffer", party::party_offer)
     .handle("partyreset", party::party_reset)
     .handle("partychangelist", party::party_change_list)
+    .handle("partychange_assist", party::party_change_assist)
     .handle("partynameset", party::party_name_set)
     .handle("partychange", party::party_change)
     .handle("party_strength", party::party_strength)

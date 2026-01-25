@@ -323,17 +323,17 @@ pub async fn party_reset(state: Arc<AppState>, request: ApiRequest, session: Arc
 // See [Wonder_Api_PartychangelistResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct PartychangelistResponseDto {
-  pub members: Vec<ChangePartyMember>,
-  pub weapons: Vec<ChangePartyWeapon>,
+  pub members: Vec<ChangeListPartyMember>,
+  pub weapons: Vec<ChangeListPartyWeapon>,
   pub accessories: Vec<PartyAccessory>,
-  pub assists: Vec<ChangePartyAssist>,
+  pub assists: Vec<ChangeListPartyAssist>,
 }
 
 impl CallCustom for PartychangelistResponseDto {}
 
 // See [Wonder_Api_PartychangelistMembersResponseDto_Fields]
 #[derive(Debug, Serialize)]
-pub struct ChangePartyMember {
+pub struct ChangeListPartyMember {
   pub id: i64,
   pub lv: i32,
   pub member_id: i64,
@@ -342,25 +342,92 @@ pub struct ChangePartyMember {
 
 // See [Wonder_Api_PartychangelistWeaponsResponseDto_Fields]
 #[derive(Debug, Serialize)]
-pub struct ChangePartyWeapon {
+pub struct ChangeListPartyWeapon {
   pub id: i64,
   pub weapon_id: i64,
 }
 
 // See [Wonder_Api_PartychangelistAssistsResponseDto_Fields]
 #[derive(Debug, Serialize)]
-pub struct ChangePartyAssist {
+pub struct ChangeListPartyAssist {
   pub id: i64,
 }
 
-// update_type=assist
-pub async fn party_change_list(request: ApiRequest, session: Arc<Session>) -> impl IntoHandlerResponse {
+#[derive(Debug, Deserialize)]
+pub struct PartyChangeListRequest {
+  pub update_type: String,
+}
+
+pub async fn party_change_list(
+  session: Arc<Session>,
+  Params(params): Params<PartyChangeListRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: party_change_list");
+
   Ok(Unsigned(PartychangelistResponseDto {
     members: vec![],
     weapons: vec![],
     accessories: vec![],
-    assists: vec![],
+    assists: vec![ChangeListPartyAssist { id: 1134410001 }],
   }))
+}
+
+// See [Wonder_Api_PartychangeAssistRequest_Fields]
+// body={"party_no": "1", "main_assist_unique_id": "1134410001", "sub_assist_unique_ids": "[]", "is_allow_trial": "1", "is_fame_quest": "0"}
+#[derive(Debug, Deserialize)]
+pub struct PartyChangeAssistRequest {
+  #[serde(rename = "party_no")]
+  pub party_id: i32,
+  pub main_assist_unique_id: i64,
+  pub sub_assist_unique_ids: Vec<i64>,
+  #[serde(with = "crate::bool_as_int")]
+  pub is_allow_trial: bool,
+  #[serde(with = "crate::bool_as_int")]
+  pub is_fame_quest: bool,
+}
+
+// See [Wonder_Api_PartychangeAssistResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct PartyChangeAssistResponse {
+  pub party: Vec<Party>,
+  pub members: Vec<PartyMember>,
+  pub weapons: Vec<PartyWeapon>,
+  pub accessories: Vec<PartyAccessory>,
+}
+
+impl CallCustom for PartyChangeAssistResponse {}
+
+pub async fn party_change_assist(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<PartyChangeAssistRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: party_change_assist");
+
+  let client = state.get_database_client().await?;
+  #[rustfmt::skip]
+  let statement = client
+    .prepare(/* language=postgresql */ r#"
+      update user_parties
+      set assist_id = $3
+      where user_id = $1 and party_id = $2
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  client
+    .query(
+      &statement,
+      &[
+        &session.user_id,
+        &(params.party_id as i64),
+        &params.main_assist_unique_id,
+      ],
+    )
+    .await
+    .context("failed to execute query")?;
+
+  // Response is identical to party_info
+  Ok(party_info(state, session).await)
 }
 
 #[derive(Debug, Deserialize)]
@@ -397,21 +464,81 @@ pub async fn party_name_set(
   Ok(Unsigned(()))
 }
 
-// form_no=0
-// party_no=1
-// is_fame_quest=0
-// is_allow_trial=0
-// unique_id=50000010
-// update_type=party_passive_skill
-// trial=0
+// See [Wonder.Data.PartyConst$$.cctor]
+#[derive(Debug, Deserialize)]
+pub enum PartyUpdateType {
+  #[serde(rename = "main")]
+  Main,
+  #[serde(rename = "sub1")]
+  Sub1,
+  #[serde(rename = "sub2")]
+  Sub2,
+  #[serde(rename = "weapon")]
+  Weapon,
+  #[serde(rename = "acc")]
+  Accessory,
+  #[serde(rename = "specialskill")]
+  SpecialSkill,
+  #[serde(rename = "assist")]
+  Assist,
+  #[serde(rename = "party_passive_skill")]
+  PartyPassiveSkill,
+  #[serde(rename = "skill_pa_fame")]
+  FameTrait,
+}
+
+// See [Wonder_Api_PartychangeRequest_Fields]
+#[derive(Debug, Deserialize)]
+pub struct PartyChangeRequest {
+  pub update_type: PartyUpdateType,
+  #[serde(rename = "party_no")]
+  pub party_id: i32,
+  #[serde(rename = "form_no")]
+  pub form_id: i32,
+  pub unique_id: i64,
+  #[serde(rename = "trial", with = "crate::bool_as_int")]
+  pub is_trial: bool,
+  #[serde(with = "crate::bool_as_int")]
+  pub is_allow_trial: bool,
+  #[serde(with = "crate::bool_as_int")]
+  pub is_fame_quest: bool,
+}
+
 pub async fn party_change(
   state: Arc<AppState>,
-  request: ApiRequest,
+  Params(params): Params<PartyChangeRequest>,
   session: Arc<Session>,
 ) -> impl IntoHandlerResponse {
-  let party_no: i32 = request.body["party_no"].parse().unwrap();
+  let client = state.get_database_client().await?;
 
-  warn!(?party_no, "encountered stub: party_change");
+  match params.update_type {
+    PartyUpdateType::PartyPassiveSkill => {
+      #[rustfmt::skip]
+      let statement = client
+        .prepare(/* language=postgresql */ r#"
+          update user_parties
+          set trait_id = $3
+          where user_id = $1 and party_id = $2
+        "#)
+        .await
+        .context("failed to prepare statement")?;
+      client
+        .query(
+          &statement,
+          &[&session.user_id, &(params.party_id as i64), &params.unique_id],
+        )
+        .await
+        .context("failed to execute query")?;
+
+      debug!(?params, "updated party trait");
+    }
+    _ => {
+      warn!(
+        "encountered stub: party_change with update type {:?}",
+        params.update_type
+      );
+    }
+  }
 
   // Response is identical to party_info
   Ok(party_info(state, session).await)

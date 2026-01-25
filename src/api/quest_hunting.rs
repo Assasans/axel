@@ -11,7 +11,7 @@ use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::item::UpdateItemCountBy;
-use crate::member::{FetchUserMembers, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{FetchUserMembers, FetchUserParty, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
 use crate::user::session::Session;
 use crate::AppState;
 use anyhow::Context;
@@ -274,70 +274,10 @@ pub async fn battle_hunting_result(
   let fetch_members = FetchUserMembers::new(&client).await.unwrap();
   let members = fetch_members.run(session.user_id).await.unwrap();
 
-  let statement = client
-    .prepare(
-      /* language=postgresql */
-      r#"
-      select
-        up.party_id,
-        -- Incidentally, client expects party name to be inside each form,
-        -- which is exactly how JOIN returns it.
-        up.name,
-        upf.form_id,
-        upf.main_member_id,
-        upf.sub1_member_id,
-        upf.sub2_member_id,
-        upf.weapon_id,
-        upf.accessory_id,
-        upf.special_skill_id
-      from user_parties up
-        join user_party_forms upf
-          on up.user_id = upf.user_id and up.party_id = upf.party_id
-      where up.user_id = $1 and up.party_id = $2
-      order by upf.form_id
-    "#,
-    )
-    .await
-    .context("failed to prepare statement")?;
-  let forms = client
-    .query(&statement, &[&session.user_id, &(params.party_id as i64)])
-    .await
-    .context("failed to execute query")?;
-  let forms = forms
-    .into_iter()
-    .map(|row| {
-      let party_name: String = row.get(1);
-      let form_id: i64 = row.get(2);
-      let main_member_id: i64 = row.get(3);
-      let sub1_member_id: i64 = row.get(4);
-      let sub2_member_id: i64 = row.get(5);
-      let weapon_id: i64 = row.get(6);
-      let accessory_id: i64 = row.get(7);
-      let special_skill_id: i64 = row.get(8);
-
-      PartyForm {
-        id: form_id as i32,
-        form_no: form_id as i32,
-        party_no: params.party_id,
-        main: main_member_id as i32,
-        sub1: sub1_member_id as i32,
-        sub2: sub2_member_id as i32,
-        weapon: weapon_id,
-        acc: accessory_id,
-        name: party_name,
-        strength: 123,
-        specialskill: SpecialSkillInfo {
-          special_skill_id: special_skill_id as i32,
-          trial: false,
-        },
-        skill_pa_fame: 0,
-      }
-    })
-    .collect::<Vec<_>>()
-    .try_into()
-    .unwrap();
-
-  let party = Party::new(forms, params.party_id);
+  let party = FetchUserParty::new(&client)
+    .await?
+    .run(session.user_id, params.party_id as i64)
+    .await?;
 
   let characters = party
     .party_forms

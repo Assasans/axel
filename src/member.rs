@@ -1,11 +1,12 @@
 use crate::api::battle::BattleMember;
 use crate::api::dungeon::{DungeonBattleMember, PartyMember};
 use crate::api::master_all::get_master_manager;
-use crate::api::party_info::{PartyForm, SpecialSkillInfo};
+use crate::api::party_info::{Party, PartyForm, PartyPassiveSkillInfo, SpecialSkillInfo};
 use crate::api::{MemberFameStats, MemberParameterWire, SkillPaFame};
 use crate::database::QueryExecutor;
 use crate::level::get_member_level_calculator;
 use crate::user::id::UserId;
+use itertools::Itertools;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio_postgres::{Row, Statement};
@@ -527,12 +528,12 @@ pub fn materialize_member_row_impl(
   }
 }
 
-pub struct FetchUserPartyForms<'a> {
+pub struct FetchUserParties<'a> {
   executor: QueryExecutor<'a>,
   statement: Statement,
 }
 
-impl<'a> FetchUserPartyForms<'a> {
+impl<'a> FetchUserParties<'a> {
   pub async fn new(executor: impl Into<QueryExecutor<'a>>) -> anyhow::Result<Self> {
     let executor = executor.into();
     Ok(Self {
@@ -540,9 +541,49 @@ impl<'a> FetchUserPartyForms<'a> {
       statement: executor.prepare(/* language=postgresql */ r#"
         select
           up.party_id,
-          -- Incidentally, client expects party name to be inside each form,
-          -- which is exactly how JOIN returns it.
           up.name,
+          up.assist_id,
+          up.trait_id,
+          upf.form_id,
+          upf.main_member_id,
+          upf.sub1_member_id,
+          upf.sub2_member_id,
+          upf.weapon_id,
+          upf.accessory_id,
+          upf.special_skill_id
+        from user_parties up
+          join user_party_forms upf
+            on up.user_id = upf.user_id and up.party_id = upf.party_id
+        where up.user_id = $1
+        order by up.party_id, upf.form_id
+      "#).await?,
+      executor,
+    })
+  }
+
+  pub async fn run(&self, user_id: UserId) -> anyhow::Result<Vec<Party>> {
+    let rows = self.executor.client().query(&self.statement, &[&user_id]).await?;
+    Ok(materialize_party_rows(rows))
+  }
+}
+
+pub struct FetchUserParty<'a> {
+  executor: QueryExecutor<'a>,
+  statement: Statement,
+}
+
+impl<'a> FetchUserParty<'a> {
+
+  pub async fn new(executor: impl Into<QueryExecutor<'a>>) -> anyhow::Result<Self> {
+    let executor = executor.into();
+    Ok(Self {
+      #[rustfmt::skip]
+      statement: executor.prepare(/* language=postgresql */ r#"
+        select
+          up.party_id,
+          up.name,
+          up.assist_id,
+          up.trait_id,
           upf.form_id,
           upf.main_member_id,
           upf.sub1_member_id,
@@ -554,20 +595,34 @@ impl<'a> FetchUserPartyForms<'a> {
           join user_party_forms upf
             on up.user_id = upf.user_id and up.party_id = upf.party_id
         where up.user_id = $1 and up.party_id = $2
-        order by upf.form_id
+        order by up.party_id, upf.form_id
       "#).await?,
       executor,
     })
   }
 
-  pub async fn run(&self, user_id: UserId, party_id: i64) -> anyhow::Result<Vec<PartyForm>> {
-    let rows = self
-      .executor
-      .client()
-      .query(&self.statement, &[&user_id, &party_id])
-      .await?;
-    Ok(
-      rows
+  pub async fn run(&self, user_id: UserId, party_id: i64) -> anyhow::Result<Party> {
+    let rows = self.executor.client().query(&self.statement, &[&user_id, &party_id]).await?;
+    Ok(materialize_party_rows(rows).into_iter().next().unwrap())
+  }
+}
+
+pub fn materialize_party_rows(rows: Vec<Row>) -> Vec<Party> {
+  rows
+    .into_iter()
+    .chunk_by(|row| {
+      let party_id: i64 = row.get("party_id");
+      party_id as i32
+    })
+    .into_iter()
+    .map(|(party_id, forms)| {
+      let forms = forms.collect::<Vec<_>>();
+      // Hack because of JOIN, I guess
+      let form_one = &forms[0];
+      let assist_id: i64 = form_one.get("assist_id");
+      let trait_id: i64 = form_one.get("trait_id");
+
+      let forms = forms
         .into_iter()
         .map(|row| {
           let party_name: String = row.get("name");
@@ -582,14 +637,14 @@ impl<'a> FetchUserPartyForms<'a> {
           PartyForm {
             id: form_id as i32,
             form_no: form_id as i32,
-            party_no: party_id as i32,
+            party_no: party_id,
             main: main_member_id as i32,
             sub1: sub1_member_id as i32,
             sub2: sub2_member_id as i32,
             weapon: weapon_id,
             acc: accessory_id,
             name: party_name,
-            strength: 123,
+            strength: 12300,
             specialskill: SpecialSkillInfo {
               special_skill_id: special_skill_id as i32,
               trial: false,
@@ -597,9 +652,22 @@ impl<'a> FetchUserPartyForms<'a> {
             skill_pa_fame: 0,
           }
         })
-        .collect::<Vec<_>>(),
-    )
-  }
+        .collect::<Vec<_>>()
+        .try_into()
+        .unwrap();
+
+      Party {
+        party_forms: forms,
+        party_no: party_id,
+        assist: assist_id,
+        sub_assists: vec![],
+        party_passive_skill: PartyPassiveSkillInfo {
+          skill_id: trait_id,
+          user_member_id: 0,
+        },
+      }
+    })
+    .collect::<Vec<_>>()
 }
 
 pub struct FetchUserMemberSkillsIn<'a> {
