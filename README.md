@@ -32,9 +32,7 @@ On first login, you get all members with randomized XP.
 ### Broken features
 
 - \[Home\] → \[Shop\] → Item → \[Buy\] → \[OK\], purchase always fails (client stub issue)
-- \[Others\] → \[Room Invitation\], lags and does not work properly
 - \[Quest\] → \[Event\] → \[Draw\], unimplemented
-- \[Quest\] → \[Event\] → \[Boss Battle\] → \[Room ID\], response is ignored
 - Login screen → \[Menu\] → \[Data Transfer\] → \[Link to a Google account\], does nothing, `libnative-googlesignin.so` is missing
 
 ## Setup

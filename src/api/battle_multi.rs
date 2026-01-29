@@ -1,5 +1,6 @@
-//! Reference: https://youtu.be/R80TMWhTdik
+//! Reference: https://youtu.be/R80TMWhTdik and https://youtu.be/fKMXyXujWIk
 //! Stamps reference: https://youtu.be/sDF9jb8TIvY
+//! See [Wonder.Battle.MultiBattleManager._RefreshBattleData_d__32$$MoveNext]
 
 use crate::api::battle::{BattleMember, BattleParty};
 use crate::api::dungeon::{DungeonStagePartyForm, DungeonTeamSet};
@@ -9,12 +10,16 @@ use crate::api::{MemberFameStats, RemoteDataItemType};
 use crate::call::CallCustom;
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
-use crate::member::{FetchUserMemberSkillsIn, FetchUserMembersIn, FetchUserParty, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{
+  FetchUserMemberSkillsIn, FetchUserMembersIn, FetchUserParty, Member, MemberActiveSkill, MemberPrototype,
+  MemberStrength,
+};
 use crate::user::session::Session;
 use crate::AppState;
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
+use std::time::{SystemTime, UNIX_EPOCH};
 use tracing::warn;
 
 // See [Wonder_Api_MultiBattleInvitationListResponseDto_Fields]
@@ -34,7 +39,7 @@ pub async fn multi_battle_invitation_list() -> impl IntoHandlerResponse {
       event_id: 24011,
       rooms: vec![MultiBattleRoom {
         room_no: 1,
-        quest_id: 500101,
+        quest_id: 513891,
         user_icon: 1083110,
         user_name: "Megumin".to_string(),
       }],
@@ -65,7 +70,7 @@ pub async fn multi_battle_room_info(Params(params): Params<MultiBattleRoomInfoRe
   warn!(?params, "encountered stub: multi_battle_room_info");
 
   Ok(Unsigned(MultiBattleRoomInfoResponse {
-    quest_id: 0,
+    quest_id: 513891,
     name: "Megumin".to_string(),
     icon: 1083110,
     is_lock: false,
@@ -310,23 +315,23 @@ pub async fn marathon_multi_start(
     .await?;
 
   Ok(Unsigned(MarathonMultiStartResponse {
-    user_host: vec![
-      MarathonMultiStartUser {
-        user_no: "-1".to_owned(),
-        user_name: "Megumin".to_owned(),
-        hp: 100,
-        icon: 1083110,
-        strength: 50000,
-        status: 0,
-      },
-      MarathonMultiStartUser {
-        user_no: "-2".to_owned(),
-        user_name: "Aqua".to_owned(),
-        hp: 100,
-        icon: 1083110,
-        strength: 34000,
-        status: 0,
-      },
+    user_host: vec![/*MarathonMultiStartUser {
+      user_no: "-1".to_owned(),
+      user_name: "Megumin".to_owned(),
+      hp: 100,
+      icon: 1083110,
+      strength: 50000,
+      status: 0,
+    }*/],
+    user_guest1: vec![MarathonMultiStartUser {
+      user_no: "-2".to_owned(),
+      user_name: "Aqua".to_owned(),
+      hp: 100,
+      icon: 1083110,
+      strength: 34000,
+      status: 0,
+    }],
+    user_guest2: vec![
       MarathonMultiStartUser {
         user_no: "-3".to_owned(),
         user_name: "Kazuma".to_owned(),
@@ -335,18 +340,15 @@ pub async fn marathon_multi_start(
         strength: 4,
         status: 0,
       },
-      MarathonMultiStartUser {
-        user_no: "-4".to_owned(),
-        user_name: "Darkness".to_owned(),
-        hp: 100,
-        icon: 1083110,
-        strength: 90000,
-        status: 0,
-      },
     ],
-    user_guest1: vec![],
-    user_guest2: vec![],
-    user_guest3: vec![],
+    user_guest3: vec![MarathonMultiStartUser {
+      user_no: "-4".to_owned(),
+      user_name: "Darkness".to_owned(),
+      hp: 100,
+      icon: 1083110,
+      strength: 90000,
+      status: 0,
+    },],
     chest: "10101111,10101120,10101131".to_string(),
     party: party.to_battle_party(),
     // We must send only members that are used in the party, otherwise hardlock occurs
@@ -416,45 +418,41 @@ pub async fn marathon_multi_battling(
   warn!(?params, "encountered stub: marathon_multi_battling");
 
   Ok(Unsigned(MarathonMultiBattlingResponse {
-    user_host: vec![
-      MarathonMultiBattlingUser {
-        user_no: "-1".to_owned(),
-        hp: 3525,
-        stamp: 0,
-        damage: params.damage,
-        attack_type: params.attack_type,
-        status: 0,
-      },
-      MarathonMultiBattlingUser {
-        user_no: "-2".to_owned(),
-        hp: 4000,
-        stamp: 0,
-        damage: 1234,
-        attack_type: 1,
-        status: 0,
-      },
-      MarathonMultiBattlingUser {
-        user_no: "-3".to_owned(),
-        hp: 5000,
-        stamp: 0,
-        damage: 5678,
-        attack_type: 2,
-        status: 0,
-      },
-      MarathonMultiBattlingUser {
-        user_no: "-4".to_owned(),
-        hp: 6000,
-        stamp: 0,
-        damage: 91011,
-        attack_type: 1,
-        status: 0,
-      },
-    ],
-    user_guest1: vec![],
-    user_guest2: vec![],
-    user_guest3: vec![],
-    enemy: vec![17800029, 17800029],
-    battletime: 0,
+    user_host: vec![/*MarathonMultiBattlingUser {
+      user_no: "-1".to_owned(),
+      hp: 3525,
+      stamp: 0,
+      damage: params.damage,
+      attack_type: params.attack_type,
+      status: 0,
+    }*/],
+    user_guest1: vec![MarathonMultiBattlingUser {
+      user_no: "-2".to_owned(),
+      hp: 4000,
+      stamp: 0,
+      damage: 2,
+      attack_type: 1,
+      status: 0,
+    }],
+    user_guest2: vec![MarathonMultiBattlingUser {
+      user_no: "-3".to_owned(),
+      hp: 5000,
+      stamp: 0,
+      damage: 3,
+      attack_type: 1,
+      status: 0,
+    }],
+    user_guest3: vec![MarathonMultiBattlingUser {
+      user_no: "-4".to_owned(),
+      hp: 6000,
+      stamp: 0,
+      damage: 4,
+      attack_type: 1,
+      status: 0,
+    }],
+    // jq '.[] | { id, text_english }' master/assetname.json -c | grep ASSET_ENEMY_NAME_
+    enemy: vec![21000545],
+    battletime: SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs() as i32 - 3,
     battle_id: params.battle_id,
     is_timeup: 0,
   }))
@@ -472,11 +470,11 @@ impl CallCustom for MarathonMultiResultConfirmResponse {}
 // body={"battle_id": "1", "win": "2", "room_no": "1", "event_id": "24011"}
 #[derive(Debug, Deserialize)]
 pub struct MarathonMultiResultConfirmRequest {
+  pub event_id: i32,
   pub battle_id: i64,
-  pub win: i32,
   #[serde(rename = "room_no")]
   pub room_id: i32,
-  pub event_id: i32,
+  pub win: i32,
 }
 
 pub async fn marathon_multi_result_confirm(
@@ -488,7 +486,7 @@ pub async fn marathon_multi_result_confirm(
 
   Ok(Unsigned(MarathonMultiResultConfirmResponse {
     // 0 - invalid, 1 - boss defeated, 2 - complete, 3 - invalid
-    battle_status: 1,
+    battle_status: 0,
     confirmed_user: 1,
   }))
 }

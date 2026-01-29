@@ -290,6 +290,23 @@ async fn patch_master(name: &str, value: &mut Value) {
         }
       }
     }
+    "battle_wave" => {
+      info!("patching battle_wave");
+      let mut found = false;
+      if let Some(array) = value.as_array_mut() {
+        for item in array {
+          if let Some(item) = item.as_object_mut() {
+            let wave_id = item.get("wave_id").unwrap().as_str().unwrap().parse::<i32>().unwrap();
+            if wave_id == 5138911 {
+              *item.get_mut("enemy_id1").unwrap() = Value::String("21000545".to_string()); // Megumin
+              // *item.get_mut("enemy_id2").unwrap() = Value::String("20900545".to_string()); // Aqua
+              found = true;
+            }
+          }
+        }
+      }
+      assert!(found, "failed to find battle_wave to patch");
+    }
     _ => {
       // let mut logged = false;
       // if let Some(array) = value.as_array_mut() {
