@@ -38,6 +38,7 @@ pub mod profile;
 pub mod quest_fame;
 pub mod quest_hunting;
 pub mod quest_main;
+pub mod shop;
 pub mod smith_craft;
 pub mod smith_sell;
 pub mod smith_upgrade;

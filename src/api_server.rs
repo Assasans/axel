@@ -11,18 +11,18 @@ use axum::extract::{Path, Query, State};
 use axum::http::HeaderMap;
 use axum::response::{Html, IntoResponse};
 use axum::routing::{get, post};
-use axum::{Router, ServiceExt, middleware};
-use base64::Engine;
+use axum::{middleware, Router, ServiceExt};
 use base64::prelude::BASE64_STANDARD_NO_PAD;
+use base64::Engine;
 use const_decoder::Decoder;
 use jwt_simple::algorithms::{RS256KeyPair, RSAKeyPairLike};
 use jwt_simple::claims::JWTClaims;
 use md5::Digest;
 use tokio::net::TcpListener;
 use tower::Layer;
-use tracing::{Instrument, Span, debug, info, info_span, trace, warn};
+use tracing::{debug, info, info_span, trace, warn, Instrument, Span};
 
-use crate::api::{ApiRequest, ad_reward, assist, battle, capture, character, dungeon, exchange, expedition, friend, gacha, home, idlink_confirm_google, interaction, items, login, login_bonus, maintenance_check, master_all, master_list, mission, notice, party, party_info, present, profile, quest_fame, quest_hunting, quest_main, smith_craft, smith_sell, smith_upgrade, story, surprise, transfer, tutorial, battle_arena, battle_multi};
+use crate::api::{ApiRequest, *};
 use crate::call::{ApiCallParams, CallMeta};
 use crate::client_ip::add_client_ip;
 use crate::handler::{HandlerContext, IntoHandlerResponse, Signed, Unsigned};
@@ -106,6 +106,7 @@ async fn api_call(
 ) -> axum::response::Result<impl IntoResponse, AppError> {
   debug!("api call: {}", method);
 
+  #[rustfmt::skip]
   let router = crate::router::Router::new()
     .handle("idlink_confirm_google", idlink_confirm_google::idlink_confirm_google)
     .handle("masterlist", master_list::master_list)
@@ -231,6 +232,8 @@ async fn api_call(
     .handle("expeditionset", expedition::expedition_set)
     .handle("advertisement_reward_status", ad_reward::advertisement_reward_status)
     .handle("shopitemlist", ad_reward::shop_item_list)
+    .handle("purchase_google_limited_products_status", shop::purchase_google_limited_products_status)
+    .handle("purchase_google_charge_status", shop::purchase_google_charge_status)
     .handle("buy", ad_reward::buy)
     .handle("surprise_mini_event_select", surprise::surprise_mini_event_select)
     .handle("surprise_mini_event_top", surprise::surprise_mini_event_top)
@@ -259,8 +262,7 @@ async fn api_call(
     .handle("marathon_multi_result", battle_multi::marathon_multi_result)
     .handle("marathon_multi_stamp", battle_multi::marathon_multi_stamp)
     .handle("multi_battle_join_room", battle_multi::multi_battle_join_room)
-    .handle("multi_battle_room_leave", battle_multi::multi_battle_room_leave)
-    ;
+    .handle("multi_battle_room_leave", battle_multi::multi_battle_room_leave);
 
   let jwt = headers.get(JWT_HEADER).ok_or_else(|| anyhow!("no jwt header"))?;
   trace!("jwt header: {:?}", jwt);

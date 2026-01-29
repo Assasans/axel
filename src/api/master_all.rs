@@ -275,6 +275,21 @@ async fn patch_master(name: &str, value: &mut Value) {
         }
       }
     }
+    "shop_item" => {
+      info!("patching shop_item");
+      if let Some(array) = value.as_array_mut() {
+        for item in array {
+          if let Some(item) = item.as_object_mut() {
+            if let Some(start_at_value) = item.get_mut("start_at") {
+              *start_at_value = Value::String(start_at_str.clone());
+            }
+            if let Some(end_at_value) = item.get_mut("end_at") {
+              *end_at_value = Value::String(end_at_str.clone());
+            }
+          }
+        }
+      }
+    }
     _ => {
       // let mut logged = false;
       // if let Some(array) = value.as_array_mut() {

@@ -31,8 +31,7 @@ On first login, you get all members with randomized XP.
 
 ### Broken features
 
-- In-game purchases (e.g. clicking add quartz button), hardlock, issue related to stub APK
-- \[Home\] → \[Shop\], no server requests at all, hardlock, issue related to stub APK (\[Menu\] → \[Shop\] works)
+- \[Home\] → \[Shop\] → Item → \[Buy\] → \[OK\], purchase always fails (client stub issue)
 - \[Others\] → \[Room Invitation\], lags and does not work properly
 - \[Quest\] → \[Event\] → \[Draw\], unimplemented
 - \[Quest\] → \[Event\] → \[Boss Battle\] → \[Room ID\], response is ignored
