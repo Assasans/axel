@@ -1,6 +1,7 @@
 use crate::api::master_all::get_master_manager;
 use crate::api::RemoteDataItemType;
 use crate::member::{FetchUserMembers, MemberPrototype};
+use crate::user::overrides::FetchUserOverrides;
 use crate::user::session::Session;
 use anyhow::Context;
 use deadpool_postgres::Client;
@@ -46,7 +47,25 @@ pub async fn run_migrations(session: &Session, client: &mut Client) {
     ]
   });
 
+  let overrides = FetchUserOverrides::new(&*client)
+    .await
+    .unwrap()
+    .run(session.user_id)
+    .await
+    .unwrap();
+
   for migration in &*MIGRATIONS {
+    if let Some(value) = overrides.get(&format!("migration:{}", migration.name))
+      && value == "skip"
+    {
+      debug!(
+        user_id = %session.user_id,
+        name = migration.name,
+        "skipping migration due to user override"
+      );
+      continue;
+    }
+
     let rows_modified = (migration.function)(session, client).await;
     debug!(
       user_id = %session.user_id,
