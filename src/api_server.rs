@@ -209,6 +209,8 @@ async fn api_call(
     .handle("marathon_quest_start", mission::marathon_quest_start)
     .handle("marathon_quest_result", mission::marathon_quest_result)
     .handle("marathon_boss_list", mission::marathon_boss_list)
+    .handle("panel_mission_list", panel_mission::panel_mission_list)
+    .handle("panel_mission", panel_mission::panel_mission)
     .handle("sale_list", smith_sell::sale_list)
     .handle("sale", smith_sell::sale)
     .handle("blacksmithlist", smith_craft::blacksmith_list)

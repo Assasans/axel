@@ -31,6 +31,7 @@ pub mod master_all;
 pub mod master_list;
 pub mod mission;
 pub mod notice;
+pub mod panel_mission;
 pub mod party;
 pub mod party_info;
 pub mod present;
@@ -100,6 +101,10 @@ pub enum RemoteDataItemType {
   PowerPotion,
   // See [Wonder.UI.Chara.CharaPresentConfirmDialog._OnClickSendButton_d__29$$MoveNext], requires uniqid
   MaterialLove,
+  // Special cases:
+  // - item ID 1001: [Wonder.UI.ReserveMember.ReserveMemberByeByeConfirmDialog$$SetupParam]
+  // - item ID 500811 [Wonder.UI.Gacha.GachaSubScreen._DoAssistGacha_d__78$$MoveNext]
+  // - item ID 1021: [Wonder.UI.Quest.ScoreChallengeMainPanel._SetupUI_d__52$$MoveNext]
   ExchangeMedal,
   SkipTicket,
   Ticket,
@@ -126,6 +131,7 @@ pub enum RemoteDataItemType {
 }
 
 // See [Wonder.Util.UserParam$$Add] code and [Wonder.Util.UserParam$$Get] cross-references
+// See [Wonder.Data.BoxGachaTypeExtensions$$GetTicketNum] for types 28/32/46
 impl From<RemoteDataItemType> for i32 {
   fn from(item_type: RemoteDataItemType) -> Self {
     match item_type {
@@ -164,10 +170,13 @@ impl From<RemoteDataItemType> for i32 {
       RemoteDataItemType::AssistMaterial => 37,
       RemoteDataItemType::DungeonRedraw => 38,
       RemoteDataItemType::CharacterPiece => 39,
+      // See [Wonder.Battle.UI.FameQuestResult$$Initialize]
+      // and [Wonder.Util.AssistUtil$$IsUnlockSubAssist]
       RemoteDataItemType::FameRank => 40,
       RemoteDataItemType::EventTicket => 42,
       // TODO: 43 - skill pa fame unique id
       // See [Wonder.UI.Chara.MemberPlanningUnitCell$$GetSkillPaFameDatas]
+      // and [Wonder.UI.Collection.LibrarySkillPaFamePanel$$SetUpSkillPaFameListView]
       RemoteDataItemType::FamePotion => 44,
       RemoteDataItemType::FameScroll => 45,
       RemoteDataItemType::CollaborationMedal => 46,
