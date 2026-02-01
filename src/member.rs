@@ -129,12 +129,12 @@ impl MemberPrototype {
   }
 
   /// Creates a new [Member] instance from this prototype.
-  pub fn create_member(self: Arc<Self>, id: i32) -> Member {
+  pub fn create_member(self: &Arc<Self>, id: i32) -> Member {
     Member {
       id,
       prototype: self.clone(),
-      xp: if self.character_id == 102 { 150_000 } else { 35_000 } * 20,
-      promotion_level: 2,
+      xp: 0,
+      promotion_level: 0,
       active_skills: OptionallyFetched::Fetched(
         self
           .active_skills
@@ -159,7 +159,7 @@ impl MemberPrototype {
     }
   }
 
-  pub fn create_reserve_member(self: Arc<Self>, id: i32) -> Member {
+  pub fn create_reserve_member(self: &Arc<Self>, id: i32) -> Member {
     Member {
       id,
       prototype: self.clone(),

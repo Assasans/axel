@@ -432,19 +432,19 @@ pub async fn get_login_remote_data(state: &AppState, session: &Session) -> Vec<R
     AddItem::new(RemoteDataItemType::SlayerMedal, 0, 230731, 0).into_remote_data(),
     // TODO: { "cmd": 4, "item_type": 34, "item_id": 2, "item_num": 3, "uniqid": 0, "lv": 0, "tag": "-" }
     // TODO: { "cmd": 4, "item_type": 34, "item_id": 1, "item_num": 0, "uniqid": 0, "lv": 0, "tag": "-" }
-    AddItem::new(RemoteDataItemType::CharacterPiece, 0, 100, 1).into_remote_data(),
-    AddItem::new(RemoteDataItemType::CharacterPiece, 0, 103, 20).into_remote_data(),
-    AddItem::new(RemoteDataItemType::CharacterPiece, 0, 106, 25).into_remote_data(),
-    AddItem::new(RemoteDataItemType::CharacterPiece, 0, 108, 5).into_remote_data(),
-    AddItem::new(RemoteDataItemType::CharacterPiece, 0, 109, 5).into_remote_data(),
-    AddItem::new(RemoteDataItemType::CharacterPiece, 0, 110, 1).into_remote_data(),
-    AddItem::new(RemoteDataItemType::CharacterPiece, 0, 112, 1).into_remote_data(),
-    AddItem::new(RemoteDataItemType::CharacterPiece, 0, 113, 1).into_remote_data(),
-    AddItem::new(RemoteDataItemType::CharacterPiece, 0, 114, 5).into_remote_data(),
-    AddItem::new(RemoteDataItemType::CharacterPiece, 0, 115, 1).into_remote_data(),
-    AddItem::new(RemoteDataItemType::CharacterPiece, 0, 116, 1).into_remote_data(),
-    AddItem::new(RemoteDataItemType::CharacterPiece, 0, 119, 2).into_remote_data(),
-    AddItem::new(RemoteDataItemType::CharacterPiece, 0, 128, 1).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::CharacterPiece, 0, 100, 1).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::CharacterPiece, 0, 103, 20).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::CharacterPiece, 0, 106, 25).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::CharacterPiece, 0, 108, 5).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::CharacterPiece, 0, 109, 5).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::CharacterPiece, 0, 110, 1).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::CharacterPiece, 0, 112, 1).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::CharacterPiece, 0, 113, 1).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::CharacterPiece, 0, 114, 5).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::CharacterPiece, 0, 115, 1).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::CharacterPiece, 0, 116, 1).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::CharacterPiece, 0, 119, 2).into_remote_data(),
+    // AddItem::new(RemoteDataItemType::CharacterPiece, 0, 128, 1).into_remote_data(),
     AddSingletonItem::new(RemoteDataItemType::FameRank, 5).into_remote_data(),
     // AddItem::new(RemoteDataItemType::ExchangeMedal, 0, 1001, 100100).into_remote_data(),
     AddItem::new(RemoteDataItemType::ExchangeMedal, 0, 1011, 101100).into_remote_data(),
@@ -683,10 +683,25 @@ pub struct AddMember {
 }
 
 impl AddMember {
+  #[deprecated(note = "Use AddMember::normal or AddMember::reserve")]
   pub fn new(member_parameter: MemberParameterWire, tag: &str) -> Self {
     Self {
       member_parameter,
       tag: tag.to_owned(),
+    }
+  }
+
+  pub fn normal(member_parameter: MemberParameterWire) -> Self {
+    Self {
+      member_parameter,
+      tag: String::from("front"),
+    }
+  }
+
+  pub fn reserve(member_parameter: MemberParameterWire) -> Self {
+    Self {
+      member_parameter,
+      tag: String::from("back"),
     }
   }
 }

@@ -1,21 +1,24 @@
-use std::collections::BTreeMap;
-use std::sync::Arc;
 use anyhow::Context;
 use jwt_simple::prelude::Serialize;
 use rand::seq::IteratorRandom;
-use rust_decimal::Decimal;
 use rust_decimal::prelude::ToPrimitive;
+use rust_decimal::Decimal;
 use serde::Deserialize;
 use serde_json::{json, Value};
-use tracing::warn;
+use std::collections::BTreeMap;
+use std::sync::Arc;
+use tracing::{info, warn};
 
-use crate::api::master_all::get_masters;
-use crate::api::{NotificationData, RemoteData, RemoteDataItemType};
+use crate::api::master_all::get_master_manager;
+use crate::api::{NotificationData, RemoteData, RemoteDataCommand, RemoteDataItemType};
+use crate::blob::{AddMember, IntoRemoteData, UpdateMember};
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
-use crate::{master, AppState};
+use crate::item::UpdateItemCountBy;
 use crate::member::MemberPrototype;
+use crate::user::session::Session;
+use crate::{master, AppState};
 
 // See [Wonder_Api_GachaInfoResponseDto_Fields]
 #[derive(Default, Debug, Serialize)]
@@ -1202,11 +1205,12 @@ pub async fn gacha_info() -> impl IntoHandlerResponse {
     },
   ];
 
-  let master = &get_masters().await["gacha"].master_decompressed;
-  let master: Vec<master::gacha::Gacha> = serde_json::from_str(master).unwrap();
+  let master = get_master_manager().get_master("gacha");
+  let master = master
+    .iter()
+    .map(|gacha| serde_json::from_value::<master::gacha::Gacha>(gacha.clone()).unwrap());
   let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(GachaInfo {
     gacha: master
-      .iter()
       // .filter(|gacha| gacha.gacha_id != "323083")
       .map(|gacha| GachaItem::new_simple(gacha.gacha_id.parse().unwrap()))
       .collect(),
@@ -1286,13 +1290,22 @@ pub struct GachaChainRequest {
   pub money_type: i32,
 }
 
-pub async fn gacha_chain(Params(params): Params<GachaChainRequest>) -> impl IntoHandlerResponse {
+/// 10x pull
+pub async fn gacha_chain(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<GachaChainRequest>,
+) -> impl IntoHandlerResponse {
   warn!(?params, "encountered stub: gacha_chain");
 
-  gacha_normal(Params(GachaNormalRequest {
-    gacha_id: params.gacha_id,
-    money_type: params.money_type,
-  }))
+  gacha_normal(
+    state,
+    session,
+    Params(GachaNormalRequest {
+      gacha_id: params.gacha_id,
+      money_type: params.money_type,
+    }),
+  )
   .await
 }
 
@@ -1302,44 +1315,127 @@ pub struct GachaNormalRequest {
   pub money_type: i32,
 }
 
-pub async fn gacha_normal(Params(params): Params<GachaNormalRequest>) -> impl IntoHandlerResponse {
+/// 1x pull
+pub async fn gacha_normal(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<GachaNormalRequest>,
+) -> impl IntoHandlerResponse {
   warn!(?params, "encountered stub: gacha_normal");
 
-  let masters = get_masters().await;
-  let members: Vec<Value> = serde_json::from_str(&masters["member"].master_decompressed).unwrap();
-  let goods = members
-    .into_iter()
+  let members = get_master_manager().get_master("member");
+  let members = members
+    .iter()
     .filter(|member| member["rare"].as_str().unwrap().parse::<i32>().unwrap() >= 2)
-    .choose_multiple(&mut rand::rng(), 10)
+    .choose_multiple(&mut rand::rng(), 1)
     .into_iter()
-    .map(|member| {
-      GachaGood::new(
-        RemoteDataItemType::Member.into(),
-        member["id"].as_str().unwrap().parse::<i64>().unwrap(),
-        1,
-        true,
-      )
-    })
+    .map(|member| member["id"].as_str().unwrap().parse::<i64>().unwrap())
+    .map(MemberPrototype::load_from_id)
     .collect::<Vec<_>>();
+
+  let members = members
+    .into_iter()
+    .map(|prototype| prototype.create_member(prototype.id as i32))
+    .collect::<Vec<_>>();
+
+  let mut client = state.get_database_client().await.unwrap();
+  let transaction = client.transaction().await.unwrap();
+
+  #[rustfmt::skip]
+  let statement = transaction
+    .prepare(/* language=postgresql */ r#"
+      with new_member as (
+        -- Insert into user_members, if not exists
+        insert into user_members (user_id, member_id, xp, promotion_level)
+          values ($1, $2, 0, 0)
+          on conflict do nothing
+          returning 1
+      )
+      -- Otherwise, insert into user_members_reserve
+      insert into user_members_reserve (user_id, member_id)
+      select $1, $2
+      where not exists (select 1 from new_member);
+    "#)
+    .await
+    .context("failed to prepare statement").unwrap();
+
+  let character_piece_rate = get_master_manager()
+    .get_master("gacha_character_piece_rate")
+    .iter()
+    .map(|item| {
+      let rarity: i32 = item["rare"].as_str().unwrap().parse().unwrap();
+      let rate: i32 = item["character_piece_rate"].as_str().unwrap().parse().unwrap();
+      (rarity, rate)
+    })
+    .collect::<BTreeMap<_, _>>();
+  let character_piece_mapping = get_master_manager()
+    .get_master("character_piece")
+    .iter()
+    .map(|item| {
+      let character_id: i64 = item["character_id"].as_str().unwrap().parse().unwrap();
+      let piece_id: i64 = item["piece_id"].as_str().unwrap().parse().unwrap();
+      (character_id, piece_id)
+    })
+    .collect::<BTreeMap<_, _>>();
 
   let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(GachaResult {
     gacha_id: params.gacha_id,
-    goods,
+    goods: members
+      .iter()
+      .map(|member| GachaGood::new(RemoteDataItemType::Member.into(), member.id as i64, 1, true))
+      .collect::<Vec<_>>(),
     bonus_info: None,
     bonus_step: None,
   }));
-  response.add_remote_data(vec![
-    RemoteData::new(1, 7, 2, 11, 0, 0, "".to_string()),
-    RemoteData::new(1, 7, 14, 1, 0, 0, "".to_string()),
-    RemoteData::new(1, 7, 14, 1, 0, 0, "".to_string()),
-    RemoteData::new(1, 7, 14, 1, 0, 0, "".to_string()),
-    RemoteData::new(1, 7, 3, 3, 0, 0, "".to_string()),
-    RemoteData::new(1, 7, 13, 7, 0, 0, "".to_string()),
-    RemoteData::new(1, 7, 34, 2, 0, 0, "show_button".to_string()),
-    RemoteData::new(1, 6, 1, 30030001, 0, 0, "".to_string()),
-    RemoteData::new(1, 10, 230731, 52307325, 0, 0, "".to_string()),
-    RemoteData::new(1, 10, 230831, 52308305, 0, 0, "".to_string()),
-  ]);
+
+  let update = UpdateItemCountBy::new(&transaction).await.unwrap();
+  for member in &members {
+    let pieces = character_piece_rate.get(&member.prototype.rarity).copied().unwrap_or(0);
+    if pieces > 0 {
+      let piece_id = character_piece_mapping
+        .get(&member.prototype.character_id)
+        .copied()
+        .unwrap();
+      let item = update
+        .run(session.user_id, (RemoteDataItemType::CharacterPiece, piece_id), pieces)
+        .await
+        .context("failed to execute query")
+        .unwrap();
+      info!(?item, character_id = ?member.prototype.character_id, "granted character pieces");
+      response.add_remote_data(item.into_remote_data());
+    }
+
+    let rows_affected = transaction
+      .execute(&statement, &[&session.user_id, &(member.id as i64)])
+      .await
+      .context("failed to execute statement")
+      .unwrap();
+    let is_reserve = rows_affected != 0;
+    info!(?member.id, is_reserve, "granted member");
+    if is_reserve {
+      response.add_remote_data(AddMember::reserve(member.to_member_parameter_wire()).into_remote_data());
+    } else {
+      response.add_remote_data(AddMember::normal(member.to_member_parameter_wire()).into_remote_data());
+    }
+  }
+
+  transaction.commit().await.unwrap();
+
+  // Fixed very old bug back from commit [baa1fae0],
+  // this was intended to be notification data and not remote data.
+  // #[rustfmt::skip]
+  // response.add_notifications(vec![
+  //   NotificationData::new(1, 7, 2, 11, "".to_string(), "".to_string()),
+  //   NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
+  //   NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
+  //   NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
+  //   NotificationData::new(1, 7, 3, 3, "".to_string(), "".to_string()),
+  //   NotificationData::new(1, 7, 13, 7, "".to_string(), "".to_string()),
+  //   NotificationData::new(1, 7, 34, 2, "show_button".to_string(), "".to_string()),
+  //   NotificationData::new(1, 6, 1, 30030001, "".to_string(), "".to_string()),
+  //   NotificationData::new(1, 10, 230731, 52307325, "".to_string(), "".to_string()),
+  //   NotificationData::new(1, 10, 230831, 52308305, "".to_string(), "".to_string()),
+  // ]);
 
   Unsigned(response)
 }
@@ -1366,9 +1462,7 @@ pub struct GachaRateAssist {
 
 impl CallCustom for GachaRateAssist {}
 
-pub async fn gacha_rate_assist(
-  Params(params): Params<GachaRateAssistRequest>,
-) -> impl IntoHandlerResponse {
+pub async fn gacha_rate_assist(Params(params): Params<GachaRateAssistRequest>) -> impl IntoHandlerResponse {
   warn!(?params, "encountered stub: gacha_rate_assist");
 
   Ok(Unsigned(GachaRateAssist {
@@ -1405,9 +1499,7 @@ pub struct GachaLogItem {
 pub async fn gacha_assist_log() -> impl IntoHandlerResponse {
   warn!("encountered stub: gacha_assist_log");
 
-  Ok(Unsigned(GachaAssistLog {
-    goods: vec![]
-  }))
+  Ok(Unsigned(GachaAssistLog { goods: vec![] }))
 }
 
 #[derive(Debug)]
@@ -1424,10 +1516,7 @@ pub struct DatabaseGachaRate {
 // CLIENT BUG: Clicking "Details" and immediately pressing back causes hard lock.
 // TODO: Per-rarity probabilities do not sum to 100% and per-item probabilities can fluctuate,
 //  e.g. 0.015% and 0.014%. Maybe original server did some corrections for per-rarity values.
-pub async fn gacha_rate(
-  state: Arc<AppState>,
-  Params(params): Params<GachaRateRequest>,
-) -> impl IntoHandlerResponse {
+pub async fn gacha_rate(state: Arc<AppState>, Params(params): Params<GachaRateRequest>) -> impl IntoHandlerResponse {
   warn!(?params, "encountered stub: gacha_rate");
 
   let client = state.get_database_client().await?;
@@ -1476,7 +1565,10 @@ pub async fn gacha_rate(
       .into_iter()
       .map(|row| GachaRateBonusItem {
         pack_id: row.get("pack_id"),
-        rate: (row.get::<_, Decimal>("rate") * Decimal::from(1000)).round().to_i32().unwrap(),
+        rate: (row.get::<_, Decimal>("rate") * Decimal::from(1000))
+          .round()
+          .to_i32()
+          .unwrap(),
       })
       .collect::<Vec<_>>()
   };
