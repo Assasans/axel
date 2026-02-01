@@ -320,7 +320,9 @@ impl<'de> de::Deserializer<'de> for StrDeserializer<'de> {
   where
     V: Visitor<'de>,
   {
-    Err(de::Error::custom("tuples are not supported"))
+    serde_json::Deserializer::from_str(self.0)
+      .deserialize_tuple(_len, _visitor)
+      .map_err(de::Error::custom)
   }
 
   fn deserialize_tuple_struct<V>(self, _name: &'static str, _len: usize, _visitor: V) -> Result<V::Value, Self::Error>
@@ -456,5 +458,20 @@ mod tests {
     let result: WithEnum = from_hashmap(&map).unwrap();
 
     assert_eq!(result.status, Status::Active);
+  }
+
+  #[test]
+  fn test_array_deserialization() {
+    let mut map = HashMap::new();
+    map.insert("numbers".to_string(), "[1, 2, 3, 4, 5]".to_string());
+
+    #[derive(Debug, Deserialize, PartialEq)]
+    struct WithArray {
+      numbers: [i32; 5],
+    }
+
+    let result: WithArray = from_hashmap(&map).unwrap();
+
+    assert_eq!(result.numbers, [1, 2, 3, 4, 5]);
   }
 }

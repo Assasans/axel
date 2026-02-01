@@ -41,6 +41,8 @@ pub async fn run_migrations(session: &Session, client: &mut Client) {
       migration!(add_user_character_special_skills),
       migration!(add_user_party_form_skills),
       migration!(add_user_member_skills),
+      migration!(add_user_home_illustrations),
+      migration!(set_user_current_home_member),
     ]
   });
 
@@ -640,4 +642,117 @@ async fn add_user_member_skills(session: &Session, client: &mut Client) -> u64 {
     .unwrap();
 
   total_inserted
+}
+
+async fn add_user_home_illustrations(session: &Session, client: &mut Client) -> u64 {
+  // XXX: First member conveniently has same ID as its default illustration
+  let member_id: i64 = {
+    #[rustfmt::skip]
+    let statement = client
+      .prepare(/* language=postgresql */ r#"
+        select member_id
+        from user_members
+        where user_id = $1
+        order by member_id
+        limit 1
+      "#)
+      .await
+      .context("failed to prepare statement")
+      .unwrap();
+    let row = client
+      .query_one(&statement, &[&session.user_id])
+      .await
+      .context("failed to execute query")
+      .unwrap();
+    row.get(0)
+  };
+
+  #[rustfmt::skip]
+  let statement = client
+    .prepare(/* language=postgresql */ r#"
+      insert into user_home_illustrations (user_id, slot, member_id)
+      select $1, h.slot, h.member_id
+      from (values (1::int, $2::bigint),
+                   (2::int, null),
+                   (3::int, null),
+                   (4::int, null),
+                   (5::int, null)) as h(slot, member_id)
+      where not exists (select 1
+                        from user_home_illustrations uhi
+                        where uhi.user_id = $1
+                          and uhi.slot = h.slot)
+    "#)
+    .await
+    .context("failed to prepare statement")
+    .unwrap();
+  client
+    .execute(&statement, &[&session.user_id, &member_id])
+    .await
+    .context("failed to execute query")
+    .unwrap()
+}
+
+async fn set_user_current_home_member(session: &Session, client: &mut Client) -> u64 {
+  // If users.home_current_illustration_id is null, set it to first slot in user_home_illustrations
+  let current_member_id: Option<i64> = {
+    #[rustfmt::skip]
+    let statement = client
+      .prepare(/* language=postgresql */ r#"
+        select home_current_illustration_id
+        from users
+        where id = $1
+        for update
+      "#)
+      .await
+      .context("failed to prepare statement")
+      .unwrap();
+    let row = client
+      .query_one(&statement, &[&session.user_id])
+      .await
+      .context("failed to execute query")
+      .unwrap();
+    row.get(0)
+  };
+
+  if current_member_id.is_some() {
+    // XXX: Ideally we should check whether member also exists in user_members invalidate it if not
+    0
+  } else {
+    let member_id: i64 = {
+      #[rustfmt::skip]
+      let statement = client
+        .prepare(/* language=postgresql */ r#"
+          select member_id
+          from user_home_illustrations
+          where user_id = $1 and member_id is not null
+          order by slot
+          limit 1
+        "#)
+        .await
+        .context("failed to prepare statement")
+        .unwrap();
+      let row = client
+        .query_one(&statement, &[&session.user_id])
+        .await
+        .context("failed to execute query")
+        .unwrap();
+      row.get(0)
+    };
+
+    #[rustfmt::skip]
+    let update_statement = client
+      .prepare(/* language=postgresql */ r#"
+        update users
+        set home_current_illustration_id = $2
+        where id = $1
+      "#)
+      .await
+      .context("failed to prepare update statement")
+      .unwrap();
+    client
+      .execute(&update_statement, &[&session.user_id, &member_id])
+      .await
+      .context("failed to execute update")
+      .unwrap()
+  }
 }
