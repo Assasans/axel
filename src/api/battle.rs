@@ -1,9 +1,10 @@
 use crate::api::battle_multi::{BattleCharacterLove, BattleClearReward, BattleMemberExp};
 use crate::api::master_all::get_master_manager;
 use crate::api::party_info::{Party, PartyForm, PartyPassiveSkillInfo, SpecialSkillInfo};
-use crate::api::quest_hunting::{extract_items, BattleReward};
+use crate::api::quest::quest_hunting::BattleReward;
+use crate::api::quest::{parse_reward_items, QuestRewardItem};
 use crate::api::surprise::BasicBattlePartyForm;
-use crate::api::{ApiRequest, MemberFameStats, NotificationData, RemoteDataItemType};
+use crate::api::{ApiRequest, MemberFameStats, NotificationData, RemoteData, RemoteDataItemType};
 use crate::blob::IntoRemoteData;
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
@@ -14,6 +15,7 @@ use crate::member::{
   MemberStrength,
 };
 use crate::notification::{IntoNotificationData, MissionDone};
+use crate::user::overrides::FetchUserOverrides;
 use crate::user::session::Session;
 use crate::AppState;
 use anyhow::Context;
@@ -21,7 +23,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::collections::HashMap;
 use std::sync::Arc;
-use tracing::{debug, warn};
+use tracing::{debug, info, warn};
 
 // See [Wonder_Api_BattlestartMembersResponseDto_Fields]
 // See [Wonder_Api_SurpriseQuestStartMembersResponseDto_Fields]
@@ -234,6 +236,7 @@ pub async fn battle_wave_result(request: ApiRequest) -> impl IntoHandlerResponse
 }
 
 // See [Wonder_Api_ResultResponseDto_Fields]
+// See [Wonder_Api_BattlemarathonquestresultResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct BattleResultResponse {
   pub limit: i32,
@@ -277,28 +280,14 @@ pub struct BattleResultRequest {
   pub memcheckcount: i32,
 }
 
-pub async fn battle_result(
-  state: Arc<AppState>,
-  session: Arc<Session>,
-  Params(params): Params<BattleResultRequest>,
-) -> impl IntoHandlerResponse {
-  warn!(?params, "encountered stub: battle_result");
-
-  let rewards = get_master_manager()
-    .get_master("mainquest_stage_itemreward")
-    .into_iter()
-    .map(|reward| (reward["id"].as_str().unwrap().parse::<i32>().unwrap(), reward))
-    .collect::<HashMap<_, _>>();
-  let mut rewards = extract_items(&rewards[&params.quest_id]);
-  for item in &mut rewards {
-    item.item_num *= 20;
-  }
-
-  let mut client = state.get_database_client().await?;
-  let transaction = client.transaction().await.context("failed to start transaction")?;
-  let update = UpdateItemCountBy::new(&transaction).await?;
+pub async fn grant_rewards(
+  transaction: &deadpool_postgres::Transaction<'_>,
+  session: &Session,
+  rewards: &[QuestRewardItem],
+) -> anyhow::Result<Vec<RemoteData>> {
+  let update = UpdateItemCountBy::new(transaction).await?;
   let mut update_items = Vec::new();
-  for item in &rewards {
+  for item in rewards {
     let item = update
       .run(
         session.user_id,
@@ -307,20 +296,43 @@ pub async fn battle_result(
       )
       .await
       .context("failed to execute query")?;
-    debug!(?item, "granted main quest reward");
+    debug!(?item, "granted battle reward");
 
     update_items.push(item.into_remote_data());
   }
-  transaction.commit().await.context("failed to commit transaction")?;
 
-  let party = FetchUserParty::new(&client)
+  Ok(update_items.into_iter().flatten().collect())
+}
+
+pub async fn apply_reward_multiplier(
+  transaction: &deadpool_postgres::Transaction<'_>,
+  session: &Session,
+  rewards: &mut Vec<QuestRewardItem>,
+) -> anyhow::Result<()> {
+  let multiplier = FetchUserOverrides::new(transaction)
     .await?
-    .run(session.user_id, params.party_id as i64)
-    .await?;
+    .run(session.user_id)
+    .await?
+    .get("battle_reward_multiplier")
+    .and_then(|v| v.parse::<f32>().ok());
+  if let Some(multiplier) = multiplier {
+    info!(?multiplier, "applying battle reward multiplier");
+    for item in rewards {
+      item.item_num = ((item.item_num as f32) * multiplier).ceil() as i32;
+    }
+  }
 
+  Ok(())
+}
+
+pub async fn make_battle_member_exp_and_character_love(
+  party: &Party,
+  client: &deadpool_postgres::Client,
+  session: &Session,
+) -> anyhow::Result<(Vec<BattleMemberExp>, Vec<BattleCharacterLove>)> {
   // We must send only members that are used in the party, otherwise hardlock occurs
   #[rustfmt::skip]
-  let members = FetchUserMembersIn::new(&client)
+  let members = FetchUserMembersIn::new(client)
     .await?
     .run(session.user_id, &party.party_forms.iter().map(|form| form.main as i64).collect::<Vec<_>>())
     .await?;
@@ -374,26 +386,56 @@ pub async fn battle_result(
       .collect::<HashMap<_, _>>()
   };
 
+  let member_exp = members
+    .iter()
+    .map(|member| BattleMemberExp {
+      // TODO: I don't know whether client wants user-id or prototype-id here
+      member_id: member.id as i64,
+      exp: 230,
+    })
+    .collect();
+  let character_love = characters
+    .iter()
+    .map(|(character_id, intimacy)| BattleCharacterLove {
+      character_id: *character_id,
+      love: *intimacy + 10,
+    })
+    .collect();
+  Ok((member_exp, character_love))
+}
+
+pub async fn battle_result(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<BattleResultRequest>,
+) -> impl IntoHandlerResponse {
+  let mut client = state.get_database_client().await?;
+  let transaction = client.transaction().await.context("failed to start transaction")?;
+
+  let rewards = get_master_manager()
+    .get_master("mainquest_stage_itemreward")
+    .iter()
+    .map(|reward| (reward["id"].as_str().unwrap().parse::<i32>().unwrap(), reward))
+    .collect::<HashMap<_, _>>();
+  let mut rewards = parse_reward_items(rewards[&params.quest_id]);
+  apply_reward_multiplier(&transaction, &session, &mut rewards).await?;
+  let update_items = grant_rewards(&transaction, &session, &rewards).await?;
+  transaction.commit().await.context("failed to commit transaction")?;
+
+  let party = FetchUserParty::new(&client)
+    .await?
+    .run(session.user_id, params.party_id as i64)
+    .await?;
+
+  let (member_exp, love) = make_battle_member_exp_and_character_love(&party, &client, &session).await?;
   let mut response = CallResponse::new_success(Box::new(BattleResultResponse {
     limit: 0,
     exp: 5,
     lvup: 0,
     money: 85000,
     storyunlock: vec![],
-    love: characters
-      .iter()
-      .map(|(character_id, intimacy)| BattleCharacterLove {
-        character_id: *character_id,
-        love: *intimacy + 10,
-      })
-      .collect(),
-    member_exp: members
-      .iter()
-      .map(|member| BattleMemberExp {
-        member_id: member.id as i64,
-        exp: 230,
-      })
-      .collect(),
+    love,
+    member_exp,
     mission: params.clearquestmission,
     reward: rewards
       .iter()
@@ -415,7 +457,7 @@ pub async fn battle_result(
     },
     firstclear: true,
   }));
-  response.remote.extend(update_items.into_iter().flatten());
+  response.remote.extend(update_items);
   // TODO: Send remote data to actually update characters stats
   response.add_notifications(vec![
     NotificationData::new(1, 16, 1, 0, "".to_string(), "".to_string()),

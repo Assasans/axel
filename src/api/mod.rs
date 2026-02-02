@@ -36,9 +36,7 @@ pub mod party;
 pub mod party_info;
 pub mod present;
 pub mod profile;
-pub mod quest_fame;
-pub mod quest_hunting;
-pub mod quest_main;
+pub mod quest;
 pub mod shop;
 pub mod smith_craft;
 pub mod smith_sell;
@@ -319,6 +317,7 @@ pub struct SkillPaFame {
   pub add_status_list: Vec<SkillPaFameAddStatus>,
 }
 
+// See [Wonder_Api_SkillPaFameAddStatusResponseDto_Fields]
 // See [Wonder_Data_MemberParameter_SkillPaFame_AddStatus_Fields]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SkillPaFameAddStatus {

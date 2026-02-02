@@ -1,17 +1,24 @@
 //! Hierarchy is Rank (I) -> Area (Near the Axel Village) -> Stage (Dire Bunny Raid)
 
+use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::Value;
 use std::sync::Arc;
+use anyhow::Context;
 use tracing::debug;
 
-use crate::api::master_all::get_masters;
-use crate::api::{battle, ApiRequest};
+use crate::api::battle_multi::{BattleCharacterLove, BattleMemberExp};
+use crate::api::master_all::{get_master_manager, get_masters};
+use crate::api::quest::quest_hunting::{BattleReward};
+use crate::api::{battle, ApiRequest, SkillPaFameAddStatus};
+use crate::api::battle::{apply_reward_multiplier, grant_rewards, make_battle_member_exp_and_character_love};
+use crate::api::quest::parse_reward_items;
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
-use crate::handler::{HandlerResponse, IntoHandlerResponse, Unsigned};
+use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::user::session::Session;
 use crate::AppState;
+use crate::member::FetchUserParty;
 
 // See [Wonder_Api_FameQuestRankListResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -205,109 +212,107 @@ pub async fn fame_quest_start(
   battle::make_battle_start(&state, &session, party_no).await
 }
 
+// See [Wonder_Api_FameQuestResultResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct FameQuestResultResponse {
+  pub fame_rank_up: i32,
+  pub money: i32,
+  pub exp: i32,
+  pub lvup: i32,
+  pub love: Vec<BattleCharacterLove>,
+  pub member_exp: Vec<BattleMemberExp>,
+  // [mission_reward] and [clear_reward] names seem to be swapped
+  pub mission_reward: Vec<BattleClearReward>,
+  pub clear_reward: Vec<BattleReward>,
+  pub lottery_potion_list: Vec<FameQuestLotteryPotion>,
+}
+
+impl CallCustom for FameQuestResultResponse {}
+
+// See [Wonder_Api_FameQuestResultClearRewardResponseDto_Fields]
+// extends [Wonder_Api_ResultClearrewardResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct BattleClearReward {
+  pub itemtype: i32,
+  pub itemid: i64,
+  pub itemnum: i32,
+  pub mission: i32,
+  #[serde(with = "crate::bool_as_int")]
+  pub is_rare: bool,
+}
+
+// See [Wonder_Api_FameQuestLotteryPotionResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct FameQuestLotteryPotion {
+  pub potion_id: i32,
+  pub user_member_id: i64,
+  pub potion_choice_list: Vec<FameQuestLotteryPotionChoice>,
+}
+
+// See [Wonder_Api_FameQuestLotteryPotionChoiceResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct FameQuestLotteryPotionChoice {
+  pub potion_choice_id: i32,
+  pub potion_type: i32,
+  pub skill_pa_fame_id: i64,
+  pub skill_pa_fame_status: Vec<SkillPaFameAddStatus>,
+}
+
 // Interestingly it does not have [memcheckcount].
-// party_no=1
-// win=0
-// clear_mission_list=[0,0,0]
-// stage_id=710011
-pub async fn fame_quest_result(request: ApiRequest) -> impl IntoHandlerResponse {
-  let party_no: i32 = request.body["party_no"].parse().unwrap();
-  let win: i32 = request.body["win"].parse().unwrap();
-  let clear_mission_list: Vec<i32> = serde_json::from_str(&request.body["clear_mission_list"]).unwrap();
-  let stage_id: i32 = request.body["stage_id"].parse().unwrap();
+// See [Wonder_Api_FameQuestResultRequest_Fields]
+#[derive(Debug, Deserialize)]
+pub struct FameQuestResultRequest {
+  #[serde(rename = "party_no")]
+  pub party_id: i32,
+  pub stage_id: i32,
+  pub win: i32,
+  pub clear_mission_list: Vec<i32>,
+}
 
-  let response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(json!({
-    "fame_rank_up": 0,
-    "money": 0,
-    "exp": 0,
-    "lvlup": 0,
-    "love": [
-      {
-        "character_id": 100,
-        "love": 4
-      },
-      {
-        "character_id": 101,
-        "love": 4
-      },
-      {
-        "character_id": 106,
-        "love": 4
-      }
-    ],
-    "member_exp": [
-      {
-        "member_id": 1001100,
-        "exp": 150
-      },
-      {
-        "member_id": 1011100,
-        "exp": 150
-      },
-      {
-        "member_id": 1064217,
-        "exp": 150
-      }
-    ],
-    "mission_reward": [
-      {
-        "itemtype": 15,
-        "itemid": 5001,
-        "itemnum": 4,
-        "mission": 0,
-        "is_rare": 0
-      },
-      {
-        "itemtype": 18,
-        "itemid": 1,
-        "itemnum": 1,
-        "mission": 0,
-        "is_rare": 0
-      },
-      {
-        "itemtype": 16,
-        "itemid": 151,
-        "itemnum": 1,
-        "mission": 0,
-        "is_rare": 0
-      },
-      {
-        "itemtype": 18,
-        "itemid": 2,
-        "itemnum": 2,
-        "mission": 0,
-        "is_rare": 0
-      },
-      {
-        "itemtype": 27,
-        "itemid": 230831,
-        "itemnum": 3,
-        "mission": 0,
-        "is_rare": 0
-      }
-    ],
-    "clear_reward": [
-      {
-        "itemtype": 15,
-        "itemid": 1100,
-        "itemnum": 3,
-        "mission": 1
-      },
-      {
-        "itemtype": 4,
-        "itemid": 1061100,
-        "itemnum": 1,
-        "mission": 1
-      },
-      {
-        "itemtype": 3,
-        "itemid": 1,
-        "itemnum": 50,
-        "mission": 3
-      }
-    ],
-    "lottery_potion_list": [],
-  })));
+pub async fn fame_quest_result(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<FameQuestResultRequest>,
+) -> impl IntoHandlerResponse {
+  let mut client = state.get_database_client().await?;
+  let transaction = client.transaction().await.context("failed to start transaction")?;
 
+  let rewards = get_master_manager()
+    .get_master("fame_quest_stage_itemreward")
+    .iter()
+    .map(|reward| (reward["fame_quest_id"].as_str().unwrap().parse::<i32>().unwrap(), reward))
+    .collect::<HashMap<_, _>>();
+  let mut rewards = parse_reward_items(rewards[&params.stage_id]);
+  apply_reward_multiplier(&transaction, &session, &mut rewards).await?;
+  let update_items = grant_rewards(&transaction, &session, &rewards).await?;
+  transaction.commit().await.context("failed to commit transaction")?;
+
+  let party = FetchUserParty::new(&client)
+    .await?
+    .run(session.user_id, params.party_id as i64)
+    .await?;
+
+  let (member_exp, love) = make_battle_member_exp_and_character_love(&party, &client, &session).await?;
+  let mut response = CallResponse::new_success(Box::new(FameQuestResultResponse {
+    fame_rank_up: 1,
+    exp: 230,
+    lvup: 0,
+    money: 42000,
+    love,
+    // TODO: We must send only members that are used in the party, otherwise hardlock occurs??
+    member_exp,
+    clear_reward: rewards
+      .iter()
+      .map(|item| BattleReward {
+        itemtype: item.item_type,
+        itemid: item.item_id,
+        itemnum: item.item_num,
+        is_rare: item.item_rare,
+      })
+      .collect(),
+    mission_reward: vec![],
+    lottery_potion_list: vec![],
+  }));
+  response.remote.extend(update_items);
   Ok(Unsigned(response))
 }

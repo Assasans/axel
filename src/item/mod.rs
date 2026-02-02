@@ -13,6 +13,24 @@ pub struct CountedItem {
 impl IntoRemoteData for CountedItem {
   fn into_remote_data(self) -> Vec<RemoteData> {
     vec![
+      // XXX: This is a hack, UserParamAdd combines amount with existing amount.
+      //  UserParamUpdate does not create new items. We need to either track state what was sent
+      //  to the client, or delete item entirely and re-add it.
+      //  UserParamNew does not work either, behaving as UserParamAdd.
+      RemoteData {
+        cmd: RemoteDataCommand::UserParamDelete as i32,
+        uid: None,
+        item_type: self.item.item_type.into(),
+        item_id: self.item.item_id,
+        // UserParamDelete decreases by this amount, and clamps at zero
+        item_num: i32::MAX,
+        uniqid: 0,
+        lv: 0,
+        tag: String::from("-"),
+        member_parameter: None,
+        character_parameter: None,
+        is_trial: None,
+      },
       RemoteData {
         cmd: RemoteDataCommand::UserParamNew as i32,
         uid: None,
@@ -21,7 +39,7 @@ impl IntoRemoteData for CountedItem {
         item_num: self.quantity,
         uniqid: 0,
         lv: 0,
-        tag: String::from(""),
+        tag: String::from("-"),
         member_parameter: None,
         character_parameter: None,
         is_trial: None,

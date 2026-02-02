@@ -20,6 +20,8 @@ use serde_json::Value;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tracing::{debug, warn};
+use crate::api::battle::{apply_reward_multiplier, grant_rewards, make_battle_member_exp_and_character_love};
+use crate::api::quest::parse_reward_items;
 
 // See [Wonder_Api_QuesthuntinglistResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -209,6 +211,7 @@ pub struct BattleHuntingResultResponse {
   pub clearreward: Vec<BattleClearReward>,
 }
 
+// See [Wonder_Api_FameQuestResultRewardResponseDto_Fields]
 // See [Wonder_Api_BattlehuntingresultRewardResponseDto_Fields]
 // See [Wonder_Api_ResultRewardResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -239,116 +242,34 @@ pub async fn battle_hunting_result(
   session: Arc<Session>,
   Params(params): Params<BattleHuntingResultRequest>,
 ) -> impl IntoHandlerResponse {
-  warn!(?params, "encountered stub: battle_hunting_result");
+  let mut client = state.get_database_client().await?;
+  let transaction = client.transaction().await.context("failed to start transaction")?;
 
   let rewards = get_master_manager()
     .get_master("huntingquest_stage_itemreward")
-    .into_iter()
+    .iter()
     .map(|reward| (reward["id"].as_str().unwrap().parse::<i32>().unwrap(), reward))
     .collect::<HashMap<_, _>>();
-  let mut rewards = extract_items(&rewards[&params.quest_id]);
-  for item in &mut rewards {
-    item.item_num *= 20;
-  }
-
-  let mut client = state.get_database_client().await?;
-  let transaction = client.transaction().await.context("failed to start transaction")?;
-  let update = UpdateItemCountBy::new(&transaction).await?;
-  let mut update_items = Vec::new();
-  for item in &rewards {
-    let item = update
-      .run(
-        session.user_id,
-        (RemoteDataItemType::from(item.item_type), item.item_id),
-        item.item_num,
-      )
-      .await
-      .context("failed to execute query")?;
-    debug!(?item, "granted hunting quest reward");
-
-    update_items.push(item.into_remote_data());
-  }
+  let mut rewards = parse_reward_items(rewards[&params.quest_id]);
+  apply_reward_multiplier(&transaction, &session, &mut rewards).await?;
+  let update_items = grant_rewards(&transaction, &session, &rewards).await?;
   transaction.commit().await.context("failed to commit transaction")?;
-
-  // TODO: We must send only members that are used in the party, otherwise hardlock occurs??
-  let fetch_members = FetchUserMembers::new(&client).await.unwrap();
-  let members = fetch_members.run(session.user_id).await.unwrap();
 
   let party = FetchUserParty::new(&client)
     .await?
     .run(session.user_id, params.party_id as i64)
     .await?;
 
-  let characters = party
-    .party_forms
-    .iter()
-    .map(|form| {
-      [
-        members
-          .iter()
-          .find(|member| member.id == form.main)
-          .map(|m| m.prototype.character_id),
-        members
-          .iter()
-          .find(|member| member.id == form.sub1)
-          .map(|m| m.prototype.character_id),
-        members
-          .iter()
-          .find(|member| member.id == form.sub2)
-          .map(|m| m.prototype.character_id),
-      ]
-    })
-    .flatten()
-    .flatten()
-    .collect::<Vec<_>>();
-  let characters = {
-    #[rustfmt::skip]
-    let statement = client
-      .prepare(/* language=postgresql */ r#"
-        select
-          character_id,
-          intimacy
-        from user_characters
-        where user_id = $1
-      "#)
-      .await
-      .context("failed to prepare statement")?;
-    let rows = client
-      .query(&statement, &[&session.user_id])
-      .await
-      .context("failed to execute query")?;
-    rows
-      .iter()
-      .map(|row| {
-        let character_id: i64 = row.get(0);
-        let intimacy: i32 = row.get(1);
-        (character_id, intimacy)
-      })
-      .filter(|(id, _)| characters.contains(id))
-      .collect::<HashMap<_, _>>()
-  };
-
+  let (member_exp, love) = make_battle_member_exp_and_character_love(&party, &client, &session).await?;
   let mut response = CallResponse::new_success(Box::new(BattleHuntingResultResponse {
     limit: 1,
     exp: 230,
     lvup: 0,
     money: 42000,
     storyunlock: vec![],
-    love: characters
-      .iter()
-      .map(|(id, intimacy)| BattleCharacterLove {
-        character_id: *id,
-        love: *intimacy + 10,
-      })
-      .collect(),
-    member_exp: members
-      .iter()
-      .map(|member| BattleMemberExp {
-        // XXX: I don't know whether client wants user-id or prototype-id here
-        member_id: member.id as i64,
-        exp: 230,
-      })
-      .collect(),
+    love,
+    // TODO: We must send only members that are used in the party, otherwise hardlock occurs??
+    member_exp,
     mission: params.clearquestmission,
     reward: rewards
       .iter()
@@ -361,7 +282,7 @@ pub async fn battle_hunting_result(
       .collect(),
     clearreward: vec![],
   }));
-  response.remote.extend(update_items.into_iter().flatten());
+  response.remote.extend(update_items);
   Ok(Unsigned(response))
 }
 
@@ -399,71 +320,6 @@ pub struct HuntingQuestListByItemRequest {
   pub item_id: i64,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub struct HuntingRewardItem {
-  pub item_type: i32,
-  pub item_id: i64,
-  pub item_num: i32,
-  pub item_rare: bool,
-}
-
-pub fn extract_items(value: &Value) -> Vec<HuntingRewardItem> {
-  let object = value.as_object().unwrap();
-
-  // Find all indices that appear in keys like "item_type{n}"
-  let mut indices: Vec<u32> = object
-    .keys()
-    .filter_map(|k| k.strip_prefix("item_type"))
-    .filter_map(|suffix| suffix.parse::<u32>().ok())
-    .collect();
-
-  indices.sort_unstable();
-  indices.dedup();
-
-  indices
-    .into_iter()
-    .filter_map(|i| {
-      let item_type = object
-        .get(format!("item_type{i}").as_str())?
-        .as_str()
-        .unwrap()
-        .parse::<i32>()
-        .ok()?;
-      let item_id = object
-        .get(format!("item_id{i}").as_str())?
-        .as_str()
-        .unwrap()
-        .parse::<i64>()
-        .ok()?;
-      let item_num = object
-        .get(format!("item_num{i}").as_str())?
-        .as_str()
-        .unwrap()
-        .parse::<i32>()
-        .ok()?;
-      let item_rare = object
-        .get(format!("item_rare{i}").as_str())?
-        .as_str()
-        .unwrap()
-        .parse::<i32>()
-        .ok()?
-        != 0;
-
-      // Skip empty item slots
-      if item_type == 0 || item_id == 0 || item_num == 0 {
-        return None;
-      }
-
-      Some(HuntingRewardItem {
-        item_type,
-        item_id,
-        item_num,
-        item_rare,
-      })
-    })
-    .collect()
-}
-
 pub async fn hunting_quest_list_by_item(
   Params(params): Params<HuntingQuestListByItemRequest>,
 ) -> impl IntoHandlerResponse {
@@ -478,7 +334,7 @@ pub async fn hunting_quest_list_by_item(
 
   let stages = stages.iter().filter(|stage| {
     let id = stage["id"].as_str().unwrap().parse::<i32>().unwrap();
-    let rewards = extract_items(&rewards[&id]);
+    let rewards = parse_reward_items(&rewards[&id]);
 
     rewards
       .iter()

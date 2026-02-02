@@ -10,6 +10,7 @@ use itertools::Itertools;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio_postgres::{Row, Statement};
+use tracing::warn;
 
 /// Member information from master data. Can be used to create new [Member] instances.
 #[derive(Debug, Clone)]
@@ -443,8 +444,22 @@ impl MinMaxRange {
 
   pub fn interpolate(&self, level: i32) -> i32 {
     const MAX_LEVEL: i32 = 60;
+
+    // Used for debugging only, should always be 1.0 in production.
+    const POST_MULTIPLIER: f32 = 20.0;
+    if POST_MULTIPLIER != 1.0 {
+      static WARNED: std::sync::Once = std::sync::Once::new();
+      WARNED.call_once(|| {
+        warn!(
+          "MinMaxRange::interpolate: POST_MULTIPLIER is not 1.0, got {}",
+          POST_MULTIPLIER
+        );
+      });
+    }
+
     let ratio = (level - 1) as f32 / (MAX_LEVEL - 1) as f32;
-    (self.min as f32 + (self.max - self.min) as f32 * ratio).round() as i32
+    let interpolated = self.min as f32 + (self.max - self.min) as f32 * ratio;
+    (interpolated * POST_MULTIPLIER).round() as i32
   }
 }
 
@@ -573,7 +588,6 @@ pub struct FetchUserParty<'a> {
 }
 
 impl<'a> FetchUserParty<'a> {
-
   pub async fn new(executor: impl Into<QueryExecutor<'a>>) -> anyhow::Result<Self> {
     let executor = executor.into();
     Ok(Self {
@@ -602,7 +616,11 @@ impl<'a> FetchUserParty<'a> {
   }
 
   pub async fn run(&self, user_id: UserId, party_id: i64) -> anyhow::Result<Party> {
-    let rows = self.executor.client().query(&self.statement, &[&user_id, &party_id]).await?;
+    let rows = self
+      .executor
+      .client()
+      .query(&self.statement, &[&user_id, &party_id])
+      .await?;
     Ok(materialize_party_rows(rows).into_iter().next().unwrap())
   }
 }

@@ -536,6 +536,7 @@ pub struct MarathonMultiResultResponse {
 
 impl CallCustom for MarathonMultiResultResponse {}
 
+// See [Wonder_Api_FameQuestResultLoveResponseDto_Fields]
 // See [Wonder_Api_MarathonMultiResultLoveResponseDto_Fields]
 // See [Wonder_Api_BattlehuntingresultLoveResponseDto_Fields]
 // See [Wonder_Api_ResultLoveResponseDto_Fields]
@@ -545,6 +546,7 @@ pub struct BattleCharacterLove {
   pub love: i32,
 }
 
+// See [Wonder_Api_FameQuestResultMemberExpResponseDto_Fields]
 // See [Wonder_Api_MarathonMultiResultMemberExpResponseDto_Fields]
 // See [Wonder_Api_BattlehuntingresultMemberExpResponseDto_Fields]
 // See [Wonder_Api_ResultMemberExpResponseDto_Fields]

@@ -1,4 +1,5 @@
 //! Reference: https://youtu.be/A47Qcj323C0
+//! List of rules: jq '.[].rule' master/mission_panel.json -r | sort -u
 
 use crate::api::master_all::get_master_manager;
 use crate::api::RemoteDataItemType;

@@ -1,17 +1,23 @@
+use std::collections::HashMap;
 use std::sync::Arc;
-
+use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use tracing::warn;
 
 use crate::api::master_all::{get_master_manager, get_masters};
-use crate::api::{battle, ApiRequest};
-use crate::call::CallCustom;
+use crate::api::{battle, ApiRequest, NotificationData};
+use crate::api::battle::{apply_reward_multiplier, grant_rewards, make_battle_member_exp_and_character_love, AutoProgressionResultResponse, BattleResultResponse};
+use crate::api::quest::parse_reward_items;
+use crate::api::quest::quest_hunting::BattleReward;
+use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Signed, Unsigned};
 use crate::user::session::Session;
 use crate::AppState;
+use crate::member::FetchUserParty;
+use crate::notification::MissionDone;
 
 #[derive(Debug, Serialize)]
 pub struct MissionList {
@@ -329,17 +335,91 @@ pub async fn marathon_quest_start(
   Ok(battle::make_battle_start(&state, &session, party_no).await)
 }
 
-// quest_id=514012
-// party_no=1
-// auto_progression_info={"is_start":false,"stop_setting":0,"incomplete_setting":0}
-// event_id=24013
-pub async fn marathon_quest_result(request: ApiRequest) -> impl IntoHandlerResponse {
-  let quest_id = request.body["quest_id"].parse::<i32>().unwrap();
-  let party_no = request.body["party_no"].parse::<i32>().unwrap();
-  let event_id: Value = serde_json::from_str(&request.body["event_id"])?;
+// See [Wonder_Api_MarathonQuestResultRequest_Fields]
+#[derive(Debug, Deserialize)]
+pub struct MarathonQuestResultRequest {
+  pub quest_id: i32,
+  #[serde(rename = "party_no")]
+  pub party_id: i32,
+  pub win: i32,
+  pub wave: i32,
+  pub clearquestmission: Vec<i32>,
+  pub auto_progression_stop: bool,
+  pub memcheckcount: i32,
+  pub event_id: i32,
+}
 
-  todo!() as Result<Unsigned<()>, anyhow::Error>
-  // Ok(battle::battle_result(request).await)
+pub async fn marathon_quest_result(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<MarathonQuestResultRequest>,
+)  -> impl IntoHandlerResponse {
+  let mut client = state.get_database_client().await?;
+  let transaction = client.transaction().await.context("failed to start transaction")?;
+
+  let rewards = get_master_manager()
+    .get_master("event_quest_stage_itemreward")
+    .iter()
+    .map(|reward| (reward["id"].as_str().unwrap().parse::<i32>().unwrap(), reward))
+    .collect::<HashMap<_, _>>();
+  let mut rewards = parse_reward_items(rewards[&params.quest_id]);
+  apply_reward_multiplier(&transaction, &session, &mut rewards).await?;
+  let update_items = grant_rewards(&transaction, &session, &rewards).await?;
+  transaction.commit().await.context("failed to commit transaction")?;
+
+  let party = FetchUserParty::new(&client)
+    .await?
+    .run(session.user_id, params.party_id as i64)
+    .await?;
+
+  let (member_exp, love) = make_battle_member_exp_and_character_love(&party, &client, &session).await?;
+  let mut response = CallResponse::new_success(Box::new(BattleResultResponse {
+    limit: 0,
+    exp: 5,
+    lvup: 0,
+    money: 85000,
+    storyunlock: vec![],
+    love,
+    member_exp,
+    mission: params.clearquestmission,
+    reward: rewards
+      .iter()
+      .map(|item| BattleReward {
+        itemtype: item.item_type,
+        itemid: item.item_id,
+        itemnum: item.item_num,
+        is_rare: item.item_rare,
+      })
+      .collect(),
+    clearreward: vec![],
+    auto_progression_result: AutoProgressionResultResponse {
+      auto_count: 0,
+      is_continue: false,
+      stop_reason: 0,
+      stamina_all: 0,
+      reward_all: vec![],
+      clearreward_all: vec![],
+    },
+    firstclear: true,
+  }));
+  response.remote.extend(update_items);
+  // TODO: Send remote data to actually update characters stats
+  response.add_notifications(vec![
+    NotificationData::new(1, 16, 1, 0, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 22, 0, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 14, 1, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 20, 1, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 3, 2, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 13, 7, "".to_string(), "".to_string()),
+    NotificationData::new(1, 7, 34, 1, "show_button".to_string(), "".to_string()),
+    NotificationData::new(1, 6, 1, 30030001, "".to_string(), "".to_string()),
+    NotificationData::new(1, 10, 230731, 52307325, "".to_string(), "".to_string()),
+    NotificationData::new(1, 10, 230831, 52308305, "".to_string(), "".to_string()),
+  ]);
+
+  Ok(Unsigned(response))
 }
 
 // See [Wonder_Api_MarathonBossListResponseDto_Fields]

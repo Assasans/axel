@@ -1,6 +1,6 @@
 use crate::api::master_all::get_master_manager;
-use crate::api::quest_fame::FameQuestReleaseConditionInfo;
-use crate::api::quest_hunting::{extract_items, HuntingQuest};
+use crate::api::quest::quest_fame::FameQuestReleaseConditionInfo;
+use crate::api::quest::quest_hunting::{HuntingQuest};
 use crate::api::smith_craft::BlacksmithEquippedItemResponseDto;
 use crate::call::CallCustom;
 use crate::extractor::Params;
@@ -11,6 +11,7 @@ use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;
+use crate::api::quest::parse_reward_items;
 
 // See [Wonder_Api_ItempoweruplistResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -146,7 +147,7 @@ pub async fn blacksmith_quest_list(Params(params): Params<BlacksmithQuestListReq
       .into_iter()
       .filter(|stage| {
         let id = stage["id"].as_str().unwrap().parse::<i32>().unwrap();
-        let rewards = extract_items(&rewards[&id]);
+        let rewards = parse_reward_items(&rewards[&id]);
         rewards.iter().any(|item| item.item_id == params.item_id)
       })
       .collect::<Vec<_>>()
@@ -164,7 +165,7 @@ pub async fn blacksmith_quest_list(Params(params): Params<BlacksmithQuestListReq
       .into_iter()
       .filter(|stage| {
         let id = stage["id"].as_str().unwrap().parse::<i32>().unwrap();
-        let rewards = extract_items(&rewards[&id]);
+        let rewards = parse_reward_items(&rewards[&id]);
 
         rewards.iter().any(|item| item.item_id == params.item_id)
       })
