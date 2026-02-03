@@ -171,6 +171,10 @@ async fn api_call(
     .handle("dungeon_team_offer", dungeon::dungeon_team_offer)
     .handle("dungeon_team_reset", dungeon::dungeon_team_reset)
     .handle("dungeon_area_skip", dungeon::dungeon_area_skip)
+    .handle("dungeon_battle_result", dungeon::dungeon_battle_result)
+    .handle("dungeon_select_benefit", dungeon::dungeon_select_benefit)
+    .handle("dungeon_benefit_list", dungeon::dungeon_benefit_list)
+    .handle("dungeon_benefit_re_lottery", dungeon::dungeon_benefit_re_lottery)
     .handle("weaponlist", items::weapon_list)
     .handle("accessorylist", items::accessory_list)
     .handle("battlestart", battle::battle_start)
@@ -274,7 +278,7 @@ async fn api_call(
   };
   let data = BASE64_STANDARD_NO_PAD.decode(data).unwrap();
   let meta: CallMeta = serde_json::from_slice(&data).unwrap();
-  debug!("api call meta: {:?}", meta);
+  trace!("api call meta: {:?}", meta);
 
   let mut session_span: Option<Span> = None;
   let session = if let Some(user_key) = &meta.uk {
@@ -344,7 +348,7 @@ async fn api_call(
       .expect("failed to decrypt body");
     let body = str::from_utf8(&body).expect(&format!("failed to convert body to string: {:?}", body));
     let body_raw = body;
-    debug!("api call body: {}", body);
+    trace!("api call body: {}", body);
 
     let body: HashMap<String, String> = serde_urlencoded::from_str(body).unwrap();
     debug!("api call body: {:?}", body);

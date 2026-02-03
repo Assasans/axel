@@ -1,20 +1,25 @@
 //! Reference: https://youtu.be/5xRIW8bDzc4, https://youtu.be/ViMtYimwca4
 
-use crate::api::battle::{BattleParty, LiveMember};
+use crate::api::battle::{apply_reward_multiplier, BattleParty, LiveMember};
 use crate::api::master_all::get_master_manager;
 use crate::api::party_info::{PartyPassiveSkillInfo, SpecialSkillInfo};
+use crate::api::quest::parse_reward_items;
+use crate::api::quest::quest_hunting::BattleReward;
 use crate::api::surprise::BasicBattlePartyForm;
 use crate::api::{MemberFameStats, RemoteDataItemType};
 use crate::blob::{AddItem, IntoRemoteData};
 use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
-use crate::member::{FetchUserMemberSkillsIn, FetchUserMembers, FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype, MemberStrength};
+use crate::member::{
+  FetchUserMemberSkillsIn, FetchUserMembers, FetchUserMembersIn, Member, MemberActiveSkill, MemberPrototype,
+  MemberStrength,
+};
 use crate::user::session::Session;
 use crate::AppState;
 use anyhow::Context;
-use jwt_simple::prelude::Deserialize;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::sync::Arc;
 use tracing::warn;
 
@@ -39,7 +44,10 @@ pub struct DungeonAreaTopResponse {
   pub stage_state: DungeonStageState,
   pub party_set: DungeonPartySet,
   pub clear_info: DungeonAreaClearInfo,
-  pub unchoosed_benefit_id_list: Vec<i32>,
+  /// Must have 3 elements; otherwise, client incorrectly displays empty slots.
+  /// NULLs are not allowed.
+  pub unchoosed_benefit_id_list: [i32; 3],
+  /// Number of redraws used (not remaining).
   pub benefit_re_lottery_count: i32,
   pub is_allow_trial: bool,
 }
@@ -65,6 +73,7 @@ pub struct DungeonAreaClearRewardInfo {
 #[derive(Debug, Serialize)]
 pub struct DungeonStageState {
   pub stage_id: i32,
+  /// Whether to resume in-progress battle.
   pub is_challenge: bool,
   pub enemies: Vec<DungeonStageEnemyState>,
 }
@@ -181,44 +190,61 @@ pub struct DungeonAreaTopRequest {
   pub area_id: i32,
 }
 
-pub async fn dungeon_area_top(Params(params): Params<DungeonAreaTopRequest>) -> impl IntoHandlerResponse {
+pub async fn dungeon_area_top(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<DungeonAreaTopRequest>,
+) -> impl IntoHandlerResponse {
   warn!(?params, "encountered stub: dungeon_area_top");
 
+  let enemies = get_master_manager().get_master("battle_enemy");
+  let stages = get_master_manager().get_master("dungeon_stage");
   let benefits = get_master_manager().get_master("dungeon_benefit_level");
+
+  let areas = get_master_manager().get_master("dungeon_area");
+  let area = areas
+    .iter()
+    .find(|area| area["id"].as_str().unwrap().parse::<i32>().unwrap() == params.area_id)
+    .context("invalid area_id")?;
+  let member_num = area["member_num"].as_str().unwrap().parse::<usize>().unwrap();
+
+  let mut stages = stages
+    .iter()
+    .filter(|stage| stage["area_id"].as_str().unwrap().parse::<i32>().unwrap() == params.area_id);
+  stages.next().unwrap();
+  let stage = stages.next().context("no stages found for area")?;
 
   Ok(Unsigned(DungeonAreaTopResponse {
     is_practice: false,
     stage_state: DungeonStageState {
-      stage_id: 1101,
+      stage_id: stage["id"].as_str().unwrap().parse::<i32>().unwrap(),
       is_challenge: false,
-      enemies: vec![],
+      enemies: enemies
+        .iter()
+        .take(3)
+        .map(|enemy| DungeonStageEnemyState {
+          enemy_id: enemy["enemy_id"].as_str().unwrap().parse::<i32>().unwrap(),
+          current_hp: 100,
+        })
+        .collect(),
     },
-    party_set: DungeonPartySet {
-      stage_party_set: DungeonStagePartySet {
-        party: vec![],
-        reserved_party: vec![],
-        assist: 0,
-        sub_assists: vec![],
-        assist_remain_count: 0,
-        party_passive_skill: Default::default(),
-      },
-      team_members: vec![],
-      team_weapons: vec![],
-      team_accessories: vec![],
-    },
+    party_set: get_party_set(&state, &session, member_num).await?,
     clear_info: DungeonAreaClearInfo {
-      clear_rank: 3,
-      reward_items: vec![DungeonAreaClearRewardInfo {
+      clear_rank: 0,
+      reward_items: vec![/*DungeonAreaClearRewardInfo {
         item_type: RemoteDataItemType::RealMoney.into(),
         item_id: 1,
         item_num: 10000,
-      }],
+      }*/],
     },
     unchoosed_benefit_id_list: benefits
       .iter()
       .map(|benefit| benefit["id"].as_str().unwrap().parse::<i32>().unwrap())
-      .collect(),
-    benefit_re_lottery_count: 10,
+      .take(3)
+      .collect::<Vec<_>>()
+      .try_into()
+      .unwrap(),
+    benefit_re_lottery_count: 0,
     is_allow_trial: true,
   }))
 }
@@ -267,7 +293,7 @@ pub async fn dungeon_top(Params(params): Params<DungeonTopRequest>) -> impl Into
   let areas = get_master_manager().get_master("dungeon_area");
 
   let mut response = CallResponse::new_success(Box::new(DungeonTopResponse {
-    challenging_area_id: 0,
+    challenging_area_id: 11,
     area_info_list: areas
       .iter()
       .filter(|area| area["dungeon_id"].as_str().unwrap().parse::<i32>().unwrap() == params.dungeon_id)
@@ -281,7 +307,7 @@ pub async fn dungeon_top(Params(params): Params<DungeonTopRequest>) -> impl Into
       bought_count: 4,
       available_buy_count: 4,
     },
-    has_new_dungeon: true,
+    has_new_dungeon: false,
   }));
   // response.remote.push(AddItem::new(RemoteDataItemType::DungeonChallenge, 1, 1, 4).into_remote_data());
 
@@ -405,6 +431,56 @@ async fn get_team_set(state: &AppState, session: &Session, member_num: usize) ->
     accessories: vec![],
     assist: 0,
     sub_assists: vec![],
+  })
+}
+
+async fn get_party_set(state: &AppState, session: &Session, member_num: usize) -> anyhow::Result<DungeonPartySet> {
+  let client = state.get_database_client().await?;
+
+  let fetch_members = FetchUserMembers::new(&client).await.unwrap();
+  let mut members = fetch_members.run(session.user_id).await.unwrap();
+  FetchUserMemberSkillsIn::new(&client)
+    .await?
+    .run(session.user_id, &mut members.iter_mut().collect::<Vec<_>>())
+    .await?;
+
+  Ok(DungeonPartySet {
+    stage_party_set: DungeonStagePartySet {
+      party: (1..=member_num)
+        .map(|i| DungeonStagePartyForm {
+          id: 1,
+          form_no: i as i32,
+          main: members.get(i - 1).map_or(0, |m| m.id),
+          sub1: 0,
+          sub2: 0,
+          weapon: 0,
+          acc: 0,
+          strength: 123,
+          specialskill: SpecialSkillInfo {
+            special_skill_id: 100001,
+            trial: false,
+          },
+          skill_pa_fame: 0,
+          current_hp: 100,
+          max_hp: 100,
+          current_sp: 0,
+        })
+        .collect(),
+      reserved_party: vec![],
+      assist: 0,
+      sub_assists: vec![],
+      assist_remain_count: 0,
+      party_passive_skill: Default::default(),
+    },
+    // TODO: We must send only members that are used in the party, otherwise hardlock occurs?
+    team_members: members
+      .into_iter()
+      .map(|member| member.to_party_member())
+      // .filter(|member| party.party_forms.iter().any(|form| form.main == member.id))
+      .take(member_num)
+      .collect(),
+    team_weapons: vec![],
+    team_accessories: vec![],
   })
 }
 
@@ -898,5 +974,125 @@ pub async fn dungeon_area_skip(Params(params): Params<DungeonAreaSkipRequest>) -
       itemid: 1,
       itemnum: 5000,
     }],
+  }))
+}
+
+// See [Wonder_Api_DungeonBattleResultResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct DungeonBattleResultResponse {
+  pub reward: Vec<BattleReward>,
+}
+
+impl CallCustom for DungeonBattleResultResponse {}
+
+// See [Wonder_Api_BattlewaveresultLivemembersRequestDto_Fields]
+#[derive(Debug, Deserialize)]
+pub struct DungeonBattleResultLiveMemberRequest {
+  pub id: i32,
+  pub hp: i32,
+  pub form_no: i32,
+}
+
+// See [Wonder_Api_DungeonBattleResultRequest_Fields]
+#[derive(Debug, Deserialize)]
+pub struct DungeonBattleResultRequest {
+  pub stage_id: i32,
+  pub livemembers: Vec<DungeonBattleResultLiveMemberRequest>,
+  pub resume_info: String,
+}
+
+pub async fn dungeon_battle_result(
+  session: Arc<Session>,
+  Params(params): Params<DungeonBattleResultRequest>,
+) -> impl IntoHandlerResponse {
+  let rewards = get_master_manager()
+    .get_master("dungeon_stage_item_reward")
+    .iter()
+    .map(|reward| (reward["id"].as_str().unwrap().parse::<i32>().unwrap(), reward))
+    .collect::<HashMap<_, _>>();
+  let mut rewards = parse_reward_items(rewards[&params.stage_id]);
+  // apply_reward_multiplier(&transaction, &session, &mut rewards).await?;
+
+  Ok(Unsigned(DungeonBattleResultResponse {
+    reward: rewards
+      .iter()
+      .map(|item| BattleReward {
+        itemtype: item.item_type,
+        itemid: item.item_id,
+        itemnum: item.item_num,
+        is_rare: item.item_rare,
+      })
+      .collect(),
+  }))
+}
+
+// See [Wonder_Api_DungeonSelectBenefitRequest_Fields]
+#[derive(Debug, Deserialize)]
+pub struct DungeonSelectBenefitRequest {
+  pub benefit_id: i32,
+}
+
+// See [Wonder_Api_DungeonSelectBenefitResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct DungeonSelectBenefitResponse {
+  pub revival_character_id: i64,
+}
+
+impl CallCustom for DungeonSelectBenefitResponse {}
+
+pub async fn dungeon_select_benefit(
+  session: Arc<Session>,
+  Params(params): Params<DungeonSelectBenefitRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: dungeon_select_benefit");
+
+  Ok(Unsigned(DungeonSelectBenefitResponse {
+    revival_character_id: 0,
+  }))
+}
+
+// See [Wonder_Api_DungeonBenefitListResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct DungeonBenefitListResponse {
+  pub benefit_id_list: Vec<i32>,
+}
+
+impl CallCustom for DungeonBenefitListResponse {}
+
+/// Currently active benefits.
+pub async fn dungeon_benefit_list(session: Arc<Session>) -> impl IntoHandlerResponse {
+  warn!("encountered stub: dungeon_benefit_list");
+
+  let benefits = get_master_manager().get_master("dungeon_benefit_level");
+
+  Ok(Unsigned(DungeonBenefitListResponse {
+    benefit_id_list: benefits
+      .iter()
+      .map(|benefit| benefit["id"].as_str().unwrap().parse::<i32>().unwrap())
+      .collect::<Vec<_>>(),
+  }))
+}
+
+// See [Wonder_Api_DungeonBenefitReLotteryResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct DungeonBenefitRelotteryResponse {
+  pub benefit_id_list: [i32; 3],
+}
+
+impl CallCustom for DungeonBenefitRelotteryResponse {}
+
+pub async fn dungeon_benefit_re_lottery(session: Arc<Session>) -> impl IntoHandlerResponse {
+  warn!("encountered stub: dungeon_benefit_re_lottery");
+
+  let benefits = get_master_manager().get_master("dungeon_benefit_level");
+
+  Ok(Unsigned(DungeonBenefitRelotteryResponse {
+    benefit_id_list: benefits
+      .iter()
+      .map(|benefit| benefit["id"].as_str().unwrap().parse::<i32>().unwrap())
+      .take(3)
+      .collect::<Vec<_>>()
+      .try_into()
+      .unwrap(),
   }))
 }
