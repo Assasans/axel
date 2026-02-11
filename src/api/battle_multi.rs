@@ -540,6 +540,7 @@ impl CallCustom for MarathonMultiResultResponse {}
 // See [Wonder_Api_MarathonMultiResultLoveResponseDto_Fields]
 // See [Wonder_Api_BattlehuntingresultLoveResponseDto_Fields]
 // See [Wonder_Api_ResultLoveResponseDto_Fields]
+// See [Wonder_Api_MarathonSingleResultLoveResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct BattleCharacterLove {
   pub character_id: i64,
@@ -550,6 +551,7 @@ pub struct BattleCharacterLove {
 // See [Wonder_Api_MarathonMultiResultMemberExpResponseDto_Fields]
 // See [Wonder_Api_BattlehuntingresultMemberExpResponseDto_Fields]
 // See [Wonder_Api_ResultMemberExpResponseDto_Fields]
+// See [Wonder_Api_MarathonSingleResultMemberExpResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct BattleMemberExp {
   pub member_id: i64,

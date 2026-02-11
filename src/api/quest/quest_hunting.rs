@@ -214,6 +214,7 @@ pub struct BattleHuntingResultResponse {
 // See [Wonder_Api_FameQuestResultRewardResponseDto_Fields]
 // See [Wonder_Api_BattlehuntingresultRewardResponseDto_Fields]
 // See [Wonder_Api_ResultRewardResponseDto_Fields]
+// See [Wonder_Api_MarathonSingleResultRewardResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct BattleReward {
   pub itemtype: i32,

@@ -7,20 +7,20 @@
 ## Current progress
 
 The first scene ("And so the Adventure Begins!") works.
+New account sequence works, you can edit your profile.
+On first login, you get all members with randomized XP.
 The home and profile menus work, and most actions there don't cause errors
 (see [Broken features](#broken-features) for details), but neither they save any progress.
 
 A lot of gacha banners (including collaborations ones) is visible, but still not all 947 of them.
-Loot pool is completely random, not saved to database.
+Loot pool is completely random, not saved to database. Dropped members are saved to database.
 
 All main quests are enabled. All stories (including collaboration ones) are enabled.
-Battles work but no rewards are actually given, you can change your party, but not upgrade characters.
+Battles work rewards are actually given (for Main Quests, Free Quests and Fame Quests),
+you can change your party and upgrade members.
 
 All costumes and backgrounds are unlocked. Note that these customizations are not stored
 on the server by client design, so they are not synced across accounts and devices.
-
-Database support is being implemented, new account sequence works, you can edit your profile.
-On first login, you get all members with randomized XP.
 
 <p>
   <img src="https://files.catbox.moe/xvvt4z.png" width="300px">

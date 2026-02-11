@@ -1,4 +1,4 @@
-use crate::api::battle_multi::{BattleCharacterLove, BattleClearReward, BattleMemberExp};
+use crate::api::battle_multi::{BattleCharacterLove, BattleClearReward, BattleMemberExp, MarathonMultiLogRequest};
 use crate::api::master_all::get_master_manager;
 use crate::api::party_info::{Party, PartyForm, PartyPassiveSkillInfo, SpecialSkillInfo};
 use crate::api::quest::quest_hunting::BattleReward;
@@ -29,6 +29,7 @@ use tracing::{debug, info, warn};
 // See [Wonder_Api_SurpriseQuestStartMembersResponseDto_Fields]
 // See [Wonder_Api_ScorechallengestartMembersResponseDto_Fields]
 // See [Wonder_Api_MarathonMultiStartMembersResponseDto_Fields]
+// See [Wonder_Api_MarathonSingleStartMembersResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct BattleMember {
   pub id: i32,
@@ -76,6 +77,7 @@ impl CallCustom for BattleStartResponse {}
 // See [Wonder_Api_BattlestartPartyResponseDto_Fields]
 // See [Wonder_Api_ScorechallengestartPartyResponseDto_Fields]
 // See [Wonder_Api_MarathonMultiStartPartyResponseDto_Fields]
+// See [Wonder_Api_MarathonSingleStartPartyResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct BattleParty {
   pub party_forms: [BasicBattlePartyForm; 5],
@@ -482,4 +484,148 @@ pub async fn battle_result(
 pub async fn battle_retire(request: ApiRequest) -> impl IntoHandlerResponse {
   let response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(json!({})));
   Ok(Unsigned(response))
+}
+
+// See [Wonder_Api_MarathonSingleStartRequest_Fields]
+#[derive(Debug, Deserialize)]
+pub struct MarathonSingleStartRequest {
+  pub quest_id: i32,
+  #[serde(rename = "party_no")]
+  pub party_id: i32,
+  pub event_id: i32,
+  pub ticket_ratio: i32,
+}
+
+// See [Wonder_Api_MarathonSingleStartResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct MarathonSingleStartResponse {
+  pub chest: String,
+  pub party: BattleParty,
+  pub members: Vec<BattleMember>,
+  pub get_log: bool,
+}
+
+impl CallCustom for MarathonSingleStartResponse {}
+
+pub async fn marathon_single_start(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<MarathonSingleStartRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "stub encountered: marathon_single_start");
+
+  let client = state.pool.get().await.context("failed to get database connection")?;
+
+  let party = FetchUserParty::new(&client)
+    .await?
+    .run(session.user_id, params.party_id as i64)
+    .await?;
+
+  let fetch_members = FetchUserMembersIn::new(&client).await.unwrap();
+  #[rustfmt::skip]
+  let mut members = fetch_members.run(
+    session.user_id,
+    &party.party_forms.iter().map(|form| form.main as i64).collect::<Vec<_>>(),
+  ).await.unwrap();
+  FetchUserMemberSkillsIn::new(&client)
+    .await?
+    .run(session.user_id, &mut members.iter_mut().collect::<Vec<_>>())
+    .await?;
+
+  Ok(Unsigned(MarathonSingleStartResponse {
+    chest: "10101111,10101120,10101131".to_string(),
+    party: party.to_battle_party(),
+    // We must send only members that are used in the party, otherwise hardlock occurs?
+    members: members
+      .into_iter()
+      .map(|member| {
+        let form = party.party_forms.iter().find(|form| form.main == member.id).unwrap();
+        member.to_battle_member(form)
+      })
+      .collect(),
+    get_log: true,
+  }))
+}
+
+// See [Wonder_Api_MarathonSingleLogRequest_Fields]
+#[derive(Debug, Deserialize)]
+pub struct MarathonSingleLogRequest {
+  pub event_id: i32,
+  pub quest_id: i32,
+  #[serde(deserialize_with = "crate::serde_compat::comma_separated_string")]
+  pub log: Vec<String>,
+}
+
+pub async fn marathon_single_log(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<MarathonSingleLogRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: marathon_single_log");
+
+  // See [Wonder_Api_MarathonSingleLogResponseDto_Fields]
+  Ok(Unsigned(()))
+}
+
+// See [Wonder_Api_MarathonSingleResultRequest_Fields]
+#[derive(Debug, Deserialize)]
+pub struct MarathonSingleResultRequest {
+  pub quest_id: i32,
+  #[serde(rename = "party_no")]
+  pub party_id: i32,
+  pub clearquestmission: Vec<i32>,
+  pub win: i32,
+  pub wave: i32,
+  pub memcheckcount: i32,
+  pub event_id: i32,
+}
+
+// See [Wonder_Api_MarathonSingleResultResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct MarathonSingleResultResponse {
+  pub exp: i32,
+  pub lvup: i32,
+  pub money: i32,
+  pub love: Vec<BattleCharacterLove>,
+  pub member_exp: Vec<BattleMemberExp>,
+  pub reward: Vec<BattleReward>,
+}
+
+impl CallCustom for MarathonSingleResultResponse {}
+
+pub async fn marathon_single_result(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<MarathonSingleResultRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: marathon_single_result");
+
+  let client = state.pool.get().await.context("failed to get database connection")?;
+  let party = FetchUserParty::new(&client)
+    .await?
+    .run(session.user_id, params.party_id as i64)
+    .await?;
+
+  let (member_exp, love) = make_battle_member_exp_and_character_love(&party, &client, &session).await?;
+  Ok(Unsigned(BattleResultResponse {
+    limit: 0,
+    exp: 5,
+    lvup: 0,
+    money: 85000,
+    storyunlock: vec![],
+    love,
+    member_exp,
+    mission: params.clearquestmission,
+    reward: vec![],
+    clearreward: vec![],
+    auto_progression_result: AutoProgressionResultResponse {
+      auto_count: 0,
+      is_continue: false,
+      stop_reason: 0,
+      stamina_all: 0,
+      reward_all: vec![],
+      clearreward_all: vec![],
+    },
+    firstclear: true,
+  }))
 }
