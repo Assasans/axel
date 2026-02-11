@@ -161,6 +161,9 @@ impl GachaGoodItem {
   }
 }
 
+// See [Wonder_Api_GachanormalResponseDto_Fields]
+// See [Wonder_Api_GachachainResponseDto_Fields]
+// See [Wonder_Api_GachadailyResponseDto_Fields]
 #[derive(Default, Debug, Serialize)]
 pub struct GachaResult {
   pub gacha_id: i32,
@@ -180,6 +183,8 @@ pub struct StepupBonusStep {
 }
 
 // See [Wonder_Api_GachanormalGoodsResponseDto_Fields]
+// See [Wonder_Api_GachachainGoodsResponseDto_Fields]
+// See [Wonder_Api_GachadailyGoodsResponseDto_Fields]
 #[derive(Default, Debug, Serialize)]
 pub struct GachaGood {
   pub itemtype: i32,
@@ -1284,50 +1289,18 @@ pub async fn gacha_tutorial_reward() -> impl IntoHandlerResponse {
   Unsigned(CallResponse::new_success(Box::new(response)))
 }
 
-#[derive(Debug, Deserialize)]
-pub struct GachaChainRequest {
-  pub gacha_id: i32,
-  pub money_type: i32,
-}
-
-/// 10x pull
-pub async fn gacha_chain(
+async fn gacha_impl(
   state: Arc<AppState>,
   session: Arc<Session>,
-  Params(params): Params<GachaChainRequest>,
+  gacha_id: i32,
+  money_type: i32,
+  amount: usize,
 ) -> impl IntoHandlerResponse {
-  warn!(?params, "encountered stub: gacha_chain");
-
-  gacha_normal(
-    state,
-    session,
-    Params(GachaNormalRequest {
-      gacha_id: params.gacha_id,
-      money_type: params.money_type,
-    }),
-  )
-  .await
-}
-
-#[derive(Debug, Deserialize)]
-pub struct GachaNormalRequest {
-  pub gacha_id: i32,
-  pub money_type: i32,
-}
-
-/// 1x pull
-pub async fn gacha_normal(
-  state: Arc<AppState>,
-  session: Arc<Session>,
-  Params(params): Params<GachaNormalRequest>,
-) -> impl IntoHandlerResponse {
-  warn!(?params, "encountered stub: gacha_normal");
-
   let members = get_master_manager().get_master("member");
   let members = members
     .iter()
     .filter(|member| member["rare"].as_str().unwrap().parse::<i32>().unwrap() >= 2)
-    .choose_multiple(&mut rand::rng(), 1)
+    .choose_multiple(&mut rand::rng(), amount)
     .into_iter()
     .map(|member| member["id"].as_str().unwrap().parse::<i64>().unwrap())
     .map(MemberPrototype::load_from_id)
@@ -1379,7 +1352,7 @@ pub async fn gacha_normal(
     .collect::<BTreeMap<_, _>>();
 
   let mut response: CallResponse<dyn CallCustom> = CallResponse::new_success(Box::new(GachaResult {
-    gacha_id: params.gacha_id,
+    gacha_id,
     goods: members
       .iter()
       .map(|member| GachaGood::new(RemoteDataItemType::Member.into(), member.id as i64, 1, true))
@@ -1438,6 +1411,53 @@ pub async fn gacha_normal(
   // ]);
 
   Unsigned(response)
+}
+
+#[derive(Debug, Deserialize)]
+pub struct GachaChainRequest {
+  pub gacha_id: i32,
+  pub money_type: i32,
+}
+
+/// 10x pull
+pub async fn gacha_chain(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<GachaChainRequest>,
+) -> impl IntoHandlerResponse {
+  gacha_impl(state, session, params.gacha_id, params.money_type, 10).await
+}
+
+#[derive(Debug, Deserialize)]
+pub struct GachaNormalRequest {
+  pub gacha_id: i32,
+  pub money_type: i32,
+}
+
+/// 1x pull
+pub async fn gacha_normal(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<GachaNormalRequest>,
+) -> impl IntoHandlerResponse {
+  gacha_impl(state, session, params.gacha_id, params.money_type, 1).await
+}
+
+// See [Wonder_Api_GachadailyRequest_Fields]
+#[derive(Debug, Deserialize)]
+pub struct GachaDailyRequest {
+  pub gacha_id: i32,
+  pub money_type: i32,
+}
+
+pub async fn gacha_daily(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<GachaDailyRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: gacha_daily");
+
+  gacha_impl(state, session, params.gacha_id, params.money_type, 1).await
 }
 
 #[derive(Debug, Deserialize)]
