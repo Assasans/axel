@@ -221,6 +221,7 @@ async fn api_call(
     .handle("blacksmithlist", smith_craft::blacksmith_list)
     .handle("blacksmith", smith_craft::blacksmith)
     .handle("itempoweruplist", smith_upgrade::item_power_up_list)
+    .handle("itempowerup", smith_upgrade::item_power_up)
     .handle("blacksmithquestlist", smith_upgrade::blacksmith_quest_list)
     .handle("partymembers", party::party_members)
     .handle("gradeup", party::grade_up)

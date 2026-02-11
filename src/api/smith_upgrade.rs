@@ -1,8 +1,11 @@
 use crate::api::master_all::get_master_manager;
+use crate::api::quest::parse_reward_items;
 use crate::api::quest::quest_fame::FameQuestReleaseConditionInfo;
-use crate::api::quest::quest_hunting::{HuntingQuest};
-use crate::api::smith_craft::BlacksmithEquippedItemResponseDto;
-use crate::call::CallCustom;
+use crate::api::quest::quest_hunting::HuntingQuest;
+use crate::api::smith_craft::{BlacksmithEquippedItemResponseDto, BlacksmithItem, BlacksmithReturnedItem};
+use crate::api::RemoteDataItemType;
+use crate::blob::{AddEquipment, IntoRemoteData};
+use crate::call::{CallCustom, CallResponse};
 use crate::extractor::Params;
 use crate::handler::{IntoHandlerResponse, Unsigned};
 use crate::user::session::Session;
@@ -11,7 +14,7 @@ use anyhow::Context;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;
-use crate::api::quest::parse_reward_items;
+use tracing::{debug, info, warn};
 
 // See [Wonder_Api_ItempoweruplistResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -71,6 +74,114 @@ pub async fn item_power_up_list(state: Arc<AppState>, session: Arc<Session>) -> 
     equipped_weapon_list: vec![],
     equipped_accessory_list: vec![],
   }))
+}
+
+// See [Wonder_Api_ItempowerupMaterialEquipmentsRequestDto_Fields]
+#[derive(Debug, Deserialize)]
+pub struct ItemPowerUpMaterial {
+  pub unique_id: i32,
+  pub item_type: i32,
+}
+
+// See [Wonder_Api_ItempowerupRequest_Fields]
+#[derive(Debug, Deserialize)]
+pub struct ItemPowerUpRequest {
+  pub target_item_id: i64,
+  pub item_type: i32,
+  pub material_equipments: Vec<ItemPowerUpMaterial>,
+  pub powerup_count: i32,
+}
+
+// See [Wonder_Api_ItempowerupItemsResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct ItemPowerUpItem {
+  pub itemtype: i32,
+  pub itemid: i32,
+  pub itemnum: i32,
+}
+
+// See [Wonder_Api_ItempowerupResponseDto_Fields]
+#[derive(Debug, Serialize)]
+pub struct ItemPowerUpResponse {
+  pub items: Vec<ItemPowerUpItem>,
+  pub returned_items: Vec<BlacksmithReturnedItem>,
+}
+
+impl CallCustom for ItemPowerUpResponse {}
+
+pub async fn item_power_up(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<ItemPowerUpRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: item_power_up");
+
+  let equip_weapon_details = get_master_manager().get_master("equip_weapon_details");
+
+  // (item_id, level) -> item_id_details
+  let item_to_item_details: HashMap<(i64, i32), i64> = equip_weapon_details
+    .iter()
+    .map(|data| {
+      let item_id: i64 = data["item_id"].as_str().unwrap().parse::<i64>().unwrap();
+      let level: i32 = data["lv"].as_str().unwrap().parse::<i32>().unwrap();
+      let item_id_details: i64 = data["item_id_details"].as_str().unwrap().parse::<i64>().unwrap();
+      ((item_id, level), item_id_details)
+    })
+    .collect::<HashMap<_, _>>();
+
+  // TODO: Does not consume items, and does not validate anything.
+  let mut client = state.get_database_client().await?;
+  let transaction = client.transaction().await.context("failed to start transaction")?;
+  #[rustfmt::skip]
+  let statement = transaction
+    .prepare(/* language=postgresql */ r#"
+      update user_items_equipment
+      set level = level + $4
+      where id = $1 and user_id = $2 and item_type = $3
+      returning id, item_type, item_id, level, is_locked
+    "#)
+    .await
+    .context("failed to prepare statement")?;
+  let row = transaction
+    .query_one(
+      &statement,
+      &[&params.target_item_id, &session.user_id, &(params.item_type as i64), &params.powerup_count],
+    )
+    .await
+    .context("failed to execute query")?;
+  debug!(?row, "upgraded equipment item");
+
+  let id = row.get::<_, i64>("id");
+  let item_type = row.get::<_, i64>("item_type") as i32;
+  let item_id = row.get::<_, i64>("item_id");
+  let level = row.get::<_, i32>("level");
+  let is_locked = row.get::<_, bool>("is_locked");
+  let item_details_id = *item_to_item_details
+    .get(&(item_id, level))
+    .expect(&format!("missing item details for item_id={} level={}", item_id, level));
+  info!(?id, ?item_type, ?item_id, ?level, ?is_locked, "upgraded item");
+
+  let mut response = CallResponse::new_success(Box::new(ItemPowerUpResponse {
+    items: vec![ItemPowerUpItem {
+      itemtype: item_type,
+      itemid: item_details_id as i32,
+      itemnum: 1,
+    }],
+    returned_items: vec![],
+  }));
+  response.remote.extend(
+    AddEquipment::new(
+      RemoteDataItemType::from(item_type),
+      item_details_id,
+      id as i32,
+      is_locked,
+    )
+    .into_remote_data(),
+  );
+
+  transaction.commit().await.context("failed to commit transaction")?;
+
+  Ok(Unsigned(response))
 }
 
 // See [Wonder_Api_BlacksmithquestlistResponseDto_Fields]

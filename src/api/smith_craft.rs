@@ -105,6 +105,7 @@ pub struct BlacksmithItem {
 }
 
 // See [Wonder_Api_BlacksmithReturnedItemsResponseDto_Fields]
+// See [Wonder_Api_ItempowerupReturnedItemsResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct BlacksmithReturnedItem {
   pub item_type: i32,
