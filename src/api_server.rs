@@ -256,6 +256,7 @@ async fn api_call(
     .handle("scorechallengebestscoreparty", battle_arena::score_challenge_best_score_party)
     .handle("scorechallengestart", battle_arena::score_challenge_start)
     .handle("scorechallengeresult", battle_arena::score_challenge_result)
+    .handle("scorechallenge_log", battle_arena::score_challenge_log)
     .handle("scorechallenge_mission", battle_arena::score_challenge_mission)
     .handle("scorechallenge_mission_list", battle_arena::score_challenge_mission_list)
     .handle("multi_battle_invitation_list", battle_multi::multi_battle_invitation_list)

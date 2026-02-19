@@ -403,3 +403,24 @@ pub async fn score_challenge_mission_list() -> impl IntoHandlerResponse {
     scorechallenge_mission_list: vec![],
   }))
 }
+
+// See [Wonder_Api_EventScorechallengeLogRequest_Fields]
+#[derive(Debug, Deserialize)]
+pub struct ScoreChallengeLogRequest {
+  pub event_id: i32,
+  pub stage_id: i32,
+  #[serde(rename = "party_no")]
+  pub party_id: i32,
+  pub log: String,
+}
+
+pub async fn score_challenge_log(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<ScoreChallengeLogRequest>,
+) -> anyhow::Result<impl IntoHandlerResponse> {
+  warn!(?params, "encountered stub: scorechallenge_log");
+
+  // See [Wonder_Api_EventScorechallengeLogResponseDto_Fields]
+  Ok(Unsigned(()))
+}
