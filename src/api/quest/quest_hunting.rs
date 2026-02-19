@@ -1,9 +1,12 @@
 //! Hierarchy is Area (Relic Quest) -> Stage (Eris - Beginner)
 //! Reference: https://youtu.be/S9fX6sbXRHw (also shows character upgrade and promotion)
 
+use crate::api::battle::{apply_reward_multiplier, grant_rewards, make_battle_member_exp_and_character_love};
 use crate::api::battle_multi::{BattleCharacterLove, BattleClearReward, BattleMemberExp};
+use crate::api::dungeon::BattleSkipReward;
 use crate::api::master_all::{get_master_manager, get_masters};
 use crate::api::party_info::{Party, PartyForm, SpecialSkillInfo};
+use crate::api::quest::parse_reward_items;
 use crate::api::smith_upgrade::{DungeonAreaMaterialInfoResponseDto, FameQuestMaterialInfoResponseDto};
 use crate::api::{battle, MemberFameStats, RemoteDataItemType};
 use crate::blob::IntoRemoteData;
@@ -20,8 +23,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tracing::{debug, warn};
-use crate::api::battle::{apply_reward_multiplier, grant_rewards, make_battle_member_exp_and_character_love};
-use crate::api::quest::parse_reward_items;
+use crate::api::quest::quest_main::BattleSkipResponse;
 
 // See [Wonder_Api_QuesthuntinglistResponseDto_Fields]
 #[derive(Debug, Serialize)]
@@ -138,7 +140,7 @@ pub async fn quest_hunting_stage_list(
         newstage: 0,
         task1: 1,
         task2: 1,
-        task3: 0,
+        task3: 1,
       })
       .collect::<Vec<_>>(),
   }))
@@ -367,5 +369,40 @@ pub async fn hunting_quest_list_by_item(
       challenging_area_id: 0,
     },
     fame_quest: vec![],
+  }))
+}
+
+// See [Wonder_Api_BattlehuntingskipRequest_Fields]
+#[derive(Debug, Deserialize)]
+pub struct BattleHuntingSkipRequest {
+  pub skip: Vec<SkipInfoRequestDto>,
+  pub splitcount: i32,
+  pub max_splitcount: i32,
+}
+
+// See [Wonder_Api_SkipInfoRequestDto_Fields]
+#[derive(Debug, Deserialize)]
+pub struct SkipInfoRequestDto {
+  pub quest_id: i32,
+  pub skip_count: i32,
+}
+
+pub async fn battle_hunting_skip(
+  state: Arc<AppState>,
+  session: Arc<Session>,
+  Params(params): Params<BattleHuntingSkipRequest>,
+) -> impl IntoHandlerResponse {
+  warn!(?params, "encountered stub: battle_hunting_skip");
+
+  Ok(Unsigned(BattleSkipResponse {
+    lvup: 0,
+    reward: vec![BattleSkipReward {
+      dropnum: 1,
+      exp: 500,
+      money: 1000,
+      itemtype: RemoteDataItemType::RealMoney.into(),
+      itemid: 1,
+      itemnum: 5000,
+    }],
   }))
 }

@@ -944,6 +944,7 @@ pub struct DungeonAreaSkipResponse {
 impl CallCustom for DungeonAreaSkipResponse {}
 
 // See [Wonder_Api_BattleskipRewardResponseDto_Fields]
+// See [Wonder_Api_BattlehuntingskipRewardResponseDto_Fields]
 #[derive(Debug, Serialize)]
 pub struct BattleSkipReward {
   /// Stage number
